@@ -1,6 +1,8 @@
 --- Status: 24.07.2017
 --- Execute this in BigQuery
 
+--- TODO: Check extraction of SO references (e.g. post 3758880)
+
 --- Select all source code lines of text files that contain a link to Stack Overflow
 SELECT
   id,
