@@ -1,4 +1,4 @@
---- add secure-file-priv="" under [mysqld] in my.ini
+# add secure-file-priv="" under [mysqld] in my.ini
 
 USE `stackoverflow17_06`;
 
