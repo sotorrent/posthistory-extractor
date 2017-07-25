@@ -1,3 +1,5 @@
+CREATE DATABASE IF NOT EXISTS `stackoverflow17_06`;
+
 USE `stackoverflow17_06`;
 
 SET foreign_key_checks = 0;
