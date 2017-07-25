@@ -1,3 +1,5 @@
+# TODO: put table names in `...` to preserve CamelCase
+
 CREATE DATABASE IF NOT EXISTS `stackoverflow17_06`;
 
 USE `stackoverflow17_06`;
