@@ -78,7 +78,7 @@ CREATE TABLE PostBlockVersion (
   PostHistoryId INT NOT NULL,
   PostBlockTypeId TINYINT NOT NULL,
   LocalId INT NOT NULL,
-  RootPostBlockVersionId INT NOT NULL,
+  RootPostBlockVersionId INT,
   Content TEXT NOT NULL,
   Length INT NOT NULL,
   LineCount INT NOT NULL,
