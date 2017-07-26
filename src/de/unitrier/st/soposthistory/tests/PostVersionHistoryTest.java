@@ -172,27 +172,27 @@ class PostVersionHistoryTest {
         assertEquals(6, firstVersion.getPostBlocks().size());
         // root post blocks of first version must be null
         for (PostBlockVersion currentPostBlock : firstVersion.getPostBlocks()) {
-            assertEquals(currentPostBlock.getId(), (int)currentPostBlock.getRootPostBlockVersionId());
+            assertEquals(currentPostBlock.getId(), (int)currentPostBlock.getRootPostBlockId());
         }
 
         PostVersion secondPostVersion = a_3758880.get(1);
         assertEquals(4, secondPostVersion.getPostBlocks().size());
         // first code block of second version has first code block of first version as root post block
-        assertEquals((int)secondPostVersion.getCodeBlocks().get(0).getRootPostBlockVersionId(),
+        assertEquals((int)secondPostVersion.getCodeBlocks().get(0).getRootPostBlockId(),
                 firstVersion.getCodeBlocks().get(0).getId());
         // second code block of second version has third code block of first version as root post block
-        assertEquals((int)secondPostVersion.getCodeBlocks().get(1).getRootPostBlockVersionId(),
+        assertEquals((int)secondPostVersion.getCodeBlocks().get(1).getRootPostBlockId(),
                 firstVersion.getCodeBlocks().get(2).getId());
         // second text block of second version has no predecessor (-> itself as root post block)
-        assertEquals((int)secondPostVersion.getTextBlocks().get(0).getRootPostBlockVersionId(),
+        assertEquals((int)secondPostVersion.getTextBlocks().get(0).getRootPostBlockId(),
                 secondPostVersion.getTextBlocks().get(0).getId());
 
         PostVersion lastPostVersion = a_3758880.get(a_3758880.size()-1);
         // first code block of last version still has first code block of first version as root post block
-        assertEquals((int)lastPostVersion.getCodeBlocks().get(0).getRootPostBlockVersionId(),
+        assertEquals((int)lastPostVersion.getCodeBlocks().get(0).getRootPostBlockId(),
                 firstVersion.getCodeBlocks().get(0).getId());
         // first text block of last version has first text block of second version as root post block
-        assertEquals((int)lastPostVersion.getTextBlocks().get(0).getRootPostBlockVersionId(),
+        assertEquals((int)lastPostVersion.getTextBlocks().get(0).getRootPostBlockId(),
                 secondPostVersion.getTextBlocks().get(0).getId());
     }
 }

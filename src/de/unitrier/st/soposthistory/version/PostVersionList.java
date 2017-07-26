@@ -99,7 +99,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
                 currentVersion.setPredPostHistoryId(null);
                 // the post blocks in the first version have themselves as root post blocks
                 for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks()) {
-                    currentPostBlock.setRootPostBlockVersionId(currentPostBlock.getId());
+                    currentPostBlock.setRootPostBlockId(currentPostBlock.getId());
                 }
             } else {
                 currentVersion.setPredPostHistoryId(this.get(predIndex).getPostHistoryId());
@@ -123,10 +123,10 @@ public class PostVersionList extends LinkedList<PostVersion> {
                 for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks()) {
                     if (currentPostBlock.getPred() == null) {
                         // block has no predecessor -> set itself as root post block
-                        currentPostBlock.setRootPostBlockVersionId(currentPostBlock.getId());
+                        currentPostBlock.setRootPostBlockId(currentPostBlock.getId());
                     } else {
                         // block has predecessor -> set root post block of predecessor as root post block of this block
-                        currentPostBlock.setRootPostBlockVersionId(currentPostBlock.getPred().getRootPostBlockVersionId());
+                        currentPostBlock.setRootPostBlockId(currentPostBlock.getPred().getRootPostBlockId());
                     }
                 }
             }

@@ -78,10 +78,10 @@ CREATE TABLE PostBlockVersion (
   PostHistoryId INT NOT NULL,
   PostBlockTypeId TINYINT NOT NULL,
   LocalId INT NOT NULL,
-  RootPostBlockVersionId INT,
   Content TEXT NOT NULL,
   Length INT NOT NULL,
   LineCount INT NOT NULL,
+  RootPostBlockId INT DEFAULT NULL,
   PredPostBlockId INT DEFAULT NULL,
   PredEqual BOOLEAN DEFAULT NULL,
   PredSimilarity DOUBLE DEFAULT NULL,
@@ -92,7 +92,7 @@ CREATE TABLE PostBlockVersion (
   FOREIGN KEY(PostId) REFERENCES Posts(Id),
   FOREIGN KEY(PostHistoryId) REFERENCES PostHistory(Id),
   FOREIGN KEY(PostBlockTypeId) REFERENCES PostBlockType(Id),
-  FOREIGN KEY(RootPostBlockVersionId) REFERENCES PostBlockVersion(Id),
+  FOREIGN KEY(RootPostBlockId) REFERENCES PostBlockVersion(Id),
   FOREIGN KEY(PredPostBlockId) REFERENCES PostBlockVersion(Id)
 ) AUTO_INCREMENT = 1;
 

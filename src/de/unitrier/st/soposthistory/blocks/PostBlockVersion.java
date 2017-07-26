@@ -33,10 +33,10 @@ public abstract class PostBlockVersion {
     protected Integer postId;
     protected Integer postHistoryId;
     protected Integer localId;
-    protected Integer rootPostBlockVersionId;
     protected String content;
     protected int length;
     protected int lineCount;
+    protected Integer rootPostBlockId;
     protected Integer predPostBlockId;
     protected Boolean predEqual;
     protected Double predSimilarity;
@@ -54,10 +54,10 @@ public abstract class PostBlockVersion {
         this.postId = null;
         this.postHistoryId = null;
         this.localId = null;
-        this.rootPostBlockVersionId = null;
         this.content = null;
         this.length = 0;
         this.lineCount = 0;
+        this.rootPostBlockId = null;
         this.predPostBlockId = null;
         this.predEqual = null;
         this.predSimilarity = null;
@@ -119,16 +119,6 @@ public abstract class PostBlockVersion {
     }
 
     @Basic
-    @Column(name = "RootPostBlockVersionId")
-    public Integer getRootPostBlockVersionId() {
-        return rootPostBlockVersionId;
-    }
-
-    public void setRootPostBlockVersionId(Integer rootPostBlockVersionId) {
-        this.rootPostBlockVersionId = rootPostBlockVersionId;
-    }
-
-    @Basic
     @Column(name = "Content")
     public String getContent() {
         return content == null ? contentBuilder.toString() : content;
@@ -156,6 +146,16 @@ public abstract class PostBlockVersion {
 
     public void setLineCount(int lineCount) {
         this.lineCount = lineCount;
+    }
+
+    @Basic
+    @Column(name = "RootPostBlockId")
+    public Integer getRootPostBlockId() {
+        return rootPostBlockId;
+    }
+
+    public void setRootPostBlockId(Integer rootPostBlockId) {
+        this.rootPostBlockId = rootPostBlockId;
     }
 
     @Basic
@@ -283,7 +283,7 @@ public abstract class PostBlockVersion {
     @Override
     public String toString() {
         return "Changed: " + (predSimilarity == null ? "-" : predSimilarity != 1.0) + "\n"
-                + "RootPostBlock: " + rootPostBlockVersionId + "\n"
+                + "RootPostBlock: " + rootPostBlockId + "\n"
                 + "---Predecessor---\n"
                 + "Count: " + (predCount)
                 + "Id: " + (pred == null ? "none" : pred.composeId()) + "\n"
@@ -309,7 +309,7 @@ public abstract class PostBlockVersion {
         if (id != that.getId()) return false;
         if (postHistoryId != null ? !postHistoryId.equals(that.getPostHistoryId()) : that.getPostHistoryId() != null) return false;
         if (localId != null ? !localId.equals(that.getLocalId()) : that.getLocalId() != null) return false;
-        if (rootPostBlockVersionId != null ? !rootPostBlockVersionId.equals(that.getRootPostBlockVersionId()) : that.getRootPostBlockVersionId() != null) return false;
+        if (rootPostBlockId != null ? !rootPostBlockId.equals(that.getRootPostBlockId()) : that.getRootPostBlockId() != null) return false;
         if (content != null ? !content.equals(that.getContent()) : that.getContent() != null) return false;
         if (predPostBlockId != null ? !predPostBlockId.equals(that.getPredPostBlockId()) : that.getPredPostBlockId() != null) return false;
         if (predEqual != null ? !predEqual.equals(that.getPredEqual()) : that.getPredEqual() != null) return false;
@@ -325,7 +325,7 @@ public abstract class PostBlockVersion {
         int result = id;
         result = 31 * result + (postHistoryId != null ? postHistoryId.hashCode() : 0);
         result = 31 * result + (localId != null ? localId.hashCode() : 0);
-        result = 31 * result + (rootPostBlockVersionId != null ? rootPostBlockVersionId.hashCode() : 0);
+        result = 31 * result + (rootPostBlockId != null ? rootPostBlockId.hashCode() : 0);
         result = 31 * result + (content != null ? content.hashCode() : 0);
         result = 31 * result + (predPostBlockId != null ? predPostBlockId.hashCode() : 0);
         result = 31 * result + (predSimilarity != null ? predSimilarity.hashCode() : 0);
