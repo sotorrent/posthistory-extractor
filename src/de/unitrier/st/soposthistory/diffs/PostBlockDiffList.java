@@ -6,6 +6,7 @@ import de.unitrier.st.soposthistory.version.PostVersion;
 import org.hibernate.StatelessSession;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import static de.unitrier.st.soposthistory.util.Util.insertList;
 
@@ -14,7 +15,7 @@ public class PostBlockDiffList extends LinkedList<PostBlockDiff> {
     public void fromPostVersionList(PostVersionList versionList) {
         for (PostVersion version : versionList) {
             for (PostBlockVersion block : version.getPostBlocks()) {
-                LinkedList<diff_match_patch.Diff> predDiff = block.getPredDiff();
+                List<diff_match_patch.Diff> predDiff = block.getPredDiff();
                 if (predDiff != null) {
                     for (diff_match_patch.Diff diff : predDiff) {
                         PostBlockDiff diffPrev = new PostBlockDiff(

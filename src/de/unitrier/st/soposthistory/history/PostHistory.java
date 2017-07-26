@@ -9,10 +9,10 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-@SuppressWarnings({"RedundantIfStatement", "WeakerAccess", "unused"})
 @Entity
 @Table(name = "PostHistory", schema = "stackoverflow16_12")
 public class PostHistory {
@@ -47,7 +47,7 @@ public class PostHistory {
     private String userDisplayName;
     private String comment;
     // internal
-    private LinkedList<PostBlockVersion> blocks;
+    private List<PostBlockVersion> blocks;
     private int postTypeId;
 
     public PostHistory() {}
@@ -166,7 +166,7 @@ public class PostHistory {
     }
 
     @Transient
-    public LinkedList<PostBlockVersion> getBlocks() {
+    public List<PostBlockVersion> getBlocks() {
         return blocks;
     }
 

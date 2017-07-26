@@ -235,7 +235,7 @@ public class PostHistoryIterator {
     }
 
     public void extractDataFromPostHistory(String type) {
-        LinkedList<ExtractionThread> extractionThreads = new LinkedList<>();
+        List<ExtractionThread> extractionThreads = new LinkedList<>();
 
         logger.info("Starting parallel extraction of post history...");
 

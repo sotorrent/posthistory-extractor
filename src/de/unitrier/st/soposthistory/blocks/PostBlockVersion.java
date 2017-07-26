@@ -6,7 +6,7 @@ import de.unitrier.st.soposthistory.diffs.diff_match_patch;
 import javax.persistence.*;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -33,6 +33,7 @@ public abstract class PostBlockVersion {
     protected Integer postId;
     protected Integer postHistoryId;
     protected Integer localId;
+    protected Integer rootPostBlockVersionId;
     protected String content;
     protected int length;
     protected int lineCount;
@@ -44,15 +45,16 @@ public abstract class PostBlockVersion {
     // internal
     private StringBuilder contentBuilder;
     private final LineDiff lineDiff;
-    private LinkedList<diff_match_patch.Diff> predDiff;
+    private List<diff_match_patch.Diff> predDiff;
     private PostBlockVersion pred;
-    private LinkedList<diff_match_patch.Diff> succDiff;
+    private List<diff_match_patch.Diff> succDiff;
 
     public PostBlockVersion() {
         // database
         this.postId = null;
         this.postHistoryId = null;
         this.localId = null;
+        this.rootPostBlockVersionId = null;
         this.content = null;
         this.length = 0;
         this.lineCount = 0;
@@ -114,6 +116,16 @@ public abstract class PostBlockVersion {
 
     public void setLocalId(Integer localId) {
         this.localId = localId;
+    }
+
+    @Basic
+    @Column(name = "RootPostBlockVersionId")
+    public Integer getRootPostBlockVersionId() {
+        return rootPostBlockVersionId;
+    }
+
+    public void setRootPostBlockVersionId(Integer rootPostBlockVersionId) {
+        this.rootPostBlockVersionId = rootPostBlockVersionId;
     }
 
     @Basic
@@ -248,12 +260,12 @@ public abstract class PostBlockVersion {
     }
 
     @Transient
-    public LinkedList<diff_match_patch.Diff> getPredDiff() {
+    public List<diff_match_patch.Diff> getPredDiff() {
         return predDiff;
     }
 
     @Transient
-    public LinkedList<diff_match_patch.Diff> getSuccDiff() {
+    public List<diff_match_patch.Diff> getSuccDiff() {
         return succDiff;
     }
 
@@ -264,13 +276,14 @@ public abstract class PostBlockVersion {
     // TODO: after preliminary evaluation: 2-Grams and Dice for code blocks and 4-Grams and Overlap for text blocks
     abstract public double compareTo(PostBlockVersion otherBlock);
 
-    private LinkedList<diff_match_patch.Diff> diff(PostBlockVersion block) {
+    private List<diff_match_patch.Diff> diff(PostBlockVersion block) {
         return lineDiff.diff_lines_only(this.getContent(), block.getContent());
     }
 
     @Override
     public String toString() {
         return "Changed: " + (predSimilarity == null ? "-" : predSimilarity != 1.0) + "\n"
+                + "RootPostBlock: " + rootPostBlockVersionId + "\n"
                 + "---Predecessor---\n"
                 + "Count: " + (predCount)
                 + "Id: " + (pred == null ? "none" : pred.composeId()) + "\n"
@@ -296,6 +309,7 @@ public abstract class PostBlockVersion {
         if (id != that.getId()) return false;
         if (postHistoryId != null ? !postHistoryId.equals(that.getPostHistoryId()) : that.getPostHistoryId() != null) return false;
         if (localId != null ? !localId.equals(that.getLocalId()) : that.getLocalId() != null) return false;
+        if (rootPostBlockVersionId != null ? !rootPostBlockVersionId.equals(that.getRootPostBlockVersionId()) : that.getRootPostBlockVersionId() != null) return false;
         if (content != null ? !content.equals(that.getContent()) : that.getContent() != null) return false;
         if (predPostBlockId != null ? !predPostBlockId.equals(that.getPredPostBlockId()) : that.getPredPostBlockId() != null) return false;
         if (predEqual != null ? !predEqual.equals(that.getPredEqual()) : that.getPredEqual() != null) return false;
@@ -311,6 +325,7 @@ public abstract class PostBlockVersion {
         int result = id;
         result = 31 * result + (postHistoryId != null ? postHistoryId.hashCode() : 0);
         result = 31 * result + (localId != null ? localId.hashCode() : 0);
+        result = 31 * result + (rootPostBlockVersionId != null ? rootPostBlockVersionId.hashCode() : 0);
         result = 31 * result + (content != null ? content.hashCode() : 0);
         result = 31 * result + (predPostBlockId != null ? predPostBlockId.hashCode() : 0);
         result = 31 * result + (predSimilarity != null ? predSimilarity.hashCode() : 0);

@@ -6,7 +6,6 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import java.util.function.BiFunction;
 
-@SuppressWarnings("unused")
 @Entity
 @DiscriminatorValue(value="1")
 public class TextBlockVersion extends PostBlockVersion {
