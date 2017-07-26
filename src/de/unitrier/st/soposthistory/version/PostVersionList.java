@@ -1,6 +1,7 @@
 package de.unitrier.st.soposthistory.version;
 
 import de.unitrier.st.soposthistory.blocks.CodeBlockVersion;
+import de.unitrier.st.soposthistory.blocks.PostBlockVersion;
 import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
 import de.unitrier.st.soposthistory.diffs.PostBlockDiffList;
 import de.unitrier.st.soposthistory.history.PostHistory;
@@ -70,6 +71,9 @@ public class PostVersionList extends LinkedList<PostVersion> {
                     this.add(postVersion);
                 }
             }
+
+            processVersionHistory();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -93,6 +97,10 @@ public class PostVersionList extends LinkedList<PostVersion> {
             if (predIndex == -1) {
                 // current is first element
                 currentVersion.setPredPostHistoryId(null);
+                // the post blocks in the first version have themselves as root post blocks
+                for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks()) {
+                    currentPostBlock.setRootPostBlockVersionId(currentPostBlock.getId());
+                }
             } else {
                 currentVersion.setPredPostHistoryId(this.get(predIndex).getPostHistoryId());
 
@@ -110,6 +118,17 @@ public class PostVersionList extends LinkedList<PostVersion> {
                         previousVersion.getCodeBlocks(),
                         CodeBlockVersion.similarityThreshold
                 );
+
+                // set root post blocks
+                for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks()) {
+                    if (currentPostBlock.getPred() == null) {
+                        // block has no predecessor -> set itself as root post block
+                        currentPostBlock.setRootPostBlockVersionId(currentPostBlock.getId());
+                    } else {
+                        // block has predecessor -> set root post block of predecessor as root post block of this block
+                        currentPostBlock.setRootPostBlockVersionId(currentPostBlock.getPred().getRootPostBlockVersionId());
+                    }
+                }
             }
 
             if (succIndex==this.size()) {
@@ -120,6 +139,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
             }
         }
 
+        // calculate diffs
         diffs.fromPostVersionList(this);
     }
 
@@ -131,7 +151,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
         for (PostVersion currentVersion : this) {
             // save current post version
             session.insert(currentVersion);
-            // update the post blocks (pred, succ, similarity)
+            // update the post blocks (pred, succ, similarity, root post block)
             currentVersion.updateBlocks(session);
         }
 
