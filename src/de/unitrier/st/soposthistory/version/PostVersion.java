@@ -26,8 +26,8 @@ public class PostVersion {
     private Integer predPostHistoryId;
     private Integer succPostHistoryId;
     // internal
-    private final LinkedList<PostBlockVersion> postBlocks;
-    private final LinkedList<PostVersionUrl> urls;
+    private final List<PostBlockVersion> postBlocks;
+    private final List<PostVersionUrl> urls;
 
     public PostVersion() {
         // database
@@ -99,7 +99,7 @@ public class PostVersion {
     }
 
     @Transient
-    public LinkedList<PostBlockVersion> getPostBlocks() {
+    public List<PostBlockVersion> getPostBlocks() {
         return postBlocks;
     }
 
@@ -113,7 +113,7 @@ public class PostVersion {
         }
     }
 
-    public LinkedList<PostBlockVersion> sortPostBlocks() {
+    public List<PostBlockVersion> sortPostBlocks() {
         postBlocks.sort((b1, b2) ->
                 b1.getLocalId() < b2.getLocalId() ? -1 : b1.getLocalId() > b2.getLocalId() ? 1 : 0
         );
@@ -164,12 +164,12 @@ public class PostVersion {
     }
 
     public void extractUrlsFromTextBlocks() {
-        String textBlockContent = getMergedTextBlockContent();
-        Matcher linkMatcher = Link.regex.matcher(textBlockContent);
-
-        while (linkMatcher.find()) {
-            String url = linkMatcher.group(1);
-            urls.add(new PostVersionUrl(postHistoryId, url));
+        for (TextBlockVersion currentTextBlock : getTextBlocks()) {
+            Matcher linkMatcher = Link.regex.matcher(currentTextBlock.getContent());
+            while (linkMatcher.find()) {
+                String url = linkMatcher.group(1);
+                urls.add(new PostVersionUrl(postId, postHistoryId, currentTextBlock.getId(), url));
+            }
         }
     }
 
