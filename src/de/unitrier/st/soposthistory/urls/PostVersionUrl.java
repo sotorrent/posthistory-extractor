@@ -6,7 +6,9 @@ import javax.persistence.*;
 @Table(name = "PostVersionUrl", schema = "stackoverflow16_12")
 public class PostVersionUrl{
     private int id;
+    private Integer postId;
     private Integer postHistoryId;
+    private Integer postBlockVersionId;
     private String url;
 
     public PostVersionUrl(){
@@ -14,8 +16,10 @@ public class PostVersionUrl{
         this.url = null;
     }
 
-    public PostVersionUrl(int postHistoryId, String urls){
+    public PostVersionUrl(int postId, int postHistoryId, int postBlockVersionId, String urls){
+        this.postId = postId;
         this.postHistoryId = postHistoryId;
+        this.postBlockVersionId = postBlockVersionId;
         this.url = urls;
     }
 
@@ -31,6 +35,16 @@ public class PostVersionUrl{
     }
 
     @Basic
+    @Column(name = "PostId")
+    public Integer getPostId() {
+        return postId;
+    }
+
+    public void setPostId(Integer postId) {
+        this.postId = postId;
+    }
+
+    @Basic
     @Column(name = "PostHistoryId")
     public Integer getPostHistoryId() {
         return postHistoryId;
@@ -38,6 +52,16 @@ public class PostVersionUrl{
 
     public void setPostHistoryId(Integer postHistoryId) {
         this.postHistoryId = postHistoryId;
+    }
+
+    @Basic
+    @Column(name = "PostBlockVersionId")
+    public Integer getPostBlockVersionId() {
+        return postBlockVersionId;
+    }
+
+    public void setPostBlockVersionId(Integer postBlockVersionId) {
+        this.postBlockVersionId = postBlockVersionId;
     }
 
     @Basic
