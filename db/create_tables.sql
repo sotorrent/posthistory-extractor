@@ -78,6 +78,7 @@ CREATE TABLE PostBlockVersion (
   PostHistoryId INT NOT NULL,
   PostBlockTypeId TINYINT NOT NULL,
   LocalId INT NOT NULL,
+  RootPostBlockVersionId INT NOT NULL,
   Content TEXT NOT NULL,
   Length INT NOT NULL,
   LineCount INT NOT NULL,
@@ -91,6 +92,7 @@ CREATE TABLE PostBlockVersion (
   FOREIGN KEY(PostId) REFERENCES Posts(Id),
   FOREIGN KEY(PostHistoryId) REFERENCES PostHistory(Id),
   FOREIGN KEY(PostBlockTypeId) REFERENCES PostBlockType(Id),
+  FOREIGN KEY(RootPostBlockVersionId) REFERENCES PostBlockVersion(Id),
   FOREIGN KEY(PredPostBlockId) REFERENCES PostBlockVersion(Id)
 ) AUTO_INCREMENT = 1;
 
@@ -99,9 +101,13 @@ ALTER TABLE PostBlockDiff ADD FOREIGN KEY(PostBlockVersionId) REFERENCES PostBlo
 
 CREATE TABLE PostVersionUrl (
   Id INT NOT NULL AUTO_INCREMENT,
+  PostId INT NOT NULL,
   PostHistoryId INT NOT NULL,
+  PostBlockVersionId INT NOT NULL,
   Url TEXT,
   PRIMARY KEY(Id),
+  FOREIGN KEY(PostId) REFERENCES Posts(Id),
+  FOREIGN KEY(PostBlockVersionId) REFERENCES PostBlockVersion(Id),
   FOREIGN KEY(PostHistoryId) REFERENCES PostHistory(Id)
 );
 
