@@ -115,6 +115,5 @@ CREATE TABLE PostReferenceGH (
   PostId INT NOT NULL,
   PostTypeId TINYINT NOT NULL,
   Url TEXT NOT NULL,
-  Line TEXT NOT NULL,
   FOREIGN KEY(PostId) REFERENCES Posts(Id)
 );
