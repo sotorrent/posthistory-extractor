@@ -18,6 +18,7 @@ class PostVersionHistoryTest {
     private static PostVersionList a_2581754;
     private static PostVersionList a_20991163;
     private static PostVersionList a_3758880;
+    private static PostVersionList a_32012927;
 
     @BeforeAll
     static void init() {
@@ -33,6 +34,8 @@ class PostVersionHistoryTest {
         a_20991163.readFromCSV("testdata/", 20991163, 2);
         a_3758880 = new PostVersionList();
         a_3758880.readFromCSV("testdata/", 3758880, 2);
+        a_32012927 = new PostVersionList();
+        a_32012927.readFromCSV("testdata/", 32012927, 2);
     }
 
     @Test
@@ -153,14 +156,25 @@ class PostVersionHistoryTest {
 
     @Test
     void testReadingPostHistory20991163() {
+        // this post should only consist of one code block (not an empty text block at the end)
+
         assertEquals(1, a_20991163.size());
 
         PostVersion version_1 = a_20991163.get(0);
         assertEquals(1, version_1.getPostBlocks().size());
         assertEquals(0, version_1.getTextBlocks().size());
         assertEquals(1, version_1.getCodeBlocks().size());
+    }
 
-        System.out.println("version 1: " + version_1.getContent());
+    @Test
+    void testReadingPostHistory32012927() {
+        assertEquals(4, a_32012927.size());
+
+        // the first version of this post should only consist of one text block
+        PostVersion version_1 = a_32012927.get(0);
+        assertEquals(1, version_1.getPostBlocks().size());
+        assertEquals(1, version_1.getTextBlocks().size());
+        assertEquals(0, version_1.getCodeBlocks().size());
     }
 
     @Test

@@ -47,7 +47,6 @@ public abstract class PostBlockVersion {
     private final LineDiff lineDiff;
     private List<diff_match_patch.Diff> predDiff;
     private PostBlockVersion pred;
-    private List<diff_match_patch.Diff> succDiff;
 
     public PostBlockVersion() {
         // database
@@ -68,7 +67,6 @@ public abstract class PostBlockVersion {
         this.lineDiff = new LineDiff();
         this.pred = null;
         this.predDiff = null;
-        this.succDiff = null;
     }
 
     public PostBlockVersion(int postId, int postHistoryId) {
@@ -262,11 +260,6 @@ public abstract class PostBlockVersion {
     @Transient
     public List<diff_match_patch.Diff> getPredDiff() {
         return predDiff;
-    }
-
-    @Transient
-    public List<diff_match_patch.Diff> getSuccDiff() {
-        return succDiff;
     }
 
     protected String composeId() {

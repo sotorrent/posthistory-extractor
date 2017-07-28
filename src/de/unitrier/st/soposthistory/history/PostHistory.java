@@ -11,7 +11,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 @Entity
 @Table(name = "PostHistory", schema = "stackoverflow16_12")
@@ -34,7 +33,6 @@ public class PostHistory {
         relevantPostHistoryTypes.add(5); // Edit Body
         relevantPostHistoryTypes.add(8); // Rollback Body
     }
-    private static Pattern whitespacePattern = Pattern.compile("\\s+");
 
     // database
     private int id;
@@ -47,7 +45,7 @@ public class PostHistory {
     private String userDisplayName;
     private String comment;
     // internal
-    private List<PostBlockVersion> blocks;
+    private List<PostBlockVersion> postBlocks;
     private int postTypeId;
 
     public PostHistory() {}
@@ -166,14 +164,14 @@ public class PostHistory {
     }
 
     @Transient
-    public List<PostBlockVersion> getBlocks() {
-        return blocks;
+    public List<PostBlockVersion> getPostBlocks() {
+        return postBlocks;
     }
 
     public void extractPostBlocks() {
         //TODO: Also extract language from HTML comment? (see http://stackoverflow.com/editing-help#syntax-highlighting)
 
-        blocks = new LinkedList<>();
+        postBlocks = new LinkedList<>();
         int localIdCount = 0;
 
         // http://stackoverflow.com/a/454913
@@ -189,7 +187,7 @@ public class PostHistory {
             // even if tab is not listed here: http://stackoverflow.com/editing-help#code
             // we observed cases where it was important to check for the tab
             boolean isCodeBlock = (line.startsWith("    ") || line.startsWith("\t"));
-            boolean isWhitespaceLine = whitespacePattern.matcher(line).matches();
+            boolean isWhitespaceLine = line.trim().length() == 0;
 
             if (currentBlock == null) {
                 // ignore whitespaces at the beginning of a post
@@ -205,17 +203,23 @@ public class PostHistory {
                 // block has length > 0 => continue or end previous block
                 if (isCodeBlock && currentBlock instanceof TextBlockVersion) {
                     // end of text block, beginning of code block
-                    currentBlock.setLocalId(++localIdCount);
-                    currentBlock.finalizeContent();
-                    blocks.add(currentBlock);
-                    currentBlock = new CodeBlockVersion(postId, id);
-                // do not close code blocks when whitespace line is reached (see, e.g., PostHistory, Id=55158265)
-                } else if ((!isCodeBlock && !isWhitespaceLine) && currentBlock instanceof CodeBlockVersion) {
-                    // end of code block, beginning of text block
-                    currentBlock.setLocalId(++localIdCount);
-                    currentBlock.finalizeContent();
-                    blocks.add(currentBlock);
-                    currentBlock = new TextBlockVersion(postId, id);
+                    if (!isWhitespaceLine) {
+                        // Do not end current block if next line is whitespace line
+                        // see, e.g., second line of PostHistory, Id=97576027
+                        currentBlock.setLocalId(++localIdCount);
+                        postBlocks.add(currentBlock);
+                        currentBlock = new CodeBlockVersion(postId, id);
+                    }
+                // do not close code postBlocks when whitespace line is reached
+                // see, e.g., PostHistory, Id=55158265, PostId=20991163 (-> test case)
+                } else if (!isCodeBlock && currentBlock instanceof CodeBlockVersion) {
+                    if (!isWhitespaceLine) {
+                        // Do not end current block if next line is whitespace line
+                        // see, e.g., second line of PostHistory, Id=97576027
+                        currentBlock.setLocalId(++localIdCount);
+                        postBlocks.add(currentBlock);
+                        currentBlock = new TextBlockVersion(postId, id);
+                    }
                 }
             }
 
@@ -228,17 +232,19 @@ public class PostHistory {
             if (!currentBlock.isEmpty()) {
                 // last block not added yet
                 currentBlock.setLocalId(++localIdCount);
-                currentBlock.finalizeContent();
-                blocks.add(currentBlock);
+                postBlocks.add(currentBlock);
             }
+        }
 
+        for (PostBlockVersion currentPostBlock : postBlocks) {
+            currentPostBlock.finalizeContent();
         }
     }
 
     public PostVersion toPostVersion() {
         // convert PostHistory (SO Database Schema) to PostVersion (Our Schema)
         PostVersion postVersion = new PostVersion(postId, id, postTypeId);
-        postVersion.addPostBlockList(blocks);
+        postVersion.addPostBlockList(postBlocks);
         return postVersion;
     }
 
