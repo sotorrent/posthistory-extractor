@@ -41,4 +41,5 @@ target/
 ########
 # Misc #
 ########
+/data
 *.log
