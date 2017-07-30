@@ -30,9 +30,10 @@ public abstract class PostBlockVersion {
 
     // database
     protected int id;
+    protected Integer postVersionId;
+    protected Integer localId;
     protected Integer postId;
     protected Integer postHistoryId;
-    protected Integer localId;
     protected String content;
     protected int length;
     protected int lineCount;
@@ -50,9 +51,10 @@ public abstract class PostBlockVersion {
 
     public PostBlockVersion() {
         // database
+        this.postVersionId = null;
+        this.localId = null;
         this.postId = null;
         this.postHistoryId = null;
-        this.localId = null;
         this.content = null;
         this.length = 0;
         this.lineCount = 0;
@@ -82,6 +84,26 @@ public abstract class PostBlockVersion {
         return id;
     }
 
+    public Integer getPostVersionId() {
+        return postVersionId;
+    }
+
+    @Basic
+    @Column(name = "PostVersionId")
+    public void setPostVersionId(Integer postVersionId) {
+        this.postVersionId = postVersionId;
+    }
+
+    @Basic
+    @Column(name = "LocalId")
+    public Integer getLocalId() {
+        return localId;
+    }
+
+    public void setLocalId(Integer localId) {
+        this.localId = localId;
+    }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -104,16 +126,6 @@ public abstract class PostBlockVersion {
 
     public void setPostId(Integer postId) {
         this.postId = postId;
-    }
-
-    @Basic
-    @Column(name = "LocalId")
-    public Integer getLocalId() {
-        return localId;
-    }
-
-    public void setLocalId(Integer localId) {
-        this.localId = localId;
     }
 
     @Basic
@@ -263,7 +275,7 @@ public abstract class PostBlockVersion {
     }
 
     protected String composeId() {
-            return getPostId() + "-" + getPostHistoryId() + "-" + getLocalId();
+        return getPostVersionId() + "-" + getLocalId();
     }
 
     // TODO: after preliminary evaluation: 2-Grams and Dice for code blocks and 4-Grams and Overlap for text blocks

@@ -20,6 +20,7 @@ import static de.unitrier.st.soposthistory.util.Util.updateList;
 public class PostVersion {
     private final double EQUALITY_SIMILARITY = 10.0;
     // database
+    private int id;
     private Integer postId;
     private Integer postHistoryId;
     private Integer postTypeId;
@@ -48,6 +49,17 @@ public class PostVersion {
         this.postTypeId = postTypeId;
     }
 
+    @Id
+    @Column(name = "Id")
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     @Basic
     @Column(name = "PostId")
     public Integer getPostId() {
@@ -68,7 +80,7 @@ public class PostVersion {
         this.postTypeId = postTypeId;
     }
 
-    @Id
+    @Basic
     @Column(name = "PostHistoryId")
     public Integer getPostHistoryId() {
         return postHistoryId;

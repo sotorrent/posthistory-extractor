@@ -24,6 +24,7 @@ CREATE TABLE PostBlockType (
 INSERT INTO PostBlockType VALUES(1, 'TextBlock');
 INSERT INTO PostBlockType VALUES(2, 'CodeBlock');
 
+# see https://meta.stackexchange.com/a/2678
 CREATE TABLE PostType (
   Id TINYINT NOT NULL,
   Type VARCHAR(50) NOT NULL,
@@ -32,6 +33,14 @@ CREATE TABLE PostType (
 
 INSERT INTO PostType VALUES(1, 'Question');
 INSERT INTO PostType VALUES(2, 'Answer');
+INSERT INTO PostType VALUES(3, 'Orphaned tag wiki');
+INSERT INTO PostType VALUES(4, 'Tag wiki excerpt');
+INSERT INTO PostType VALUES(5, 'Tag wiki');
+INSERT INTO PostType VALUES(6, 'Moderator nomination');
+INSERT INTO PostType VALUES(7, 'Wiki placeholder');
+INSERT INTO PostType VALUES(8, 'Privilege wiki');
+
+#ALTER TABLE Posts ADD FOREIGN KEY(PostTypeId) REFERENCES PostType(Id);
 
 CREATE TABLE PostBlockDiffOperation (
   Id TINYINT NOT NULL,
@@ -58,12 +67,13 @@ CREATE TABLE PostBlockDiff (
 ) AUTO_INCREMENT = 1;
 
 CREATE TABLE PostVersion (
+  Id INT NOT NULL AUTO_INCREMENT,
   PostId INT NOT NULL,
   PostHistoryId INT NOT NULL,
   PostTypeId TINYINT NOT NULL,
   PredPostHistoryId INT DEFAULT NULL,
   SuccPostHistoryId INT DEFAULT NULL,
-  PRIMARY KEY(PostHistoryId),
+  PRIMARY KEY(Id),
   UNIQUE(PostHistoryId, PredPostHistoryId, SuccPostHistoryId),
   FOREIGN KEY(PostId) REFERENCES Posts(Id),
   FOREIGN KEY(PostHistoryId) REFERENCES PostHistory(Id),
@@ -74,6 +84,7 @@ CREATE TABLE PostVersion (
 
 CREATE TABLE PostBlockVersion (
   Id INT NOT NULL AUTO_INCREMENT,
+  PostVersionId INT NOT NULL,
   PostId INT NOT NULL,
   PostHistoryId INT NOT NULL,
   PostBlockTypeId TINYINT NOT NULL,
@@ -89,6 +100,7 @@ CREATE TABLE PostBlockVersion (
   SuccCount INT DEFAULT NULL,
   PRIMARY KEY(Id),
   UNIQUE(PostHistoryId, PostBlockTypeId, LocalId),
+  FOREIGN KEY(PostVersionId) REFERENCES PostVersion(Id),
   FOREIGN KEY(PostId) REFERENCES Posts(Id),
   FOREIGN KEY(PostHistoryId) REFERENCES PostHistory(Id),
   FOREIGN KEY(PostBlockTypeId) REFERENCES PostBlockType(Id),
