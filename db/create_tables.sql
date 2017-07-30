@@ -84,7 +84,7 @@ CREATE TABLE PostVersion (
 
 CREATE TABLE PostBlockVersion (
   Id INT NOT NULL AUTO_INCREMENT,
-  PostVersionId INT NOT NULL,
+  PostVersionId INT DEFAULT NULL,
   PostId INT NOT NULL,
   PostHistoryId INT NOT NULL,
   PostBlockTypeId TINYINT NOT NULL,

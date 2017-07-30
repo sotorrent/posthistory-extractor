@@ -119,11 +119,8 @@ public class PostVersionList extends LinkedList<PostVersion> {
                         CodeBlockVersion.similarityThreshold
                 );
 
-                // set post version id and root post block for all post blocks
+                // set root post block for all post blocks
                 for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks()) {
-                    // set post version
-                    currentPostBlock.setPostId(currentVersion.getId());
-
                     if (currentPostBlock.getPred() == null) {
                         // block has no predecessor -> set itself as root post block
                         currentPostBlock.setRootPostBlockId(currentPostBlock.getId());
@@ -154,8 +151,11 @@ public class PostVersionList extends LinkedList<PostVersion> {
         for (PostVersion currentVersion : this) {
             // save current post version
             session.insert(currentVersion);
-            // update the post blocks (pred, succ, similarity, root post block)
-            currentVersion.updateBlocks(session);
+            // set post version for all post blocks and update them (pred, succ, similarity, root post block)
+            for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks()) {
+                currentPostBlock.setPostVersionId(currentVersion.getId());
+                session.update(currentPostBlock);
+            }
         }
 
         diffs.insert(session);
