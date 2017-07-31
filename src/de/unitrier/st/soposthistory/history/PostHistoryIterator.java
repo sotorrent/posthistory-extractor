@@ -30,6 +30,7 @@ public class PostHistoryIterator {
 
     private static final Path logFileDir  = Paths.get(System.getProperty("user.dir"));
     private static final CSVFormat csvFormat;
+    private static final int LOG_PACE = 1000;
 
     public static Logger logger = null;
     public static SessionFactory sessionFactory = null;
@@ -312,8 +313,12 @@ public class PostHistoryIterator {
                         CSVRecord record = records.get(i);
                         int postId = Integer.parseInt(record.get("PostId"));
                         int postTypeId = Integer.parseInt(record.get("PostTypeId"));
-                        logger.info("Thread " + partition + ": Current PostId: " + postId + " (PostTypeId: "
-                                + postTypeId + "; record " + i + " of " + recordCount + ")");
+
+                        if (i == 0 || i == recordCount-1 || i % LOG_PACE == 0) {
+                            // do not log all records
+                            logger.info("Thread " + partition + ": Current PostId: " + postId + " (PostTypeId: "
+                                    + postTypeId + "; record " + i + " of " + recordCount + ")");
+                        }
 
                         if (postTypeId == 1 || postTypeId == 2) { // question or answer
                             // retrieve data from post history...
