@@ -5,7 +5,6 @@ import de.unitrier.st.soposthistory.blocks.PostBlockVersion;
 import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
 import de.unitrier.st.soposthistory.version.PostVersion;
 import de.unitrier.st.soposthistory.version.PostVersionList;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -13,36 +12,12 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PostVersionHistoryTest {
-    // TODO: move static variables to test methods
-
-    private static PostVersionList a_1109108;
-    private static PostVersionList a_3145655;
-    private static PostVersionList a_9855338;
-    private static PostVersionList a_2581754;
-    private static PostVersionList a_20991163;
-    private static PostVersionList a_3758880;
-    private static PostVersionList a_32012927;
-
-    @BeforeAll
-    static void init() {
-        a_1109108 = new PostVersionList();
-        a_1109108.readFromCSV("testdata/", 1109108, 2);
-        a_3145655 = new PostVersionList();
-        a_3145655.readFromCSV("testdata/", 3145655, 2);
-        a_9855338 = new PostVersionList();
-        a_9855338.readFromCSV("testdata/", 9855338, 2);
-        a_2581754 = new PostVersionList();
-        a_2581754.readFromCSV("testdata/", 2581754, 2);
-        a_20991163 = new PostVersionList();
-        a_20991163.readFromCSV("testdata/", 20991163, 2);
-        a_3758880 = new PostVersionList();
-        a_3758880.readFromCSV("testdata/", 3758880, 2);
-        a_32012927 = new PostVersionList();
-        a_32012927.readFromCSV("testdata/", 32012927, 2);
-    }
 
     @Test
     void testReadingPostHistory1109108() {
+        PostVersionList a_1109108 = new PostVersionList();
+        a_1109108.readFromCSV("testdata/", 1109108, 2);
+
         assertEquals(7, a_1109108.size());
 
         PostVersion version_7 = a_1109108.get(6);
@@ -70,6 +45,9 @@ class PostVersionHistoryTest {
 
     @Test
     void testReadingPostHistory3145655() {
+        PostVersionList a_3145655 = new PostVersionList();
+        a_3145655.readFromCSV("testdata/", 3145655, 2);
+
         assertEquals(7, a_3145655.size());
 
         PostVersion version_7 = a_3145655.get(6);
@@ -94,6 +72,9 @@ class PostVersionHistoryTest {
 
     @Test
     void testReadingPostHistory9855338() {
+        PostVersionList a_9855338 = new PostVersionList();
+        a_9855338.readFromCSV("testdata/", 9855338, 2);
+
         assertEquals(11, a_9855338.size());
 
         PostVersion version_11 = a_9855338.get(10);
@@ -118,6 +99,9 @@ class PostVersionHistoryTest {
 
     @Test
     void testReadingPostHistory2581754() {
+        PostVersionList a_2581754 = new PostVersionList();
+        a_2581754.readFromCSV("testdata/", 2581754, 2);
+
         assertEquals(8, a_2581754.size());
 
         PostVersion version_3 = a_2581754.get(2);
@@ -159,8 +143,10 @@ class PostVersionHistoryTest {
 
     @Test
     void testReadingPostHistory20991163() {
-        // this post should only consist of one code block (not an empty text block at the end)
+        PostVersionList a_20991163 = new PostVersionList();
+        a_20991163.readFromCSV("testdata/", 20991163, 2);
 
+        // this post should only consist of one code block (not an empty text block at the end)
         assertEquals(1, a_20991163.size());
 
         PostVersion version_1 = a_20991163.get(0);
@@ -171,6 +157,9 @@ class PostVersionHistoryTest {
 
     @Test
     void testReadingPostHistory32012927() {
+        PostVersionList a_32012927 = new PostVersionList();
+        a_32012927.readFromCSV("testdata/", 32012927, 2);
+
         assertEquals(4, a_32012927.size());
 
         // the first version of this post should only consist of one text block
@@ -204,6 +193,9 @@ class PostVersionHistoryTest {
 
     @Test
     void testRootPostBlockVersionId3758880() {
+        PostVersionList a_3758880 = new PostVersionList();
+        a_3758880.readFromCSV("testdata/", 3758880, 2);
+
         // there are 11 versions of this post
         assertEquals(11, a_3758880.size());
 
