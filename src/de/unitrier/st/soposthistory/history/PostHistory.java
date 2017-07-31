@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 @Entity
 @Table(name = "PostHistory", schema = "stackoverflow16_12")
@@ -33,6 +34,10 @@ public class PostHistory {
         relevantPostHistoryTypes.add(5); // Edit Body
         relevantPostHistoryTypes.add(8); // Rollback Body
     }
+
+    // a code block is indented by four spaces or a tab (which can be preceded by spaces)
+    private static Pattern codeBlockPattern = Pattern.compile("^( {4}|[ ]*\\t)");
+    private static Pattern whiteSpaceLinePattern = Pattern.compile("^\\s+$");
 
     // database
     private int id;
@@ -185,9 +190,10 @@ public class PostHistory {
             }
 
             // even if tab is not listed here: http://stackoverflow.com/editing-help#code
-            // we observed cases where it was important to check for the tab
-            boolean isCodeBlock = (line.startsWith("    ") || line.startsWith("\t"));
-            boolean isWhitespaceLine = line.trim().length() == 0;
+            // we observed cases where it was important to check for the tab, sometimes preceded by spaces
+            // (see test cases)
+            boolean isCodeBlock = codeBlockPattern.matcher(line).find(); // only match beginning of line
+            boolean isWhitespaceLine = whiteSpaceLinePattern.matcher(line).matches(); // match whole line
 
             if (currentBlock == null) {
                 // ignore whitespaces at the beginning of a post

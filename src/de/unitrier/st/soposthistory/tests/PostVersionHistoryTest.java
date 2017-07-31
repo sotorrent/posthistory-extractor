@@ -8,9 +8,12 @@ import de.unitrier.st.soposthistory.version.PostVersionList;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class PostVersionHistoryTest {
+    // TODO: move static variables to test methods
 
     private static PostVersionList a_1109108;
     private static PostVersionList a_3145655;
@@ -175,6 +178,28 @@ class PostVersionHistoryTest {
         assertEquals(1, version_1.getPostBlocks().size());
         assertEquals(1, version_1.getTextBlocks().size());
         assertEquals(0, version_1.getCodeBlocks().size());
+    }
+
+    @Test
+    void testReadingPostHistory10734905() {
+        PostVersionList a_10734905 = new PostVersionList();
+        a_10734905.readFromCSV("testdata/", 10734905, 2);
+
+        assertEquals(1, a_10734905.size());
+
+        // the first and only version of this post should consist of three text blocks and two code blocks
+        PostVersion version_1 = a_10734905.get(0);
+        assertEquals(5, version_1.getPostBlocks().size());
+        assertEquals(3, version_1.getTextBlocks().size());
+        assertEquals(2, version_1.getCodeBlocks().size());
+
+        List<PostBlockVersion> postBlocks = version_1.getPostBlocks();
+
+        assertTrue(postBlocks.get(0) instanceof TextBlockVersion);
+        assertTrue(postBlocks.get(1) instanceof CodeBlockVersion);
+        assertTrue(postBlocks.get(2) instanceof TextBlockVersion);
+        assertTrue(postBlocks.get(3) instanceof CodeBlockVersion);
+        assertTrue(postBlocks.get(4) instanceof TextBlockVersion);
     }
 
     @Test
