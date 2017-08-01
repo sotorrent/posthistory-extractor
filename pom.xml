@@ -5,7 +5,7 @@
     <name>SOPostHistoryExtractor</name>
     <groupId>de.unitrier.st</groupId>
     <artifactId>so-posthistory-extractor</artifactId>
-    <version>1.2.1</version>
+    <version>1.2.2</version>
     <url>https://github.com/sotorrent/so-posthistory-extractor</url>
 
     <repositories>

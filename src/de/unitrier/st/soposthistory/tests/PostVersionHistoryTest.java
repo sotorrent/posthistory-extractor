@@ -192,6 +192,27 @@ class PostVersionHistoryTest {
     }
 
     @Test
+    void testReadingPostHistory31965641() {
+        PostVersionList a_31965641 = new PostVersionList();
+        a_31965641.readFromCSV("testdata/", 31965641, 2);
+
+        assertEquals(1, a_31965641.size());
+
+        // the first and only version of this post should consist of three text blocks and two code blocks
+        PostVersion version_1 = a_31965641.get(0);
+        assertEquals(4, version_1.getPostBlocks().size());
+        assertEquals(2, version_1.getTextBlocks().size());
+        assertEquals(2, version_1.getCodeBlocks().size());
+
+        List<PostBlockVersion> postBlocks = version_1.getPostBlocks();
+
+        assertTrue(postBlocks.get(0) instanceof TextBlockVersion);
+        assertTrue(postBlocks.get(1) instanceof CodeBlockVersion);
+        assertTrue(postBlocks.get(2) instanceof TextBlockVersion);
+        assertTrue(postBlocks.get(3) instanceof CodeBlockVersion);
+    }
+
+    @Test
     void testRootPostBlockVersionId3758880() {
         PostVersionList a_3758880 = new PostVersionList();
         a_3758880.readFromCSV("testdata/", 3758880, 2);

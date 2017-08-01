@@ -38,6 +38,7 @@ public class PostHistory {
     // a code block is indented by four spaces or a tab (which can be preceded by spaces)
     private static Pattern codeBlockPattern = Pattern.compile("^( {4}|[ ]*\\t)");
     private static Pattern whiteSpaceLinePattern = Pattern.compile("^\\s+$");
+    private static Pattern containsLetterOrDigitPattern = Pattern.compile("[a-zA-Z0-9]");
 
     // database
     private int id;
@@ -192,14 +193,15 @@ public class PostHistory {
             // even if tab is not listed here: http://stackoverflow.com/editing-help#code
             // we observed cases where it was important to check for the tab, sometimes preceded by spaces
             // (see test cases)
-            boolean isCodeBlock = codeBlockPattern.matcher(line).find(); // only match beginning of line
+            boolean isCodeLine = codeBlockPattern.matcher(line).find(); // only match beginning of line
             boolean isWhitespaceLine = whiteSpaceLinePattern.matcher(line).matches(); // match whole line
+            boolean containsLettersOrDigits = containsLetterOrDigitPattern.matcher(line).find(); // only match beginning of line
 
             if (currentBlock == null) {
                 // ignore whitespaces at the beginning of a post
                 if (!isWhitespaceLine) {
                     // first line, block element not created yet
-                    if (isCodeBlock) {
+                    if (isCodeLine) {
                         currentBlock = new CodeBlockVersion(postId, id);
                     } else {
                         currentBlock = new TextBlockVersion(postId, id);
@@ -207,10 +209,10 @@ public class PostHistory {
                 }
             } else {
                 // block has length > 0 => continue or end previous block
-                if (isCodeBlock && currentBlock instanceof TextBlockVersion) {
+                if (isCodeLine && currentBlock instanceof TextBlockVersion) {
                     // end of text block, beginning of code block
                     if (!isWhitespaceLine) {
-                        // Do not end current block if next line is whitespace line
+                        // Do not end text block if next line is whitespace line
                         // see, e.g., second line of PostHistory, Id=97576027
                         currentBlock.setLocalId(++localIdCount);
                         postBlocks.add(currentBlock);
@@ -218,10 +220,11 @@ public class PostHistory {
                     }
                 // do not close code postBlocks when whitespace line is reached
                 // see, e.g., PostHistory, Id=55158265, PostId=20991163 (-> test case)
-                } else if (!isCodeBlock && currentBlock instanceof CodeBlockVersion) {
-                    if (!isWhitespaceLine) {
-                        // Do not end current block if next line is whitespace line
+                } else if (!isCodeLine && currentBlock instanceof CodeBlockVersion) {
+                    if (!isWhitespaceLine && containsLettersOrDigits) {
+                        // Do not end code block if next line is whitespace line
                         // see, e.g., second line of PostHistory, Id=97576027
+                        // Only end code block if next line contains a letter or a digit (e.g., '{').
                         currentBlock.setLocalId(++localIdCount);
                         postBlocks.add(currentBlock);
                         currentBlock = new TextBlockVersion(postId, id);
