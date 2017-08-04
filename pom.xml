@@ -101,7 +101,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>de.unitrier.st.soposthistory.Main</mainClass>
+                            <mainClass>de.unitrier.st.soposthistory.MainIterator</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -112,7 +112,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>de.unitrier.st.soposthistory.Main</mainClass>
+                            <mainClass>de.unitrier.st.soposthistory.MainIterator</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

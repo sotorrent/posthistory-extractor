@@ -5,6 +5,7 @@ import de.unitrier.st.soposthistory.blocks.PostBlockVersion;
 import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
 import de.unitrier.st.soposthistory.diffs.PostBlockDiffList;
 import de.unitrier.st.soposthistory.history.PostHistory;
+import de.unitrier.st.soposthistory.history.PostHistoryIterator;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;

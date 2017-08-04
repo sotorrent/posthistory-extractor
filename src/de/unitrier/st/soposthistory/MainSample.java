@@ -1,16 +1,15 @@
 package de.unitrier.st.soposthistory;
 
-import de.unitrier.st.soposthistory.history.PostHistoryIterator;
+import de.unitrier.st.soposthistory.history.PostHistoryList;
 import org.apache.commons.cli.*;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-class Main {
-    // TODO : Also store n-grams of code blocks in database?
+class MainSample {
 
     public static void main (String[] args) {
-        System.out.println("SOPostHistory");
+        System.out.println("SOPostHistory (Sampling Mode)");
 
         Options options = new Options();
 
@@ -32,7 +31,7 @@ class Main {
             commandLine = commandLineParser.parse(options, args);
         } catch (ParseException e) {
             System.out.println(e.getMessage());
-            commandLineFormatter.printHelp("SOPostHistory", options);
+            commandLineFormatter.printHelp("SOPostHistory (Sampling Mode)", options);
             System.exit(1);
             return;
         }
@@ -40,15 +39,12 @@ class Main {
         Path dataDirPath = Paths.get(commandLine.getOptionValue("data-dir"));
         Path hibernateConfigFilePath = Paths.get(commandLine.getOptionValue("hibernate-config"));
 
-        PostHistoryIterator.createSessionFactory(hibernateConfigFilePath);
-        PostHistoryIterator postHistoryIterator = new PostHistoryIterator(dataDirPath, "java",
-                4, new String[]{"java"}); // "android" removed for testing
+        PostHistoryList.createSessionFactory(hibernateConfigFilePath);
 
-        postHistoryIterator.extractAndSavePostIds(); // including split
+        PostHistoryList postHistoryList = new PostHistoryList(3758880, 2);
+        postHistoryList.retrieveFromDatabase();
+        postHistoryList.writeToCSV(dataDirPath);
 
-        postHistoryIterator.extractDataFromPostHistory("answers");
-        postHistoryIterator.extractDataFromPostHistory("questions");
-
-        PostHistoryIterator.sessionFactory.close();
+        PostHistoryList.sessionFactory.close();
     }
 }
