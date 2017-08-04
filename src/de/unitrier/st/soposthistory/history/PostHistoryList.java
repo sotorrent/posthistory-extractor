@@ -1,12 +1,11 @@
 package de.unitrier.st.soposthistory.history;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.csv.QuoteMode;
+import org.apache.commons.csv.*;
 import org.hibernate.*;
 import org.hibernate.cfg.Configuration;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -20,9 +19,10 @@ import java.util.logging.SimpleFormatter;
 
 public class PostHistoryList extends LinkedList<PostHistory> {
     private static final Path logFileDir  = Paths.get(System.getProperty("user.dir"));
-    private static final CSVFormat csvFormat;
+    private static final CSVFormat outputCSVFormat;
+    private static final CSVFormat inputCSVFormat;
 
-    public static Logger logger = null;
+    private static Logger logger = null;
     public static SessionFactory sessionFactory = null;
 
     private int postId;
@@ -50,8 +50,18 @@ public class PostHistoryList extends LinkedList<PostHistory> {
             e.printStackTrace();
         }
 
-        // configure CSV format for in- and output
-        csvFormat = CSVFormat.DEFAULT
+        // configure CSV format for input
+        inputCSVFormat = CSVFormat.DEFAULT
+                .withHeader("PostId", "PostTypeId")
+                .withDelimiter(';')
+                .withQuote('"')
+                .withQuoteMode(QuoteMode.MINIMAL)
+                .withEscape('\\')
+                .withNullString("")
+                .withFirstRecordAsHeader();
+
+        // configure CSV format for output
+        outputCSVFormat = CSVFormat.DEFAULT
                 .withHeader("Id", "PostId", "UserId", "PostHistoryTypeId", "RevisionGUID", "CreationDate", "Text",
                         "UserDisplayName", "Comment")
                 .withDelimiter(';')
@@ -61,7 +71,7 @@ public class PostHistoryList extends LinkedList<PostHistory> {
                 .withNullString("");
     }
 
-    public PostHistoryList(int postId, int postTypeId) {
+    private PostHistoryList(int postId, int postTypeId) {
         this.postId = postId;
         this.postTypeId = postTypeId;
     }
@@ -77,7 +87,38 @@ public class PostHistoryList extends LinkedList<PostHistory> {
                 .buildSessionFactory();
     }
 
-    public void retrieveFromDatabase() {
+    public static void readFromCSVAndRetrieve(Path inputFile, Path outputDir) {
+        // ensure that input file exists
+        if (!Files.exists(inputFile)) {
+            throw new IllegalArgumentException("Input file not found: " + inputFile);
+        }
+
+        // ensure that output dir exists, but is empty
+        try {
+            Files.deleteIfExists(outputDir);
+            Files.createDirectory(outputDir);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        logger.info("Reading file " + inputFile.getFileName() + " ...");
+
+        try (CSVParser csvParser = new CSVParser(new FileReader(inputFile.toFile()), inputCSVFormat)) {
+
+            for (CSVRecord currentRecord : csvParser) {
+                int postId = Integer.parseInt(currentRecord.get("PostId"));
+                int postTypeId = Integer.parseInt(currentRecord.get("PostTypeId"));
+
+                PostHistoryList currentPostHistoryList = new PostHistoryList(postId, postTypeId);
+                currentPostHistoryList.retrieveFromDatabase();
+                currentPostHistoryList.writeToCSV(outputDir);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void retrieveFromDatabase() {
         if (sessionFactory == null) {
             throw new IllegalStateException("Static session factory not created yet.");
         }
@@ -110,19 +151,10 @@ public class PostHistoryList extends LinkedList<PostHistory> {
         }
     }
 
-    public void writeToCSV(Path dataDir) {
-        // ensure that data dir exists
-        try {
-            if (!Files.exists(dataDir)) {
-                Files.createDirectory(dataDir);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+    private void writeToCSV(Path outputDir) {
         // create output file
         String filename = postId + ".csv";
-        File outputFile = Paths.get(dataDir.toString(), filename).toFile();
+        File outputFile = Paths.get(outputDir.toString(), filename).toFile();
         if (outputFile.exists()) {
             if (!outputFile.delete()) {
                 throw new IllegalStateException("Error while deleting output file: " + outputFile);
@@ -131,7 +163,7 @@ public class PostHistoryList extends LinkedList<PostHistory> {
 
         // write post history
         logger.info("Writing post history to CSV file " + outputFile.getName() + " ...");
-        try (CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(outputFile), csvFormat)) {
+        try (CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(outputFile), outputCSVFormat)) {
             // header is automatically written
             // write postIds along with postTypeId
             for (PostHistory currentPostHistory : this) {

@@ -13,9 +13,13 @@ class MainSample {
 
         Options options = new Options();
 
-        Option dataDir = new Option("d", "data-dir", true, "path to data directory");
-        dataDir.setRequired(true);
-        options.addOption(dataDir);
+        Option inputFile = new Option("i", "input-file", true, "path to input file");
+        inputFile.setRequired(true);
+        options.addOption(inputFile);
+
+        Option outputDir = new Option("o", "output-dir", true, "path to output directory");
+        outputDir.setRequired(true);
+        options.addOption(outputDir);
 
         Option hibernateConfigFile = new Option("h", "hibernate-config", true,
                 "path to hibernate config file");
@@ -36,14 +40,13 @@ class MainSample {
             return;
         }
 
-        Path dataDirPath = Paths.get(commandLine.getOptionValue("data-dir"));
+        Path inputFilePath = Paths.get(commandLine.getOptionValue("input-file"));
+        Path outputDirPath = Paths.get(commandLine.getOptionValue("output-dir"));
         Path hibernateConfigFilePath = Paths.get(commandLine.getOptionValue("hibernate-config"));
 
         PostHistoryList.createSessionFactory(hibernateConfigFilePath);
 
-        PostHistoryList postHistoryList = new PostHistoryList(3758880, 2);
-        postHistoryList.retrieveFromDatabase();
-        postHistoryList.writeToCSV(dataDirPath);
+        PostHistoryList.readFromCSVAndRetrieve(inputFilePath, outputDirPath);
 
         PostHistoryList.sessionFactory.close();
     }
