@@ -41,7 +41,7 @@ public class PostHistoryIterator {
     private String[] tags;
 
     static {
-        // ensure that log dir and hibernate config file exist
+        // ensure that log dir exists
         try {
             if (!Files.exists(logFileDir)) {
                 Files.createDirectory(logFileDir);
@@ -55,7 +55,7 @@ public class PostHistoryIterator {
             String logFile = Paths.get(logFileDir.toString(), PostHistoryIterator.class.getSimpleName() + ".log" )
                     .toString();
             logger = Logger.getLogger(PostHistoryIterator.class.getName());
-            Handler fileHandler = new FileHandler(logFile );
+            Handler fileHandler = new FileHandler(logFile);
             fileHandler.setFormatter(new SimpleFormatter());
             logger.addHandler(fileHandler);
         } catch (IOException e) {
@@ -279,14 +279,7 @@ public class PostHistoryIterator {
                 throw new IllegalStateException("Static session factory not created yet.");
             }
 
-            // retrieve relevant post history types
-            Integer[] relevantTypes = new Integer[PostHistory.relevantPostHistoryTypes.size()];
-            PostHistory.relevantPostHistoryTypes.toArray(relevantTypes);
-            StringBuilder relevantTypesString = new StringBuilder();
-            for (int i=0; i<relevantTypes.length-1; i++) {
-                relevantTypesString.append(relevantTypes[i]).append(",");
-            }
-            relevantTypesString.append(relevantTypes[relevantTypes.length - 1]);
+
 
             // read post ids from CSV file and process them
             File inputFile = Paths.get(dataDir.toString(), filename).toFile();
@@ -325,8 +318,10 @@ public class PostHistoryIterator {
                             PostVersionList postVersionList = new PostVersionList();
 
                             // get all PostHistory entries for current PostId, order them chronologically
-                            String currentPostHistoryQuery = String.format("FROM PostHistory WHERE postHistoryTypeId IN (%s) " +
-                                    "AND PostId=%d", relevantTypesString, postId);
+                            String currentPostHistoryQuery = String.format("FROM PostHistory " +
+                                    "WHERE PostId=%d AND postHistoryTypeId IN (%s)",
+                                    postId, PostHistory.getRelevantPostHistoryTypes()
+                            );
 
                             t = session.beginTransaction();
 

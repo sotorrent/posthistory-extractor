@@ -54,6 +54,18 @@ public class PostHistory {
     private List<PostBlockVersion> postBlocks;
     private int postTypeId;
 
+    public static String getRelevantPostHistoryTypes() {
+        Integer[] relevantTypes = new Integer[PostHistory.relevantPostHistoryTypes.size()];
+        relevantPostHistoryTypes.toArray(relevantTypes);
+        StringBuilder relevantTypesString = new StringBuilder();
+        for (int i=0; i<relevantTypes.length-1; i++) {
+            relevantTypesString.append(relevantTypes[i]).append(",");
+        }
+        relevantTypesString.append(relevantTypes[relevantTypes.length - 1]);
+
+        return relevantTypesString.toString();
+    }
+
     public PostHistory() {}
 
     public PostHistory(int id, int postId, int postTypeId, String userId, byte postHistoryTypeId, String revisionGuid,
