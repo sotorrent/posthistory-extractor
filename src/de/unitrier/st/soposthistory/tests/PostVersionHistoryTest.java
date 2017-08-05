@@ -198,7 +198,7 @@ class PostVersionHistoryTest {
 
         assertEquals(1, a_31965641.size());
 
-        // the first and only version of this post should consist of three text blocks and two code blocks
+        // the first and only version of this post should consist of two text blocks and two code blocks
         PostVersion version_1 = a_31965641.get(0);
         assertEquals(4, version_1.getPostBlocks().size());
         assertEquals(2, version_1.getTextBlocks().size());
@@ -246,5 +246,34 @@ class PostVersionHistoryTest {
         // first text block of last version has first text block of second version as root post block
         assertEquals((int)lastPostVersion.getTextBlocks().get(0).getRootPostBlockId(),
                 secondPostVersion.getTextBlocks().get(0).getId());
+    }
+
+    @Test
+    void testReadingPostHistory22360443() {
+        PostVersionList q_22360443 = new PostVersionList();
+        q_22360443.readFromCSV("testdata/", 22360443, 1);
+
+        assertEquals(2, q_22360443.size());
+
+        PostVersion version_1 = q_22360443.get(0);
+        assertEquals(4, version_1.getPostBlocks().size());
+        assertEquals(2, version_1.getTextBlocks().size());
+        assertEquals(2, version_1.getCodeBlocks().size());
+        List<PostBlockVersion> postBlocks = version_1.getPostBlocks();
+        assertTrue(postBlocks.get(0) instanceof CodeBlockVersion);
+        assertTrue(postBlocks.get(1) instanceof TextBlockVersion);
+        assertTrue(postBlocks.get(2) instanceof CodeBlockVersion);
+        assertTrue(postBlocks.get(3) instanceof TextBlockVersion);
+
+        PostVersion version_2 = q_22360443.get(1);
+        assertEquals(5, version_2.getPostBlocks().size());
+        assertEquals(3, version_2.getTextBlocks().size());
+        assertEquals(2, version_2.getCodeBlocks().size());
+        postBlocks = version_2.getPostBlocks();
+        assertTrue(postBlocks.get(0) instanceof TextBlockVersion);
+        assertTrue(postBlocks.get(1) instanceof CodeBlockVersion);
+        assertTrue(postBlocks.get(2) instanceof TextBlockVersion);
+        assertTrue(postBlocks.get(3) instanceof CodeBlockVersion);
+        assertTrue(postBlocks.get(4) instanceof TextBlockVersion);
     }
 }
