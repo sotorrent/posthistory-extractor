@@ -1,7 +1,7 @@
 USE `stackoverflow17_06`;
 
 SET foreign_key_checks = 0;
-LOAD DATA LOCAL INFILE 'PostReferenceGH.csv' INTO TABLE PostReferenceGH
+LOAD DATA LOCAL INFILE 'PostReferenceGH.csv' INTO TABLE `PostReferenceGH`
 CHARACTER SET utf8mb4
 FIELDS TERMINATED BY ','
 OPTIONALLY ENCLOSED BY '\"'

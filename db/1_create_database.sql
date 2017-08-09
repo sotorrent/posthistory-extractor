@@ -7,16 +7,14 @@
 # underscore vs. camel case: http://stackoverflow.com/a/14319048/1974143
 # types: http://dev.mysql.com/doc/workbench/en/wb-migration-database-mssql-typemapping.html
 
-DROP DATABASE IF EXISTS stackoverflow17_06;
+DROP DATABASE IF EXISTS `stackoverflow17_06`;
 
 SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE DATABASE stackoverflow17_06 DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE `stackoverflow17_06` DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;
 
-USE stackoverflow17_06;
+USE `stackoverflow17_06`;
 
-SET foreign_key_checks = 0;
-
-CREATE TABLE Users (
+CREATE TABLE `Users` (
     Id INT NOT NULL,
     Reputation INT NOT NULL,
     CreationDate DATETIME,
@@ -35,7 +33,7 @@ CREATE TABLE Users (
     PRIMARY KEY (Id)
 );
 
-CREATE TABLE Badges (
+CREATE TABLE `Badges` (
     Id INT NOT NULL,
     UserId INT NOT NULL,
     Name VARCHAR(50),
@@ -46,7 +44,7 @@ CREATE TABLE Badges (
     FOREIGN KEY (UserId) REFERENCES Users(Id)
 );
 
-CREATE TABLE Posts (
+CREATE TABLE `Posts` (
     Id INT NOT NULL,
     PostTypeId TINYINT,
     AcceptedAnswerId INT,
@@ -74,7 +72,7 @@ CREATE TABLE Posts (
     FOREIGN KEY (ParentId) REFERENCES Posts(Id)
 );
 
-CREATE TABLE Comments (
+CREATE TABLE `Comments` (
     Id INT NOT NULL,
     PostId INT NOT NULL,
     Score INT NOT NULL DEFAULT 0,
@@ -86,7 +84,7 @@ CREATE TABLE Comments (
     FOREIGN KEY (PostId) REFERENCES Posts(Id)
 );
 
-CREATE TABLE PostHistory (
+CREATE TABLE `PostHistory` (
     Id INT NOT NULL,
     PostHistoryTypeId TINYINT NOT NULL,
     PostId INT NOT NULL,
@@ -100,7 +98,7 @@ CREATE TABLE PostHistory (
     FOREIGN KEY (PostId) REFERENCES Posts(Id)
 );
 
-CREATE TABLE PostLinks (
+CREATE TABLE `PostLinks` (
     Id INT NOT NULL,
     CreationDate DATETIME,
     PostId INT NOT NULL,
@@ -111,7 +109,7 @@ CREATE TABLE PostLinks (
     FOREIGN KEY (RelatedPostId) REFERENCES Posts(Id)
 );
 
-CREATE TABLE Tags (
+CREATE TABLE `Tags` (
     Id INT NOT NULL,
     TagName VARCHAR(25),
     Count INT,
@@ -120,7 +118,7 @@ CREATE TABLE Tags (
     PRIMARY KEY(Id)
 );
 
-CREATE TABLE Votes (
+CREATE TABLE `Votes` (
     Id INT NOT NULL,
     PostId INT NOT NULL,
     VoteTypeId TINYINT,
@@ -131,44 +129,3 @@ CREATE TABLE Votes (
     FOREIGN KEY (PostId) REFERENCES Posts(Id),
     FOREIGN KEY (UserId) REFERENCES Users(Id)
 );
-
-LOAD XML LOCAL INFILE 'Users.xml'
-INTO TABLE Users
-ROWS IDENTIFIED BY '<row>';
-
-LOAD XML LOCAL INFILE 'Badges.xml'
-INTO TABLE Badges
-ROWS IDENTIFIED BY '<row>';
-
-LOAD XML LOCAL INFILE 'Posts.xml'
-INTO TABLE Posts
-ROWS IDENTIFIED BY '<row>';
-
-LOAD XML LOCAL INFILE 'Comments.xml'
-INTO TABLE Comments
-ROWS IDENTIFIED BY '<row>';
-
-LOAD XML LOCAL INFILE 'PostHistory.xml'
-INTO TABLE PostHistory
-ROWS IDENTIFIED BY '<row>';
-
-LOAD XML LOCAL INFILE 'PostLinks.xml'
-INTO TABLE PostLinks
-ROWS IDENTIFIED BY '<row>';
-
-LOAD XML LOCAL INFILE 'Tags.xml'
-INTO TABLE Tags
-ROWS IDENTIFIED BY '<row>';
-
-LOAD XML LOCAL INFILE 'Votes.xml'
-INTO TABLE Votes
-ROWS IDENTIFIED BY '<row>';
-
-CREATE INDEX comments_index_1 ON Comments(UserId);
-
-CREATE INDEX post_history_index_1 ON PostHistory(UserId);
-
-CREATE INDEX posts_index_1 ON Posts(OwnerUserId);
-CREATE INDEX posts_index_2 ON Posts(LastEditorUserId);
-
-SET foreign_key_checks = 1;
