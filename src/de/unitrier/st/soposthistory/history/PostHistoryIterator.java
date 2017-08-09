@@ -119,28 +119,49 @@ public class PostHistoryIterator {
 
         Transaction t = null; // see https://docs.jboss.org/hibernate/orm/3.3/reference/en/html/transactions.html
         try (StatelessSession session = sessionFactory.openStatelessSession()) {
+
             // retrieve question post ids
+            String questionsPostIdQueryString;
+            if (tagPattern.length() == 0) {
+                // do not filter questions
+                logger.info("Retrieving all questions from table Posts...");
+                questionsPostIdQueryString = String.format("SELECT id FROM Posts " +
+                        "WHERE postTypeId = 1 ORDER BY id ASC");
+            } else {
+                // filter questions according to tags
+                logger.info("Retrieving questions having configured tags from table Posts...");
+                questionsPostIdQueryString = String.format("SELECT id FROM Posts " +
+                        "WHERE postTypeId = 1 AND (%s) ORDER BY id ASC", tagPattern);
+            }
+
             t = session.beginTransaction();
-            logger.info("Retrieving questions having configured tags from table Posts...");
-            String questionsPostIdQueryString = String.format("SELECT id FROM Posts " +
-                    "WHERE postTypeId = 1 AND (%s) ORDER BY id ASC", tagPattern);
             Query questionsPostIdQuery = session.createQuery(questionsPostIdQueryString);
             @SuppressWarnings("unchecked") // see https://stackoverflow.com/a/509115
-            List<Integer> questionPostIds = questionsPostIdQuery.list();
+                    List<Integer> questionPostIds = questionsPostIdQuery.list();
             logger.info(questionPostIds.size() + " questions retrieved.");
             t.commit();
             // write question post ids to CSV file
             writePostIdsToCSV(questionPostIds, 1, baseFilename+"_questions.csv"); // questions have PostTypeId 1
 
             // retrieve answer post ids
+            String answerPostIdQueryString;
+            if (tagPattern.length() == 0) {
+                // do not filter answers
+                logger.info("Retrieving all answers from table Posts...");
+                answerPostIdQueryString = String.format("SELECT id FROM Posts " +
+                        "WHERE postTypeId = 2 ORDER BY id ASC");
+            } else {
+                // filter answers according to tags
+                logger.info("Retrieving answers to the previously retrieved questions from table Posts...");
+                answerPostIdQueryString = String.format("SELECT id FROM Posts " +
+                        "WHERE postTypeId = 2 AND parentId IN (%s) " +
+                        "ORDER BY id ASC", questionsPostIdQueryString);
+            }
+
             t = session.beginTransaction();
-            logger.info("Retrieving answers to the previously retrieved questions from table Posts...");
-            String answerPostIdQueryString = String.format("SELECT id FROM Posts " +
-                    "WHERE postTypeId = 2 AND parentId IN (%s) " +
-                    "ORDER BY id ASC", questionsPostIdQueryString);
             Query answerPostIdQuery = session.createQuery(answerPostIdQueryString);
             @SuppressWarnings("unchecked") // see https://stackoverflow.com/a/509115
-            List<Integer> answerPostIds = answerPostIdQuery.list();
+                    List<Integer> answerPostIds = answerPostIdQuery.list();
             logger.info(answerPostIds.size() + " answers retrieved.");
             t.commit();
             // write answer post ids to CSV file

@@ -18,6 +18,8 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 public class PostHistoryList extends LinkedList<PostHistory> {
+    // TODO: Merge with PostHistoryIterator?
+
     private static final Path logFileDir  = Paths.get(System.getProperty("user.dir"));
     private static final CSVFormat outputCSVFormat;
     private static final CSVFormat inputCSVFormat;

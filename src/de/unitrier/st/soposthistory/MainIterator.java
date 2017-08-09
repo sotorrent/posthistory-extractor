@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 
 class MainIterator {
     // TODO : Also store n-grams of code blocks in database?
+    // TODO: add tags as command-line parameter
 
     public static void main (String[] args) {
         System.out.println("SOPostHistory (Iterator Mode)");
@@ -42,8 +43,8 @@ class MainIterator {
 
         PostHistoryIterator.createSessionFactory(hibernateConfigFilePath);
 
-        PostHistoryIterator postHistoryIterator = new PostHistoryIterator(dataDirPath, "java",
-                4, new String[]{"java"}); // "android" removed for testing
+        PostHistoryIterator postHistoryIterator = new PostHistoryIterator(dataDirPath, "all",
+                4, new String[]{}); // no tags provided -> all posts
 
         postHistoryIterator.extractAndSavePostIds(); // including split
 
