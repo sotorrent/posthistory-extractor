@@ -60,11 +60,11 @@ CREATE TABLE `Posts` (
     LastEditorDisplayName VARCHAR(40),
     LastEditDate DATETIME,
     LastActivityDate DATETIME,
-    Title VARCHAR(250) NOT NULL,
+    Title VARCHAR(250),
     Tags VARCHAR(150),
-    AnswerCount INT NOT NULL DEFAULT 0,
-    CommentCount INT NOT NULL DEFAULT 0,
-    FavoriteCount INT NOT NULL DEFAULT 0,
+    AnswerCount INT DEFAULT 0,
+    CommentCount INT DEFAULT 0,
+    FavoriteCount INT DEFAULT 0,
     ClosedDate DATETIME,
     CommunityOwnedDate DATETIME,
     PRIMARY KEY (Id),
@@ -92,8 +92,8 @@ CREATE TABLE `PostHistory` (
     CreationDate DATETIME,
     UserId INT, # either UserId or UserDisplayName is present
     UserDisplayName VARCHAR(40),
-    Comment VARCHAR(400),
-    Text TEXT,
+    Comment TEXT,
+    Text MEDIUMTEXT,
     PRIMARY KEY (Id),
     FOREIGN KEY (PostId) REFERENCES Posts(Id)
 );
