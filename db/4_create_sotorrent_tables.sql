@@ -1,5 +1,3 @@
-CREATE DATABASE IF NOT EXISTS `stackoverflow17_06`;
-
 USE `stackoverflow17_06`;
 
 SET foreign_key_checks = 0;
@@ -29,7 +27,7 @@ INSERT INTO `PostType` VALUES(6, 'Moderator nomination');
 INSERT INTO `PostType` VALUES(7, 'Wiki placeholder');
 INSERT INTO `PostType` VALUES(8, 'Privilege wiki');
 
-#ALTER TABLE `Posts` ADD FOREIGN KEY(PostTypeId) REFERENCES PostType(Id);
+ALTER TABLE `Posts` ADD FOREIGN KEY(PostTypeId) REFERENCES PostType(Id);
 
 CREATE TABLE `PostBlockType` (
   Id TINYINT NOT NULL,
