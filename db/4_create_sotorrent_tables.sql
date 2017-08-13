@@ -2,7 +2,6 @@ USE `stackoverflow17_06`;
 
 SET foreign_key_checks = 0;
 DROP TABLE IF EXISTS `PostBlockType`;
-DROP TABLE IF EXISTS `PostType`;
 DROP TABLE IF EXISTS `PostBlockDiffOperation`;
 DROP TABLE IF EXISTS `PostBlockDiff`;
 DROP TABLE IF EXISTS `PostVersion`;
@@ -10,24 +9,6 @@ DROP TABLE IF EXISTS `PostBlockVersion`;
 DROP TABLE IF EXISTS `PostVersionUrl`;
 DROP TABLE IF EXISTS `PostReferenceGH`;
 SET foreign_key_checks = 1;
-
-# see https://meta.stackexchange.com/a/2678
-CREATE TABLE `PostType` (
-  Id TINYINT NOT NULL,
-  Type VARCHAR(50) NOT NULL,
-  PRIMARY KEY(Id)
-);
-
-INSERT INTO `PostType` VALUES(1, 'Question');
-INSERT INTO `PostType` VALUES(2, 'Answer');
-INSERT INTO `PostType` VALUES(3, 'Orphaned tag wiki');
-INSERT INTO `PostType` VALUES(4, 'Tag wiki excerpt');
-INSERT INTO `PostType` VALUES(5, 'Tag wiki');
-INSERT INTO `PostType` VALUES(6, 'Moderator nomination');
-INSERT INTO `PostType` VALUES(7, 'Wiki placeholder');
-INSERT INTO `PostType` VALUES(8, 'Privilege wiki');
-
-ALTER TABLE `Posts` ADD FOREIGN KEY(PostTypeId) REFERENCES PostType(Id);
 
 CREATE TABLE `PostBlockType` (
   Id TINYINT NOT NULL,

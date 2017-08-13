@@ -129,3 +129,21 @@ CREATE TABLE `Votes` (
     FOREIGN KEY (PostId) REFERENCES Posts(Id),
     FOREIGN KEY (UserId) REFERENCES Users(Id)
 );
+
+# see https://meta.stackexchange.com/a/2678
+CREATE TABLE `PostType` (
+  Id TINYINT NOT NULL,
+  Type VARCHAR(50) NOT NULL,
+  PRIMARY KEY(Id)
+);
+
+INSERT INTO `PostType` VALUES(1, 'Question');
+INSERT INTO `PostType` VALUES(2, 'Answer');
+INSERT INTO `PostType` VALUES(3, 'Orphaned tag wiki');
+INSERT INTO `PostType` VALUES(4, 'Tag wiki excerpt');
+INSERT INTO `PostType` VALUES(5, 'Tag wiki');
+INSERT INTO `PostType` VALUES(6, 'Moderator nomination');
+INSERT INTO `PostType` VALUES(7, 'Wiki placeholder');
+INSERT INTO `PostType` VALUES(8, 'Privilege wiki');
+
+ALTER TABLE `Posts` ADD FOREIGN KEY(PostTypeId) REFERENCES PostType(Id);
