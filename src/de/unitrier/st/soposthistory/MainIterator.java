@@ -48,6 +48,7 @@ class MainIterator {
 
         postHistoryIterator.extractAndSavePostIds(); // including split
 
+        // TODO: process questions first?
         postHistoryIterator.extractDataFromPostHistory("answers");
         postHistoryIterator.extractDataFromPostHistory("questions");
 
