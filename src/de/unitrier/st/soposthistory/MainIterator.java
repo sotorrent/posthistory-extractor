@@ -8,22 +8,25 @@ import java.nio.file.Paths;
 
 class MainIterator {
     // TODO : Also store n-grams of code blocks in database?
-    // TODO: add tags as command-line parameter
 
     public static void main (String[] args) {
         System.out.println("SOPostHistory (Iterator Mode)");
 
         Options options = new Options();
 
-        Option dataDir = new Option("d", "data-dir", true, "path to data directory");
-        dataDir.setRequired(true);
-        options.addOption(dataDir);
+        Option dataDirOption = new Option("d", "data-dir", true, "path to data directory");
+        dataDirOption.setRequired(true);
+        options.addOption(dataDirOption);
 
-        Option hibernateConfigFile = new Option("h", "hibernate-config", true,
+        Option hibernateConfigFileOption = new Option("h", "hibernate-config", true,
                 "path to hibernate config file");
-        hibernateConfigFile.setRequired(true);
-        options.addOption(hibernateConfigFile);
+        hibernateConfigFileOption.setRequired(true);
+        options.addOption(hibernateConfigFileOption);
 
+        Option tagsOption = new Option("t", "tags", true,
+                "tags for filtering questions and answers (separated by a space)");
+        tagsOption.setRequired(false);
+        options.addOption(tagsOption);
 
         CommandLineParser commandLineParser = new DefaultParser();
         HelpFormatter commandLineFormatter = new HelpFormatter();
@@ -40,11 +43,16 @@ class MainIterator {
 
         Path dataDirPath = Paths.get(commandLine.getOptionValue("data-dir"));
         Path hibernateConfigFilePath = Paths.get(commandLine.getOptionValue("hibernate-config"));
+        String[] tags = {}; // no tags provided -> all posts
+
+        if (commandLine.hasOption("tags")) {
+            tags = commandLine.getOptionValue("tags").split(" ");
+        }
 
         PostHistoryIterator.createSessionFactory(hibernateConfigFilePath);
 
         PostHistoryIterator postHistoryIterator = new PostHistoryIterator(dataDirPath, "all",
-                4, new String[]{}); // no tags provided -> all posts
+                4, tags);
 
         postHistoryIterator.extractAndSavePostIds(); // including split
 
