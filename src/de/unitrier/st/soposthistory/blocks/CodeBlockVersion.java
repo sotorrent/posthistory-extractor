@@ -33,7 +33,7 @@ public class CodeBlockVersion extends PostBlockVersion {
         return "----------------------\n"
                 + "---CodeBlockVersion---\n"
                 + "----------------------\n"
-                + "Id: " + composeId() + "\n"
+                + "Id: " + getId() + "\n"
                 + super.toString()
                 + "\n";
     }

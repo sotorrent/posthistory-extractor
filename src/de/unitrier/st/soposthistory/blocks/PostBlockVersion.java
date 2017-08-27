@@ -274,10 +274,6 @@ public abstract class PostBlockVersion {
         return predDiff;
     }
 
-    protected String composeId() {
-        return getPostVersionId() + "-" + getLocalId();
-    }
-
     // TODO: after preliminary evaluation: 2-Grams and Dice for code blocks and 4-Grams and Overlap for text blocks
     abstract public double compareTo(PostBlockVersion otherBlock);
 
@@ -291,7 +287,7 @@ public abstract class PostBlockVersion {
                 + "RootPostBlock: " + rootPostBlockId + "\n"
                 + "---Predecessor---\n"
                 + "Count: " + (predCount)
-                + "Id: " + (pred == null ? "none" : pred.composeId()) + "\n"
+                + "Id: " + (pred == null ? "none" : pred.getId()) + "\n"
                 + "Similarity: " + (predSimilarity == null ? "-" : (new DecimalFormat("#0.00", new DecimalFormatSymbols(Locale.ENGLISH)))
                     .format(predSimilarity)) + "\n"
                 + "Diff:\n" + (predDiff == null ? "none" : predDiff
