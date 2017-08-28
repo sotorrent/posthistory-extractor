@@ -276,4 +276,14 @@ class PostVersionHistoryTest {
         assertTrue(postBlocks.get(3) instanceof CodeBlockVersion);
         assertTrue(postBlocks.get(4) instanceof TextBlockVersion);
     }
+
+    @Test
+    void testRootPostBlocks3758880() {
+        PostVersionList q_3758880 = new PostVersionList();
+        q_3758880.readFromCSV("testdata/", 3758880, 1);
+
+        assertEquals(11, q_3758880.size());
+
+        // TODO: Implement way to test root post block assignment without connection to database
+    }
 }
