@@ -137,13 +137,14 @@ CREATE TABLE `PostType` (
   PRIMARY KEY(Id)
 );
 
+# see http://data.stackexchange.com/stackoverflow/query/36599/show-all-types
 INSERT INTO `PostType` VALUES(1, 'Question');
 INSERT INTO `PostType` VALUES(2, 'Answer');
-INSERT INTO `PostType` VALUES(3, 'Orphaned tag wiki');
-INSERT INTO `PostType` VALUES(4, 'Tag wiki excerpt');
-INSERT INTO `PostType` VALUES(5, 'Tag wiki');
-INSERT INTO `PostType` VALUES(6, 'Moderator nomination');
-INSERT INTO `PostType` VALUES(7, 'Wiki placeholder');
-INSERT INTO `PostType` VALUES(8, 'Privilege wiki');
+INSERT INTO `PostType` VALUES(3, 'Wiki');
+INSERT INTO `PostType` VALUES(4, 'TagWikiExcerpt');
+INSERT INTO `PostType` VALUES(5, 'TagWiki');
+INSERT INTO `PostType` VALUES(6, 'ModeratorNomination');
+INSERT INTO `PostType` VALUES(7, 'WikiPlaceholder');
+INSERT INTO `PostType` VALUES(8, 'PrivilegeWiki');
 
 ALTER TABLE `Posts` ADD FOREIGN KEY(PostTypeId) REFERENCES PostType(Id);
