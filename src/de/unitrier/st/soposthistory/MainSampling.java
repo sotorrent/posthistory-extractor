@@ -6,7 +6,10 @@ import org.apache.commons.cli.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-class MainSample {
+/**
+ * Retrieve the version history for sampled posts (see project so-posthistory-gt).
+ */
+class MainSampling {
 
     public static void main (String[] args) {
         System.out.println("SOPostHistory (Sampling Mode)");
