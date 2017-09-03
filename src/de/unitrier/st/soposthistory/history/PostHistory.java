@@ -39,6 +39,11 @@ public class PostHistory {
     private static Pattern codeBlockPattern = Pattern.compile("^( {4}|[ ]*\\t)");
     private static Pattern whiteSpaceLinePattern = Pattern.compile("^\\s+$");
     private static Pattern containsLetterOrDigitPattern = Pattern.compile("[a-zA-Z0-9]");
+    // see https://stackoverflow.blog/2014/09/16/introducing-runnable-javascript-css-and-html-code-snippets/
+    private static Pattern stackSnippetBeginPattern = Pattern.compile(".*<!--\\s+begin\\s+snippet[^>]+>");
+    private static Pattern stackSnippetEndPattern = Pattern.compile(".*<!--\\s+end\\s+snippet\\s+-->");
+    // see https://stackoverflow.com/editing-help#syntax-highlighting
+    private static Pattern snippetLanguagePattern = Pattern.compile(".*<!--\\s+language:[^>]+>");
 
     // database
     private int id;
@@ -53,6 +58,7 @@ public class PostHistory {
     // internal
     private List<PostBlockVersion> postBlocks;
     private int postTypeId;
+    private int localIdCount;
 
     public static String getRelevantPostHistoryTypes() {
         Integer[] relevantTypes = new Integer[PostHistory.relevantPostHistoryTypes.size()];
@@ -190,7 +196,7 @@ public class PostHistory {
         //TODO: Also extract language from HTML comment? (see http://stackoverflow.com/editing-help#syntax-highlighting)
 
         postBlocks = new LinkedList<>();
-        int localIdCount = 0;
+        localIdCount = 0;
 
         // http://stackoverflow.com/a/454913
         String[] lines = text.split("&#xD;&#xA;");
@@ -202,12 +208,22 @@ public class PostHistory {
                 continue;
             }
 
+            // see https://stackoverflow.blog/2014/09/16/introducing-runnable-javascript-css-and-html-code-snippets/
+            boolean isStackSnippetBegin = stackSnippetBeginPattern.matcher(line).find(); // only match beginning of line
+            boolean isStackSnippetEnd = stackSnippetEndPattern.matcher(line).find(); // only match beginning of line
+
+            // ignore Stack Snippet information
+            if (isStackSnippetBegin || isStackSnippetEnd) {
+                continue;
+            }
+
             // even if tab is not listed here: http://stackoverflow.com/editing-help#code
             // we observed cases where it was important to check for the tab, sometimes preceded by spaces
             // (see test cases)
             boolean isCodeLine = codeBlockPattern.matcher(line).find(); // only match beginning of line
             boolean isWhitespaceLine = whiteSpaceLinePattern.matcher(line).matches(); // match whole line
             boolean containsLettersOrDigits = containsLetterOrDigitPattern.matcher(line).find(); // only match beginning of line
+            boolean isSnippetLanguage = snippetLanguagePattern.matcher(line).find(); // only match beginning of line
 
             if (currentBlock == null) {
                 // ignore whitespaces at the beginning of a post
@@ -220,31 +236,38 @@ public class PostHistory {
                     }
                 }
             } else {
-                // block has length > 0 => continue or end previous block
-                if (isCodeLine && currentBlock instanceof TextBlockVersion) {
-                    // end of text block, beginning of code block
-                    if (!isWhitespaceLine) {
+                // currentBlock has length > 0 => check if current line belongs to this block
+                // or if it is first line of next block
+
+                if (currentBlock instanceof TextBlockVersion) {
+                    if ((isCodeLine || isSnippetLanguage) && !isWhitespaceLine) {
+                        // End of text block, beginning of code block.
                         // Do not end text block if next line is whitespace line
                         // see, e.g., second line of PostHistory, Id=97576027
-                        currentBlock.setLocalId(++localIdCount);
-                        postBlocks.add(currentBlock);
+                        addPostBlock(currentBlock);
                         currentBlock = new CodeBlockVersion(postId, id);
                     }
-                // do not close code postBlocks when whitespace line is reached
-                // see, e.g., PostHistory, Id=55158265, PostId=20991163 (-> test case)
-                } else if (!isCodeLine && currentBlock instanceof CodeBlockVersion) {
-                    if (!isWhitespaceLine && containsLettersOrDigits) {
+                }
+
+                if (currentBlock instanceof CodeBlockVersion) {
+                    // snippet language divides two code blocks (if first block is not empty)
+                    if (isSnippetLanguage) {
+                        addPostBlock(currentBlock);
+                        currentBlock = new CodeBlockVersion(postId, id);
+                    } else if(!isCodeLine && !isWhitespaceLine && containsLettersOrDigits) {
+                        // Do not close code postBlocks when whitespace line is reached
+                        // see, e.g., PostHistory, Id=55158265, PostId=20991163 (-> test case).
                         // Do not end code block if next line is whitespace line
                         // see, e.g., second line of PostHistory, Id=97576027
                         // Only end code block if next line contains a letter or a digit (e.g., '{').
-                        currentBlock.setLocalId(++localIdCount);
-                        postBlocks.add(currentBlock);
+                        addPostBlock(currentBlock);
                         currentBlock = new TextBlockVersion(postId, id);
                     }
                 }
             }
 
-            if (currentBlock != null) {
+            // ignore snippet language information (see https://stackoverflow.com/editing-help#syntax-highlighting)
+            if (currentBlock != null && !isSnippetLanguage) {
                 currentBlock.append(line);
             }
         }
@@ -259,6 +282,14 @@ public class PostHistory {
 
         for (PostBlockVersion currentPostBlock : postBlocks) {
             currentPostBlock.finalizeContent();
+        }
+    }
+
+    private void addPostBlock(PostBlockVersion postBlock) {
+        // only add non-empty post blocks
+        if (postBlock.getContent().trim().length() > 0) {
+            postBlock.setLocalId(++localIdCount);
+            postBlocks.add(postBlock);
         }
     }
 
