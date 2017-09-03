@@ -286,4 +286,27 @@ class PostVersionHistoryTest {
 
         // TODO: Implement way to test root post block assignment without connection to database
     }
+
+    @Test
+    void testStackSnippetCodeBlocks32143330() {
+        PostVersionList a_32143330 = new PostVersionList();
+        a_32143330.readFromCSV("testdata/", 32143330, 2);
+
+        assertEquals(4, a_32143330.size());
+
+        // Test if Stack Snippets (see https://stackoverflow.blog/2014/09/16/introducing-runnable-javascript-css-and-html-code-snippets/)
+        // and snippet language information blocks (see https://stackoverflow.com/editing-help#syntax-highlighting)
+        // are correctly handled (language info splits code blocks).
+        PostVersion version_4 = a_32143330.get(3);
+        assertEquals(6, version_4.getPostBlocks().size());
+        assertEquals(3, version_4.getTextBlocks().size());
+        assertEquals(3, version_4.getCodeBlocks().size());
+        List<PostBlockVersion> postBlocks = version_4.getPostBlocks();
+        assertTrue(postBlocks.get(0) instanceof TextBlockVersion);
+        assertTrue(postBlocks.get(1) instanceof CodeBlockVersion);
+        assertTrue(postBlocks.get(2) instanceof TextBlockVersion);
+        assertTrue(postBlocks.get(3) instanceof CodeBlockVersion);
+        assertTrue(postBlocks.get(4) instanceof CodeBlockVersion);
+        assertTrue(postBlocks.get(5) instanceof TextBlockVersion);
+    }
 }
