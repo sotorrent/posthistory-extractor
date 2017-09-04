@@ -14,7 +14,7 @@
 			     must be cloned to the same directory like this project and
 				 then build using its Maven script -->
             <id>string-similarity</id>
-            <url>file://${basedir}../string-similarity/target/</url>
+            <url>file://${basedir}/../string-similarity/target/</url>
         </repository>
     </repositories>
 
