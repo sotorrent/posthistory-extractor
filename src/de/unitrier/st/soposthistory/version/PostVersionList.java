@@ -5,15 +5,15 @@ import de.unitrier.st.soposthistory.blocks.PostBlockVersion;
 import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
 import de.unitrier.st.soposthistory.diffs.PostBlockDiffList;
 import de.unitrier.st.soposthistory.history.PostHistory;
-import de.unitrier.st.soposthistory.history.PostHistoryIterator;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.hibernate.StatelessSession;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,11 +28,12 @@ public class PostVersionList extends LinkedList<PostVersion> {
         diffs = new PostBlockDiffList();
     }
 
-    public void readFromCSV(String pathname, int postId, int postTypeId) {
+    public void readFromCSV(String dir, int postId, int postTypeId) {
+        Path pathToCSVFile = Paths.get(dir, postId + ".csv");
         CSVParser parser;
         try {
             parser = CSVParser.parse(
-                    new File(pathname + postId + ".csv"),
+                    pathToCSVFile.toFile(),
                     StandardCharsets.UTF_8,
                     CSVFormat.DEFAULT.withHeader().withDelimiter(';')
             );
