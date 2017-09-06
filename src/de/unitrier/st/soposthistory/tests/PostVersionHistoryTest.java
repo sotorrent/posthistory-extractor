@@ -309,4 +309,27 @@ class PostVersionHistoryTest {
         assertTrue(postBlocks.get(4) instanceof CodeBlockVersion);
         assertTrue(postBlocks.get(5) instanceof TextBlockVersion);
     }
+
+    @Test
+    void testStackSnippetCodeBlocks26044128() {
+        PostVersionList a_26044128 = new PostVersionList();
+        a_26044128.readFromCSV("testdata", 26044128, 2);
+
+        assertEquals(12, a_26044128.size());
+
+        PostVersion version_12 = a_26044128.get(11);
+        assertEquals(8, version_12.getPostBlocks().size());
+        assertEquals(4, version_12.getTextBlocks().size());
+        assertEquals(4, version_12.getCodeBlocks().size());
+        List<PostBlockVersion> postBlocks = version_12.getPostBlocks();
+        assertTrue(postBlocks.get(0) instanceof TextBlockVersion);
+        assertTrue(postBlocks.get(1) instanceof CodeBlockVersion);
+        assertTrue(postBlocks.get(2) instanceof TextBlockVersion);
+        assertTrue(postBlocks.get(3) instanceof CodeBlockVersion);
+        assertTrue(postBlocks.get(4) instanceof CodeBlockVersion);
+        assertTrue(postBlocks.get(5) instanceof TextBlockVersion);
+        assertTrue(postBlocks.get(6) instanceof CodeBlockVersion);
+        assertTrue(postBlocks.get(7) instanceof TextBlockVersion); // Markdown links
+    }
+
 }

@@ -201,6 +201,7 @@ public class PostHistory {
         // http://stackoverflow.com/a/454913
         String[] lines = text.split("&#xD;&#xA;");
         PostBlockVersion currentBlock = null;
+        boolean inStackSnippetBlock = false;
 
         for (String line : lines) {
             // ignore empty lines
@@ -213,7 +214,13 @@ public class PostHistory {
             boolean isStackSnippetEnd = stackSnippetEndPattern.matcher(line).find(); // only match beginning of line
 
             // ignore Stack Snippet information
-            if (isStackSnippetBegin || isStackSnippetEnd) {
+            if (isStackSnippetBegin) {
+                inStackSnippetBlock = true;
+                continue;
+            }
+
+            if (isStackSnippetEnd) {
+                inStackSnippetBlock = false;
                 continue;
             }
 
@@ -254,7 +261,9 @@ public class PostHistory {
                     if (isSnippetLanguage) {
                         addPostBlock(currentBlock);
                         currentBlock = new CodeBlockVersion(postId, id);
-                    } else if(!isCodeLine && !isWhitespaceLine && containsLettersOrDigits) {
+                    } else if((!isCodeLine && !inStackSnippetBlock) && !isWhitespaceLine && containsLettersOrDigits) {
+                        // In a Stack Snippet, the lines do not have to be indented (see version 12 of answer
+                        // 26044128 and corresponding test case).
                         // Do not close code postBlocks when whitespace line is reached
                         // see, e.g., PostHistory, Id=55158265, PostId=20991163 (-> test case).
                         // Do not end code block if next line is whitespace line
