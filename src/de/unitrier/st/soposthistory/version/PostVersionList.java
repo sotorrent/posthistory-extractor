@@ -21,6 +21,13 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PostVersionList extends LinkedList<PostVersion> {
+    /*
+     * Enum type used to configure method processVersionHistory()
+     */
+    public enum PostBlockTypeFilter {
+        TEXT, CODE, BOTH
+    }
+
     private final PostBlockDiffList diffs;
 
     public PostVersionList() {
@@ -88,6 +95,15 @@ public class PostVersionList extends LinkedList<PostVersion> {
     }
 
     public void processVersionHistory() {
+        processVersionHistory(PostBlockTypeFilter.BOTH);
+    }
+
+    /**
+     * Set root post blocks and compute similarity and diffs between two matched versions of a block.
+     *
+     * @param filter Either text blocks, code blocks, or both can be processed (mainly needed for evaluation of similarity metrics).
+     */
+    public void processVersionHistory(PostBlockTypeFilter filter) {
         for (int i=0; i<this.size(); i++) {
             PostVersion currentVersion = this.get(i);
 
@@ -108,18 +124,24 @@ public class PostVersionList extends LinkedList<PostVersion> {
 
                 // compute similarity and diffs
                 PostVersion previousVersion = this.get(i-1);
+
                 // text blocks
-                currentVersion.computePostBlockSimilarityAndDiffs(
-                        currentVersion.getTextBlocks(),
-                        previousVersion.getTextBlocks(),
-                        TextBlockVersion.similarityThreshold
-                );
+                if (filter == PostBlockTypeFilter.BOTH || filter == PostBlockTypeFilter.TEXT) {
+                    currentVersion.computePostBlockSimilarityAndDiffs(
+                            currentVersion.getTextBlocks(),
+                            previousVersion.getTextBlocks(),
+                            TextBlockVersion.similarityThreshold
+                    );
+                }
+
                 // code blocks
-                currentVersion.computePostBlockSimilarityAndDiffs(
-                        currentVersion.getCodeBlocks(),
-                        previousVersion.getCodeBlocks(),
-                        CodeBlockVersion.similarityThreshold
-                );
+                if (filter == PostBlockTypeFilter.BOTH || filter == PostBlockTypeFilter.CODE) {
+                    currentVersion.computePostBlockSimilarityAndDiffs(
+                            currentVersion.getCodeBlocks(),
+                            previousVersion.getCodeBlocks(),
+                            CodeBlockVersion.similarityThreshold
+                    );
+                }
 
                 // set root post block for all post blocks
                 for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks()) {
