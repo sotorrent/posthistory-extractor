@@ -311,11 +311,7 @@ public class PostHistory {
 
     @Override
     public String toString() {
-        String str = "----- PostHistory ------------------" + "\n";
-        str += "Id: " + id + "\nCreationDate: "+ creationDate + "\n";
-        str += "PostId: "+ postId + "\n";
-        str += "----------------------------------------";
-        return str;
+        return "PostHistory: Id=" + id + ", PostId="+ postId;
     }
 
     @Override

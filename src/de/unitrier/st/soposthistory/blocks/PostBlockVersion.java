@@ -283,21 +283,7 @@ public abstract class PostBlockVersion {
 
     @Override
     public String toString() {
-        return "Changed: " + (predSimilarity == null ? "-" : predSimilarity != 1.0) + "\n"
-                + "RootPostBlock: " + rootPostBlockId + "\n"
-                + "---Predecessor---\n"
-                + "Count: " + (predCount)
-                + "Id: " + (pred == null ? "none" : pred.getId()) + "\n"
-                + "Similarity: " + (predSimilarity == null ? "-" : (new DecimalFormat("#0.00", new DecimalFormatSymbols(Locale.ENGLISH)))
-                    .format(predSimilarity)) + "\n"
-                + "Diff:\n" + (predDiff == null ? "none" : predDiff
-                    .stream()
-                    .map(diff_match_patch.Diff::toString)
-                    .collect(Collectors.joining("\n")))
-                + "\n"
-                + "---Successor---\n"
-                + "Count: " + (succCount)
-                + "\n";
+        return "PostBlockVersion: " + getContent();
     }
     
     @Override

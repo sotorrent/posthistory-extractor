@@ -282,25 +282,6 @@ public class PostVersion {
 
     @Override
     public String toString() {
-        StringBuilder str = new StringBuilder("----------------------------\n"
-                + "---PostVersion--------------\n"
-                + "----------------------------\n"
-                + "PostId: " + postId + "\n"
-                + "PostHistoryId: " + postHistoryId + "\n"
-                + "PostBlocks: \n\n");
-
-        for (PostBlockVersion postBlock : postBlocks) {
-            str.append(postBlock);
-        }
-
-        str.append("\n\n");
-
-        for (PostVersionUrl url : urls) {
-            str.append(url);
-        }
-
-        str.append("\n");
-
-        return str.toString();
+        return "PostVersion: PostId=" + postId + ", PostHistoryId=" + postHistoryId;
     }
 }

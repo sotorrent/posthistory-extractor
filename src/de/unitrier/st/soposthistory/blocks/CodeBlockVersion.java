@@ -30,11 +30,6 @@ public class CodeBlockVersion extends PostBlockVersion {
 
     @Override
     public String toString() {
-        return "----------------------\n"
-                + "---CodeBlockVersion---\n"
-                + "----------------------\n"
-                + "Id: " + getId() + "\n"
-                + super.toString()
-                + "\n";
+        return "CodeBlockVersion: " + getContent();
     }
 }
