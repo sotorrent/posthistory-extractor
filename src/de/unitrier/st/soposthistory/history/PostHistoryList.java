@@ -98,7 +98,7 @@ public class PostHistoryList extends LinkedList<PostHistory> {
         // ensure that output dir exists, but is empty
         try {
             Files.deleteIfExists(outputDir);
-            Files.createDirectory(outputDir);
+            Files.createDirectories(outputDir);
         } catch (IOException e) {
             e.printStackTrace();
         }
