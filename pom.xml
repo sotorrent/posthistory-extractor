@@ -21,7 +21,7 @@
     <dependencies>
         <!-- local dependency -->
         <dependency>
-            <groupId>de.unitrier.st.stringsimilarity</groupId>
+            <groupId>de.unitrier.st.soposthistory</groupId>
             <artifactId>string-similarity</artifactId>
             <version>1.1.1</version>
         </dependency>
