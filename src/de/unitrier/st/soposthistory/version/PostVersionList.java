@@ -36,6 +36,10 @@ public class PostVersionList extends LinkedList<PostVersion> {
     }
 
     public void readFromCSV(String dir, int postId, int postTypeId) {
+        readFromCSV(dir, postId, postTypeId, true);
+    }
+
+    public void readFromCSV(String dir, int postId, int postTypeId, boolean processVersionHistory) {
         Path pathToCSVFile = Paths.get(dir, postId + ".csv");
         CSVParser parser;
         try {
@@ -81,7 +85,9 @@ public class PostVersionList extends LinkedList<PostVersion> {
                 }
             }
 
-            processVersionHistory();
+            if (processVersionHistory) {
+                processVersionHistory();
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
