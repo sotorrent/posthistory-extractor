@@ -24,7 +24,6 @@ class PostVersionHistoryTest {
         assertEquals(3, version_7.getPostBlocks().size());
         assertEquals(2, version_7.getTextBlocks().size());
         assertEquals(1, version_7.getCodeBlocks().size());
-        //System.out.print(version_7.toString());
 
         CodeBlockVersion codeBlock_1 = version_7.getCodeBlocks().get(0);
         String[] lines = codeBlock_1.getContent().split("\n");
@@ -32,7 +31,6 @@ class PostVersionHistoryTest {
         for (String line : lines) {
             assertTrue(line.startsWith("    "));
         }
-        //System.out.print(codeBlock_1.toString());
 
         TextBlockVersion textBlock_1 = version_7.getTextBlocks().get(0);
         lines = textBlock_1.getContent().split("\n");
@@ -40,7 +38,6 @@ class PostVersionHistoryTest {
         for (String line : lines) {
             assertFalse(line.startsWith("    "));
         }
-        //System.out.print(textBlock_1.toString());
     }
 
     @Test
@@ -108,7 +105,6 @@ class PostVersionHistoryTest {
         assertEquals(6, version_3.getPostBlocks().size());
         assertEquals(3, version_3.getTextBlocks().size());
         assertEquals(3, version_3.getCodeBlocks().size());
-        System.out.println("version 4 block 7: " + a_2581754.get(3).getPostBlocks().get(6).getContent());
 
         CodeBlockVersion codeBlock_1 = version_3.getCodeBlocks().get(0);
         String[] lines = codeBlock_1.getContent().split("\n");
@@ -116,7 +112,6 @@ class PostVersionHistoryTest {
         for (String line : lines) {
             assertTrue(line.startsWith("    "));
         }
-        System.out.println("code block size: " + version_3.getCodeBlocks().size());
 
         TextBlockVersion textBlock_1 = version_3.getTextBlocks().get(0);
         lines = textBlock_1.getContent().split("\n");
@@ -124,11 +119,6 @@ class PostVersionHistoryTest {
         for (String line : lines) {
             assertFalse(line.startsWith("    "));
         }
-        System.out.println("text block size: " + version_3.getTextBlocks().size());
-
-        System.out.println("text block version 8, block 7: " + a_2581754.get(7).getPostBlocks().get(6).getContent());
-
-        // System.out.println("text block version 7, block 8: " + a_2581754.get(6).getPostBlocks().get(7).getContent());
     }
 
     @Test
