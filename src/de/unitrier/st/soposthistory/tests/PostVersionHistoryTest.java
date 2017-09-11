@@ -321,4 +321,24 @@ class PostVersionHistoryTest {
         assertTrue(postBlocks.get(6) instanceof CodeBlockVersion);
         assertTrue(postBlocks.get(7) instanceof TextBlockVersion); // Markdown links
     }
+
+    @Test
+    void testAlternativeCodeBlockQuestion32342082() {
+        PostVersionList q_32342082 = new PostVersionList();
+        q_32342082.readFromCSV("testdata", 32342082, 1);
+
+        assertEquals(8, q_32342082.size());
+
+        // version 5 contains an alternative (GitHub-style) code block (see https://stackoverflow.com/revisions/32342082/5)
+        PostVersion version_5 = q_32342082.get(4);
+        assertEquals(5, version_5.getPostBlocks().size());
+        assertEquals(3, version_5.getTextBlocks().size());
+        assertEquals(2, version_5.getCodeBlocks().size());
+        List<PostBlockVersion> postBlocks = version_5.getPostBlocks();
+        assertTrue(postBlocks.get(0) instanceof TextBlockVersion);
+        assertTrue(postBlocks.get(1) instanceof CodeBlockVersion);
+        assertTrue(postBlocks.get(2) instanceof TextBlockVersion);
+        assertTrue(postBlocks.get(3) instanceof CodeBlockVersion);
+        assertTrue(postBlocks.get(4) instanceof TextBlockVersion);
+    }
 }

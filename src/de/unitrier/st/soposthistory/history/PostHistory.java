@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Entity
@@ -44,6 +45,9 @@ public class PostHistory {
     private static Pattern stackSnippetEndPattern = Pattern.compile(".*<!--\\s+end\\s+snippet\\s+-->");
     // see https://stackoverflow.com/editing-help#syntax-highlighting
     private static Pattern snippetLanguagePattern = Pattern.compile(".*<!--\\s+language:[^>]+>");
+    // see https://meta.stackexchange.com/q/125148; example: https://stackoverflow.com/posts/32342082/revisions
+    private static Pattern alternativeCodeBlockBeginPattern = Pattern.compile("\\s*(```).*");
+    private static Pattern alternativeCodeBlockEndPattern = Pattern.compile(".*(```)\\s*");
 
     // database
     private int id;
@@ -201,7 +205,8 @@ public class PostHistory {
         // http://stackoverflow.com/a/454913
         String[] lines = text.split("&#xD;&#xA;");
         PostBlockVersion currentBlock = null;
-        boolean inStackSnippetBlock = false;
+        boolean inStackSnippetCodeBlock = false;
+        boolean inAlternativeCodeBlock = false;
 
         for (String line : lines) {
             // ignore empty lines
@@ -215,28 +220,53 @@ public class PostHistory {
 
             // ignore Stack Snippet information
             if (isStackSnippetBegin) {
-                inStackSnippetBlock = true;
+                inStackSnippetCodeBlock = true;
                 continue;
             }
 
             if (isStackSnippetEnd) {
-                inStackSnippetBlock = false;
+                inStackSnippetCodeBlock = false;
                 continue;
+            }
+
+            // see https://meta.stackexchange.com/q/125148; example: https://stackoverflow.com/posts/32342082/revisions
+            Matcher alternativeCodeBlockBeginMatcher = alternativeCodeBlockBeginPattern.matcher(line);
+            boolean isAlternativeCodeBlockBegin = alternativeCodeBlockBeginMatcher.matches(); // match whole line
+            Matcher alternativeCodeBlockEndMatcher = alternativeCodeBlockEndPattern.matcher(line);
+            boolean isAlternativeCodeBlockEnd = alternativeCodeBlockEndMatcher.matches(); // match whole line
+
+            if (isAlternativeCodeBlockBegin) {
+                // remove "```" from line
+                line = alternativeCodeBlockBeginMatcher.replaceAll("");
+                inAlternativeCodeBlock = true;
+                // continue if line only contained "```"
+                if (line.trim().length() == 0) {
+                    continue;
+                }
+            }
+
+            if (isAlternativeCodeBlockEnd) {
+                // remove "```" from line
+                line = alternativeCodeBlockEndMatcher.replaceAll("");
+                inAlternativeCodeBlock = false;
             }
 
             // even if tab is not listed here: http://stackoverflow.com/editing-help#code
             // we observed cases where it was important to check for the tab, sometimes preceded by spaces
             // (see test cases)
             boolean isCodeLine = codeBlockPattern.matcher(line).find(); // only match beginning of line
+            // e.g. "<!-- language: lang-js -->" (see https://stackoverflow.com/editing-help#syntax-highlighting)
+            boolean isSnippetLanguage = snippetLanguagePattern.matcher(line).find(); // only match beginning of line
             boolean isWhitespaceLine = whiteSpaceLinePattern.matcher(line).matches(); // match whole line
             boolean containsLettersOrDigits = containsLetterOrDigitPattern.matcher(line).find(); // only match beginning of line
-            boolean isSnippetLanguage = snippetLanguagePattern.matcher(line).find(); // only match beginning of line
+
+            boolean inCodeBlock = isCodeLine || isSnippetLanguage || inStackSnippetCodeBlock || inAlternativeCodeBlock;
 
             if (currentBlock == null) {
                 // ignore whitespaces at the beginning of a post
                 if (!isWhitespaceLine) {
                     // first line, block element not created yet
-                    if (isCodeLine) {
+                    if (inCodeBlock) {
                         currentBlock = new CodeBlockVersion(postId, id);
                     } else {
                         currentBlock = new TextBlockVersion(postId, id);
@@ -247,7 +277,7 @@ public class PostHistory {
                 // or if it is first line of next block
 
                 if (currentBlock instanceof TextBlockVersion) {
-                    if ((isCodeLine || isSnippetLanguage) && !isWhitespaceLine) {
+                    if (inCodeBlock && !isWhitespaceLine) {
                         // End of text block, beginning of code block.
                         // Do not end text block if next line is whitespace line
                         // see, e.g., second line of PostHistory, Id=97576027
@@ -261,7 +291,7 @@ public class PostHistory {
                     if (isSnippetLanguage) {
                         addPostBlock(currentBlock);
                         currentBlock = new CodeBlockVersion(postId, id);
-                    } else if((!isCodeLine && !inStackSnippetBlock) && !isWhitespaceLine && containsLettersOrDigits) {
+                    } else if(!inCodeBlock && !isWhitespaceLine && containsLettersOrDigits) {
                         // In a Stack Snippet, the lines do not have to be indented (see version 12 of answer
                         // 26044128 and corresponding test case).
                         // Do not close code postBlocks when whitespace line is reached
