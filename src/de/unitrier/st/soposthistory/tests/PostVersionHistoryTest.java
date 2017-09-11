@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class PostVersionHistoryTest {
 
     @Test
-    void testReadingPostHistory1109108() {
+    void testReadPostHistoryAnswer1109108() {
         PostVersionList a_1109108 = new PostVersionList();
         a_1109108.readFromCSV("testdata", 1109108, 2);
 
@@ -41,7 +41,7 @@ class PostVersionHistoryTest {
     }
 
     @Test
-    void testReadingPostHistory3145655() {
+    void testReadPostHistoryAnswer3145655() {
         PostVersionList a_3145655 = new PostVersionList();
         a_3145655.readFromCSV("testdata", 3145655, 2);
 
@@ -68,7 +68,7 @@ class PostVersionHistoryTest {
     }
 
     @Test
-    void testReadingPostHistory9855338() {
+    void testReadPostHistoryAnswer9855338() {
         PostVersionList a_9855338 = new PostVersionList();
         a_9855338.readFromCSV("testdata", 9855338, 2);
 
@@ -95,7 +95,7 @@ class PostVersionHistoryTest {
     }
 
     @Test
-    void testReadingPostHistory2581754() {
+    void testReadPostHistoryAnswer2581754() {
         PostVersionList a_2581754 = new PostVersionList();
         a_2581754.readFromCSV("testdata", 2581754, 2);
 
@@ -132,7 +132,7 @@ class PostVersionHistoryTest {
     }
 
     @Test
-    void testReadingPostHistory20991163() {
+    void testReadPostHistoryAnswer20991163() {
         PostVersionList a_20991163 = new PostVersionList();
         a_20991163.readFromCSV("testdata", 20991163, 2);
 
@@ -146,7 +146,7 @@ class PostVersionHistoryTest {
     }
 
     @Test
-    void testReadingPostHistory32012927() {
+    void testReadPostHistoryAnswer32012927() {
         PostVersionList a_32012927 = new PostVersionList();
         a_32012927.readFromCSV("testdata", 32012927, 2);
 
@@ -160,7 +160,7 @@ class PostVersionHistoryTest {
     }
 
     @Test
-    void testReadingPostHistory10734905() {
+    void testReadPostHistoryAnswer10734905() {
         PostVersionList a_10734905 = new PostVersionList();
         a_10734905.readFromCSV("testdata", 10734905, 2);
 
@@ -182,7 +182,7 @@ class PostVersionHistoryTest {
     }
 
     @Test
-    void testReadingPostHistory31965641() {
+    void testReadPostHistoryAnswer31965641() {
         PostVersionList a_31965641 = new PostVersionList();
         a_31965641.readFromCSV("testdata", 31965641, 2);
 
@@ -203,7 +203,7 @@ class PostVersionHistoryTest {
     }
 
     @Test
-    void testRootPostBlockVersionId3758880() {
+    void testRootPostBlockVersionIdAnswer3758880() {
         PostVersionList a_3758880 = new PostVersionList();
         a_3758880.readFromCSV("testdata", 3758880, 2);
 
@@ -239,7 +239,7 @@ class PostVersionHistoryTest {
     }
 
     @Test
-    void testReadingPostHistory22360443() {
+    void testReadPostHistoryQuestion22360443() {
         PostVersionList q_22360443 = new PostVersionList();
         q_22360443.readFromCSV("testdata", 22360443, 1);
 
@@ -268,7 +268,7 @@ class PostVersionHistoryTest {
     }
 
     @Test
-    void testRootPostBlocks3758880() {
+    void testRootPostBlocksQuestion3758880() {
         PostVersionList q_3758880 = new PostVersionList();
         q_3758880.readFromCSV("testdata", 3758880, 1);
 
@@ -278,7 +278,7 @@ class PostVersionHistoryTest {
     }
 
     @Test
-    void testStackSnippetCodeBlocks32143330() {
+    void testStackSnippetCodeBlocksAnswer32143330() {
         PostVersionList a_32143330 = new PostVersionList();
         a_32143330.readFromCSV("testdata", 32143330, 2);
 
@@ -301,7 +301,7 @@ class PostVersionHistoryTest {
     }
 
     @Test
-    void testStackSnippetCodeBlocks26044128() {
+    void testStackSnippetCodeBlocksAnswer26044128() {
         PostVersionList a_26044128 = new PostVersionList();
         a_26044128.readFromCSV("testdata", 26044128, 2);
 
@@ -321,5 +321,4 @@ class PostVersionHistoryTest {
         assertTrue(postBlocks.get(6) instanceof CodeBlockVersion);
         assertTrue(postBlocks.get(7) instanceof TextBlockVersion); // Markdown links
     }
-
 }
