@@ -21,6 +21,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PostVersionList extends LinkedList<PostVersion> {
+
+    //TODO: add methods to extract history of code or text blocks (either ignoring versions where only blocks of the other type changed (global) or where one particular block did not change (local)
+
     /*
      * Enum type used to configure method processVersionHistory()
      */
