@@ -4,12 +4,8 @@ import de.unitrier.st.soposthistory.diffs.LineDiff;
 import de.unitrier.st.soposthistory.diffs.diff_match_patch;
 
 import javax.persistence.*;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.List;
-import java.util.Locale;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 import static de.unitrier.st.soposthistory.history.PostHistoryIterator.logger;
 
@@ -48,6 +44,8 @@ public abstract class PostBlockVersion {
     private final LineDiff lineDiff;
     private List<diff_match_patch.Diff> predDiff;
     private PostBlockVersion pred;
+    private boolean isPredOfBlock = false;
+
 
     public PostBlockVersion() {
         // database
@@ -319,5 +317,15 @@ public abstract class PostBlockVersion {
         result = 31 * result + succCount;
         result = 31 * result + predCount;
         return result;
+    }
+
+    @Transient
+    public boolean isPredOfBlock() {
+        return isPredOfBlock;
+    }
+
+    @Transient
+    public void setIsPredOfBlock(boolean predOfBlock) {
+        isPredOfBlock = predOfBlock;
     }
 }
