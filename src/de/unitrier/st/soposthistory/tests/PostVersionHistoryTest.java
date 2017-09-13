@@ -392,5 +392,25 @@ class PostVersionHistoryTest {
             }
         }
     }
+
+    @Test
+    public void testConnectionsForThreeCodeBlockInVersionIAreEqualToFourCodeBlocksInIPlusOne(){
+        PostVersionList q_42070509 = new PostVersionList();
+        q_42070509.readFromCSV("testdata", 42070509, 1);
+
+        q_42070509.processVersionHistory();
+
+        for(int i=1; i<q_42070509.size(); i++) {
+            List<CodeBlockVersion> codeBlocks = q_42070509.get(i).getCodeBlocks();
+            System.out.println("versions: " + (i-1) + " and " + i + "\n");
+            for (CodeBlockVersion codeBlock : codeBlocks) {
+                Integer predId = null;
+                if(codeBlock.getPred() != null)
+                    predId = codeBlock.getPred().getLocalId();
+
+                    System.out.println("connections: " + predId + " <- " + codeBlock.getLocalId());
+            }
+        }
+    }
 }
 
