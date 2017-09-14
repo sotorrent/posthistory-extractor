@@ -7,7 +7,10 @@ import de.unitrier.st.soposthistory.version.PostVersion;
 import de.unitrier.st.soposthistory.version.PostVersionList;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.Vector;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -341,4 +344,73 @@ class PostVersionHistoryTest {
         assertTrue(postBlocks.get(3) instanceof CodeBlockVersion);
         assertTrue(postBlocks.get(4) instanceof TextBlockVersion);
     }
+
+    @Test
+    public void testWhetherBlocksAreSetMoreThanOneAsPredecessors(){
+        PostVersionList q_3758880 = new PostVersionList();
+        q_3758880.readFromCSV("testdata", 3758880, 1);
+
+        TextBlockVersion.similarityMetric = de.unitrier.st.stringsimilarity.set.Variants::twoGramDiceVariant;
+        q_3758880.processVersionHistory(PostVersionList.PostBlockTypeFilter.TEXT);
+
+        Vector<Integer> predecssors = new Vector<>();
+        List<TextBlockVersion> textBlocks = q_3758880.getLast().getTextBlocks();
+        for (TextBlockVersion textBlock : textBlocks) {
+            Integer tmpPred = null;
+            if(textBlock.getPred() != null){
+                tmpPred = textBlock.getPred().getLocalId();
+            }
+            predecssors.add(tmpPred);
+            System.out.println(textBlock.getLocalId() + " has pred " + tmpPred);
+        }
+
+        System.out.println();
+
+
+        Set<Integer> set = new HashSet<>(predecssors);
+        assertEquals(true, set.size() == predecssors.size()); // if there are not equal there exists duplicates i.e. multiple times the same predecessor
+    }
+
+    @Test
+    public void testConnectionsWhenTwoVersionsHaveTwoEqualBlocks(){
+        PostVersionList q_37625877 = new PostVersionList();
+        q_37625877.readFromCSV("testdata", 37625877, 1);
+
+        TextBlockVersion.similarityMetric = de.unitrier.st.stringsimilarity.set.Variants::twoGramDiceVariant;
+        q_37625877.processVersionHistory(PostVersionList.PostBlockTypeFilter.TEXT);
+
+        for(int i=1; i<q_37625877.size(); i++) {
+            List<TextBlockVersion> textBlocks = q_37625877.get(i).getTextBlocks();
+            for (TextBlockVersion textBlock : textBlocks) {
+                if (textBlock.getContent().equals("or:")) {
+                    System.out.println(
+                            "versions: " + (i-1) + " and " + i + "\n"
+                          + "conent: \"" + textBlock.getContent() + "\"" + "\n"
+                          + "connections: " + textBlock.getPred().getLocalId() + " -> " + textBlock.getLocalId() + "\n"
+                    );
+                }
+            }
+        }
+    }
+
+    @Test
+    public void testConnectionsForThreeCodeBlockInVersionIAreEqualToFourCodeBlocksInIPlusOne(){
+        PostVersionList q_42070509 = new PostVersionList();
+        q_42070509.readFromCSV("testdata", 42070509, 1);
+
+        q_42070509.processVersionHistory();
+
+        for(int i=1; i<q_42070509.size(); i++) {
+            List<CodeBlockVersion> codeBlocks = q_42070509.get(i).getCodeBlocks();
+            System.out.println("versions: " + (i-1) + " and " + i + "\n");
+            System.out.println("connections: ");
+            for (CodeBlockVersion codeBlock : codeBlocks) {
+                Integer predId = null;
+                if(codeBlock.getPred() != null)
+                    predId = codeBlock.getPred().getLocalId();
+                    System.out.println(predId + " <- " + codeBlock.getLocalId());
+            }
+        }
+    }
 }
+
