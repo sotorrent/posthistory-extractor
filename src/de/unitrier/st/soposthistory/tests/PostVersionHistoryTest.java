@@ -8,9 +8,9 @@ import de.unitrier.st.soposthistory.version.PostVersionList;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -346,71 +346,62 @@ class PostVersionHistoryTest {
     }
 
     @Test
-    public void testWhetherBlocksAreSetMoreThanOneAsPredecessors(){
-        PostVersionList q_3758880 = new PostVersionList();
-        q_3758880.readFromCSV("testdata", 3758880, 1);
+    void testPredecessorAssignmentAnswer3758880(){
+        // tests if posts blocks are set more than once as predecessor
+        PostVersionList a_3758880 = new PostVersionList();
+        a_3758880.readFromCSV("testdata", 3758880, 2);
 
         TextBlockVersion.similarityMetric = de.unitrier.st.stringsimilarity.set.Variants::twoGramDiceVariant;
-        q_3758880.processVersionHistory(PostVersionList.PostBlockTypeFilter.TEXT);
+        a_3758880.processVersionHistory(PostVersionList.PostBlockTypeFilter.TEXT);
 
-        Vector<Integer> predecssors = new Vector<>();
-        List<TextBlockVersion> textBlocks = q_3758880.getLast().getTextBlocks();
-        for (TextBlockVersion textBlock : textBlocks) {
-            Integer tmpPred = null;
-            if(textBlock.getPred() != null){
-                tmpPred = textBlock.getPred().getLocalId();
+        // we consider the most recent version here
+        List<Integer> predecessorList = new LinkedList<>();
+        List<TextBlockVersion> textBlocks = a_3758880.getLast().getTextBlocks();
+        for (TextBlockVersion currentTextBlock : textBlocks) {
+            if(currentTextBlock.getPred() != null){
+                predecessorList.add(currentTextBlock.getPred().getLocalId());
             }
-            predecssors.add(tmpPred);
-            System.out.println(textBlock.getLocalId() + " has pred " + tmpPred);
         }
 
-        System.out.println();
-
-
-        Set<Integer> set = new HashSet<>(predecssors);
-        assertEquals(true, set.size() == predecssors.size()); // if there are not equal there exists duplicates i.e. multiple times the same predecessor
+        // if the list and the set do not have equal size, there exist duplicates (i.e., post blocks with multiple predecessors)
+        Set<Integer> predecessorSet = new HashSet<>(predecessorList);
+        assertTrue(predecessorList.size() == predecessorSet.size());
     }
 
     @Test
-    public void testConnectionsWhenTwoVersionsHaveTwoEqualBlocks(){
+    void testPredecessorAssignmentQuestion37625877(){
+        // tests predecessor assignment if two versions have two equal text blocks
         PostVersionList q_37625877 = new PostVersionList();
         q_37625877.readFromCSV("testdata", 37625877, 1);
 
         TextBlockVersion.similarityMetric = de.unitrier.st.stringsimilarity.set.Variants::twoGramDiceVariant;
         q_37625877.processVersionHistory(PostVersionList.PostBlockTypeFilter.TEXT);
 
-        for(int i=1; i<q_37625877.size(); i++) {
-            List<TextBlockVersion> textBlocks = q_37625877.get(i).getTextBlocks();
-            for (TextBlockVersion textBlock : textBlocks) {
-                if (textBlock.getContent().equals("or:")) {
-                    System.out.println(
-                            "versions: " + (i-1) + " and " + i + "\n"
-                          + "conent: \"" + textBlock.getContent() + "\"" + "\n"
-                          + "connections: " + textBlock.getPred().getLocalId() + " -> " + textBlock.getLocalId() + "\n"
-                    );
-                }
-            }
-        }
+        PostVersion version_1 = q_37625877.get(0);
+        PostVersion version_2 = q_37625877.get(1);
+
+        // both versions have two text blocks with value "or:" at position 2 and 3, which should be linked accordingly
+        assertEquals(version_1.getTextBlocks().get(2).getLocalId(), version_2.getTextBlocks().get(2).getPred().getLocalId());
+        assertEquals(version_1.getTextBlocks().get(3).getLocalId(), version_2.getTextBlocks().get(3).getPred().getLocalId());
     }
 
     @Test
-    public void testConnectionsForThreeCodeBlockInVersionIAreEqualToFourCodeBlocksInIPlusOne(){
-        PostVersionList q_42070509 = new PostVersionList();
-        q_42070509.readFromCSV("testdata", 42070509, 1);
+    void testPredecessorAssignmentAnswer42070509(){
+        // tests predecessor assignment if version i has three code blocks that are equal to four code blocks in version i+1
+        PostVersionList a_42070509 = new PostVersionList();
+        a_42070509.readFromCSV("testdata", 42070509, 2);
 
-        q_42070509.processVersionHistory();
+        a_42070509.processVersionHistory(PostVersionList.PostBlockTypeFilter.CODE);
 
-        for(int i=1; i<q_42070509.size(); i++) {
-            List<CodeBlockVersion> codeBlocks = q_42070509.get(i).getCodeBlocks();
-            System.out.println("versions: " + (i-1) + " and " + i + "\n");
-            System.out.println("connections: ");
-            for (CodeBlockVersion codeBlock : codeBlocks) {
-                Integer predId = null;
-                if(codeBlock.getPred() != null)
-                    predId = codeBlock.getPred().getLocalId();
-                    System.out.println(predId + " <- " + codeBlock.getLocalId());
-            }
-        }
+        PostVersion version_1 = a_42070509.get(0);
+        PostVersion version_2 = a_42070509.get(1);
+
+        // code blocks with content "var circle = d3.select("circle");..." are present in both versions
+        assertEquals(version_1.getCodeBlocks().get(0).getLocalId(), version_2.getCodeBlocks().get(0).getPred().getLocalId());
+        assertEquals(version_1.getCodeBlocks().get(2).getLocalId(), version_2.getCodeBlocks().get(2).getPred().getLocalId());
+        assertEquals(version_1.getCodeBlocks().get(4).getLocalId(), version_2.getCodeBlocks().get(4).getPred().getLocalId());
+        // this code block is new in version two and should not have a predecessor
+        assertEquals(null, version_2.getCodeBlocks().get(6).getPred());
     }
 }
 
