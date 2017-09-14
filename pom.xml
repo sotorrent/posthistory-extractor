@@ -9,17 +9,19 @@
     <url>https://github.com/sotorrent/so-posthistory-extractor</url>
 
     <repositories>
+        <!-- see also https://stackoverflow.com/a/14013645 -->
         <repository>
-			<!-- The project https://github.com/sotorrent/string-similarity
-			     must be cloned to the same directory like this project and
-				 then build using its Maven script -->
             <id>string-similarity</id>
-            <url>file://${basedir}/../string-similarity/target/</url>
+            <url>https://raw.github.com/sotorrent/string-similarity/releases/</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
         </repository>
     </repositories>
 
     <dependencies>
-        <!-- local dependency -->
+        <!-- https://github.com/sotorrent/string-similarity/tree/master/releases -->
         <dependency>
             <groupId>de.unitrier.st</groupId>
             <artifactId>string-similarity</artifactId>
