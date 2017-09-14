@@ -234,28 +234,34 @@ public class PostVersion {
                         .map(Map.Entry::getKey)
                         .collect(Collectors.toList());
 
-                int pos = 0;
-                while(pos < matchingPredecessors.size() && matchingPredecessors.get(pos).isPredOfBlock()){
-                    pos++;
-                }
 
-                if (matchingPredecessors.size() > 0 && pos < matchingPredecessors.size()) {
-
-                    // set predecessor for first match
-                    if (finalMaxSimilarity == EQUALITY_SIMILARITY) {
-                        currentVersionPostBlock.setPred(matchingPredecessors.get(pos), 1.0); // computes diff
-                        currentVersionPostBlock.setPredEqual(true);
-                    } else {
-                        currentVersionPostBlock.setPred(matchingPredecessors.get(pos), finalMaxSimilarity); // computes diff
-                        currentVersionPostBlock.setPredEqual(false);
+                if (matchingPredecessors.size() > 0) {
+                    // find matching predecessor that is still available
+                    int pos = 0;
+                    while(pos < matchingPredecessors.size() && !matchingPredecessors.get(pos).isAvailable()) {
+                        pos++;
                     }
 
-                    matchingPredecessors.get(pos).setIsPredOfBlock(true);
+                    if (pos < matchingPredecessors.size()) {
+                        // matching and available predecessor found
+                        if (finalMaxSimilarity == EQUALITY_SIMILARITY) {
+                            // pred is equal
+                            currentVersionPostBlock.setPred(matchingPredecessors.get(pos), 1.0); // computes diff
+                            currentVersionPostBlock.setPredEqual(true);
+                        } else {
+                            // pred is similar
+                            currentVersionPostBlock.setPred(matchingPredecessors.get(pos), finalMaxSimilarity); // computes diff
+                            currentVersionPostBlock.setPredEqual(false);
+                        }
 
-                    // increase successor count for all matches
-                    for (PostBlockVersion matchingPredecessor : matchingPredecessors) {
-                        currentVersionPostBlock.incrementPredCount();
-                        matchingPredecessor.incrementSuccCount();
+                        // mark predecessor as not available
+                        matchingPredecessors.get(pos).setNotAvailable();
+
+                        // increase successor count for all matches
+                        for (PostBlockVersion matchingPredecessor : matchingPredecessors) {
+                            currentVersionPostBlock.incrementPredCount();
+                            matchingPredecessor.incrementSuccCount();
+                        }
                     }
                 }
             }

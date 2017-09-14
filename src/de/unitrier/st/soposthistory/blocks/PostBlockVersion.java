@@ -37,15 +37,14 @@ public abstract class PostBlockVersion {
     protected Integer predPostBlockId;
     protected Boolean predEqual;
     protected Double predSimilarity;
-    protected int predCount;
+    protected int predCount; // this marks possible predecessors, which may not be available for linking (see below)
     protected int succCount;
     // internal
     private StringBuilder contentBuilder;
     private final LineDiff lineDiff;
     private List<diff_match_patch.Diff> predDiff;
     private PostBlockVersion pred;
-    private boolean isPredOfBlock = false;
-
+    private boolean isAvailable = true; // false if this post block is set as a predecessor of a block in the next version
 
     public PostBlockVersion() {
         // database
@@ -272,7 +271,20 @@ public abstract class PostBlockVersion {
         return predDiff;
     }
 
-    // TODO: after preliminary evaluation: 2-Grams and Dice for code blocks and 4-Grams and Overlap for text blocks
+    @Transient
+    public boolean isAvailable() {
+        return isAvailable;
+    }
+
+    @Transient
+    public void setNotAvailable() {
+        if (!isAvailable) {
+            throw new IllegalStateException("A post block can only be prececessor of one post block in the next verion.");
+        } else {
+            isAvailable = false;
+        }
+    }
+
     abstract public double compareTo(PostBlockVersion otherBlock);
 
     private List<diff_match_patch.Diff> diff(PostBlockVersion block) {
@@ -283,7 +295,7 @@ public abstract class PostBlockVersion {
     public String toString() {
         return "PostBlockVersion: " + getContent();
     }
-    
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -317,15 +329,5 @@ public abstract class PostBlockVersion {
         result = 31 * result + succCount;
         result = 31 * result + predCount;
         return result;
-    }
-
-    @Transient
-    public boolean isPredOfBlock() {
-        return isPredOfBlock;
-    }
-
-    @Transient
-    public void setIsPredOfBlock(boolean predOfBlock) {
-        isPredOfBlock = predOfBlock;
     }
 }
