@@ -12,8 +12,8 @@ public class CodeBlockVersion extends PostBlockVersion {
     // TODO: Aus Tags der Frage (und evtl. Analyse des Codes) die Programmiersprache ableiten
 
     public static final int blockTypeId = 2;
-    public static BiFunction<String, String, Double> similarityMetric = Variants::twoGramDice;
-    public static double similarityThreshold = 0.6;
+    public static BiFunction<String, String, Double> similarityMetric = Variants::twoGramDice; //TODO: update this after evaluation
+    public static double similarityThreshold = 0.6; //TODO: update this after evaluation
 
     public CodeBlockVersion() {
         super();
