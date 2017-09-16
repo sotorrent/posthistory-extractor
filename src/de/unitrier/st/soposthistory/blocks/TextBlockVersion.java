@@ -12,8 +12,8 @@ public class TextBlockVersion extends PostBlockVersion {
     // TODO: handling of URL blocks (tranform to inline URLs, see AnchorTextAndUrlHandler)
 
     public static final int blockTypeId = 1;
-    public static BiFunction<String, String, Double> similarityMetric = Variants::fourGramOverlap;
-    public static double similarityThreshold = 0.6;
+    public static BiFunction<String, String, Double> similarityMetric = Variants::fourGramOverlap; //TODO: update this after evaluation
+    public static double similarityThreshold = 0.6; //TODO: update this after evaluation
 
     public TextBlockVersion() {
         super();
