@@ -32,7 +32,7 @@
         <dependency>
             <groupId>de.unitrier.st</groupId>
             <artifactId>string-similarity</artifactId>
-            <version>1.2.0</version>
+            <version>1.2.1</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/commons-cli/commons-cli -->
         <dependency>
