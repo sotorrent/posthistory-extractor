@@ -349,7 +349,7 @@ class PostVersionHistoryTest {
     void testPredecessorAssignmentAnswer3758880(){
         // tests if posts blocks are set more than once as predecessor
         PostVersionList a_3758880 = new PostVersionList();
-        a_3758880.readFromCSV("testdata", 3758880, 2);
+        a_3758880.readFromCSV("testdata", 3758880, 2, false);
 
         TextBlockVersion.similarityMetric = de.unitrier.st.stringsimilarity.set.Variants::twoGramDiceVariant;
         a_3758880.processVersionHistory(PostVersionList.PostBlockTypeFilter.TEXT);
@@ -372,7 +372,7 @@ class PostVersionHistoryTest {
     void testPredecessorAssignmentQuestion37625877(){
         // tests predecessor assignment if two versions have two equal text blocks
         PostVersionList q_37625877 = new PostVersionList();
-        q_37625877.readFromCSV("testdata", 37625877, 1);
+        q_37625877.readFromCSV("testdata", 37625877, 1, false);
 
         TextBlockVersion.similarityMetric = de.unitrier.st.stringsimilarity.set.Variants::twoGramDiceVariant;
         q_37625877.processVersionHistory(PostVersionList.PostBlockTypeFilter.TEXT);
@@ -389,7 +389,7 @@ class PostVersionHistoryTest {
     void testPredecessorAssignmentAnswer42070509(){
         // tests predecessor assignment if version i has three code blocks that are equal to four code blocks in version i+1
         PostVersionList a_42070509 = new PostVersionList();
-        a_42070509.readFromCSV("testdata", 42070509, 2);
+        a_42070509.readFromCSV("testdata", 42070509, 2, false);
 
         a_42070509.processVersionHistory(PostVersionList.PostBlockTypeFilter.CODE);
 
