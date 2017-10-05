@@ -5,7 +5,7 @@
     <name>SOPostHistoryExtractor</name>
     <groupId>de.unitrier.st.soposthistory</groupId>
     <artifactId>so-posthistory-extractor</artifactId>
-    <version>1.4.1</version>
+    <version>1.4.2</version>
     <url>https://github.com/sotorrent/so-posthistory-extractor</url>
 
     <distributionManagement>
@@ -32,7 +32,7 @@
         <dependency>
             <groupId>de.unitrier.st</groupId>
             <artifactId>string-similarity</artifactId>
-            <version>1.2.1</version>
+            <version>1.2.2</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/commons-cli/commons-cli -->
         <dependency>
