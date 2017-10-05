@@ -1,6 +1,6 @@
 package de.unitrier.st.soposthistory.blocks;
 
-import de.unitrier.st.stringsimilarity.set.Variants;
+import de.unitrier.st.stringsimilarity.util.InputTooShortException;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -12,8 +12,9 @@ public class TextBlockVersion extends PostBlockVersion {
     // TODO: handling of URL blocks (tranform to inline URLs, see AnchorTextAndUrlHandler)
 
     public static final int blockTypeId = 1;
-    public static BiFunction<String, String, Double> similarityMetric = Variants::fourGramOverlap; //TODO: update this after evaluation
-    public static double similarityThreshold = 0.6; //TODO: update this after evaluation
+    public static BiFunction<String, String, Double> similarityMetric = de.unitrier.st.stringsimilarity.set.Variants::fourGramOverlap; //TODO: update this after evaluation
+    public static BiFunction<String, String, Double> backupSimilarityMetric = de.unitrier.st.stringsimilarity.edit.Variants::levenshtein; // TODO: use best text-based metric here
+    public static double similarityThreshold = 0.6; //TODO: update this after evaluation (two thresholds needed because of backup)
 
     public TextBlockVersion() {
         super();
@@ -25,7 +26,11 @@ public class TextBlockVersion extends PostBlockVersion {
 
     @Override
     public double compareTo(PostBlockVersion otherBlock) {
-        return similarityMetric.apply(getContent(), otherBlock.getContent());
+        try {
+            return similarityMetric.apply(getContent(), otherBlock.getContent());
+        } catch (InputTooShortException e) {
+            return backupSimilarityMetric.apply(getContent(), otherBlock.getContent());
+        }
     }
 
     @Override
