@@ -13,7 +13,7 @@ public class TextBlockVersion extends PostBlockVersion {
 
     public static final int blockTypeId = 1;
     public static BiFunction<String, String, Double> similarityMetric = de.unitrier.st.stringsimilarity.set.Variants::fourGramOverlap; //TODO: update this after evaluation
-    public static BiFunction<String, String, Double> backupSimilarityMetric = de.unitrier.st.stringsimilarity.edit.Variants::levenshtein; // TODO: use best text-based metric here
+    public static BiFunction<String, String, Double> backupSimilarityMetric = de.unitrier.st.stringsimilarity.edit.Variants::levenshtein; // TODO: use best edit-based metric here
     public static double similarityThreshold = 0.6; //TODO: update this after evaluation (two thresholds needed because of backup)
 
     public TextBlockVersion() {
