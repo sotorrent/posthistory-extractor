@@ -404,7 +404,7 @@ class PostVersionHistoryTest {
         assertEquals(null, version_2.getCodeBlocks().get(6).getPred());
     }
 
-    
+
     @Test
     void testPredecessorAssignmentAnswer23459881(){
         PostVersionList a_23459881 = new PostVersionList();
