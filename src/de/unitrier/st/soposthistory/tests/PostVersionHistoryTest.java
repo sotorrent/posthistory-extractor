@@ -403,5 +403,69 @@ class PostVersionHistoryTest {
         // this code block is new in version two and should not have a predecessor
         assertEquals(null, version_2.getCodeBlocks().get(6).getPred());
     }
+
+    
+    @Test
+    void testPredecessorAssignmentAnswer23459881(){
+        PostVersionList a_23459881 = new PostVersionList();
+        a_23459881.readFromCSV("testdata", 23459881, 2, false);
+
+        a_23459881.processVersionHistory();
+
+        PostVersion version_2 = a_23459881.get(1);
+
+        assertEquals(new Integer(3), version_2.getPostBlocks().get(4).getPred().getLocalId());
+        assertEquals(new Integer(4), version_2.getPostBlocks().get(5).getPred().getLocalId());
+        assertEquals(new Integer(5), version_2.getPostBlocks().get(6).getPred().getLocalId());
+        assertEquals(new Integer(6), version_2.getPostBlocks().get(7).getPred().getLocalId());
+    }
+
+
+    @Test
+    void testPredecessorAssignmentAnswer36082771(){
+        PostVersionList a_36082771 = new PostVersionList();
+        a_36082771.readFromCSV("testdata", 36082771, 2, false);
+
+        a_36082771.processVersionHistory();
+
+        PostVersion version_2 = a_36082771.get(1);
+
+        assertEquals(new Integer(7), version_2.getPostBlocks().get(2).getPred().getLocalId());
+        assertEquals(new Integer(8), version_2.getPostBlocks().get(3).getPred().getLocalId());
+        assertEquals(new Integer(9), version_2.getPostBlocks().get(4).getPred().getLocalId());
+        assertEquals(new Integer(10), version_2.getPostBlocks().get(5).getPred().getLocalId());
+        assertEquals(new Integer(11), version_2.getPostBlocks().get(6).getPred().getLocalId());
+        assertEquals(new Integer(12), version_2.getPostBlocks().get(7).getPred().getLocalId());
+        assertEquals(new Integer(13), version_2.getPostBlocks().get(8).getPred().getLocalId());
+        assertEquals(new Integer(14), version_2.getPostBlocks().get(9).getPred().getLocalId());
+        assertEquals(new Integer(15), version_2.getPostBlocks().get(10).getPred().getLocalId());
+        assertEquals(new Integer(16), version_2.getPostBlocks().get(11).getPred().getLocalId());
+    }
+
+
+    @Test
+    void testPredecessorAssignmentAnswer18276636(){
+        PostVersionList a_18276636 = new PostVersionList();
+        a_18276636.readFromCSV("testdata", 18276636, 2, false);
+
+        a_18276636.processVersionHistory();
+
+        PostVersion version_2 = a_18276636.get(1);
+
+        assertEquals(new Integer(1), version_2.getPostBlocks().get(4).getPred().getLocalId());
+        assertEquals(new Integer(2), version_2.getPostBlocks().get(5).getPred().getLocalId());
+        assertEquals(new Integer(3), version_2.getPostBlocks().get(6).getPred().getLocalId());
+        assertEquals(new Integer(4), version_2.getPostBlocks().get(7).getPred().getLocalId());
+        assertEquals(new Integer(5), version_2.getPostBlocks().get(8).getPred().getLocalId());
+        assertEquals(new Integer(6), version_2.getPostBlocks().get(9).getPred().getLocalId());
+        assertEquals(new Integer(7), version_2.getPostBlocks().get(10).getPred().getLocalId());
+        assertEquals(new Integer(8), version_2.getPostBlocks().get(11).getPred().getLocalId());
+        assertEquals(new Integer(9), version_2.getPostBlocks().get(12).getPred().getLocalId());
+        assertEquals(new Integer(10), version_2.getPostBlocks().get(13).getPred().getLocalId());
+        assertEquals(new Integer(11), version_2.getPostBlocks().get(14).getPred().getLocalId());
+        assertEquals(new Integer(12), version_2.getPostBlocks().get(15).getPred().getLocalId());
+        assertEquals(new Integer(13), version_2.getPostBlocks().get(16).getPred().getLocalId());
+
+    }
 }
 
