@@ -19,7 +19,7 @@
         <!-- see also https://stackoverflow.com/a/14013645 -->
         <repository>
             <id>string-similarity</id>
-            <url>https://raw.github.com/sotorrent/string-similarity/releases/</url>
+            <url>https://raw.github.com/sotorrent/string-similarity/master/releases/</url>
             <snapshots>
                 <enabled>true</enabled>
                 <updatePolicy>always</updatePolicy>
@@ -28,7 +28,7 @@
     </repositories>
 
     <dependencies>
-        <!-- https://github.com/sotorrent/string-similarity/tree/master/releases -->
+        <!-- https://github.com/sotorrent/string-similarity/tree/master/releases/ -->
         <dependency>
             <groupId>de.unitrier.st</groupId>
             <artifactId>string-similarity</artifactId>
