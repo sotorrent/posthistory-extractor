@@ -449,20 +449,44 @@ class PostVersionHistoryTest {
         PostVersionList q_36082771 = new PostVersionList();
         q_36082771.readFromCSV("testdata", 36082771, 1, true);
 
-        //TODO: revise
-
         PostVersion version_2 = q_36082771.get(1);
+        assertEquals(12, version_2.getPostBlocks().size());
+        assertEquals(6, version_2.getTextBlocks().size());
+        assertEquals(6, version_2.getCodeBlocks().size());
+        List<PostBlockVersion> postBlocks = version_2.getPostBlocks();
+        assertTrue(postBlocks.get(0) instanceof TextBlockVersion);
+        assertTrue(postBlocks.get(1) instanceof CodeBlockVersion);
+        assertTrue(postBlocks.get(2) instanceof TextBlockVersion);
+        assertTrue(postBlocks.get(3) instanceof CodeBlockVersion);
+        assertTrue(postBlocks.get(4) instanceof TextBlockVersion);
+        assertTrue(postBlocks.get(5) instanceof CodeBlockVersion);
+        assertTrue(postBlocks.get(6) instanceof TextBlockVersion);
+        assertTrue(postBlocks.get(7) instanceof CodeBlockVersion);
+        assertTrue(postBlocks.get(8) instanceof TextBlockVersion);
+        assertTrue(postBlocks.get(9) instanceof CodeBlockVersion);
+        assertTrue(postBlocks.get(10) instanceof TextBlockVersion);
+        assertTrue(postBlocks.get(11) instanceof CodeBlockVersion);
 
-        assertEquals(new Integer(7), version_2.getPostBlocks().get(2).getPred().getLocalId());
-        assertEquals(new Integer(8), version_2.getPostBlocks().get(3).getPred().getLocalId());
-        assertEquals(new Integer(9), version_2.getPostBlocks().get(4).getPred().getLocalId());
-        assertEquals(new Integer(10), version_2.getPostBlocks().get(5).getPred().getLocalId());
-        assertEquals(new Integer(11), version_2.getPostBlocks().get(6).getPred().getLocalId());
-        assertEquals(new Integer(12), version_2.getPostBlocks().get(7).getPred().getLocalId());
-        assertEquals(new Integer(13), version_2.getPostBlocks().get(8).getPred().getLocalId());
-        assertEquals(new Integer(14), version_2.getPostBlocks().get(9).getPred().getLocalId());
-        assertEquals(new Integer(15), version_2.getPostBlocks().get(10).getPred().getLocalId());
-        assertEquals(new Integer(16), version_2.getPostBlocks().get(11).getPred().getLocalId());
+        // version 1: code block with localId 2 and content "glaucon@polo..." + same content in code block with localId 6
+        // version 2: code block with localId 2 and content "glaucon@polo..."
+        // block 2 is "correct" predecessor
+
+        // version 1: text block with localId 3 and content "If I do then run..." + same content in code block with localId 7
+        // version 2: code block with localId 3 and content "If I do then run..."
+        // block 3 is "correct" predecessor
+
+        // version 1: text block with localId 4 and content "glaucon@polo..." + same content in code block with localId 8
+        // version 2: code block with localId 4 and content "glaucon@polo..."
+        // block 4 is "correct" predecessor
+
+        assertNotNull(postBlocks.get(1).getPred()); // localId 2
+        assertEquals(new Integer(2), postBlocks.get(1).getPred().getLocalId()); // localId 2
+
+        assertNotNull(postBlocks.get(2).getPred()); // localId 3
+        assertEquals(new Integer(3), postBlocks.get(2).getPred().getLocalId()); // localId 3
+
+        assertNotNull(postBlocks.get(3).getPred()); // localId 4
+        assertEquals(new Integer(4), postBlocks.get(3).getPred().getLocalId()); // localId 4
     }
 
 
@@ -471,22 +495,42 @@ class PostVersionHistoryTest {
         PostVersionList q_18276636 = new PostVersionList();
         q_18276636.readFromCSV("testdata", 18276636, 1, true);
 
-        //TODO: revise
-
         PostVersion version_2 = q_18276636.get(1);
+        assertEquals(17, version_2.getPostBlocks().size());
+        assertEquals(9, version_2.getTextBlocks().size());
+        assertEquals(8, version_2.getCodeBlocks().size());
+        List<PostBlockVersion> postBlocks = version_2.getPostBlocks();
+        assertTrue(postBlocks.get(0) instanceof TextBlockVersion);
+        assertTrue(postBlocks.get(1) instanceof CodeBlockVersion);
+        assertTrue(postBlocks.get(2) instanceof TextBlockVersion);
+        assertTrue(postBlocks.get(3) instanceof CodeBlockVersion);
+        assertTrue(postBlocks.get(4) instanceof TextBlockVersion);
+        assertTrue(postBlocks.get(5) instanceof CodeBlockVersion);
+        assertTrue(postBlocks.get(6) instanceof TextBlockVersion);
+        assertTrue(postBlocks.get(7) instanceof CodeBlockVersion);
+        assertTrue(postBlocks.get(8) instanceof TextBlockVersion);
+        assertTrue(postBlocks.get(9) instanceof CodeBlockVersion);
+        assertTrue(postBlocks.get(10) instanceof TextBlockVersion);
+        assertTrue(postBlocks.get(11) instanceof CodeBlockVersion);
+        assertTrue(postBlocks.get(12) instanceof TextBlockVersion);
+        assertTrue(postBlocks.get(13) instanceof CodeBlockVersion);
+        assertTrue(postBlocks.get(14) instanceof TextBlockVersion);
+        assertTrue(postBlocks.get(15) instanceof CodeBlockVersion);
+        assertTrue(postBlocks.get(16) instanceof TextBlockVersion);
 
-        assertEquals(new Integer(1), version_2.getPostBlocks().get(4).getPred().getLocalId());
-        assertEquals(new Integer(2), version_2.getPostBlocks().get(5).getPred().getLocalId());
-        assertEquals(new Integer(3), version_2.getPostBlocks().get(6).getPred().getLocalId());
-        assertEquals(new Integer(4), version_2.getPostBlocks().get(7).getPred().getLocalId());
-        assertEquals(new Integer(5), version_2.getPostBlocks().get(8).getPred().getLocalId());
-        assertEquals(new Integer(6), version_2.getPostBlocks().get(9).getPred().getLocalId());
-        assertEquals(new Integer(7), version_2.getPostBlocks().get(10).getPred().getLocalId());
-        assertEquals(new Integer(8), version_2.getPostBlocks().get(11).getPred().getLocalId());
-        assertEquals(new Integer(9), version_2.getPostBlocks().get(12).getPred().getLocalId());
-        assertEquals(new Integer(10), version_2.getPostBlocks().get(13).getPred().getLocalId());
-        assertEquals(new Integer(11), version_2.getPostBlocks().get(14).getPred().getLocalId());
-        assertEquals(new Integer(12), version_2.getPostBlocks().get(15).getPred().getLocalId());
-        assertEquals(new Integer(13), version_2.getPostBlocks().get(16).getPred().getLocalId());
+        // version 1: text block with localId 3 and content "to"
+        // version 2: text block with localId 3 and content "to" + same content in text block with localId 7
+        // block 7 is "correct" successor (same neighbors)
+
+        assertNull(postBlocks.get(2).getPred()); // localId 3
+
+        assertNotNull(postBlocks.get(5).getPred()); // localId 6
+        assertEquals(new Integer(2), postBlocks.get(5).getPred().getLocalId()); // localId 6
+
+        assertNotNull(postBlocks.get(6).getPred()); // localId 7
+        assertEquals(new Integer(3), postBlocks.get(6).getPred().getLocalId()); // localId 7
+
+        assertNotNull(postBlocks.get(7).getPred()); // localId 8
+        assertEquals(new Integer(4), postBlocks.get(7).getPred().getLocalId()); // localId 8
     }
 }

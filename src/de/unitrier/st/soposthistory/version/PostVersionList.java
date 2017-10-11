@@ -1,8 +1,6 @@
 package de.unitrier.st.soposthistory.version;
 
-import de.unitrier.st.soposthistory.blocks.CodeBlockVersion;
 import de.unitrier.st.soposthistory.blocks.PostBlockVersion;
-import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
 import de.unitrier.st.soposthistory.diffs.PostBlockDiffList;
 import de.unitrier.st.soposthistory.history.PostHistory;
 import org.apache.commons.csv.CSVFormat;
@@ -15,8 +13,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -131,25 +131,53 @@ public class PostVersionList extends LinkedList<PostVersion> {
             } else {
                 currentVersion.setPredPostHistoryId(this.get(predIndex).getPostHistoryId());
 
-                // compute similarity and diffs
                 PostVersion previousVersion = this.get(i-1);
+                Map<PostBlockVersion, Integer> matchedPredecessors = new HashMap<>();
 
-                // text blocks
+                // find matching predecessors for text blocks
                 if (filter == PostBlockTypeFilter.BOTH || filter == PostBlockTypeFilter.TEXT) {
-                    currentVersion.computePostBlockSimilarityAndDiffs(
+                    matchedPredecessors.putAll(currentVersion.findMatchingPredecessors(
                             currentVersion.getTextBlocks(),
-                            previousVersion.getTextBlocks(),
-                            TextBlockVersion.similarityThreshold
-                    );
+                            previousVersion.getTextBlocks()
+                    ));
                 }
 
-                // code blocks
+                // find matching predecessors for text blocks
                 if (filter == PostBlockTypeFilter.BOTH || filter == PostBlockTypeFilter.CODE) {
-                    currentVersion.computePostBlockSimilarityAndDiffs(
+                    matchedPredecessors.putAll(currentVersion.findMatchingPredecessors(
                             currentVersion.getCodeBlocks(),
-                            previousVersion.getCodeBlocks(),
-                            CodeBlockVersion.similarityThreshold
-                    );
+                            previousVersion.getCodeBlocks()
+                    ));
+                }
+
+                // set predecessors of text and code blocks if only one predecessor matches and if this predecessor is only matched by one block in the current version
+                for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks()) {
+                    if (currentPostBlock.getMatchingPredecessors().size() == 1) {
+                        // only one matching predecessor found
+                        PostBlockVersion matchingPredecessor = currentPostBlock.getMatchingPredecessors().get(0);
+                        if (matchedPredecessors.get(matchingPredecessor) == 1) {
+                            // the matched predecessor is only matched for currentPostBlock
+                            if (matchingPredecessor.isAvailable()) {
+                                currentPostBlock.setPred(matchingPredecessor);
+                            }
+                        }
+                    }
+                }
+
+                // next, try to set remaining predecessors using context (neighboring blocks of post block and matching predecessor)
+                for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks()) {
+                    // predecessor for this post block not set yet and at least one matching predecessor found
+                    if (currentPostBlock.getPred() == null && currentPostBlock.getMatchingPredecessors().size() > 0) {
+                        currentPostBlock.setPredContext(currentVersion, previousVersion);
+                    }
+                }
+
+                // finally, set the remaining predecessors using the order in the post (localId)
+                for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks()) {
+                    // predecessor for this post block not set yet and at least one matching predecessor found
+                    if (currentPostBlock.getPred() == null && currentPostBlock.getMatchingPredecessors().size() > 0) {
+                        currentPostBlock.setPredMinPos();
+                    }
                 }
 
                 // set root post block for all post blocks

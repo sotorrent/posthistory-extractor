@@ -2,10 +2,12 @@ package de.unitrier.st.soposthistory.blocks;
 
 import de.unitrier.st.soposthistory.diffs.LineDiff;
 import de.unitrier.st.soposthistory.diffs.diff_match_patch;
+import de.unitrier.st.soposthistory.version.PostVersion;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 import static de.unitrier.st.soposthistory.history.PostHistoryIterator.logger;
 
@@ -14,6 +16,8 @@ import static de.unitrier.st.soposthistory.history.PostHistoryIterator.logger;
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name="PostBlockTypeId",discriminatorType=DiscriminatorType.INTEGER)
 public abstract class PostBlockVersion {
+    private static final double EQUALITY_SIMILARITY = 10.0;
+
     /*
      * Decisions:
      *  (1) Only direct predecessors are compared (in snippet 326440, for instance, blocks in version 5 and 8 are
@@ -44,7 +48,10 @@ public abstract class PostBlockVersion {
     private final LineDiff lineDiff;
     private List<diff_match_patch.Diff> predDiff;
     private PostBlockVersion pred;
-    private boolean isAvailable = true; // false if this post block is set as a predecessor of a block in the next version
+    private boolean isAvailable; // false if this post block is set as a predecessor of a block in the next version
+    private List<PostBlockVersion> matchingPredecessors;
+    private Map<PostBlockVersion, Double> predecessorSimilarities;
+    private double maxSimilarity;
 
     public PostBlockVersion() {
         // database
@@ -66,6 +73,10 @@ public abstract class PostBlockVersion {
         this.lineDiff = new LineDiff();
         this.pred = null;
         this.predDiff = null;
+        this.isAvailable = true;
+        this.matchingPredecessors = new LinkedList<>();
+        this.predecessorSimilarities = new HashMap<>();
+        this.maxSimilarity = -1;
     }
 
     public PostBlockVersion(int postId, int postHistoryId) {
@@ -239,6 +250,93 @@ public abstract class PostBlockVersion {
         }
     }
 
+    public void setPred(PostBlockVersion pred) {
+        if (maxSimilarity == EQUALITY_SIMILARITY) {
+            // pred is equal
+            setPred(pred, 1.0); // computes diff
+            setPredEqual(true);
+        } else {
+            // pred is similar
+            setPred(pred, maxSimilarity); // computes diff
+            setPredEqual(false);
+        }
+
+        // mark predecessor as not available
+        pred.setNotAvailable();
+    }
+
+    public boolean setPredMinPos() {
+        // set matching predecessor that has minimal position and is still available
+        int pos = 0;
+        while(pos < matchingPredecessors.size()
+                && !matchingPredecessors.get(pos).isAvailable()) {
+            pos++;
+        }
+
+        if (pos < matchingPredecessors.size()) {
+            PostBlockVersion matchingPredecessor = matchingPredecessors.get(pos);
+            if (matchingPredecessor.isAvailable()) {
+                setPred(matchingPredecessor);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean setPredContext(PostVersion currentVersion, PostVersion previousVersion) {
+        for (PostBlockVersion matchingPredecessor : matchingPredecessors) {
+            if (setPredContext(matchingPredecessor, currentVersion, previousVersion)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean setPredContext(PostBlockVersion matchingPredecessor, PostVersion currentVersion, PostVersion previousVersion) {
+        int indexThis = currentVersion.getPostBlocks().indexOf(this);
+        int indexPred = previousVersion.getPostBlocks().indexOf(matchingPredecessor);
+
+        // consider context to select matching predecessor
+        if ((indexThis > 0 && indexThis < currentVersion.getPostBlocks().size()-1)
+                && (indexPred > 0 && indexPred < previousVersion.getPostBlocks().size()-1)) {
+
+            // neighbors of post block and matching predecessor are available
+
+            // get post blocks before and after this post block
+            PostBlockVersion beforePostBlock = currentVersion.getPostBlocks().get(indexThis - 1);
+            PostBlockVersion afterPostBlock = currentVersion.getPostBlocks().get(indexThis + 1);
+
+            // get post blocks before and after matching predecessor
+            PostBlockVersion beforeMatchingPredecessor = previousVersion.getPostBlocks().get(indexPred - 1);
+            PostBlockVersion afterMatchingPredecessor = previousVersion.getPostBlocks().get(indexPred + 1);
+
+            // use different strategies for code and text blocks
+            if (this instanceof CodeBlockVersion) {
+                // check if matching predecessor has same neighbors
+                if (beforePostBlock.getPred() != null && beforePostBlock.getPred() == beforeMatchingPredecessor
+                        && afterPostBlock.getPred() != null && afterPostBlock.getPred() == afterMatchingPredecessor) {
+                    if (matchingPredecessor.isAvailable()) {
+                        setPred(matchingPredecessor);
+                        return true;
+                    }
+                }
+            } else if (this instanceof TextBlockVersion) {
+                // consider text as caption for next code block -> focus on afterPostBlock (beforePostBlock may be null)
+                if ((beforePostBlock.getPred() == null ||
+                        (beforePostBlock.getPred() != null && beforePostBlock.getPred() == beforeMatchingPredecessor))
+                        && afterPostBlock.getPred() != null && afterPostBlock.getPred() == afterMatchingPredecessor) {
+                    if (matchingPredecessor.isAvailable()) {
+                        setPred(matchingPredecessor);
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
     public void append(String line) {
         if (contentBuilder.length() > 0) {
             // end previous line with line break
@@ -276,7 +374,6 @@ public abstract class PostBlockVersion {
         return isAvailable;
     }
 
-    @Transient
     public void setNotAvailable() {
         if (!isAvailable) {
             throw new IllegalStateException("A post block can only be prececessor of one post block in the next verion.");
@@ -289,6 +386,55 @@ public abstract class PostBlockVersion {
 
     private List<diff_match_patch.Diff> diff(PostBlockVersion block) {
         return lineDiff.diff_lines_only(this.getContent(), block.getContent());
+    }
+
+    @Transient
+    public List<PostBlockVersion> getMatchingPredecessors() {
+        return matchingPredecessors;
+    }
+
+    abstract public <T extends PostBlockVersion> List<PostBlockVersion> findMatchingPredecessors(List<T> previousVersionPostBlocks);
+
+    public <T extends PostBlockVersion> List<PostBlockVersion> findMatchingPredecessors(List<T> previousVersionPostBlocks,
+                                                                      double similarityThreshold) {
+
+        for (PostBlockVersion previousVersionPostBlock : previousVersionPostBlocks) {
+            boolean equal = getContent().equals(previousVersionPostBlock.getContent());
+            double similarity = compareTo(previousVersionPostBlock);
+
+            if (equal) {
+                // equal predecessors have similarity 10.0 (see final static constant EQUALITY_SIMILARITY)
+                predecessorSimilarities.put(previousVersionPostBlock, EQUALITY_SIMILARITY);
+                maxSimilarity = EQUALITY_SIMILARITY;
+            } else {
+                predecessorSimilarities.put(previousVersionPostBlock, similarity);
+                if (similarity > maxSimilarity) {
+                    maxSimilarity = similarity;
+                }
+            }
+        }
+
+        // set most similar post block as predecessor:
+        // (1) equality of content, (2) similarity metric, (3) context, (4) order in post.
+        final double finalMaxSimilarity = maxSimilarity; // final value needed for lambda expression
+
+        if (finalMaxSimilarity >= similarityThreshold) {
+            // get predecessors with max. similarity
+            matchingPredecessors = predecessorSimilarities.entrySet()
+                    .stream()
+                    .filter(e -> e.getValue() == finalMaxSimilarity)
+                    .sorted(Comparator.comparing(e -> e.getKey().getLocalId())) // TODO: asc or desc???
+                    .map(Map.Entry::getKey)
+                    .collect(Collectors.toList());
+        }
+
+        // increase successor count for all matching predecessors
+        for (PostBlockVersion matchingPredecessor : matchingPredecessors) {
+            incrementPredCount();
+            matchingPredecessor.incrementSuccCount();
+        }
+
+        return matchingPredecessors;
     }
 
     @Override
