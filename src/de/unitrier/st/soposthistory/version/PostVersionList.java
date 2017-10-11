@@ -134,6 +134,8 @@ public class PostVersionList extends LinkedList<PostVersion> {
                 PostVersion previousVersion = this.get(i-1);
                 Map<PostBlockVersion, Integer> matchedPredecessors = new HashMap<>();
 
+                // find matching predecessors by (1) equality of content and (2) similarity metric
+
                 // find matching predecessors for text blocks
                 if (filter == PostBlockTypeFilter.BOTH || filter == PostBlockTypeFilter.TEXT) {
                     matchedPredecessors.putAll(currentVersion.findMatchingPredecessors(

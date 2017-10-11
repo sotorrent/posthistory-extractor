@@ -414,10 +414,8 @@ public abstract class PostBlockVersion {
             }
         }
 
-        // set most similar post block as predecessor:
-        // (1) equality of content, (2) similarity metric, (3) context, (4) order in post.
+        // retrieve predecessors with maximal similarity
         final double finalMaxSimilarity = maxSimilarity; // final value needed for lambda expression
-
         if (finalMaxSimilarity >= similarityThreshold) {
             // get predecessors with max. similarity
             matchingPredecessors = predecessorSimilarities.entrySet()
