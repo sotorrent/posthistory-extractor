@@ -18,7 +18,6 @@ import static de.unitrier.st.soposthistory.util.Util.updateList;
 @Entity
 @Table(name = "PostVersion", schema = "stackoverflow16_12")
 public class PostVersion {
-    private final double EQUALITY_SIMILARITY = 10.0;
     // database
     private int id;
     private Integer postId;
@@ -194,78 +193,29 @@ public class PostVersion {
      * Rules for matching: (1) equality of content, (2) similarity metric, (3) order in post.
      * @param currentVersionPostBlocks Text or code blocks from current post version
      * @param previousVersionPostBlocks Text or code blocks from previous post version
-     * @param similarityThreshold Similarity threshold for matching
      * @param <T> Either TextBlockVersion or CodeBlockVersion
      */
-    public <T extends PostBlockVersion> void computePostBlockSimilarityAndDiffs(
+    public <T extends PostBlockVersion> Map<PostBlockVersion, Integer> findMatchingPredecessors(
                                                 List<T> currentVersionPostBlocks,
-                                                List<T> previousVersionPostBlocks,
-                                                double similarityThreshold) {
+                                                List<T> previousVersionPostBlocks) {
+
+        Map<PostBlockVersion, Integer> matchedPredecessors = new HashMap<>();
+
         for (T currentVersionPostBlock : currentVersionPostBlocks) {
-            HashMap<T, Double> similarities = new HashMap<>();
-            double maxSimilarity = -1;
+            List<PostBlockVersion> currentMatchedPredecessors
+                    = currentVersionPostBlock.findMatchingPredecessors(previousVersionPostBlocks);
 
-            for (T previousVersionPostBlock : previousVersionPostBlocks) {
-                boolean equal = currentVersionPostBlock.getContent().equals(previousVersionPostBlock.getContent());
-                double similarity = currentVersionPostBlock.compareTo(previousVersionPostBlock);
-
-                if (equal) {
-                    // equal predecessors have similarity 10.0 (see final constant)
-                    similarities.put(previousVersionPostBlock, EQUALITY_SIMILARITY);
-                    maxSimilarity = EQUALITY_SIMILARITY;
+            for (PostBlockVersion matchedPredecessor : currentMatchedPredecessors) {
+                if (matchedPredecessors.containsKey(matchedPredecessor)) {
+                    int count = matchedPredecessors.get(matchedPredecessor);
+                    matchedPredecessors.put(matchedPredecessor, ++count);
                 } else {
-                    similarities.put(previousVersionPostBlock, similarity);
-                    if (similarity > maxSimilarity) {
-                        maxSimilarity = similarity;
-                    }
-                }
-            }
-
-            // set most similar post block as predecessor:
-            // (1) equality of content, (2) similarity metric, (3) order in post.
-            final double finalMaxSimilarity = maxSimilarity; // final value needed for lambda expression
-
-            if (finalMaxSimilarity >= similarityThreshold) {
-                // get predecessors with max. similarity
-                List<PostBlockVersion> matchingPredecessors = similarities.entrySet()
-                        .stream()
-                        .filter(e -> e.getValue() == finalMaxSimilarity)
-                        .sorted(Comparator.comparing(e -> e.getKey().getLocalId())) // TODO: asc or desc???
-                        .map(Map.Entry::getKey)
-                        .collect(Collectors.toList());
-
-
-                if (matchingPredecessors.size() > 0) {
-                    // find matching predecessor that is still available
-                    int pos = 0;
-                    while(pos < matchingPredecessors.size() && !matchingPredecessors.get(pos).isAvailable()) {
-                        pos++;
-                    }
-
-                    if (pos < matchingPredecessors.size()) {
-                        // matching and available predecessor found
-                        if (finalMaxSimilarity == EQUALITY_SIMILARITY) {
-                            // pred is equal
-                            currentVersionPostBlock.setPred(matchingPredecessors.get(pos), 1.0); // computes diff
-                            currentVersionPostBlock.setPredEqual(true);
-                        } else {
-                            // pred is similar
-                            currentVersionPostBlock.setPred(matchingPredecessors.get(pos), finalMaxSimilarity); // computes diff
-                            currentVersionPostBlock.setPredEqual(false);
-                        }
-
-                        // mark predecessor as not available
-                        matchingPredecessors.get(pos).setNotAvailable();
-
-                        // increase successor count for all matches
-                        for (PostBlockVersion matchingPredecessor : matchingPredecessors) {
-                            currentVersionPostBlock.incrementPredCount();
-                            matchingPredecessor.incrementSuccCount();
-                        }
-                    }
+                    matchedPredecessors.put(matchedPredecessor, 1);
                 }
             }
         }
+
+        return matchedPredecessors;
     }
 
     @Override

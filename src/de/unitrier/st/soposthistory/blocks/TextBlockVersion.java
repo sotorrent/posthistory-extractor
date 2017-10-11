@@ -4,6 +4,7 @@ import de.unitrier.st.stringsimilarity.util.InputTooShortException;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import java.util.List;
 import java.util.function.BiFunction;
 
 @Entity
@@ -31,6 +32,11 @@ public class TextBlockVersion extends PostBlockVersion {
         } catch (InputTooShortException e) {
             return backupSimilarityMetric.apply(getContent(), otherBlock.getContent());
         }
+    }
+
+    @Override
+    public <T extends PostBlockVersion> List<PostBlockVersion> findMatchingPredecessors(List<T> previousVersionPostBlocks) {
+        return super.findMatchingPredecessors(previousVersionPostBlocks, similarityThreshold);
     }
 
     @Override
