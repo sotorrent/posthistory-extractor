@@ -248,16 +248,22 @@ public class PostHistory {
             if (isCodeTagBegin) {
                 line = line.replace("<pre><code>", "");
                 inCodeTagCodeBlock = true;
+                if (line.trim().isEmpty()) {
+                    // line only contained opening code tags -> skip
+                    continue;
+                }
             }
 
             if (isCodeTagEnd) {
                 line = line.replace("</pre></code>", "");
-                codeBlockEndsWithNextLine = true; // this line may still contain content of the code block, end with next line
-            }
-
-            // skip line if it only contained code tags
-            if (line.trim().isEmpty()) {
-                continue;
+                if (line.trim().isEmpty()) {
+                    // line only contained closing code tags -> close code block and skip
+                    inCodeTagCodeBlock = false;
+                    continue;
+                } else {
+                    // line also contained content -> close code block in next line
+                    codeBlockEndsWithNextLine = true;
+                }
             }
 
             // see https://meta.stackexchange.com/q/125148; example: https://stackoverflow.com/posts/32342082/revisions
