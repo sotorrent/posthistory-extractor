@@ -129,9 +129,8 @@ public class PostVersionList extends LinkedList<PostVersion> {
                     currentPostBlock.setRootPostBlockId(currentPostBlock.getId());
                 }
             } else {
+                PostVersion previousVersion = this.get(predIndex);
                 currentVersion.setPredPostHistoryId(this.get(predIndex).getPostHistoryId());
-
-                PostVersion previousVersion = this.get(i-1);
                 Map<PostBlockVersion, Integer> matchedPredecessors = new HashMap<>();
 
                 // find matching predecessors by (1) equality of content and (2) similarity metric
