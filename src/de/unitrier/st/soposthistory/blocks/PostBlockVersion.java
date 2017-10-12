@@ -87,7 +87,7 @@ public abstract class PostBlockVersion {
 
     @Id
     @Column(name = "Id")
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int getId() {
         return id;
     }
@@ -245,7 +245,7 @@ public abstract class PostBlockVersion {
             this.predSimilarity = predSimilarity;
             this.predPostBlockId = pred.getId();
             predDiff = diff(pred);
-        }catch(Exception e){
+        } catch (Exception e) {
             logger.log(Level.WARNING, "Couldn't set predecessor.");
         }
     }
@@ -268,7 +268,7 @@ public abstract class PostBlockVersion {
     public boolean setPredMinPos() {
         // set matching predecessor that has minimal position and is still available
         int pos = 0;
-        while(pos < matchingPredecessors.size()
+        while (pos < matchingPredecessors.size()
                 && !matchingPredecessors.get(pos).isAvailable()) {
             pos++;
         }
@@ -298,8 +298,8 @@ public abstract class PostBlockVersion {
         int indexPred = previousVersion.getPostBlocks().indexOf(matchingPredecessor);
 
         // consider context to select matching predecessor
-        if ((indexThis > 0 && indexThis < currentVersion.getPostBlocks().size()-1)
-                && (indexPred > 0 && indexPred < previousVersion.getPostBlocks().size()-1)) {
+        if ((indexThis > 0 && indexThis < currentVersion.getPostBlocks().size() - 1)
+                && (indexPred > 0 && indexPred < previousVersion.getPostBlocks().size() - 1)) {
 
             // neighbors of post block and matching predecessor are available
 
@@ -396,7 +396,7 @@ public abstract class PostBlockVersion {
     abstract public <T extends PostBlockVersion> List<PostBlockVersion> findMatchingPredecessors(List<T> previousVersionPostBlocks);
 
     public <T extends PostBlockVersion> List<PostBlockVersion> findMatchingPredecessors(List<T> previousVersionPostBlocks,
-                                                                      double similarityThreshold) {
+                                                                                        double similarityThreshold) {
 
         for (PostBlockVersion previousVersionPostBlock : previousVersionPostBlocks) {
             boolean equal = getContent().equals(previousVersionPostBlock.getContent());
@@ -438,40 +438,5 @@ public abstract class PostBlockVersion {
     @Override
     public String toString() {
         return "PostBlockVersion: " + getContent();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        PostBlockVersion that = (PostBlockVersion) o;
-
-        if (id != that.getId()) return false;
-        if (postHistoryId != null ? !postHistoryId.equals(that.getPostHistoryId()) : that.getPostHistoryId() != null) return false;
-        if (localId != null ? !localId.equals(that.getLocalId()) : that.getLocalId() != null) return false;
-        if (rootPostBlockId != null ? !rootPostBlockId.equals(that.getRootPostBlockId()) : that.getRootPostBlockId() != null) return false;
-        if (content != null ? !content.equals(that.getContent()) : that.getContent() != null) return false;
-        if (predPostBlockId != null ? !predPostBlockId.equals(that.getPredPostBlockId()) : that.getPredPostBlockId() != null) return false;
-        if (predEqual != null ? !predEqual.equals(that.getPredEqual()) : that.getPredEqual() != null) return false;
-        if (predSimilarity != null ? !predSimilarity.equals(that.getPredSimilarity()) : that.getPredSimilarity() != null) return false;
-        if (predCount != that.getPredCount()) return false;
-        if (succCount != that.getSuccCount()) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id;
-        result = 31 * result + (postHistoryId != null ? postHistoryId.hashCode() : 0);
-        result = 31 * result + (localId != null ? localId.hashCode() : 0);
-        result = 31 * result + (rootPostBlockId != null ? rootPostBlockId.hashCode() : 0);
-        result = 31 * result + (content != null ? content.hashCode() : 0);
-        result = 31 * result + (predPostBlockId != null ? predPostBlockId.hashCode() : 0);
-        result = 31 * result + (predSimilarity != null ? predSimilarity.hashCode() : 0);
-        result = 31 * result + succCount;
-        result = 31 * result + predCount;
-        return result;
     }
 }
