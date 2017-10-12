@@ -194,6 +194,7 @@ public class PostVersion {
      * @param currentVersionPostBlocks Text or code blocks from current post version
      * @param previousVersionPostBlocks Text or code blocks from previous post version
      * @param <T> Either TextBlockVersion or CodeBlockVersion
+     * @return Map with matched predecessor post blocks and number of times they were matched
      */
     public <T extends PostBlockVersion> Map<PostBlockVersion, Integer> findMatchingPredecessors(
                                                 List<T> currentVersionPostBlocks,
