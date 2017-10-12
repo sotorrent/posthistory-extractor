@@ -364,6 +364,18 @@ class PostVersionHistoryTest {
     }
 
     @Test
+    void testVersionOrderQuestion3381751() {
+        PostVersionList q_3381751 = new PostVersionList();
+        q_3381751.readFromCSV("testdata", 3381751, 1);
+
+        PostVersion previousVersion = q_3381751.get(0);
+        for (int i = 1; i < q_3381751.size(); i++) {
+            PostVersion currentVersion = q_3381751.get(i);
+            assertTrue(currentVersion.getPostHistoryId() > previousVersion.getPostHistoryId());
+        }
+    }
+
+    @Test
     void testPredecessorAssignmentAnswer3758880(){
         // tests if posts blocks are set more than once as predecessor
         PostVersionList a_3758880 = new PostVersionList();
