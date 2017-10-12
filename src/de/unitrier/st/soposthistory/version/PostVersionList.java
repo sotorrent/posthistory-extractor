@@ -88,6 +88,9 @@ public class PostVersionList extends LinkedList<PostVersion> {
                 }
             }
 
+            // sort list according to PostHistoryId, because order in CSV may not be chronologically
+            this.sort();
+
             if (processVersionHistory) {
                 processVersionHistory();
             }
