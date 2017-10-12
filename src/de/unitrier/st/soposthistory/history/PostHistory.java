@@ -48,6 +48,9 @@ public class PostHistory {
     // see https://meta.stackexchange.com/q/125148; example: https://stackoverflow.com/posts/32342082/revisions
     private static Pattern alternativeCodeBlockBeginPattern = Pattern.compile("\\s*(```).*");
     private static Pattern alternativeCodeBlockEndPattern = Pattern.compile(".*(```)\\s*");
+    // see, e.g., source of question 19175014 (<pre><code> ... </pre></code> instead of correct indention)
+    private static Pattern codeTagBeginPattern = Pattern.compile(".*<pre><code>");
+    private static Pattern codeTagEndPattern = Pattern.compile(".*</pre></code>");
 
     // database
     private int id;
@@ -207,11 +210,19 @@ public class PostHistory {
         PostBlockVersion currentBlock = null;
         boolean inStackSnippetCodeBlock = false;
         boolean inAlternativeCodeBlock = false;
+        boolean inCodeTagCodeBlock = false;
+        boolean codeBlockEndsWithNextLine = false;
 
         for (String line : lines) {
             // ignore empty lines
             if (line.isEmpty()) {
                 continue;
+            }
+
+            // end code block which contained a code tag in the previous line (see below)
+            if (codeBlockEndsWithNextLine) {
+                inCodeTagCodeBlock = false;
+                codeBlockEndsWithNextLine = false;
             }
 
             // see https://stackoverflow.blog/2014/09/16/introducing-runnable-javascript-css-and-html-code-snippets/
@@ -226,6 +237,26 @@ public class PostHistory {
 
             if (isStackSnippetEnd) {
                 inStackSnippetCodeBlock = false;
+                continue;
+            }
+
+            // code block that is marked by <pre><code> ... </pre></code> instead of correct indention
+            boolean isCodeTagBegin = codeTagBeginPattern.matcher(line).find(); // only match beginning of line
+            boolean isCodeTagEnd = codeTagEndPattern.matcher(line).find(); // only match beginning of line
+
+            // remove code tags
+            if (isCodeTagBegin) {
+                line = line.replace("<pre><code>", "");
+                inCodeTagCodeBlock = true;
+            }
+
+            if (isCodeTagEnd) {
+                line = line.replace("</pre></code>", "");
+                codeBlockEndsWithNextLine = true; // this line may still contain content of the code block, end with next line
+            }
+
+            // skip line if it only contained code tags
+            if (line.trim().isEmpty()) {
                 continue;
             }
 
@@ -260,7 +291,7 @@ public class PostHistory {
             boolean isWhitespaceLine = whiteSpaceLinePattern.matcher(line).matches(); // match whole line
             boolean containsLettersOrDigits = containsLetterOrDigitPattern.matcher(line).find(); // only match beginning of line
 
-            boolean inCodeBlock = isCodeLine || isSnippetLanguage || inStackSnippetCodeBlock || inAlternativeCodeBlock;
+            boolean inCodeBlock = isCodeLine || isSnippetLanguage || inStackSnippetCodeBlock || inAlternativeCodeBlock || inCodeTagCodeBlock;
 
             if (currentBlock == null) {
                 // ignore whitespaces at the beginning of a post
