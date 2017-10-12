@@ -582,4 +582,19 @@ class PostVersionHistoryTest {
         assertNotNull(postBlocks.get(7).getPred()); // localId 8
         assertEquals(new Integer(4), postBlocks.get(7).getPred().getLocalId()); // localId 8
     }
+
+    @Test
+    void testBrokenTextBlockQuestion15372744() {
+        PostVersionList q_15372744 = new PostVersionList();
+        q_15372744.readFromCSV("testdata", 15372744, 1);
+
+        // version 1 contains a broken text block, which has an indented line. Stack Overflow displays this correctly  (see https://stackoverflow.com/revisions/15372744/1)
+        PostVersion version_1 = q_15372744.get(0);
+        assertEquals(1, version_1.getPostBlocks().size());
+        assertEquals(1, version_1.getTextBlocks().size());
+        assertEquals(0, version_1.getCodeBlocks().size());
+
+        List<PostBlockVersion> postBlocks = version_1.getPostBlocks();
+        assertTrue(postBlocks.get(0) instanceof TextBlockVersion);
+    }
 }

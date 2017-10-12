@@ -210,7 +210,7 @@ public class PostHistory {
 
         // http://stackoverflow.com/a/454913
         String[] lines = text.split("&#xD;&#xA;");
-        PostBlockVersion currentBlock = null;
+        PostBlockVersion currentPostBlock = null;
         boolean inStackSnippetCodeBlock = false;
         boolean inAlternativeCodeBlock = false;
         boolean inCodeTagCodeBlock = false;
@@ -328,35 +328,35 @@ public class PostHistory {
             boolean inCodeBlock = isCodeLine || isSnippetLanguage || inStackSnippetCodeBlock || inAlternativeCodeBlock
                     || inCodeTagCodeBlock || inScriptTagCodeBlock;
 
-            if (currentBlock == null) {
+            if (currentPostBlock == null) {
                 // ignore whitespaces at the beginning of a post
                 if (!isWhitespaceLine) {
                     // first line, block element not created yet
                     if (inCodeBlock) {
-                        currentBlock = new CodeBlockVersion(postId, id);
+                        currentPostBlock = new CodeBlockVersion(postId, id);
                     } else {
-                        currentBlock = new TextBlockVersion(postId, id);
+                        currentPostBlock = new TextBlockVersion(postId, id);
                     }
                 }
             } else {
                 // currentBlock has length > 0 => check if current line belongs to this block
                 // or if it is first line of next block
 
-                if (currentBlock instanceof TextBlockVersion) {
+                if (currentPostBlock instanceof TextBlockVersion) {
                     if (inCodeBlock && !isWhitespaceLine) {
                         // End of text block, beginning of code block.
                         // Do not end text block if next line is whitespace line
                         // see, e.g., second line of PostHistory, Id=97576027
-                        addPostBlock(currentBlock);
-                        currentBlock = new CodeBlockVersion(postId, id);
+                        addPostBlock(currentPostBlock);
+                        currentPostBlock = new CodeBlockVersion(postId, id);
                     }
                 }
 
-                if (currentBlock instanceof CodeBlockVersion) {
+                if (currentPostBlock instanceof CodeBlockVersion) {
                     // snippet language divides two code blocks (if first block is not empty)
                     if (isSnippetLanguage) {
-                        addPostBlock(currentBlock);
-                        currentBlock = new CodeBlockVersion(postId, id);
+                        addPostBlock(currentPostBlock);
+                        currentPostBlock = new CodeBlockVersion(postId, id);
                     } else if(!inCodeBlock && !isWhitespaceLine && containsLettersOrDigits) {
                         // In a Stack Snippet, the lines do not have to be indented (see version 12 of answer
                         // 26044128 and corresponding test case).
@@ -365,29 +365,79 @@ public class PostHistory {
                         // Do not end code block if next line is whitespace line
                         // see, e.g., second line of PostHistory, Id=97576027
                         // Only end code block if next line contains a letter or a digit (e.g., '{').
-                        addPostBlock(currentBlock);
-                        currentBlock = new TextBlockVersion(postId, id);
+                        addPostBlock(currentPostBlock);
+                        currentPostBlock = new TextBlockVersion(postId, id);
                     }
                 }
             }
 
             // ignore snippet language information (see https://stackoverflow.com/editing-help#syntax-highlighting)
-            if (currentBlock != null && !isSnippetLanguage) {
-                currentBlock.append(line);
+            if (currentPostBlock != null && !isSnippetLanguage) {
+                currentPostBlock.append(line);
             }
         }
 
-        if (currentBlock != null) {
-            if (!currentBlock.isEmpty()) {
+        if (currentPostBlock != null) {
+            if (!currentPostBlock.isEmpty()) {
                 // last block not added yet
-                currentBlock.setLocalId(++localIdCount);
-                postBlocks.add(currentBlock);
+                currentPostBlock.setLocalId(++localIdCount);
+                postBlocks.add(currentPostBlock);
             }
         }
 
-        for (PostBlockVersion currentPostBlock : postBlocks) {
+        reviseAndFinalizePostBlocks();
+    }
+
+    private void reviseAndFinalizePostBlocks() {
+        PostBlockVersion currentPostBlock;
+        Set<PostBlockVersion> markedForDeletion = new HashSet<>();
+
+        for (int i = 0; i < postBlocks.size(); i++) {
+            currentPostBlock = postBlocks.get(i);
+
+            // ignore post block if it is already marked for deletion
+            if (markedForDeletion.contains(currentPostBlock)) {
+                continue;
+            }
+
             currentPostBlock.finalizeContent();
+
+            // remove this post block if it only contains letters or digits and if it is short (second line may contain curly brace)
+            boolean containsLettersOrDigits = containsLetterOrDigitPattern.matcher(
+                    currentPostBlock.getContent()).find(); // only match beginning of line
+
+            if (!containsLettersOrDigits && currentPostBlock.getLineCount() < 3) {
+                if (i == 0) {
+                    // current post block is first one
+                    if (postBlocks.size() > 1) {
+                        PostBlockVersion nextPostBlock = postBlocks.get(i+1);
+                        nextPostBlock.append(currentPostBlock.getContent());
+                        nextPostBlock.finalizeContent();
+                        markedForDeletion.add(currentPostBlock);
+                    }
+                } else {
+                    // current post block is not first one (has predecessor)
+                    PostBlockVersion previousPostBlock = postBlocks.get(i-1);
+                    previousPostBlock.append(currentPostBlock.getContent());
+                    previousPostBlock.finalizeContent();
+                    markedForDeletion.add(currentPostBlock);
+
+                    // merge predecessor and successor if they have same type
+                    if (i < postBlocks.size()-1) {
+                        // current post block has successor
+                        PostBlockVersion nextPostBlock = postBlocks.get(i+1);
+                        nextPostBlock.finalizeContent();
+                        if (previousPostBlock.getClass() == nextPostBlock.getClass()) {
+                            previousPostBlock.append(nextPostBlock.getContent());
+                            previousPostBlock.finalizeContent();
+                            markedForDeletion.add(nextPostBlock);
+                        }
+                    }
+                }
+            }
         }
+
+        postBlocks.removeAll(markedForDeletion);
     }
 
     private void addPostBlock(PostBlockVersion postBlock) {
