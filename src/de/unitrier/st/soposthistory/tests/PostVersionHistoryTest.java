@@ -376,6 +376,25 @@ class PostVersionHistoryTest {
     }
 
     @Test
+    void testScriptTagCodeBlockQuestion3381751() {
+        PostVersionList q_3381751 = new PostVersionList();
+        q_3381751.readFromCSV("testdata", 3381751, 1);
+
+        assertEquals(15, q_3381751.size());
+
+        // version 1 contains a code block marked by <script type="text/javascript"> ... </script> instead of correct indention (see https://stackoverflow.com/revisions/3381751/1)
+        PostVersion version_1 = q_3381751.get(0);
+        assertEquals(3, version_1.getPostBlocks().size());
+        assertEquals(2, version_1.getTextBlocks().size());
+        assertEquals(1, version_1.getCodeBlocks().size());
+
+        List<PostBlockVersion> postBlocks = version_1.getPostBlocks();
+        assertTrue(postBlocks.get(0) instanceof TextBlockVersion);
+        assertTrue(postBlocks.get(1) instanceof CodeBlockVersion);
+        assertTrue(postBlocks.get(2) instanceof TextBlockVersion);
+    }
+
+    @Test
     void testPredecessorAssignmentAnswer3758880(){
         // tests if posts blocks are set more than once as predecessor
         PostVersionList a_3758880 = new PostVersionList();
