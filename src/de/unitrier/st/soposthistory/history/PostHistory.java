@@ -323,7 +323,6 @@ public class PostHistory {
             // e.g. "<!-- language: lang-js -->" (see https://stackoverflow.com/editing-help#syntax-highlighting)
             boolean isSnippetLanguage = snippetLanguagePattern.matcher(line).find(); // only match beginning of line
             boolean isWhitespaceLine = whiteSpaceLinePattern.matcher(line).matches(); // match whole line
-            boolean containsLettersOrDigits = containsLetterOrDigitPattern.matcher(line).find(); // only match beginning of line
 
             boolean inCodeBlock = isCodeLine || isSnippetLanguage || inStackSnippetCodeBlock || inAlternativeCodeBlock
                     || inCodeTagCodeBlock || inScriptTagCodeBlock;
@@ -357,14 +356,13 @@ public class PostHistory {
                     if (isSnippetLanguage) {
                         addPostBlock(currentPostBlock);
                         currentPostBlock = new CodeBlockVersion(postId, id);
-                    } else if(!inCodeBlock && !isWhitespaceLine && containsLettersOrDigits) {
+                    } else if(!inCodeBlock && !isWhitespaceLine) {
                         // In a Stack Snippet, the lines do not have to be indented (see version 12 of answer
                         // 26044128 and corresponding test case).
                         // Do not close code postBlocks when whitespace line is reached
                         // see, e.g., PostHistory, Id=55158265, PostId=20991163 (-> test case).
                         // Do not end code block if next line is whitespace line
                         // see, e.g., second line of PostHistory, Id=97576027
-                        // Only end code block if next line contains a letter or a digit (e.g., '{').
                         addPostBlock(currentPostBlock);
                         currentPostBlock = new TextBlockVersion(postId, id);
                     }
@@ -402,11 +400,11 @@ public class PostHistory {
 
             currentPostBlock.finalizeContent();
 
-            // remove this post block if it only contains letters or digits and if it is short (second line may contain curly brace)
+            // remove this post block if does not contain letters or digits
             boolean containsLettersOrDigits = containsLetterOrDigitPattern.matcher(
                     currentPostBlock.getContent()).find(); // only match beginning of line
 
-            if (!containsLettersOrDigits && currentPostBlock.getLineCount() < 3) {
+            if (!containsLettersOrDigits) {
                 if (i == 0) {
                     // current post block is first one
                     if (postBlocks.size() > 1) {
