@@ -49,8 +49,11 @@ public class PostHistory {
     private static Pattern alternativeCodeBlockBeginPattern = Pattern.compile("\\s*(```).*");
     private static Pattern alternativeCodeBlockEndPattern = Pattern.compile(".*(```)\\s*");
     // see, e.g., source of question 19175014 (<pre><code> ... </pre></code> instead of correct indention)
-    private static Pattern codeTagBeginPattern = Pattern.compile(".*<pre><code>");
+    private static Pattern codeTagBeginPattern = Pattern.compile("<pre><code>"); // the tags should not be indented -> prevent deletion from code blocks containing these tags in sample HTML
     private static Pattern codeTagEndPattern = Pattern.compile(".*</pre></code>");
+    // see, e.g., source of question 3381751 version 1 (<script type="text/javascript"> ... </script> instead of correct indention)
+    private static Pattern scriptTagBeginPattern = Pattern.compile("<script[^>]+>"); // the tags should not be indented -> prevent deletion from code blocks containing these tags in sample HTML
+    private static Pattern scriptTagEndPattern = Pattern.compile(".*</script>");
 
     // database
     private int id;
@@ -211,6 +214,7 @@ public class PostHistory {
         boolean inStackSnippetCodeBlock = false;
         boolean inAlternativeCodeBlock = false;
         boolean inCodeTagCodeBlock = false;
+        boolean inScriptTagCodeBlock = false;
         boolean codeBlockEndsWithNextLine = false;
 
         for (String line : lines) {
@@ -244,7 +248,6 @@ public class PostHistory {
             boolean isCodeTagBegin = codeTagBeginPattern.matcher(line).find(); // only match beginning of line
             boolean isCodeTagEnd = codeTagEndPattern.matcher(line).find(); // only match beginning of line
 
-            // remove code tags
             if (isCodeTagBegin) {
                 line = line.replace("<pre><code>", "");
                 inCodeTagCodeBlock = true;
@@ -262,6 +265,31 @@ public class PostHistory {
                     continue;
                 } else {
                     // line also contained content -> close code block in next line
+                    codeBlockEndsWithNextLine = true;
+                }
+            }
+
+            // code block that is marked by <script...> ... </script> instead of correct indention
+            boolean isScriptTagBegin = scriptTagBeginPattern.matcher(line).find(); // only match beginning of line
+            boolean isScriptTagEnd = scriptTagEndPattern.matcher(line).find(); // only match beginning of line
+
+            if (isScriptTagBegin) {
+                line = line.replaceFirst("<script[^>]+>", "");
+                inScriptTagCodeBlock = true;
+                if (line.trim().isEmpty()) {
+                    // line only contained opening script tag -> skip
+                    continue;
+                }
+            }
+
+            if (isScriptTagEnd) {
+                line = line.replace("</script>", "");
+                if (line.trim().isEmpty()) {
+                    // line only contained closing script tag -> close code block and skip
+                    inScriptTagCodeBlock = false;
+                    continue;
+                } else {
+                    // line also contained content -> close script block in next line
                     codeBlockEndsWithNextLine = true;
                 }
             }
@@ -297,7 +325,8 @@ public class PostHistory {
             boolean isWhitespaceLine = whiteSpaceLinePattern.matcher(line).matches(); // match whole line
             boolean containsLettersOrDigits = containsLetterOrDigitPattern.matcher(line).find(); // only match beginning of line
 
-            boolean inCodeBlock = isCodeLine || isSnippetLanguage || inStackSnippetCodeBlock || inAlternativeCodeBlock || inCodeTagCodeBlock;
+            boolean inCodeBlock = isCodeLine || isSnippetLanguage || inStackSnippetCodeBlock || inAlternativeCodeBlock
+                    || inCodeTagCodeBlock || inScriptTagCodeBlock;
 
             if (currentBlock == null) {
                 // ignore whitespaces at the beginning of a post
