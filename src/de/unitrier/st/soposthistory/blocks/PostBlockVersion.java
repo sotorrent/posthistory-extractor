@@ -354,7 +354,6 @@ public abstract class PostBlockVersion {
 
     public void finalizeContent() {
         this.content = contentBuilder.toString();
-        this.contentBuilder = null;
         this.length = content.length();
         this.lineCount = content.split("\\n").length;
     }
