@@ -206,12 +206,8 @@ public class PostVersion {
                     = currentVersionPostBlock.findMatchingPredecessors(previousVersionPostBlocks);
 
             for (PostBlockVersion matchedPredecessor : currentMatchedPredecessors) {
-                if (matchedPredecessors.containsKey(matchedPredecessor)) {
-                    int count = matchedPredecessors.get(matchedPredecessor);
-                    matchedPredecessors.put(matchedPredecessor, ++count);
-                } else {
-                    matchedPredecessors.put(matchedPredecessor, 1);
-                }
+                matchedPredecessors.put(matchedPredecessor,
+                        matchedPredecessors.getOrDefault(matchedPredecessor, 0) + 1);
             }
         }
 
