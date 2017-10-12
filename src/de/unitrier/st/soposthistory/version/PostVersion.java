@@ -215,32 +215,6 @@ public class PostVersion {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        PostVersion that = (PostVersion) o;
-
-        if (!postId.equals(that.getPostId())) return false;
-        if (!postHistoryId.equals(that.getPostHistoryId())) return false;
-        if (!postTypeId.equals(that.getPostTypeId())) return false;
-        if (!predPostHistoryId.equals(that.getPredPostHistoryId())) return false;
-        if (!succPostHistoryId.equals(that.getSuccPostHistoryId())) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = postId;
-        result = 31 * result + postHistoryId;
-        result = 31 * result + postTypeId;
-        result = 31 * result + predPostHistoryId;
-        result = 31 * result + succPostHistoryId;
-        return result;
-    }
-
-    @Override
     public String toString() {
         return "PostVersion: PostId=" + postId + ", PostHistoryId=" + postHistoryId;
     }

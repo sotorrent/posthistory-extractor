@@ -96,33 +96,4 @@ public class PostBlockDiff {
     public void setText(String text) {
         this.text = text;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        PostBlockDiff that = (PostBlockDiff) o;
-
-        if (id != that.getId()) return false;
-        if (postId != that.getPostId()) return false;
-        if (postHistoryId != that.getPostHistoryId()) return false;
-        if (postBlockVersionId != that.getPostBlockVersionId()) return false;
-        if (postBlockDiffOperationId != that.getPostBlockDiffOperationId()) return false;
-        if (text != null ? !text.equals(that.text) : that.text != null) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id;
-        result = 31 * result + postId;
-        result = 31 * result + postHistoryId;
-        result = 31 * result + predPostBlockVersionId;
-        result = 31 * result + postBlockVersionId;
-        result = 31 * result + postBlockDiffOperationId;
-        result = 31 * result + (text != null ? text.hashCode() : 0);
-        return result;
-    }
 }

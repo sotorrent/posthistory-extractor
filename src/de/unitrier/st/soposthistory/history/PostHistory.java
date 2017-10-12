@@ -374,41 +374,4 @@ public class PostHistory {
     public String toString() {
         return "PostHistory: Id=" + id + ", PostId="+ postId;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        PostHistory that = (PostHistory) o;
-
-        if (id != that.getId()) return false;
-        if (postId != that.getPostId()) return false;
-        if (postTypeId != that.getPostTypeId()) return false;
-        if (userId != null ? !userId.equals(that.getUserId()) : that.getUserId() != null) return false;
-        if (postHistoryTypeId != that.getPostHistoryTypeId()) return false;
-        if (revisionGuid != null ? !revisionGuid.equals(that.getRevisionGuid()) : that.getRevisionGuid() != null) return false;
-        if (creationDate != null ? !creationDate.equals(that.getCreationDate()) : that.getCreationDate() != null) return false;
-        if (text != null ? !text.equals(that.getText()) : that.getText() != null) return false;
-        if (userDisplayName != null ? !userDisplayName.equals(that.getUserDisplayName()) : that.getUserDisplayName() != null)
-            return false;
-        if (comment != null ? !comment.equals(that.getComment()) : that.getComment() != null) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id;
-        result = 31 * result + postId;
-        result = 31 * result + postTypeId;
-        result = 31 * result + (userId != null ? userId.hashCode() : 0);
-        result = 31 * result + (int) postHistoryTypeId;
-        result = 31 * result + (revisionGuid != null ? revisionGuid.hashCode() : 0);
-        result = 31 * result + (creationDate != null ? creationDate.hashCode() : 0);
-        result = 31 * result + (text != null ? text.hashCode() : 0);
-        result = 31 * result + (userDisplayName != null ? userDisplayName.hashCode() : 0);
-        result = 31 * result + (comment != null ? comment.hashCode() : 0);
-        return result;
-    }
 }
