@@ -229,105 +229,113 @@ public class PostHistory {
                 codeBlockEndsWithNextLine = false;
             }
 
-            // see https://stackoverflow.blog/2014/09/16/introducing-runnable-javascript-css-and-html-code-snippets/
-            boolean isStackSnippetBegin = stackSnippetBeginPattern.matcher(line).find(); // only match beginning of line
-            boolean isStackSnippetEnd = stackSnippetEndPattern.matcher(line).find(); // only match beginning of line
-
-            // ignore Stack Snippet information
-            if (isStackSnippetBegin) {
-                inStackSnippetCodeBlock = true;
-                continue;
-            }
-
-            if (isStackSnippetEnd) {
-                inStackSnippetCodeBlock = false;
-                continue;
-            }
-
-            // code block that is marked by <pre><code> ... </pre></code> instead of correct indention
-            boolean isCodeTagBegin = codeTagBeginPattern.matcher(line).find(); // only match beginning of line
-            boolean isCodeTagEnd = codeTagEndPattern.matcher(line).find(); // only match beginning of line
-
-            if (isCodeTagBegin) {
-                line = line.replace("<pre><code>", "");
-                inCodeTagCodeBlock = true;
-                if (line.trim().isEmpty()) {
-                    // line only contained opening code tags -> skip
-                    continue;
-                }
-            }
-
-            if (isCodeTagEnd) {
-                line = line.replace("</pre></code>", "");
-                if (line.trim().isEmpty()) {
-                    // line only contained closing code tags -> close code block and skip
-                    inCodeTagCodeBlock = false;
-                    continue;
-                } else {
-                    // line also contained content -> close code block in next line
-                    codeBlockEndsWithNextLine = true;
-                }
-            }
-
-            // code block that is marked by <script...> ... </script> instead of correct indention
-            boolean isScriptTagBegin = scriptTagBeginPattern.matcher(line).find(); // only match beginning of line
-            boolean isScriptTagEnd = scriptTagEndPattern.matcher(line).find(); // only match beginning of line
-
-            if (isScriptTagBegin) {
-                line = line.replaceFirst("<script[^>]+>", "");
-                inScriptTagCodeBlock = true;
-                if (line.trim().isEmpty()) {
-                    // line only contained opening script tag -> skip
-                    continue;
-                }
-            }
-
-            if (isScriptTagEnd) {
-                line = line.replace("</script>", "");
-                if (line.trim().isEmpty()) {
-                    // line only contained closing script tag -> close code block and skip
-                    inScriptTagCodeBlock = false;
-                    continue;
-                } else {
-                    // line also contained content -> close script block in next line
-                    codeBlockEndsWithNextLine = true;
-                }
-            }
-
-            // see https://meta.stackexchange.com/q/125148; example: https://stackoverflow.com/posts/32342082/revisions
-            Matcher alternativeCodeBlockBeginMatcher = alternativeCodeBlockBeginPattern.matcher(line);
-            boolean isAlternativeCodeBlockBegin = alternativeCodeBlockBeginMatcher.matches(); // match whole line
-            Matcher alternativeCodeBlockEndMatcher = alternativeCodeBlockEndPattern.matcher(line);
-            boolean isAlternativeCodeBlockEnd = alternativeCodeBlockEndMatcher.matches(); // match whole line
-
-            if (isAlternativeCodeBlockBegin) {
-                // remove "```" from line
-                line = alternativeCodeBlockBeginMatcher.replaceAll("");
-                inAlternativeCodeBlock = true;
-                // continue if line only contained "```"
-                if (line.trim().length() == 0) {
-                    continue;
-                }
-            }
-
-            if (isAlternativeCodeBlockEnd) {
-                // remove "```" from line
-                line = alternativeCodeBlockEndMatcher.replaceAll("");
-                inAlternativeCodeBlock = false;
-            }
-
+            // check for indented code blocks (Stack Overflow's standard way)
             // even if tab is not listed here: http://stackoverflow.com/editing-help#code
             // we observed cases where it was important to check for the tab, sometimes preceded by spaces
             // (see test cases)
             boolean isCodeLine = codeBlockPattern.matcher(line).find(); // only match beginning of line
+            // check if line only contains whitespaces (ignore whitespaces at the beginning of posts and not end blocks with whitespace lines)
+            boolean isWhitespaceLine = whiteSpaceLinePattern.matcher(line).matches(); // match whole line
             // e.g. "<!-- language: lang-js -->" (see https://stackoverflow.com/editing-help#syntax-highlighting)
             boolean isSnippetLanguage = snippetLanguagePattern.matcher(line).find(); // only match beginning of line
-            boolean isWhitespaceLine = whiteSpaceLinePattern.matcher(line).matches(); // match whole line
 
+            // if line is not part of a regular Stack Overflow code block, try to detect alternative code block styles
+            if (!isCodeLine && !isWhitespaceLine && !isSnippetLanguage) {
+                // see https://stackoverflow.blog/2014/09/16/introducing-runnable-javascript-css-and-html-code-snippets/
+                boolean isStackSnippetBegin = stackSnippetBeginPattern.matcher(line).find(); // only match beginning of line
+                boolean isStackSnippetEnd = stackSnippetEndPattern.matcher(line).find(); // only match beginning of line
+
+                // ignore Stack Snippet information
+                if (isStackSnippetBegin) {
+                    inStackSnippetCodeBlock = true;
+                    continue;
+                }
+
+                if (isStackSnippetEnd) {
+                    inStackSnippetCodeBlock = false;
+                    continue;
+                }
+
+                // code block that is marked by <pre><code> ... </pre></code> instead of correct indention
+                boolean isCodeTagBegin = codeTagBeginPattern.matcher(line).find(); // only match beginning of line
+                boolean isCodeTagEnd = codeTagEndPattern.matcher(line).find(); // only match beginning of line
+
+                if (isCodeTagBegin) {
+                    line = line.replace("<pre><code>", "");
+                    inCodeTagCodeBlock = true;
+                    if (line.trim().isEmpty()) {
+                        // line only contained opening code tags -> skip
+                        continue;
+                    }
+                }
+
+                if (isCodeTagEnd) {
+                    line = line.replace("</pre></code>", "");
+                    if (line.trim().isEmpty()) {
+                        // line only contained closing code tags -> close code block and skip
+                        inCodeTagCodeBlock = false;
+                        continue;
+                    } else {
+                        // line also contained content -> close code block in next line
+                        codeBlockEndsWithNextLine = true;
+                    }
+                }
+
+                // code block that is marked by <script...> ... </script> instead of correct indention
+                boolean isScriptTagBegin = scriptTagBeginPattern.matcher(line).find(); // only match beginning of line
+                boolean isScriptTagEnd = scriptTagEndPattern.matcher(line).find(); // only match beginning of line
+
+                if (isScriptTagBegin) {
+                    line = line.replaceFirst("<script[^>]+>", "");
+                    inScriptTagCodeBlock = true;
+                    if (line.trim().isEmpty()) {
+                        // line only contained opening script tag -> skip
+                        continue;
+                    }
+                }
+
+                if (isScriptTagEnd) {
+                    line = line.replace("</script>", "");
+                    if (line.trim().isEmpty()) {
+                        // line only contained closing script tag -> close code block and skip
+                        inScriptTagCodeBlock = false;
+                        continue;
+                    } else {
+                        // line also contained content -> close script block in next line
+                        codeBlockEndsWithNextLine = true;
+                    }
+                }
+
+                // see https://meta.stackexchange.com/q/125148; example: https://stackoverflow.com/posts/32342082/revisions
+                Matcher alternativeCodeBlockBeginMatcher = alternativeCodeBlockBeginPattern.matcher(line);
+                boolean isAlternativeCodeBlockBegin = alternativeCodeBlockBeginMatcher.matches(); // match whole line
+                Matcher alternativeCodeBlockEndMatcher = alternativeCodeBlockEndPattern.matcher(line);
+                boolean isAlternativeCodeBlockEnd = alternativeCodeBlockEndMatcher.matches(); // match whole line
+
+                if (isAlternativeCodeBlockBegin) {
+                    // remove "```" from line
+                    line = alternativeCodeBlockBeginMatcher.replaceAll("");
+                    inAlternativeCodeBlock = true;
+                    // continue if line only contained "```"
+                    if (line.trim().length() == 0) {
+                        continue;
+                    }
+                }
+
+                if (isAlternativeCodeBlockEnd) {
+                    // remove "```" from line
+                    line = alternativeCodeBlockEndMatcher.replaceAll("");
+                    inAlternativeCodeBlock = false;
+                }
+            }
+
+            // decide if the current line is part of a code block
             boolean inCodeBlock = isCodeLine || isSnippetLanguage || inStackSnippetCodeBlock || inAlternativeCodeBlock
                     || inCodeTagCodeBlock || inScriptTagCodeBlock;
 
             if (currentPostBlock == null) {
+                // first block in post
+
                 // ignore whitespaces at the beginning of a post
                 if (!isWhitespaceLine) {
                     // first line, block element not created yet

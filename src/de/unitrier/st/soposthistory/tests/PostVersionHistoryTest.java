@@ -395,6 +395,24 @@ class PostVersionHistoryTest {
     }
 
     @Test
+    void testScriptTagInIndentedCodeBlockQuestion28598648() {
+        PostVersionList q_28598648 = new PostVersionList();
+        q_28598648.readFromCSV("testdata", 28598648, 1);
+
+        assertEquals(2, q_28598648.size());
+
+        // version 1+2 contain an indented code block containing <script> tags (see https://stackoverflow.com/revisions/28598648/2)
+        PostVersion version_2 = q_28598648.get(1);
+        assertEquals(2, version_2.getPostBlocks().size());
+        assertEquals(1, version_2.getTextBlocks().size());
+        assertEquals(1, version_2.getCodeBlocks().size());
+
+        List<PostBlockVersion> postBlocks = version_2.getPostBlocks();
+        assertTrue(postBlocks.get(0) instanceof CodeBlockVersion);
+        assertTrue(postBlocks.get(1) instanceof TextBlockVersion);
+    }
+
+    @Test
     void testPredecessorAssignmentAnswer3758880(){
         // tests if posts blocks are set more than once as predecessor
         PostVersionList a_3758880 = new PostVersionList();
