@@ -49,10 +49,10 @@ public class PostHistory {
     private static Pattern alternativeCodeBlockBeginPattern = Pattern.compile("\\s*(```).*");
     private static Pattern alternativeCodeBlockEndPattern = Pattern.compile(".*(```)\\s*");
     // see, e.g., source of question 19175014 (<pre><code> ... </pre></code> instead of correct indention)
-    private static Pattern codeTagBeginPattern = Pattern.compile("<pre><code>"); // the tags should not be indented -> prevent deletion from code blocks containing these tags in sample HTML
+    private static Pattern codeTagBeginPattern = Pattern.compile("\\s*<pre><code>");
     private static Pattern codeTagEndPattern = Pattern.compile(".*</pre></code>");
     // see, e.g., source of question 3381751 version 1 (<script type="text/javascript"> ... </script> instead of correct indention)
-    private static Pattern scriptTagBeginPattern = Pattern.compile("<script[^>]+>"); // the tags should not be indented -> prevent deletion from code blocks containing these tags in sample HTML
+    private static Pattern scriptTagBeginPattern = Pattern.compile("\\s*<script[^>]+>");
     private static Pattern scriptTagEndPattern = Pattern.compile(".*</script>");
 
     // database
