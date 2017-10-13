@@ -3,14 +3,15 @@
   <groupId>de.unitrier.st.soposthistory</groupId>
   <artifactId>so-posthistory-extractor</artifactId>
   <versioning>
-    <release>1.5.0</release>
+    <release>1.5.1</release>
     <versions>
       <version>1.4.0</version>
       <version>1.4.1</version>
       <version>1.4.2</version>
       <version>1.4.3</version>
       <version>1.5.0</version>
+      <version>1.5.1</version>
     </versions>
-    <lastUpdated>20171012184028</lastUpdated>
+    <lastUpdated>20171013075822</lastUpdated>
   </versioning>
 </metadata>
