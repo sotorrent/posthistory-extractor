@@ -3,7 +3,6 @@ package de.unitrier.st.soposthistory.urls;
 import java.util.regex.Pattern;
 
 public class MarkdownLinkReference {
-    // TODO: adapt for include second matching group for title/label
 
     // Source: https://stackoverflow.com/editing-help#code
     // Example 1: Here's a reference-style link to [Google][1].   ...     and later   ...     [1]: http://www.google.com/
@@ -19,6 +18,8 @@ public class MarkdownLinkReference {
     // [1]: http://slashdot.org
     // [link text itself]: http://www.reddit.com
 
-    public static final Pattern regex = Pattern.compile("\\[[^]]+]:\\s*((?:http|ftp|https)://(?:[\\w_-]+(?:(?:\\.[\\w_-]+)+))(?:[\\w.,@?^=%&:/~+#-]*[\\w@?^=%&/~+#-]))?");
 
+    //public static final Pattern regex = Pattern.compile("\\[[^]]+]:\\s*((?:http|ftp|https)://(?:[\\w_-]+(?:(?:\\.[\\w_-]+)+))(?:[\\w.,@?^=%&:/~+#-]*[\\w@?^=%&/~+#-]))?");
+    public static final Pattern regex_top = Pattern.compile("\\[([^]]*)]\\[(\\s*.*?\\s*)]");
+    public static final Pattern regex_bottom = Pattern.compile("\\s(\\[([^]]+)]:\\s*((?:http|ftp|https)://(?:[\\w_-]+(?:(?:\\.[\\w_-]+)+))(?:[\\w.,@?^=%&:/~+#-]*[\\w@?^=%&/~+#-]))?)(\\s+(\".*\"))?");
 }
