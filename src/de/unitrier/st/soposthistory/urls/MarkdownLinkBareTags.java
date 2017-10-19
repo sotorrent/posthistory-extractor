@@ -2,7 +2,7 @@ package de.unitrier.st.soposthistory.urls;
 
 import java.util.regex.Pattern;
 
-public class MarkdownLinkBare {
+public class MarkdownLinkBareTags {
 
     // Source: https://stackoverflow.com/editing-help#code
     // Example 1: I often visit http://example.com.
@@ -13,5 +13,5 @@ public class MarkdownLinkBare {
     // http://www.example.com or <http://www.example.com> and sometimes
     // example.com (but not on Github, for example).
 
-    public static final Pattern regex = Pattern.compile("<?((?:http|ftp|https)://(?:[\\w_-]+(?:(?:\\.[\\w_-]+)+))(?:[\\w.,@?^=%&:/~+#-]*[\\w@?^=%&/~+#-]))>?");
+    public static final Pattern regex = Pattern.compile("<((?:http|ftp|https):\\/\\/(?:[\\w_-]+(?:(?:\\.[\\w_-]+)+))(?:[\\w.,@?^=%&:\\/~+#-]*[\\w@?^=%&\\/~+#-]))>");
 }
