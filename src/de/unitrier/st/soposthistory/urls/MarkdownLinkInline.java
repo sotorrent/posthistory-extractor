@@ -3,7 +3,6 @@ package de.unitrier.st.soposthistory.urls;
 import java.util.regex.Pattern;
 
 public class MarkdownLinkInline {
-    // TODO: adapt for include second matching group for title/label
 
     // Source: https://stackoverflow.com/editing-help#code
     // Example 1: Here's an inline link to [Google](http://www.google.com/).
@@ -13,5 +12,5 @@ public class MarkdownLinkInline {
     // Example 3: [I'm an inline-style link](https://www.google.com)
     // Example 4: [I'm an inline-style link with title](https://www.google.com "Google's Homepage")
 
-    public static final Pattern regex = Pattern.compile("\\[[^]]+]\\(\\s*((?:http|ftp|https)://(?:[\\w_-]+(?:(?:\\.[\\w_-]+)+))(?:[\\w.,@?^=%&:/~+#-]*[\\w@?^=%&/~+#-]))?(?:\\s+\"[^\"]+\")?\\s*\\)");
+    public static final Pattern regex = Pattern.compile("\\[([^]]+)]\\(\\s*((?:http|ftp|https):\\/\\/(?:[\\w_-]+(?:(?:\\.[\\w_-]+)+))(?:[\\w.,@?^=%&:\\/~+#-]*[\\w@?^=%&\\/~+#-]))?(?:\\s+\"([^\"]+)\")?\\s*\\)");
 }
