@@ -615,4 +615,13 @@ class PostVersionHistoryTest {
         List<PostBlockVersion> postBlocks = version_1.getPostBlocks();
         assertTrue(postBlocks.get(0) instanceof TextBlockVersion);
     }
+
+    @Test
+    void testNullPointerException3758880(){
+        PostVersionList q_3758880 = new PostVersionList();
+        q_3758880.readFromCSV("testdata", 3758880, 1);
+        q_3758880.processVersionHistory(PostVersionList.PostBlockTypeFilter.CODE);
+
+        // This causes a null pointer exception because a filter is set.
+    }
 }
