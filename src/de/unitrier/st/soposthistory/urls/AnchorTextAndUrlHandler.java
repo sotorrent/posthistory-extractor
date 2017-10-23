@@ -40,6 +40,7 @@ public class AnchorTextAndUrlHandler {
                             && Objects.equals(pairA.reference, pairB.reference)){
                         pairA.url = pairB.url;
                         pairA.fullMatch2 = pairB.fullMatch2;
+                        pairA.title = pairB.title;
                     }
                 }
             }
@@ -83,10 +84,10 @@ public class AnchorTextAndUrlHandler {
                 anchorTextAndUrlPairs.add(
                         new AnchorTextAndUrlPair(
                                 matcher.group(),
-                                matcher.group(4),
+                                matcher.group(6),
                                 null,
-                                matcher.group(1),
-                                matcher.group(3),
+                                matcher.group(2),
+                                matcher.group(5),
                                 type
                         )
                 );
