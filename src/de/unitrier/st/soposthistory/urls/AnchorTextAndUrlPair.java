@@ -70,4 +70,24 @@ public class AnchorTextAndUrlPair {
                 + "Type: " + type + "\n"
                 + "\n";
     }
+
+    public AnchorRefUrlType getType() {
+        return type;
+    }
+
+    public String getAnchor() {
+        return anchor;
+    }
+
+    public String getReference() {
+        return reference;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getFullMatch(){
+        return fullMatch;
+    }
 }
