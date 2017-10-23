@@ -1,5 +1,9 @@
 package de.unitrier.st.soposthistory.urls;
 
+import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
+import de.unitrier.st.soposthistory.version.PostVersion;
+import de.unitrier.st.soposthistory.version.PostVersionList;
+
 import java.util.Objects;
 import java.util.LinkedList;
 import java.util.regex.Matcher;
@@ -36,6 +40,7 @@ public class AnchorTextAndUrlHandler {
                             && Objects.equals(pairA.reference, pairB.reference)){
                         pairA.url = pairB.url;
                         pairA.fullMatch2 = pairB.fullMatch2;
+                        pairA.title = pairB.title;
                     }
                 }
             }
@@ -79,10 +84,10 @@ public class AnchorTextAndUrlHandler {
                 anchorTextAndUrlPairs.add(
                         new AnchorTextAndUrlPair(
                                 matcher.group(),
-                                matcher.group(4),
+                                matcher.group(6),
                                 null,
-                                matcher.group(1),
-                                matcher.group(3),
+                                matcher.group(2),
+                                matcher.group(5),
                                 type
                         )
                 );
@@ -188,6 +193,26 @@ public class AnchorTextAndUrlHandler {
         }
     }
 
+    public static void normalizeURLsInTextBlocksOfAllVersions(PostVersionList postVersionList, AnchorTextAndUrlHandler anchorTextAndUrlHandler){
+        if(postVersionList == null)
+            return;
+
+        for (PostVersion postVersion : postVersionList) {
+            String textBlocksConcatenated = postVersion.getMergedTextBlockContent();
+            LinkedList<AnchorTextAndUrlPair> anchorTextAndUrlPairs = anchorTextAndUrlHandler.extractAllAnchorsRefsAndURLpairs(textBlocksConcatenated);
+
+            for(TextBlockVersion textBlock : postVersion.getTextBlocks()){
+                String markdownText = textBlock.getContent();
+                markdownText = anchorTextAndUrlHandler.normalizeAnchorsRefsAndURLsForApp(markdownText, anchorTextAndUrlPairs);
+
+                if (markdownText.trim().isEmpty()){ // https://stackoverflow.com/a/3745432
+                    postVersion.getPostBlocks().remove(textBlock);
+                }else{
+                    textBlock.setContent(markdownText);
+                }
+            }
+        }
+    }
 
     public String normalizeAnchorsRefsAndURLsForApp(String markdownText, LinkedList<AnchorTextAndUrlPair> anchorTextAndUrlPairs){
 
