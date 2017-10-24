@@ -11,6 +11,7 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.junit.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class UrlExtractionTest {
 
@@ -36,16 +37,16 @@ class UrlExtractionTest {
 
         assertEquals("[reference](http://msdn.microsoft.com/en-us/library/system.math.truncate.aspx)", extractedUrls.get(0).getFullMatch());
         assertEquals("reference", extractedUrls.get(0).getAnchor());
-        assertEquals(null, extractedUrls.get(0).getReference());
+        assertNull(extractedUrls.get(0).getReference());
         assertEquals("http://msdn.microsoft.com/en-us/library/system.math.truncate.aspx", extractedUrls.get(0).getUrl());
-        assertEquals(null, extractedUrls.get(0).getTitle());
+        assertNull(extractedUrls.get(0).getTitle());
         assertThat(extractedUrls.get(0), instanceOf(MarkdownLinkInline.class));
 
         assertEquals("[Reference.](http://msdn.microsoft.com/en-us/library/system.math.round.aspx)", extractedUrls.get(1).getFullMatch());
         assertEquals("Reference.", extractedUrls.get(1).getAnchor());
-        assertEquals(null, extractedUrls.get(1).getReference());
+        assertNull(extractedUrls.get(1).getReference());
         assertEquals("http://msdn.microsoft.com/en-us/library/system.math.round.aspx", extractedUrls.get(1).getUrl());
-        assertEquals(null, extractedUrls.get(1).getTitle());
+        assertNull(extractedUrls.get(1).getTitle());
         assertThat(extractedUrls.get(1), instanceOf(MarkdownLinkInline.class));
     }
 
@@ -97,16 +98,16 @@ class UrlExtractionTest {
 
         assertEquals("<a href=\"http://msdn.microsoft.com/en-us/library/system.windows.controls.textbox.selectionstart.aspx\">SelectionStart</a>", extractedUrls.get(0).getFullMatch());
         assertEquals("SelectionStart", extractedUrls.get(0).getAnchor());
-        assertEquals(null, extractedUrls.get(0).getReference());
+        assertNull(extractedUrls.get(0).getReference());
         assertEquals("http://msdn.microsoft.com/en-us/library/system.windows.controls.textbox.selectionstart.aspx", extractedUrls.get(0).getUrl());
-        assertEquals(null, extractedUrls.get(0).getTitle());
+        assertNull(extractedUrls.get(0).getTitle());
         assertThat(extractedUrls.get(0), instanceOf(AnchorLink.class));
 
         assertEquals("<a href=\"http://msdn.microsoft.com/en-us/library/system.windows.controls.textbox.selectionlength.aspx\">SelectionLength</a>", extractedUrls.get(1).getFullMatch());
         assertEquals("SelectionLength", extractedUrls.get(1).getAnchor());
-        assertEquals(null, extractedUrls.get(1).getReference());
+        assertNull(extractedUrls.get(1).getReference());
         assertEquals("http://msdn.microsoft.com/en-us/library/system.windows.controls.textbox.selectionlength.aspx", extractedUrls.get(1).getUrl());
-        assertEquals(null, extractedUrls.get(1).getTitle());
+        assertNull(extractedUrls.get(1).getTitle());
         assertThat(extractedUrls.get(1), instanceOf(AnchorLink.class));
     }
 
@@ -150,17 +151,17 @@ class UrlExtractionTest {
         assertEquals(2, extractedUrls.size());
 
         assertEquals("<http://www.gskinner.com/blog/archives/2006/06/as3_resource_ma.html>", extractedUrls.get(0).getFullMatch());
-        assertEquals(null, extractedUrls.get(0).getAnchor());
-        assertEquals(null, extractedUrls.get(0).getReference());
+        assertNull(extractedUrls.get(0).getAnchor());
+        assertNull(extractedUrls.get(0).getReference());
         assertEquals("http://www.gskinner.com/blog/archives/2006/06/as3_resource_ma.html", extractedUrls.get(0).getUrl());
-        assertEquals(null, extractedUrls.get(0).getTitle());
+        assertNull(extractedUrls.get(0).getTitle());
         assertThat(extractedUrls.get(0), instanceOf(MarkdownLinkAngleBrackets.class));
 
         assertEquals("<http://www.craftymind.com/2008/04/09/kick-starting-the-garbage-collector-in-actionscript-3-with-air/>", extractedUrls.get(1).getFullMatch());
-        assertEquals(null, extractedUrls.get(1).getAnchor());
-        assertEquals(null, extractedUrls.get(1).getReference());
+        assertNull(extractedUrls.get(1).getAnchor());
+        assertNull(extractedUrls.get(1).getReference());
         assertEquals("http://www.craftymind.com/2008/04/09/kick-starting-the-garbage-collector-in-actionscript-3-with-air/", extractedUrls.get(1).getUrl());
-        assertEquals(null, extractedUrls.get(1).getTitle());
+        assertNull(extractedUrls.get(1).getTitle());
         assertThat(extractedUrls.get(1), instanceOf(MarkdownLinkAngleBrackets.class));
     }
 
@@ -183,10 +184,10 @@ class UrlExtractionTest {
         assertEquals(1, extractedUrls.size());
 
         assertEquals("http://www.brokenbuild.com/blog/2006/08/15/mysql-triggers-how-do-you-abort-an-insert-update-or-delete-with-a-trigger/", extractedUrls.get(0).getFullMatch());
-        assertEquals(null, extractedUrls.get(0).getAnchor());
-        assertEquals(null, extractedUrls.get(0).getReference());
+        assertNull(extractedUrls.get(0).getAnchor());
+        assertNull(extractedUrls.get(0).getReference());
         assertEquals("http://www.brokenbuild.com/blog/2006/08/15/mysql-triggers-how-do-you-abort-an-insert-update-or-delete-with-a-trigger/", extractedUrls.get(0).getUrl());
-        assertEquals(null, extractedUrls.get(0).getTitle());
+        assertNull(extractedUrls.get(0).getTitle());
         assertThat(extractedUrls.get(0), instanceOf(Link.class));
     }
 
@@ -245,9 +246,20 @@ class UrlExtractionTest {
 
         assertEquals("[I'm an inline-style link with title](https://www.google.com \"Google's Homepage\")", extractedUrls.get(0).getFullMatch());
         assertEquals("I'm an inline-style link with title", extractedUrls.get(0).getAnchor());
-        assertEquals(null, extractedUrls.get(0).getReference());
+        assertNull(extractedUrls.get(0).getReference());
         assertEquals("https://www.google.com", extractedUrls.get(0).getUrl());
         assertEquals("Google's Homepage", extractedUrls.get(0).getTitle());
+        assertThat(extractedUrls.get(0), instanceOf(MarkdownLinkInline.class));
+
+        extractedUrls = Link.extractAll("[I'm an inline-style link without title](https://www.google.com)");
+
+        assertEquals(1, extractedUrls.size());
+
+        assertEquals("[I'm an inline-style link without title](https://www.google.com)", extractedUrls.get(0).getFullMatch());
+        assertEquals("I'm an inline-style link without title", extractedUrls.get(0).getAnchor());
+        assertNull(extractedUrls.get(0).getReference());
+        assertEquals("https://www.google.com", extractedUrls.get(0).getUrl());
+        assertNull(extractedUrls.get(0).getTitle());
         assertThat(extractedUrls.get(0), instanceOf(MarkdownLinkInline.class));
     }
 }
