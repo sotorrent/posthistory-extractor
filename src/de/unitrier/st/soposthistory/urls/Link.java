@@ -144,8 +144,8 @@ public class Link {
                 normalizedMarkdownContent = normalizedMarkdownContent.replace(definition, "");
             } else {
                 // bare link
-                normalizedMarkdownContent = normalizedMarkdownContent.replaceFirst(
-                        Pattern.quote(currrentLink.getFullMatch()),
+                normalizedMarkdownContent = normalizedMarkdownContent.replace(
+                        currrentLink.getFullMatch(),
                         "<" + currrentLink.getUrl() + ">"
                 );
             }
