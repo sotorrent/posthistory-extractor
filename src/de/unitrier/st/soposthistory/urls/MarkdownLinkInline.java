@@ -23,15 +23,11 @@ public class MarkdownLinkInline extends Link {
 
         while (matcher.find()) {
             MarkdownLinkInline extractedLink = new MarkdownLinkInline();
-
-            if (matcher.groupCount() >= 3) {
-                extractedLink.fullMatch = matcher.group(0);
-                extractedLink.anchor = matcher.group(1);
-                extractedLink.url = matcher.group(2);
-                extractedLink.title = matcher.group(3);
-
-                extractedLinks.add(extractedLink);
-            }
+            extractedLink.fullMatch = matcher.group(0);
+            extractedLink.anchor = matcher.group(1);
+            extractedLink.url = matcher.group(2);
+            extractedLink.title = matcher.group(3);
+            extractedLinks.add(extractedLink);
         }
 
         return extractedLinks;

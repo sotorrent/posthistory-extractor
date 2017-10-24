@@ -24,12 +24,9 @@ public class MarkdownLinkAngleBrackets extends Link {
 
         while (matcher.find()) {
             MarkdownLinkAngleBrackets extractedLink = new MarkdownLinkAngleBrackets();
-
-            if (matcher.groupCount() == 1) {
-                extractedLink.fullMatch = matcher.group(0);
-                extractedLink.url = matcher.group(1);
-                extractedLinks.add(extractedLink);
-            }
+            extractedLink.fullMatch = matcher.group(0);
+            extractedLink.url = matcher.group(1);
+            extractedLinks.add(extractedLink);
         }
 
         return extractedLinks;
