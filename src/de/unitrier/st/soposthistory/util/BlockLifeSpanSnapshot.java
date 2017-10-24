@@ -1,10 +1,12 @@
 package de.unitrier.st.soposthistory.util;
 
+import java.util.Objects;
+
 public class BlockLifeSpanSnapshot{
 
     private int postId;
     private int postHistoryId;
-    private int postBlockTypeId;
+    private Integer postBlockTypeId;
     private int version;
     private int localId;
     private Integer predLocalId;
@@ -36,7 +38,9 @@ public class BlockLifeSpanSnapshot{
         return
                 (blockLifeSpanSnapshot instanceof BlockLifeSpanSnapshot)
             && (this.version == ((BlockLifeSpanSnapshot)blockLifeSpanSnapshot).version
-            //&& this.postHistoryId == ((BlockLifeSpanSnapshot)blockLifeSpanSnapshot).postHistoryId
+            && (this.postBlockTypeId == null
+                        || ((BlockLifeSpanSnapshot) blockLifeSpanSnapshot).postBlockTypeId == null
+                        || Objects.equals(this.postBlockTypeId, ((BlockLifeSpanSnapshot) blockLifeSpanSnapshot).postBlockTypeId))
             && this.localId == ((BlockLifeSpanSnapshot)blockLifeSpanSnapshot).localId
             && this.postId == ((BlockLifeSpanSnapshot)blockLifeSpanSnapshot).postId);
     }
