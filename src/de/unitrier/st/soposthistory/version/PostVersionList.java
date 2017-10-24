@@ -1,6 +1,8 @@
 package de.unitrier.st.soposthistory.version;
 
+import de.unitrier.st.soposthistory.blocks.CodeBlockVersion;
 import de.unitrier.st.soposthistory.blocks.PostBlockVersion;
+import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
 import de.unitrier.st.soposthistory.diffs.PostBlockDiffList;
 import de.unitrier.st.soposthistory.history.PostHistory;
 import org.apache.commons.csv.CSVFormat;
@@ -119,7 +121,9 @@ public class PostVersionList extends LinkedList<PostVersion> {
         for (int i=0; i<this.size(); i++) {
             PostVersion currentVersion = this.get(i);
 
-            currentVersion.extractUrlsFromTextBlocks();
+            if (filter == PostBlockTypeFilter.BOTH || filter == PostBlockTypeFilter.TEXT) {
+                currentVersion.extractUrlsFromTextBlocks();
+            }
 
             int predIndex = i-1;
             int succIndex = i+1;
@@ -129,6 +133,11 @@ public class PostVersionList extends LinkedList<PostVersion> {
                 currentVersion.setPredPostHistoryId(null);
                 // the post blocks in the first version have themselves as root post blocks
                 for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks()) {
+                    if ((currentPostBlock instanceof TextBlockVersion && filter == PostBlockTypeFilter.CODE)
+                            || currentPostBlock instanceof CodeBlockVersion && filter == PostBlockTypeFilter.TEXT) {
+                        continue;
+                    }
+
                     currentPostBlock.setRootPostBlockId(currentPostBlock.getId());
                 }
             } else {
@@ -156,6 +165,11 @@ public class PostVersionList extends LinkedList<PostVersion> {
 
                 // set predecessors of text and code blocks if only one predecessor matches and if this predecessor is only matched by one block in the current version
                 for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks()) {
+                    if ((currentPostBlock instanceof TextBlockVersion && filter == PostBlockTypeFilter.CODE)
+                            || currentPostBlock instanceof CodeBlockVersion && filter == PostBlockTypeFilter.TEXT) {
+                        continue;
+                    }
+
                     if (currentPostBlock.getMatchingPredecessors().size() == 1) {
                         // only one matching predecessor found
                         PostBlockVersion matchingPredecessor = currentPostBlock.getMatchingPredecessors().get(0);
@@ -170,6 +184,11 @@ public class PostVersionList extends LinkedList<PostVersion> {
 
                 // next, try to set remaining predecessors using context (neighboring blocks of post block and matching predecessor)
                 for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks()) {
+                    if ((currentPostBlock instanceof TextBlockVersion && filter == PostBlockTypeFilter.CODE)
+                            || currentPostBlock instanceof CodeBlockVersion && filter == PostBlockTypeFilter.TEXT) {
+                        continue;
+                    }
+
                     // predecessor for this post block not set yet and at least one matching predecessor found
                     if (currentPostBlock.getPred() == null && currentPostBlock.getMatchingPredecessors().size() > 0) {
                         currentPostBlock.setPredContext(currentVersion, previousVersion);
@@ -178,6 +197,11 @@ public class PostVersionList extends LinkedList<PostVersion> {
 
                 // finally, set the remaining predecessors using the order in the post (localId)
                 for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks()) {
+                    if ((currentPostBlock instanceof TextBlockVersion && filter == PostBlockTypeFilter.CODE)
+                            || currentPostBlock instanceof CodeBlockVersion && filter == PostBlockTypeFilter.TEXT) {
+                        continue;
+                    }
+
                     // predecessor for this post block not set yet and at least one matching predecessor found
                     if (currentPostBlock.getPred() == null && currentPostBlock.getMatchingPredecessors().size() > 0) {
                         currentPostBlock.setPredMinPos();
@@ -186,6 +210,11 @@ public class PostVersionList extends LinkedList<PostVersion> {
 
                 // set root post block for all post blocks
                 for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks()) {
+                    if ((currentPostBlock instanceof TextBlockVersion && filter == PostBlockTypeFilter.CODE)
+                            || currentPostBlock instanceof CodeBlockVersion && filter == PostBlockTypeFilter.TEXT) {
+                        continue;
+                    }
+
                     if (currentPostBlock.getPred() == null) {
                         // block has no predecessor -> set itself as root post block
                         currentPostBlock.setRootPostBlockId(currentPostBlock.getId());
