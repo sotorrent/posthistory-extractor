@@ -28,11 +28,7 @@ public class MarkdownLinkInline extends Link {
                 extractedLink.fullMatch = matcher.group(0);
                 extractedLink.anchor = matcher.group(1);
                 extractedLink.url = matcher.group(2);
-
-                if (matcher.groupCount() == 4) {
-                    // TODO: test this
-                    extractedLink.title = matcher.group(3);
-                }
+                extractedLink.title = matcher.group(3);
 
                 extractedLinks.add(extractedLink);
             }
