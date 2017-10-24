@@ -1,18 +1,17 @@
 package de.unitrier.st.soposthistory.tests;
 
-import de.unitrier.st.soposthistory.urls.AnchorTextAndUrlHandler;
-import de.unitrier.st.soposthistory.urls.AnchorTextAndUrlPair;
+import de.unitrier.st.soposthistory.urls.*;
 import de.unitrier.st.soposthistory.version.PostVersion;
 import de.unitrier.st.soposthistory.version.PostVersionList;
 import org.junit.jupiter.api.Test;
 
-import java.util.LinkedList;
+import java.util.List;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.junit.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class UrlExtractionTest {
-
-    private static AnchorTextAndUrlHandler anchorTextAndUrlHandler = new AnchorTextAndUrlHandler();
 
     @Test
     void testMarkdownLinkInline(){
@@ -30,21 +29,23 @@ class UrlExtractionTest {
         a_33.readFromCSV("testdata", 33, 2);
 
         PostVersion version_1 = a_33.getFirst();
-        LinkedList<AnchorTextAndUrlPair> extractedUrls = anchorTextAndUrlHandler.extractAllAnchorsRefsAndURLpairs(version_1.getContent());
+        List<Link> extractedUrls = Link.extractAll(version_1.getContent());
+
+        assertEquals(2, extractedUrls.size());
 
         assertEquals("[reference](http://msdn.microsoft.com/en-us/library/system.math.truncate.aspx)", extractedUrls.get(0).getFullMatch());
         assertEquals("reference", extractedUrls.get(0).getAnchor());
         assertEquals(null, extractedUrls.get(0).getReference());
         assertEquals("http://msdn.microsoft.com/en-us/library/system.math.truncate.aspx", extractedUrls.get(0).getUrl());
         assertEquals(null, extractedUrls.get(0).getTitle());
-        assertEquals(AnchorTextAndUrlPair.AnchorRefUrlType.type_markdownLinkInline, extractedUrls.get(0).getType());
+        assertThat(extractedUrls.get(0), instanceOf(MarkdownLinkInline.class));
 
         assertEquals("[Reference.](http://msdn.microsoft.com/en-us/library/system.math.round.aspx)", extractedUrls.get(1).getFullMatch());
         assertEquals("Reference.", extractedUrls.get(1).getAnchor());
         assertEquals(null, extractedUrls.get(1).getReference());
         assertEquals("http://msdn.microsoft.com/en-us/library/system.math.round.aspx", extractedUrls.get(1).getUrl());
         assertEquals(null, extractedUrls.get(1).getTitle());
-        assertEquals(AnchorTextAndUrlPair.AnchorRefUrlType.type_markdownLinkInline, extractedUrls.get(1).getType());
+        assertThat(extractedUrls.get(1), instanceOf(MarkdownLinkInline.class));
     }
 
     @Test
@@ -58,16 +59,17 @@ class UrlExtractionTest {
         PostVersionList a_44 = new PostVersionList();
         a_44.readFromCSV("testdata", 44, 2);
 
-        // TODO
         PostVersion version_1 = a_44.getFirst();
-        LinkedList<AnchorTextAndUrlPair> extractedUrls = anchorTextAndUrlHandler.extractAllAnchorsRefsAndURLpairs(version_1.getContent());
+        List<Link> extractedUrls = Link.extractAll(version_1.getContent());
 
-        assertEquals("[ManualResetEvent][1]", extractedUrls.get(0).getFullMatch());
+        assertEquals(1, extractedUrls.size());
+
+        assertEquals("[ManualResetEvent][1]\n[1]: http://msdn.microsoft.com/en-us/library/system.threading.manualresetevent.aspx \"MSDN Reference\"", extractedUrls.get(0).getFullMatch());
         assertEquals("ManualResetEvent", extractedUrls.get(0).getAnchor());
         assertEquals("1", extractedUrls.get(0).getReference());
         assertEquals("http://msdn.microsoft.com/en-us/library/system.threading.manualresetevent.aspx", extractedUrls.get(0).getUrl());
-        assertEquals("\"MSDN Reference\"", extractedUrls.get(0).getTitle());
-        assertEquals(AnchorTextAndUrlPair.AnchorRefUrlType.type_markdownLinkReference_top, extractedUrls.get(0).getType());
+        assertEquals("MSDN Reference", extractedUrls.get(0).getTitle());
+        assertThat(extractedUrls.get(0), instanceOf(MarkdownLinkReference.class));
     }
 
     @Test
@@ -88,25 +90,27 @@ class UrlExtractionTest {
         a_1629423.readFromCSV("testdata", 1629423, 2);
 
         PostVersion version_1 = a_1629423.getFirst();
-        LinkedList<AnchorTextAndUrlPair> extractedUrls = anchorTextAndUrlHandler.extractAllAnchorsRefsAndURLpairs(version_1.getContent());
+        List<Link> extractedUrls = Link.extractAll(version_1.getContent());
+
+        assertEquals(2, extractedUrls.size());
 
         assertEquals("<a href=\"http://msdn.microsoft.com/en-us/library/system.windows.controls.textbox.selectionstart.aspx\">SelectionStart</a>", extractedUrls.get(0).getFullMatch());
         assertEquals("SelectionStart", extractedUrls.get(0).getAnchor());
         assertEquals(null, extractedUrls.get(0).getReference());
         assertEquals("http://msdn.microsoft.com/en-us/library/system.windows.controls.textbox.selectionstart.aspx", extractedUrls.get(0).getUrl());
         assertEquals(null, extractedUrls.get(0).getTitle());
-        assertEquals(AnchorTextAndUrlPair.AnchorRefUrlType.type_anchorLink, extractedUrls.get(0).getType());
+        assertThat(extractedUrls.get(0), instanceOf(AnchorLink.class));
 
         assertEquals("<a href=\"http://msdn.microsoft.com/en-us/library/system.windows.controls.textbox.selectionlength.aspx\">SelectionLength</a>", extractedUrls.get(1).getFullMatch());
         assertEquals("SelectionLength", extractedUrls.get(1).getAnchor());
         assertEquals(null, extractedUrls.get(1).getReference());
         assertEquals("http://msdn.microsoft.com/en-us/library/system.windows.controls.textbox.selectionlength.aspx", extractedUrls.get(1).getUrl());
         assertEquals(null, extractedUrls.get(1).getTitle());
-        assertEquals(AnchorTextAndUrlPair.AnchorRefUrlType.type_anchorLink, extractedUrls.get(1).getType());
+        assertThat(extractedUrls.get(1), instanceOf(AnchorLink.class));
     }
 
     @Test
-    void testMarkdownLinkBareTags(){
+    void testMarkdownLinkAngleBrackets(){
         /*
         Have a look at this article
 
@@ -140,21 +144,23 @@ class UrlExtractionTest {
         a_52.readFromCSV("testdata", 52, 2);
 
         PostVersion version_1 = a_52.getFirst();
-        LinkedList<AnchorTextAndUrlPair> extractedUrls = anchorTextAndUrlHandler.extractAllAnchorsRefsAndURLpairs(version_1.getContent());
+        List<Link> extractedUrls = Link.extractAll(version_1.getContent());
+
+        assertEquals(2, extractedUrls.size());
 
         assertEquals("<http://www.gskinner.com/blog/archives/2006/06/as3_resource_ma.html>", extractedUrls.get(0).getFullMatch());
         assertEquals(null, extractedUrls.get(0).getAnchor());
         assertEquals(null, extractedUrls.get(0).getReference());
         assertEquals("http://www.gskinner.com/blog/archives/2006/06/as3_resource_ma.html", extractedUrls.get(0).getUrl());
         assertEquals(null, extractedUrls.get(0).getTitle());
-        assertEquals(AnchorTextAndUrlPair.AnchorRefUrlType.type_markdownLinkBareTags, extractedUrls.get(0).getType());
+        assertThat(extractedUrls.get(0), instanceOf(MarkdownLinkAngleBrackets.class));
 
         assertEquals("<http://www.craftymind.com/2008/04/09/kick-starting-the-garbage-collector-in-actionscript-3-with-air/>", extractedUrls.get(1).getFullMatch());
         assertEquals(null, extractedUrls.get(1).getAnchor());
         assertEquals(null, extractedUrls.get(1).getReference());
         assertEquals("http://www.craftymind.com/2008/04/09/kick-starting-the-garbage-collector-in-actionscript-3-with-air/", extractedUrls.get(1).getUrl());
         assertEquals(null, extractedUrls.get(1).getTitle());
-        assertEquals(AnchorTextAndUrlPair.AnchorRefUrlType.type_markdownLinkBareTags, extractedUrls.get(1).getType());
+        assertThat(extractedUrls.get(1), instanceOf(MarkdownLinkAngleBrackets.class));
     }
 
     @Test
@@ -171,14 +177,16 @@ class UrlExtractionTest {
         a_49.readFromCSV("testdata", 49, 2);
 
         PostVersion version_1 = a_49.getFirst();
-        LinkedList<AnchorTextAndUrlPair> extractedUrls = anchorTextAndUrlHandler.extractAllAnchorsRefsAndURLpairs(version_1.getContent());
+        List<Link> extractedUrls = Link.extractAll(version_1.getContent());
+
+        assertEquals(1, extractedUrls.size());
 
         assertEquals("http://www.brokenbuild.com/blog/2006/08/15/mysql-triggers-how-do-you-abort-an-insert-update-or-delete-with-a-trigger/", extractedUrls.get(0).getFullMatch());
         assertEquals(null, extractedUrls.get(0).getAnchor());
         assertEquals(null, extractedUrls.get(0).getReference());
         assertEquals("http://www.brokenbuild.com/blog/2006/08/15/mysql-triggers-how-do-you-abort-an-insert-update-or-delete-with-a-trigger/", extractedUrls.get(0).getUrl());
         assertEquals(null, extractedUrls.get(0).getTitle());
-        assertEquals(AnchorTextAndUrlPair.AnchorRefUrlType.type_bareURL, extractedUrls.get(0).getType());
+        assertThat(extractedUrls.get(0), instanceOf(Link.class));
     }
 
     @Test
@@ -199,27 +207,27 @@ class UrlExtractionTest {
         PostVersionList a_1629423 = new PostVersionList();
         a_1629423.readFromCSV("testdata", 1629423, 2);
 
-        AnchorTextAndUrlHandler.normalizeURLsInTextBlocksOfAllVersions(a_33, anchorTextAndUrlHandler);
+        Link.normalizeLinks(a_33);
         PostVersion version_1_a33 = a_33.getFirst();
         System.out.println(version_1_a33.getContent());
         System.out.println();
 
-        AnchorTextAndUrlHandler.normalizeURLsInTextBlocksOfAllVersions(a_44, anchorTextAndUrlHandler);
+        Link.normalizeLinks(a_44);
         PostVersion version_1_a44 = a_44.getFirst();
         System.out.println(version_1_a44.getContent());
         System.out.println();
 
-        AnchorTextAndUrlHandler.normalizeURLsInTextBlocksOfAllVersions(a_49, anchorTextAndUrlHandler);
+        Link.normalizeLinks(a_49);
         PostVersion version_1_a49 = a_49.getFirst();
         System.out.println(version_1_a49.getContent());
         System.out.println();
 
-        AnchorTextAndUrlHandler.normalizeURLsInTextBlocksOfAllVersions(a_52, anchorTextAndUrlHandler);
+        Link.normalizeLinks(a_52);
         PostVersion version_1_a52 = a_52.getFirst();
         System.out.println(version_1_a52.getContent());
         System.out.println();
 
-        AnchorTextAndUrlHandler.normalizeURLsInTextBlocksOfAllVersions(a_1629423, anchorTextAndUrlHandler);
+        Link.normalizeLinks(a_1629423);
         PostVersion version_1_a1629423 = a_1629423.getFirst();
         System.out.println(version_1_a1629423.getContent());
     }

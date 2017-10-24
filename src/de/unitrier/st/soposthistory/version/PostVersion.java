@@ -8,8 +8,10 @@ import de.unitrier.st.soposthistory.urls.PostVersionUrl;
 import org.hibernate.StatelessSession;
 
 import javax.persistence.*;
-import java.util.*;
-import java.util.regex.Matcher;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static de.unitrier.st.soposthistory.util.Util.insertList;
@@ -176,10 +178,9 @@ public class PostVersion {
 
     public void extractUrlsFromTextBlocks() {
         for (TextBlockVersion currentTextBlock : getTextBlocks()) {
-            Matcher linkMatcher = Link.regex.matcher(currentTextBlock.getContent());
-            while (linkMatcher.find()) {
-                String url = linkMatcher.group(1);
-                urls.add(new PostVersionUrl(postId, postHistoryId, currentTextBlock.getId(), url));
+            List<Link> extractedLinks = Link.extract(currentTextBlock.getContent());
+            for (Link currentLink : extractedLinks) {
+                urls.add(new PostVersionUrl(postId, postHistoryId, currentTextBlock.getId(), currentLink.getUrl()));
             }
         }
     }
