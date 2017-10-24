@@ -5,8 +5,12 @@ import java.util.LinkedList;
 public class BlockLifeSpan extends LinkedList<BlockLifeSpanSnapshot> {
 
     public enum Type{ codeblock, textblock }
-
     private Type type;
+
+
+    public BlockLifeSpan(Type type){
+        this.type = type;
+    }
 
 
     public static int getNumberOfSnapshots(LinkedList<BlockLifeSpan> blockLifeSpans){
@@ -32,10 +36,6 @@ public class BlockLifeSpan extends LinkedList<BlockLifeSpanSnapshot> {
         }
 
         return  sb.toString();
-    }
-
-    public BlockLifeSpan(Type type){
-        this.type = type;
     }
 
     public Type getType(){
