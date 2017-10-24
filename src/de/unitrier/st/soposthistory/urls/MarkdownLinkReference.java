@@ -32,29 +32,20 @@ public class MarkdownLinkReference extends Link {
         Matcher matcher = regex_usages.matcher(markdownContent);
         while (matcher.find()) {
             MarkdownLinkReference extractedLink = new MarkdownLinkReference();
-
-            if (matcher.groupCount() == 2) {
-                extractedLink.fullMatch = matcher.group(0);
-                extractedLink.anchor = matcher.group(1);
-                extractedLink.reference = matcher.group(2);
-                extractedLinks.add(extractedLink);
-            }
+            extractedLink.fullMatch = matcher.group(0);
+            extractedLink.anchor = matcher.group(1);
+            extractedLink.reference = matcher.group(2);
+            extractedLinks.add(extractedLink);
         }
 
         matcher = regex_definitions.matcher(markdownContent);
         while (matcher.find()) {
             MarkdownLinkReference extractedLink = new MarkdownLinkReference();
-
-            if (matcher.groupCount() >= 2) {
-                extractedLink.fullMatch = matcher.group(0);
-                extractedLink.reference = matcher.group(1);
-                extractedLink.url = matcher.group(2);
-                extractedLinks.add(extractedLink);
-
-                if (matcher.groupCount() == 3) {
-                    extractedLink.title = matcher.group(3);
-                }
-            }
+            extractedLink.fullMatch = matcher.group(0);
+            extractedLink.reference = matcher.group(1);
+            extractedLink.url = matcher.group(2);
+            extractedLink.title = matcher.group(3);
+            extractedLinks.add(extractedLink);
         }
 
         return mergeUsagesAndDefinitions(extractedLinks);
