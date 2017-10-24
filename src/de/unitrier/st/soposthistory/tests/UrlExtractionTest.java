@@ -230,5 +230,17 @@ class UrlExtractionTest {
         Link.normalizeLinks(a_1629423);
         PostVersion version_1_a1629423 = a_1629423.getFirst();
         System.out.println(version_1_a1629423.getContent());
+    @Test
+    void testMarkdownLinkInlineTitle(){
+        List<Link> extractedUrls = Link.extractAll("[I'm an inline-style link with title](https://www.google.com \"Google's Homepage\")");
+
+        assertEquals(1, extractedUrls.size());
+
+        assertEquals("[I'm an inline-style link with title](https://www.google.com \"Google's Homepage\")", extractedUrls.get(0).getFullMatch());
+        assertEquals("I'm an inline-style link with title", extractedUrls.get(0).getAnchor());
+        assertEquals(null, extractedUrls.get(0).getReference());
+        assertEquals("https://www.google.com", extractedUrls.get(0).getUrl());
+        assertEquals("Google's Homepage", extractedUrls.get(0).getTitle());
+        assertThat(extractedUrls.get(0), instanceOf(MarkdownLinkInline.class));
     }
 }
