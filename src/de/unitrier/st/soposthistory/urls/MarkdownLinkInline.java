@@ -1,8 +1,11 @@
 package de.unitrier.st.soposthistory.urls;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class MarkdownLinkInline {
+public class MarkdownLinkInline extends Link {
 
     // Source: https://stackoverflow.com/editing-help#code
     // Example 1: Here's an inline link to [Google](http://www.google.com/).
@@ -12,5 +15,30 @@ public class MarkdownLinkInline {
     // Example 3: [I'm an inline-style link](https://www.google.com)
     // Example 4: [I'm an inline-style link with title](https://www.google.com "Google's Homepage")
 
-    public static final Pattern regex = Pattern.compile("\\[([^]]+)]\\(\\s*((?:http|ftp|https):\\/\\/(?:[\\w_-]+(?:(?:\\.[\\w_-]+)+))(?:[\\w.,@?^=%&:\\/~+#-]*[\\w@?^=%&\\/~+#-]))?(?:\\s+\"([^\"]+)\")?\\s*\\)");
+    private static final Pattern regex = Pattern.compile("\\[([^]]+)]\\(\\s*((?:http|ftp|https):\\/\\/(?:[\\w_-]+(?:(?:\\.[\\w_-]+)+))(?:[\\w.,@?^=%&:\\/~+#-]*[\\w@?^=%&\\/~+#-]))?(?:\\s+\"([^\"]+)\")?\\s*\\)");
+
+    public static List<Link> extract(String markdownContent) {
+        LinkedList<Link> extractedLinks = new LinkedList<>();
+        Matcher matcher = regex.matcher(markdownContent);
+
+        while (matcher.find()) {
+            MarkdownLinkInline extractedLink = new MarkdownLinkInline();
+
+            if (matcher.groupCount() >= 3) {
+                extractedLink.fullMatch = matcher.group(0);
+                extractedLink.anchor = matcher.group(1);
+                extractedLink.url = matcher.group(2);
+
+                if (matcher.groupCount() == 4) {
+                    // TODO: test this
+                    extractedLink.title = matcher.group(3);
+                }
+
+                extractedLinks.add(extractedLink);
+            }
+        }
+
+        return extractedLinks;
+    }
+
 }

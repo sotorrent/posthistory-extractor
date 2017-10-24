@@ -1,8 +1,11 @@
 package de.unitrier.st.soposthistory.urls;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class MarkdownLinkReference {
+public class MarkdownLinkReference extends Link {
 
     // Source: https://stackoverflow.com/editing-help#code
     // Example 1: Here's a reference-style link to [Google][1].   ...     and later   ...     [1]: http://www.google.com/
@@ -20,6 +23,66 @@ public class MarkdownLinkReference {
 
 
     //public static final Pattern regex = Pattern.compile("\\[[^]]+]:\\s*((?:http|ftp|https)://(?:[\\w_-]+(?:(?:\\.[\\w_-]+)+))(?:[\\w.,@?^=%&:/~+#-]*[\\w@?^=%&/~+#-]))?");
-    public static final Pattern regex_top = Pattern.compile("\\[([^]]*)]\\[(\\s*.*?\\s*)]");
-    public static final Pattern regex_bottom = Pattern.compile("\\s(\\[([^]]+)]:\\s*((?:http|ftp|https)://(?:[\\w_-]+(?:(?:\\.[\\w_-]+)+))(?:[\\w.,@?^=%&:/~+#-]*[\\w@?^=%&/~+#-]))?)(\\s+(\".*\"))?");
+    private static final Pattern regex_usages = Pattern.compile("\\[([^]]*)]\\[(\\s*.*?\\s*)]");
+    private static final Pattern regex_definitions = Pattern.compile("(?:\\[([^]]+)]:\\s*((?:http|ftp|https):\\/\\/(?:[\\w_-]+(?:(?:\\.[\\w_-]+)+))(?:[\\w.,@?^=%&:\\/~+#-]*[\\w@?^=%&\\/~+#-]))?)(?:\\s+\"(.*)\")?");
+
+    public static List<Link> extract(String markdownContent) {
+        LinkedList<MarkdownLinkReference> extractedLinks = new LinkedList<>();
+
+        Matcher matcher = regex_usages.matcher(markdownContent);
+        while (matcher.find()) {
+            MarkdownLinkReference extractedLink = new MarkdownLinkReference();
+
+            if (matcher.groupCount() == 2) {
+                extractedLink.fullMatch = matcher.group(0);
+                extractedLink.anchor = matcher.group(1);
+                extractedLink.reference = matcher.group(2);
+                extractedLinks.add(extractedLink);
+            }
+        }
+
+        matcher = regex_definitions.matcher(markdownContent);
+        while (matcher.find()) {
+            MarkdownLinkReference extractedLink = new MarkdownLinkReference();
+
+            if (matcher.groupCount() >= 2) {
+                extractedLink.fullMatch = matcher.group(0);
+                extractedLink.reference = matcher.group(1);
+                extractedLink.url = matcher.group(2);
+                extractedLinks.add(extractedLink);
+
+                if (matcher.groupCount() == 3) {
+                    extractedLink.title = matcher.group(3);
+                }
+            }
+        }
+
+        return mergeUsagesAndDefinitions(extractedLinks);
+    }
+
+    private static List<Link> mergeUsagesAndDefinitions(List<MarkdownLinkReference> extractedLinks) {
+        LinkedList<Link> mergedLinks = new LinkedList<>();
+
+        for (Link link1 : extractedLinks) {
+            if (link1.anchor != null && link1.url == null && link1.reference != null) {
+                // link is usage of link reference
+                for (Link link2 : extractedLinks) {
+                    if (link2.anchor == null && link2.url != null && link2.reference != null) {
+                        if (link1.reference.equals(link2.reference)) {
+                            MarkdownLinkReference mergedLink = new MarkdownLinkReference();
+                            mergedLink.reference = link1.reference;
+                            mergedLink.anchor = link1.anchor;
+                            mergedLink.title = link2.title;
+                            mergedLink.url = link2.url;
+                            mergedLink.fullMatch = link1.fullMatch + "\n" + link2.fullMatch;
+                            mergedLinks.add(mergedLink);
+                        }
+                    }
+
+                }
+            }
+        }
+
+        return mergedLinks;
+    }
 }
