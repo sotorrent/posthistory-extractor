@@ -5,6 +5,7 @@ import de.unitrier.st.soposthistory.version.PostVersion;
 import de.unitrier.st.soposthistory.version.PostVersionList;
 import org.junit.jupiter.api.Test;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -207,28 +208,46 @@ class UrlExtractionTest {
         PostVersionList a_1629423 = new PostVersionList();
         a_1629423.readFromCSV("testdata", 1629423, 2);
 
+
+        LinkedList<Link> extractedLinks = new LinkedList<>();
+
         Link.normalizeLinks(a_33);
         PostVersion version_1_a33 = a_33.getFirst();
-        System.out.println(version_1_a33.getContent());
-        System.out.println();
+        extractedLinks.addAll(Link.extractAll(version_1_a33.getContent()));
 
         Link.normalizeLinks(a_44);
         PostVersion version_1_a44 = a_44.getFirst();
-        System.out.println(version_1_a44.getContent());
-        System.out.println();
+        extractedLinks.addAll(Link.extractAll(version_1_a44.getContent()));
 
         Link.normalizeLinks(a_49);
         PostVersion version_1_a49 = a_49.getFirst();
-        System.out.println(version_1_a49.getContent());
-        System.out.println();
+        extractedLinks.addAll(Link.extractAll(version_1_a49.getContent()));
 
         Link.normalizeLinks(a_52);
         PostVersion version_1_a52 = a_52.getFirst();
-        System.out.println(version_1_a52.getContent());
-        System.out.println();
+        extractedLinks.addAll(Link.extractAll(version_1_a52.getContent()));
 
         Link.normalizeLinks(a_1629423);
         PostVersion version_1_a1629423 = a_1629423.getFirst();
-        System.out.println(version_1_a1629423.getContent());
+        extractedLinks.addAll(Link.extractAll(version_1_a1629423.getContent()));
+
+
+        for(Link link : extractedLinks){
+            assertEquals(false, link instanceof MarkdownLinkReference);
+        }
+    }
+
+    @Test
+    void testMarkdownLinkInlineTitle(){
+        List<Link> extractedUrls = Link.extractAll("[I'm an inline-style link with title](https://www.google.com \"Google's Homepage\")");
+
+        assertEquals(1, extractedUrls.size());
+
+        assertEquals("[I'm an inline-style link with title](https://www.google.com \"Google's Homepage\")", extractedUrls.get(0).getFullMatch());
+        assertEquals("I'm an inline-style link with title", extractedUrls.get(0).getAnchor());
+        assertEquals(null, extractedUrls.get(0).getReference());
+        assertEquals("https://www.google.com", extractedUrls.get(0).getUrl());
+        assertEquals("Google's Homepage", extractedUrls.get(0).getTitle());
+        assertThat(extractedUrls.get(0), instanceOf(MarkdownLinkInline.class));
     }
 }
