@@ -5,6 +5,7 @@ import de.unitrier.st.soposthistory.blocks.PostBlockVersion;
 import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
 import de.unitrier.st.soposthistory.diffs.PostBlockDiffList;
 import de.unitrier.st.soposthistory.history.PostHistory;
+import de.unitrier.st.soposthistory.urls.Link;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -253,6 +254,24 @@ public class PostVersionList extends LinkedList<PostVersion> {
         }
 
         diffs.insert(session);
+    }
+
+    // Needed for GT-App to display all links correctly with Commonmark
+    public void normalizeLinks() {
+        for (PostVersion postVersion : this) {
+            String mergedTextBlocks = postVersion.getMergedTextBlockContent();
+            List<Link> extractedLinks = Link.extractAll(mergedTextBlocks);
+
+            for (TextBlockVersion currentTextBlock : postVersion.getTextBlocks()) {
+                String normalizedMarkdownContent = Link.normalizeLinks(currentTextBlock.getContent(), extractedLinks);
+
+                if (normalizedMarkdownContent.trim().isEmpty()) { // handles, e.g., post 3745432
+                    postVersion.getPostBlocks().remove(currentTextBlock);
+                } else {
+                    currentTextBlock.setContent(normalizedMarkdownContent);
+                }
+            }
+        }
     }
 
     @Override

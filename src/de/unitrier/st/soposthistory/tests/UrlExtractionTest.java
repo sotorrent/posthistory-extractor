@@ -212,23 +212,23 @@ class UrlExtractionTest {
 
         LinkedList<Link> extractedLinks = new LinkedList<>();
 
-        Link.normalizeLinks(a_33);
+        a_33.normalizeLinks();
         PostVersion version_1_a33 = a_33.getFirst();
         extractedLinks.addAll(Link.extractAll(version_1_a33.getContent()));
 
-        Link.normalizeLinks(a_44);
+        a_44.normalizeLinks();
         PostVersion version_1_a44 = a_44.getFirst();
         extractedLinks.addAll(Link.extractAll(version_1_a44.getContent()));
 
-        Link.normalizeLinks(a_49);
+        a_49.normalizeLinks();
         PostVersion version_1_a49 = a_49.getFirst();
         extractedLinks.addAll(Link.extractAll(version_1_a49.getContent()));
 
-        Link.normalizeLinks(a_52);
+        a_52.normalizeLinks();
         PostVersion version_1_a52 = a_52.getFirst();
         extractedLinks.addAll(Link.extractAll(version_1_a52.getContent()));
 
-        Link.normalizeLinks(a_1629423);
+        a_1629423.normalizeLinks();
         PostVersion version_1_a1629423 = a_1629423.getFirst();
         extractedLinks.addAll(Link.extractAll(version_1_a1629423.getContent()));
 
