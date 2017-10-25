@@ -115,8 +115,6 @@ public class Link {
 
     private static String normalizeLinks(String markdownContent, List<Link> extractedLinks) {
 
-        // TODO: replace vs. replaceFirst?
-
         String normalizedMarkdownContent = markdownContent;
 
         for (Link currrentLink : extractedLinks) {
