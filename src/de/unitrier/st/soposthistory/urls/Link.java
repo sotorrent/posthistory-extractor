@@ -92,28 +92,7 @@ public class Link {
         return validLinks;
     }
 
-    public static void normalizeLinks(PostVersionList postVersionList) {
-        if (postVersionList == null) {
-            return;
-        }
-
-        for (PostVersion postVersion : postVersionList) {
-            String mergedTextBlocks = postVersion.getMergedTextBlockContent();
-            List<Link> extractedLinks = extractAll(mergedTextBlocks);
-
-            for (TextBlockVersion currentTextBlock : postVersion.getTextBlocks()) {
-                String normalizedMarkdownContent = normalizeLinks(currentTextBlock.getContent(), extractedLinks);
-
-                if (normalizedMarkdownContent.trim().isEmpty()) { // handles, e.g., post 3745432
-                    postVersion.getPostBlocks().remove(currentTextBlock);
-                } else {
-                    currentTextBlock.setContent(normalizedMarkdownContent);
-                }
-            }
-        }
-    }
-
-    private static String normalizeLinks(String markdownContent, List<Link> extractedLinks) {
+    public static String normalizeLinks(String markdownContent, List<Link> extractedLinks) {
 
         String normalizedMarkdownContent = markdownContent;
 
