@@ -12,7 +12,7 @@ import java.util.function.BiFunction;
 public class CodeBlockVersion extends PostBlockVersion {
     // TODO: Aus Tags der Frage (und evtl. Analyse des Codes) die Programmiersprache ableiten
 
-    public static final int blockTypeId = 2;
+    public static final int postBlockTypeId = 2;
     public static BiFunction<String, String, Double> similarityMetric = de.unitrier.st.stringsimilarity.set.Variants::fourGramOverlap; //TODO: update this after evaluation
     public static BiFunction<String, String, Double> backupSimilarityMetric = de.unitrier.st.stringsimilarity.edit.Variants::levenshtein; // TODO: use best edit-based metric here
     public static double similarityThreshold = 0.6; //TODO: update this after evaluation (two thresholds needed because of backup)
