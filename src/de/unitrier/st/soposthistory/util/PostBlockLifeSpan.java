@@ -34,6 +34,14 @@ public class PostBlockLifeSpan extends LinkedList<PostBlockLifeSpanVersion> {
         return sb.toString();
     }
 
+    public int getPostId() {
+        return postId;
+    }
+
+    public int getPostBlockTypeId() {
+        return postBlockTypeId;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
