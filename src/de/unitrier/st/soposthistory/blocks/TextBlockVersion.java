@@ -12,7 +12,7 @@ import java.util.function.BiFunction;
 public class TextBlockVersion extends PostBlockVersion {
     // TODO: handling of URL blocks (tranform to inline URLs, see AnchorTextAndUrlHandler)
 
-    public static final int blockTypeId = 1;
+    public static final int postBlockTypeId = 1;
     public static BiFunction<String, String, Double> similarityMetric = de.unitrier.st.stringsimilarity.set.Variants::fourGramOverlap; //TODO: update this after evaluation
     public static BiFunction<String, String, Double> backupSimilarityMetric = de.unitrier.st.stringsimilarity.edit.Variants::levenshtein; // TODO: use best edit-based metric here
     public static double similarityThreshold = 0.6; //TODO: update this after evaluation (two thresholds needed because of backup)
