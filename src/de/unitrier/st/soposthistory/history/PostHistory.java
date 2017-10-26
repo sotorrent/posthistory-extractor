@@ -203,8 +203,6 @@ public class PostHistory {
     }
 
     public void extractPostBlocks() {
-        //TODO: Also extract language from HTML comment? (see http://stackoverflow.com/editing-help#syntax-highlighting)
-
         postBlocks = new LinkedList<>();
         localIdCount = 0;
 
@@ -407,6 +405,11 @@ public class PostHistory {
             }
 
             currentPostBlock.finalizeContent();
+
+            /* In some cases when a code blocks ends with a single character, the indention by 4 spaces is missing in
+             * the table PostHistory (see, e.g., PostHistoryId=96888165). The following code should prevent most of
+             * these cases from being recognized as text blocks.
+             */
 
             // remove this post block if does not contain letters or digits
             boolean containsLettersOrDigits = containsLetterOrDigitPattern.matcher(
