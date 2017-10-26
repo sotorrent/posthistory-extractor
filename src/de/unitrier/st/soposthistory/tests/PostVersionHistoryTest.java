@@ -3,8 +3,11 @@ package de.unitrier.st.soposthistory.tests;
 import de.unitrier.st.soposthistory.blocks.CodeBlockVersion;
 import de.unitrier.st.soposthistory.blocks.PostBlockVersion;
 import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
+import de.unitrier.st.soposthistory.util.Config;
 import de.unitrier.st.soposthistory.version.PostVersion;
 import de.unitrier.st.soposthistory.version.PostVersionList;
+import de.unitrier.st.stringsimilarity.util.InputTooShortException;
+import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
@@ -12,9 +15,23 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import static de.unitrier.st.soposthistory.blocks.PostBlockVersion.EQUALITY_SIMILARITY;
+import static org.hamcrest.Matchers.*;
+import static org.hamcrest.junit.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PostVersionHistoryTest {
+
+    private void testPredecessorSimilarities(PostVersion postVersion) {
+        for (PostBlockVersion currentPostBlockVersion : postVersion.getPostBlocks()) {
+            for (double similarity : currentPostBlockVersion.getPredecessorSimilarities().values()) {
+                assertThat(similarity, either(
+                        allOf(greaterThanOrEqualTo(0.0), lessThanOrEqualTo(1.0)))
+                        .or(equalTo(EQUALITY_SIMILARITY))
+                );
+            }
+        }
+    }
 
     @Test
     void testReadPostHistoryAnswer1109108() {
@@ -24,6 +41,8 @@ class PostVersionHistoryTest {
         assertEquals(7, a_1109108.size());
 
         PostVersion version_7 = a_1109108.get(6);
+        testPredecessorSimilarities(version_7);
+
         assertEquals(3, version_7.getPostBlocks().size());
         assertEquals(2, version_7.getTextBlocks().size());
         assertEquals(1, version_7.getCodeBlocks().size());
@@ -51,6 +70,8 @@ class PostVersionHistoryTest {
         assertEquals(7, a_3145655.size());
 
         PostVersion version_7 = a_3145655.get(6);
+        testPredecessorSimilarities(version_7);
+
         assertEquals(5, version_7.getPostBlocks().size());
         assertEquals(3, version_7.getTextBlocks().size());
         assertEquals(2, version_7.getCodeBlocks().size());
@@ -78,6 +99,8 @@ class PostVersionHistoryTest {
         assertEquals(11, a_9855338.size());
 
         PostVersion version_11 = a_9855338.get(10);
+        testPredecessorSimilarities(version_11);
+
         assertEquals(3, version_11.getPostBlocks().size());
         assertEquals(2, version_11.getTextBlocks().size());
         assertEquals(1, version_11.getCodeBlocks().size());
@@ -105,6 +128,8 @@ class PostVersionHistoryTest {
         assertEquals(8, a_2581754.size());
 
         PostVersion version_3 = a_2581754.get(2);
+        testPredecessorSimilarities(version_3);
+
         assertEquals(6, version_3.getPostBlocks().size());
         assertEquals(3, version_3.getTextBlocks().size());
         assertEquals(3, version_3.getCodeBlocks().size());
@@ -125,13 +150,9 @@ class PostVersionHistoryTest {
     }
 
     @Test
+    @Ignore
     void testPostBlockVersionExtraction() {
-        // TODO: add test cases for testing the version history extraction (similarity and diffs between code blocks and text blocks, linking of block versions)
-
-        //a_1109108.processVersionHistory();
-        //PostVersion version_7 = a_1109108.get(6);
-        //assertEquals(2, version_7.getCodeBlocks().get(0).getPredDiff().size());
-        // ....
+        // TODO: Add test cases for testing the version history extraction (similarity and diffs between code blocks and text blocks, linking of block versions); we can add some posts from the grounth truth here after we decided on the similarity metrics and thresholds.
     }
 
     @Test
@@ -143,6 +164,7 @@ class PostVersionHistoryTest {
         assertEquals(1, a_20991163.size());
 
         PostVersion version_1 = a_20991163.get(0);
+
         assertEquals(1, version_1.getPostBlocks().size());
         assertEquals(0, version_1.getTextBlocks().size());
         assertEquals(1, version_1.getCodeBlocks().size());
@@ -157,6 +179,7 @@ class PostVersionHistoryTest {
 
         // the first version of this post should only consist of one text block
         PostVersion version_1 = a_32012927.get(0);
+
         assertEquals(1, version_1.getPostBlocks().size());
         assertEquals(1, version_1.getTextBlocks().size());
         assertEquals(0, version_1.getCodeBlocks().size());
@@ -171,6 +194,7 @@ class PostVersionHistoryTest {
 
         // the first and only version of this post should consist of three text blocks and two code blocks
         PostVersion version_1 = a_10734905.get(0);
+
         assertEquals(5, version_1.getPostBlocks().size());
         assertEquals(3, version_1.getTextBlocks().size());
         assertEquals(2, version_1.getCodeBlocks().size());
@@ -193,6 +217,7 @@ class PostVersionHistoryTest {
 
         // the first and only version of this post should consist of two text blocks and two code blocks
         PostVersion version_1 = a_31965641.get(0);
+
         assertEquals(4, version_1.getPostBlocks().size());
         assertEquals(2, version_1.getTextBlocks().size());
         assertEquals(2, version_1.getCodeBlocks().size());
@@ -213,32 +238,37 @@ class PostVersionHistoryTest {
         // there are 11 versions of this post
         assertEquals(11, a_3758880.size());
 
-        PostVersion firstVersion = a_3758880.get(0);
-        assertEquals(6, firstVersion.getPostBlocks().size());
+        PostVersion version_1 = a_3758880.get(0);
+
+        assertEquals(6, version_1.getPostBlocks().size());
         // root post blocks of first version must be null
-        for (PostBlockVersion currentPostBlock : firstVersion.getPostBlocks()) {
+        for (PostBlockVersion currentPostBlock : version_1.getPostBlocks()) {
             assertEquals(currentPostBlock.getId(), (int)currentPostBlock.getRootPostBlockId());
         }
 
-        PostVersion secondPostVersion = a_3758880.get(1);
-        assertEquals(4, secondPostVersion.getPostBlocks().size());
+        PostVersion version_2 = a_3758880.get(1);
+        testPredecessorSimilarities(version_2);
+
+        assertEquals(4, version_2.getPostBlocks().size());
         // first code block of second version has first code block of first version as root post block
-        assertEquals((int)secondPostVersion.getCodeBlocks().get(0).getRootPostBlockId(),
-                firstVersion.getCodeBlocks().get(0).getId());
+        assertEquals((int)version_2.getCodeBlocks().get(0).getRootPostBlockId(),
+                version_1.getCodeBlocks().get(0).getId());
         // second code block of second version has third code block of first version as root post block
-        assertEquals((int)secondPostVersion.getCodeBlocks().get(1).getRootPostBlockId(),
-                firstVersion.getCodeBlocks().get(2).getId());
+        assertEquals((int)version_2.getCodeBlocks().get(1).getRootPostBlockId(),
+                version_1.getCodeBlocks().get(2).getId());
         // second text block of second version has no predecessor (-> itself as root post block)
-        assertEquals((int)secondPostVersion.getTextBlocks().get(0).getRootPostBlockId(),
-                secondPostVersion.getTextBlocks().get(0).getId());
+        assertEquals((int)version_2.getTextBlocks().get(0).getRootPostBlockId(),
+                version_2.getTextBlocks().get(0).getId());
 
         PostVersion lastPostVersion = a_3758880.get(a_3758880.size()-1);
+        testPredecessorSimilarities(lastPostVersion);
+
         // first code block of last version still has first code block of first version as root post block
         assertEquals((int)lastPostVersion.getCodeBlocks().get(0).getRootPostBlockId(),
-                firstVersion.getCodeBlocks().get(0).getId());
+                version_1.getCodeBlocks().get(0).getId());
         // first text block of last version has first text block of second version as root post block
         assertEquals((int)lastPostVersion.getTextBlocks().get(0).getRootPostBlockId(),
-                secondPostVersion.getTextBlocks().get(0).getId());
+                version_2.getTextBlocks().get(0).getId());
     }
 
     @Test
@@ -249,6 +279,7 @@ class PostVersionHistoryTest {
         assertEquals(2, q_22360443.size());
 
         PostVersion version_1 = q_22360443.get(0);
+
         assertEquals(4, version_1.getPostBlocks().size());
         assertEquals(2, version_1.getTextBlocks().size());
         assertEquals(2, version_1.getCodeBlocks().size());
@@ -259,6 +290,8 @@ class PostVersionHistoryTest {
         assertTrue(postBlocks.get(3) instanceof TextBlockVersion);
 
         PostVersion version_2 = q_22360443.get(1);
+        testPredecessorSimilarities(version_2);
+
         assertEquals(5, version_2.getPostBlocks().size());
         assertEquals(3, version_2.getTextBlocks().size());
         assertEquals(2, version_2.getCodeBlocks().size());
@@ -271,6 +304,7 @@ class PostVersionHistoryTest {
     }
 
     @Test
+    @Ignore
     void testRootPostBlocksQuestion3758880() {
         PostVersionList q_3758880 = new PostVersionList();
         q_3758880.readFromCSV("testdata", 3758880, 1);
@@ -291,6 +325,8 @@ class PostVersionHistoryTest {
         // and snippet language information blocks (see https://stackoverflow.com/editing-help#syntax-highlighting)
         // are correctly handled (language info splits code blocks).
         PostVersion version_4 = a_32143330.get(3);
+        testPredecessorSimilarities(version_4);
+
         assertEquals(6, version_4.getPostBlocks().size());
         assertEquals(3, version_4.getTextBlocks().size());
         assertEquals(3, version_4.getCodeBlocks().size());
@@ -311,6 +347,8 @@ class PostVersionHistoryTest {
         assertEquals(12, a_26044128.size());
 
         PostVersion version_12 = a_26044128.get(11);
+        testPredecessorSimilarities(version_12);
+
         assertEquals(8, version_12.getPostBlocks().size());
         assertEquals(4, version_12.getTextBlocks().size());
         assertEquals(4, version_12.getCodeBlocks().size());
@@ -334,6 +372,8 @@ class PostVersionHistoryTest {
 
         // version 5 contains an alternative (GitHub-style) code block (see https://stackoverflow.com/revisions/32342082/5)
         PostVersion version_5 = q_32342082.get(4);
+        testPredecessorSimilarities(version_5);
+
         assertEquals(5, version_5.getPostBlocks().size());
         assertEquals(3, version_5.getTextBlocks().size());
         assertEquals(2, version_5.getCodeBlocks().size());
@@ -354,6 +394,8 @@ class PostVersionHistoryTest {
 
         // version 1+2 contain a code block marked by <pre><code> ... </pre></code> instead of correct indention (see https://stackoverflow.com/revisions/19175014/2)
         PostVersion version_2 = q_19175014.get(1);
+        testPredecessorSimilarities(version_2);
+
         assertEquals(2, version_2.getPostBlocks().size());
         assertEquals(1, version_2.getTextBlocks().size());
         assertEquals(1, version_2.getCodeBlocks().size());
@@ -384,6 +426,7 @@ class PostVersionHistoryTest {
 
         // version 1 contains a code block marked by <script type="text/javascript"> ... </script> instead of correct indention (see https://stackoverflow.com/revisions/3381751/1)
         PostVersion version_1 = q_3381751.get(0);
+
         assertEquals(3, version_1.getPostBlocks().size());
         assertEquals(2, version_1.getTextBlocks().size());
         assertEquals(1, version_1.getCodeBlocks().size());
@@ -403,6 +446,8 @@ class PostVersionHistoryTest {
 
         // version 1+2 contain an indented code block containing <script> tags (see https://stackoverflow.com/revisions/28598648/2)
         PostVersion version_2 = q_28598648.get(1);
+        testPredecessorSimilarities(version_2);
+
         assertEquals(2, version_2.getPostBlocks().size());
         assertEquals(1, version_2.getTextBlocks().size());
         assertEquals(1, version_2.getCodeBlocks().size());
@@ -418,7 +463,6 @@ class PostVersionHistoryTest {
         PostVersionList a_3758880 = new PostVersionList();
         a_3758880.readFromCSV("testdata", 3758880, 2, false);
 
-        TextBlockVersion.similarityMetric = de.unitrier.st.stringsimilarity.set.Variants::twoGramDiceVariant;
         a_3758880.processVersionHistory(PostVersionList.PostBlockTypeFilter.TEXT);
 
         // we consider the most recent version here
@@ -441,11 +485,11 @@ class PostVersionHistoryTest {
         PostVersionList q_37625877 = new PostVersionList();
         q_37625877.readFromCSV("testdata", 37625877, 1, false);
 
-        TextBlockVersion.similarityMetric = de.unitrier.st.stringsimilarity.set.Variants::twoGramDiceVariant;
         q_37625877.processVersionHistory(PostVersionList.PostBlockTypeFilter.TEXT);
 
         PostVersion version_1 = q_37625877.get(0);
         PostVersion version_2 = q_37625877.get(1);
+        testPredecessorSimilarities(version_2);
 
         // both versions have two text blocks with value "or:" at position 2 and 3, which should be linked accordingly
         assertEquals(version_1.getTextBlocks().get(2).getLocalId(), version_2.getTextBlocks().get(2).getPred().getLocalId());
@@ -462,6 +506,7 @@ class PostVersionHistoryTest {
 
         PostVersion version_1 = a_42070509.get(0);
         PostVersion version_2 = a_42070509.get(1);
+        testPredecessorSimilarities(version_2);
 
         // code blocks with content "var circle = d3.select("circle");..." are present in both versions
         assertEquals(version_1.getCodeBlocks().get(0).getLocalId(), version_2.getCodeBlocks().get(0).getPred().getLocalId());
@@ -478,6 +523,8 @@ class PostVersionHistoryTest {
         q_23459881.readFromCSV("testdata", 23459881, 1, true);
 
         PostVersion version_2 = q_23459881.get(1);
+        testPredecessorSimilarities(version_2);
+
         assertEquals(8, version_2.getPostBlocks().size());
         assertEquals(4, version_2.getTextBlocks().size());
         assertEquals(4, version_2.getCodeBlocks().size());
@@ -517,6 +564,8 @@ class PostVersionHistoryTest {
         q_36082771.readFromCSV("testdata", 36082771, 1, true);
 
         PostVersion version_2 = q_36082771.get(1);
+        testPredecessorSimilarities(version_2);
+
         assertEquals(12, version_2.getPostBlocks().size());
         assertEquals(6, version_2.getTextBlocks().size());
         assertEquals(6, version_2.getCodeBlocks().size());
@@ -563,6 +612,8 @@ class PostVersionHistoryTest {
         q_18276636.readFromCSV("testdata", 18276636, 1, true);
 
         PostVersion version_2 = q_18276636.get(1);
+        testPredecessorSimilarities(version_2);
+
         assertEquals(17, version_2.getPostBlocks().size());
         assertEquals(9, version_2.getTextBlocks().size());
         assertEquals(8, version_2.getCodeBlocks().size());
@@ -608,6 +659,7 @@ class PostVersionHistoryTest {
 
         // version 1 contains a broken text block, which has an indented line. Stack Overflow displays this correctly  (see https://stackoverflow.com/revisions/15372744/1)
         PostVersion version_1 = q_15372744.get(0);
+
         assertEquals(1, version_1.getPostBlocks().size());
         assertEquals(1, version_1.getTextBlocks().size());
         assertEquals(0, version_1.getCodeBlocks().size());
@@ -623,5 +675,32 @@ class PostVersionHistoryTest {
         // This caused a null pointer exception before (last commit: d37e6e38c8c15efe743e35141561742d7ef91ede),
         // because some filter checks were missing.
         q_3758880.processVersionHistory(PostVersionList.PostBlockTypeFilter.CODE);
+    }
+
+    @Test
+    void testBackupMetric() {
+        // text blocks
+        TextBlockVersion textBlock1 = new TextBlockVersion(1, 1);
+        textBlock1.setContent("ab");
+        TextBlockVersion textBlock2 = new TextBlockVersion(2, 2);
+        textBlock2.setContent("ac");
+
+        textBlock1.compareTo(textBlock2, Config.DEFAULT); // no exception
+
+        assertThrows(InputTooShortException.class, () -> textBlock1.compareTo(textBlock2,
+                Config.DEFAULT.withTextBackupSimilarityMetric(null))
+        );
+
+        // code blocks
+        CodeBlockVersion codeBlock1 = new CodeBlockVersion(1, 1);
+        codeBlock1.setContent("foo");
+        CodeBlockVersion codeBlock2 = new CodeBlockVersion(2, 2);
+        codeBlock2.setContent("bar");
+
+        codeBlock1.compareTo(codeBlock2, Config.DEFAULT); // no exception
+
+        assertThrows(InputTooShortException.class, () -> codeBlock1.compareTo(codeBlock2,
+                Config.DEFAULT.withCodeBackupSimilarityMetric(null))
+        );
     }
 }
