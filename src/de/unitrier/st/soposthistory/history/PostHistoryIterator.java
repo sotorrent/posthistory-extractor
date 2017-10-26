@@ -12,18 +12,20 @@ import org.hibernate.*;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.FileHandler;
-import java.util.logging.Handler;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 import java.util.stream.Collectors;
+
+import static de.unitrier.st.soposthistory.util.Util.getClassLogger;
 
 public class PostHistoryIterator {
     // TODO: In some cases when a code blocks ends with a single character, the indention by 4 spaces is missing in the table PostHistory (see, e.g., Id=96888165). This is then recognized as a TextBlock.
@@ -52,12 +54,7 @@ public class PostHistoryIterator {
 
         // configure logger
         try {
-            String logFile = Paths.get(logFileDir.toString(), PostHistoryIterator.class.getSimpleName() + ".log" )
-                    .toString();
-            logger = Logger.getLogger(PostHistoryIterator.class.getName());
-            Handler fileHandler = new FileHandler(logFile);
-            fileHandler.setFormatter(new SimpleFormatter());
-            logger.addHandler(fileHandler);
+            logger = getClassLogger(PostHistoryIterator.class, true);
         } catch (IOException e) {
             e.printStackTrace();
         }

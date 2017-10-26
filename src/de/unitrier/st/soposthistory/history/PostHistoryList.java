@@ -12,10 +12,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
-import java.util.logging.FileHandler;
-import java.util.logging.Handler;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
+
+import static de.unitrier.st.soposthistory.util.Util.getClassLogger;
 
 public class PostHistoryList extends LinkedList<PostHistory> {
     // TODO: Merge with PostHistoryIterator?
@@ -42,12 +41,7 @@ public class PostHistoryList extends LinkedList<PostHistory> {
 
         // configure logger
         try {
-            String logFile = Paths.get(logFileDir.toString(), PostHistoryList.class.getSimpleName() + ".log" )
-                    .toString();
-            logger = Logger.getLogger(PostHistoryList.class.getName());
-            Handler fileHandler = new FileHandler(logFile);
-            fileHandler.setFormatter(new SimpleFormatter());
-            logger.addHandler(fileHandler);
+            logger = getClassLogger(PostHistoryList.class, true);
         } catch (IOException e) {
             e.printStackTrace();
         }
