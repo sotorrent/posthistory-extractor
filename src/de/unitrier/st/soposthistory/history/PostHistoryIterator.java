@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 import static de.unitrier.st.soposthistory.util.Util.getClassLogger;
 
 public class PostHistoryIterator {
-    // TODO: In some cases when a code blocks ends with a single character, the indention by 4 spaces is missing in the table PostHistory (see, e.g., Id=96888165). This is then recognized as a TextBlock.
 
     private static final Path logFileDir  = Paths.get(System.getProperty("user.dir"));
     private static final CSVFormat csvFormat;
