@@ -1,5 +1,6 @@
 package de.unitrier.st.soposthistory.blocks;
 
+import de.unitrier.st.stringsimilarity.util.IllegalSimilarityValueException;
 import de.unitrier.st.stringsimilarity.util.InputTooShortException;
 
 import javax.persistence.DiscriminatorValue;
@@ -27,11 +28,18 @@ public class TextBlockVersion extends PostBlockVersion {
 
     @Override
     public double compareTo(PostBlockVersion otherBlock) {
+        double similarity;
         try {
-            return similarityMetric.apply(getContent(), otherBlock.getContent());
+            similarity = similarityMetric.apply(getContent(), otherBlock.getContent());
         } catch (InputTooShortException e) {
-            return backupSimilarityMetric.apply(getContent(), otherBlock.getContent());
+            similarity = backupSimilarityMetric.apply(getContent(), otherBlock.getContent());
         }
+
+        if (similarity < 0.0 || similarity > 1.0) {
+            throw new IllegalSimilarityValueException("Similarity value must be in range [0.0, 1.0], but was " + similarity);
+        }
+
+        return similarity;
     }
 
     @Override
