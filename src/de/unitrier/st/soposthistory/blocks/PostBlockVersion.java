@@ -5,18 +5,30 @@ import de.unitrier.st.soposthistory.diffs.diff_match_patch;
 import de.unitrier.st.soposthistory.version.PostVersion;
 
 import javax.persistence.*;
+import java.io.IOException;
 import java.util.*;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import static de.unitrier.st.soposthistory.history.PostHistoryIterator.logger;
+import static de.unitrier.st.soposthistory.util.Util.getClassLogger;
 
 @Entity
 @Table(name = "PostBlockVersion", schema = "stackoverflow16_12")
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name="PostBlockTypeId",discriminatorType=DiscriminatorType.INTEGER)
 public abstract class PostBlockVersion {
-    private static final double EQUALITY_SIMILARITY = 10.0;
+    public static final double EQUALITY_SIMILARITY = 10.0;
+    private static Logger logger = null;
+
+    static {
+        // configure logger
+        try {
+            logger = getClassLogger(PostBlockVersion.class, false);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     /*
      * Decisions:
@@ -277,6 +289,10 @@ public abstract class PostBlockVersion {
             PostBlockVersion matchingPredecessor = matchingPredecessors.get(pos);
             if (matchingPredecessor.isAvailable()) {
                 setPred(matchingPredecessor);
+                logger.info("LocalID used for predecessor selection (PostId: " + postId + "; PostHistoryId: "
+                        + postHistoryId + "; LocalId: " + localId +"; PredSimilarity: "
+                        + predecessorSimilarities.get(matchingPredecessor)
+                        + "; PredCount: " + predCount + "; PredSuccCount: " + matchingPredecessor.getSuccCount());
                 return true;
             }
         }
@@ -392,6 +408,11 @@ public abstract class PostBlockVersion {
         return matchingPredecessors;
     }
 
+    @Transient
+    public Map<PostBlockVersion, Double> getPredecessorSimilarities() {
+        return predecessorSimilarities;
+    }
+
     abstract public <T extends PostBlockVersion> List<PostBlockVersion> findMatchingPredecessors(List<T> previousVersionPostBlocks);
 
     public <T extends PostBlockVersion> List<PostBlockVersion> findMatchingPredecessors(List<T> previousVersionPostBlocks,
@@ -420,7 +441,7 @@ public abstract class PostBlockVersion {
             matchingPredecessors = predecessorSimilarities.entrySet()
                     .stream()
                     .filter(e -> e.getValue() == finalMaxSimilarity)
-                    .sorted(Comparator.comparing(e -> e.getKey().getLocalId())) // TODO: asc or desc???
+                    .sorted(Comparator.comparing(e -> e.getKey().getLocalId())) // ascending order
                     .map(Map.Entry::getKey)
                     .collect(Collectors.toList());
         }
