@@ -2,11 +2,15 @@ package de.unitrier.st.soposthistory.blocks;
 
 import de.unitrier.st.soposthistory.diffs.LineDiff;
 import de.unitrier.st.soposthistory.diffs.diff_match_patch;
+import de.unitrier.st.soposthistory.util.Config;
 import de.unitrier.st.soposthistory.version.PostVersion;
+import de.unitrier.st.stringsimilarity.util.IllegalSimilarityValueException;
+import de.unitrier.st.stringsimilarity.util.InputTooShortException;
 
 import javax.persistence.*;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -64,6 +68,7 @@ public abstract class PostBlockVersion {
     private List<PostBlockVersion> matchingPredecessors;
     private Map<PostBlockVersion, Double> predecessorSimilarities;
     private double maxSimilarity;
+    private double similarityThreshold;
 
     public PostBlockVersion() {
         // database
@@ -89,6 +94,7 @@ public abstract class PostBlockVersion {
         this.matchingPredecessors = new LinkedList<>();
         this.predecessorSimilarities = new HashMap<>();
         this.maxSimilarity = -1;
+        this.similarityThreshold = -1;
     }
 
     public PostBlockVersion(int postId, int postHistoryId) {
@@ -397,7 +403,29 @@ public abstract class PostBlockVersion {
         }
     }
 
-    abstract public double compareTo(PostBlockVersion otherBlock);
+    abstract public double compareTo(PostBlockVersion otherBlock, Config config);
+
+    protected double compareTo(PostBlockVersion otherBlock,
+                               BiFunction<String, String, Double> similarityMetric,
+                               BiFunction<String, String, Double> backupSimilarityMetric) {
+
+        Double similarity;
+        try {
+            similarity = similarityMetric.apply(getContent(), otherBlock.getContent());
+        } catch (InputTooShortException e) {
+            if (backupSimilarityMetric != null) {
+                similarity = backupSimilarityMetric.apply(getContent(), otherBlock.getContent());
+            } else {
+                throw e;
+            }
+        }
+
+        if (similarity < 0.0 || similarity > 1.0) {
+            throw new IllegalSimilarityValueException("Similarity value must be in range [0.0, 1.0], but was " + similarity);
+        }
+
+        return similarity;
+    }
 
     private List<diff_match_patch.Diff> diff(PostBlockVersion block) {
         return lineDiff.diff_lines_only(this.getContent(), block.getContent());
@@ -413,14 +441,21 @@ public abstract class PostBlockVersion {
         return predecessorSimilarities;
     }
 
-    abstract public <T extends PostBlockVersion> List<PostBlockVersion> findMatchingPredecessors(List<T> previousVersionPostBlocks);
+    @Transient
+    protected double getSimilarityThreshold() {
+        return similarityThreshold;
+    }
+
+    protected void setSimilarityThreshold(double similarityThreshold) {
+        this.similarityThreshold = similarityThreshold;
+    }
 
     public <T extends PostBlockVersion> List<PostBlockVersion> findMatchingPredecessors(List<T> previousVersionPostBlocks,
-                                                                                        double similarityThreshold) {
+                                                                                        Config config) {
 
         for (PostBlockVersion previousVersionPostBlock : previousVersionPostBlocks) {
             boolean equal = getContent().equals(previousVersionPostBlock.getContent());
-            double similarity = compareTo(previousVersionPostBlock);
+            double similarity = compareTo(previousVersionPostBlock, config);
 
             if (equal) {
                 // equal predecessors have similarity 10.0 (see final static constant EQUALITY_SIMILARITY)
@@ -436,7 +471,7 @@ public abstract class PostBlockVersion {
 
         // retrieve predecessors with maximal similarity
         final double finalMaxSimilarity = maxSimilarity; // final value needed for lambda expression
-        if (finalMaxSimilarity >= similarityThreshold) {
+        if (finalMaxSimilarity >= getSimilarityThreshold()) {
             // get predecessors with max. similarity
             matchingPredecessors = predecessorSimilarities.entrySet()
                     .stream()
