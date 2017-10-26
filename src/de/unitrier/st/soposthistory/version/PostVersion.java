@@ -5,6 +5,7 @@ import de.unitrier.st.soposthistory.blocks.PostBlockVersion;
 import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
 import de.unitrier.st.soposthistory.urls.Link;
 import de.unitrier.st.soposthistory.urls.PostVersionUrl;
+import de.unitrier.st.soposthistory.util.Config;
 import org.hibernate.StatelessSession;
 
 import javax.persistence.*;
@@ -199,13 +200,14 @@ public class PostVersion {
      */
     public <T extends PostBlockVersion> Map<PostBlockVersion, Integer> findMatchingPredecessors(
                                                 List<T> currentVersionPostBlocks,
-                                                List<T> previousVersionPostBlocks) {
+                                                List<T> previousVersionPostBlocks,
+                                                Config config) {
 
         Map<PostBlockVersion, Integer> matchedPredecessors = new HashMap<>();
 
         for (T currentVersionPostBlock : currentVersionPostBlocks) {
             List<PostBlockVersion> currentMatchedPredecessors
-                    = currentVersionPostBlock.findMatchingPredecessors(previousVersionPostBlocks);
+                    = currentVersionPostBlock.findMatchingPredecessors(previousVersionPostBlocks, config);
 
             for (PostBlockVersion matchedPredecessor : currentMatchedPredecessors) {
                 matchedPredecessors.put(matchedPredecessor,

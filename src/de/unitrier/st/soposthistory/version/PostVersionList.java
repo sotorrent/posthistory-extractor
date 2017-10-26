@@ -6,6 +6,7 @@ import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
 import de.unitrier.st.soposthistory.diffs.PostBlockDiffList;
 import de.unitrier.st.soposthistory.history.PostHistory;
 import de.unitrier.st.soposthistory.urls.Link;
+import de.unitrier.st.soposthistory.util.Config;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -110,7 +111,15 @@ public class PostVersionList extends LinkedList<PostVersion> {
     }
 
     public void processVersionHistory() {
-        processVersionHistory(PostBlockTypeFilter.BOTH);
+        processVersionHistory(PostBlockTypeFilter.BOTH, Config.DEFAULT);
+    }
+
+    public void processVersionHistory(PostBlockTypeFilter filter) {
+        processVersionHistory(filter, Config.DEFAULT);
+    }
+
+    public void processVersionHistory(Config config) {
+        processVersionHistory(PostBlockTypeFilter.BOTH, config);
     }
 
     /**
@@ -118,7 +127,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
      *
      * @param filter Either text blocks, code blocks, or both can be processed (mainly needed for evaluation of similarity metrics).
      */
-    public void processVersionHistory(PostBlockTypeFilter filter) {
+    public void processVersionHistory(PostBlockTypeFilter filter, Config config) {
         for (int i=0; i<this.size(); i++) {
             PostVersion currentVersion = this.get(i);
 
@@ -152,7 +161,8 @@ public class PostVersionList extends LinkedList<PostVersion> {
                 if (filter == PostBlockTypeFilter.BOTH || filter == PostBlockTypeFilter.TEXT) {
                     matchedPredecessors.putAll(currentVersion.findMatchingPredecessors(
                             currentVersion.getTextBlocks(),
-                            previousVersion.getTextBlocks()
+                            previousVersion.getTextBlocks(),
+                            config
                     ));
                 }
 
@@ -160,7 +170,8 @@ public class PostVersionList extends LinkedList<PostVersion> {
                 if (filter == PostBlockTypeFilter.BOTH || filter == PostBlockTypeFilter.CODE) {
                     matchedPredecessors.putAll(currentVersion.findMatchingPredecessors(
                             currentVersion.getCodeBlocks(),
-                            previousVersion.getCodeBlocks()
+                            previousVersion.getCodeBlocks(),
+                            config
                     ));
                 }
 
