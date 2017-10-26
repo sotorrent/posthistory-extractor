@@ -16,7 +16,7 @@ public class MarkdownLinkAngleBrackets extends Link {
     // http://www.example.com or <http://www.example.com> and sometimes
     // example.com (but not on Github, for example).
 
-    private static final Pattern regex = Pattern.compile("<((?:http|ftp|https):\\/\\/(?:[\\w_-]+(?:(?:\\.[\\w_-]+)+))(?:[\\w.,@?^=%&:\\/~+#-]*[\\w@?^=%&\\/~+#-]))>");
+    private static final Pattern regex = Pattern.compile("<((?:http|ftp|https)://(?:[\\w_-]+(?:(?:\\.[\\w_-]+)+))(?:[\\w.,@?^=%&:/~+#-]*[\\w@?^=%&/~+#-]))>");
 
     public static List<Link> extract(String markdownContent) {
         LinkedList<Link> extractedLinks = new LinkedList<>();

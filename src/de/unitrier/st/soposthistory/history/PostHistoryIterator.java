@@ -122,8 +122,8 @@ public class PostHistoryIterator {
             if (tagPattern.length() == 0) {
                 // do not filter questions
                 logger.info("Retrieving all questions from table Posts...");
-                questionsPostIdQueryString = String.format("SELECT id FROM Posts " +
-                        "WHERE postTypeId = 1 ORDER BY id ASC");
+                questionsPostIdQueryString = "SELECT id FROM Posts " +
+                        "WHERE postTypeId = 1 ORDER BY id ASC";
             } else {
                 // filter questions according to tags
                 logger.info("Retrieving questions having configured tags from table Posts...");
@@ -145,8 +145,8 @@ public class PostHistoryIterator {
             if (tagPattern.length() == 0) {
                 // do not filter answers
                 logger.info("Retrieving all answers from table Posts...");
-                answerPostIdQueryString = String.format("SELECT id FROM Posts " +
-                        "WHERE postTypeId = 2 ORDER BY id ASC");
+                answerPostIdQueryString = "SELECT id FROM Posts " +
+                        "WHERE postTypeId = 2 ORDER BY id ASC";
             } else {
                 // filter answers according to tags
                 logger.info("Retrieving answers to the previously retrieved questions from table Posts...");

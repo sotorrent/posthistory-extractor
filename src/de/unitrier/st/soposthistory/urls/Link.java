@@ -1,9 +1,5 @@
 package de.unitrier.st.soposthistory.urls;
 
-import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
-import de.unitrier.st.soposthistory.version.PostVersion;
-import de.unitrier.st.soposthistory.version.PostVersionList;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -13,7 +9,7 @@ import java.util.stream.Collectors;
 
 public class Link {
     // for the basic regex, see https://stackoverflow.com/a/6041965, alternative: https://stackoverflow.com/a/29288898
-    private static final Pattern regex = Pattern.compile("(?:http|ftp|https):\\/\\/(?:[\\w_-]+(?:(?:\\.[\\w_-]+)+))(?:[\\w.,@?^=%&:\\/~+#-]*[\\w@?^=%&\\/~+#-])");
+    private static final Pattern regex = Pattern.compile("(?:http|ftp|https)://(?:[\\w_-]+(?:(?:\\.[\\w_-]+)+))(?:[\\w.,@?^=%&:/~+#-]*[\\w@?^=%&/~+#-])");
 
     String fullMatch;
     String anchor; // the link anchor visible to the user
