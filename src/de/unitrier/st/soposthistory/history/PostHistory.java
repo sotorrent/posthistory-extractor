@@ -37,23 +37,23 @@ public class PostHistory {
     }
 
     // a code block is indented by four spaces or a tab (which can be preceded by spaces)
-    private static Pattern codeBlockPattern = Pattern.compile("^( {4}|[ ]*\\t)");
-    private static Pattern whiteSpaceLinePattern = Pattern.compile("^\\s+$");
-    private static Pattern containsLetterOrDigitPattern = Pattern.compile("[a-zA-Z0-9]");
+    private static final Pattern codeBlockPattern = Pattern.compile("^( {4}|[ ]*\\t)");
+    private static final Pattern whiteSpaceLinePattern = Pattern.compile("^\\s+$");
+    private static final Pattern containsLetterOrDigitPattern = Pattern.compile("[a-zA-Z0-9]");
     // see https://stackoverflow.blog/2014/09/16/introducing-runnable-javascript-css-and-html-code-snippets/
-    private static Pattern stackSnippetBeginPattern = Pattern.compile(".*<!--\\s+begin\\s+snippet[^>]+>");
-    private static Pattern stackSnippetEndPattern = Pattern.compile(".*<!--\\s+end\\s+snippet\\s+-->");
+    private static final Pattern stackSnippetBeginPattern = Pattern.compile(".*<!--\\s+begin\\s+snippet[^>]+>");
+    private static final Pattern stackSnippetEndPattern = Pattern.compile(".*<!--\\s+end\\s+snippet\\s+-->");
     // see https://stackoverflow.com/editing-help#syntax-highlighting
-    private static Pattern snippetLanguagePattern = Pattern.compile(".*<!--\\s+language:[^>]+>");
+    private static final Pattern snippetLanguagePattern = Pattern.compile(".*<!--\\s+language:[^>]+>");
     // see https://meta.stackexchange.com/q/125148; example: https://stackoverflow.com/posts/32342082/revisions
-    private static Pattern alternativeCodeBlockBeginPattern = Pattern.compile("\\s*(```).*");
-    private static Pattern alternativeCodeBlockEndPattern = Pattern.compile(".*(```)\\s*");
+    private static final Pattern alternativeCodeBlockBeginPattern = Pattern.compile("\\s*(```).*");
+    private static final Pattern alternativeCodeBlockEndPattern = Pattern.compile(".*(```)\\s*");
     // see, e.g., source of question 19175014 (<pre><code> ... </pre></code> instead of correct indention)
-    private static Pattern codeTagBeginPattern = Pattern.compile("\\s*<pre><code>");
-    private static Pattern codeTagEndPattern = Pattern.compile(".*</pre></code>");
+    private static final Pattern codeTagBeginPattern = Pattern.compile("\\s*<pre><code>");
+    private static final Pattern codeTagEndPattern = Pattern.compile(".*</pre></code>");
     // see, e.g., source of question 3381751 version 1 (<script type="text/javascript"> ... </script> instead of correct indention)
-    private static Pattern scriptTagBeginPattern = Pattern.compile("\\s*<script[^>]+>");
-    private static Pattern scriptTagEndPattern = Pattern.compile(".*</script>");
+    private static final Pattern scriptTagBeginPattern = Pattern.compile("\\s*<script[^>]+>");
+    private static final Pattern scriptTagEndPattern = Pattern.compile(".*</script>");
 
     // database
     private int id;
