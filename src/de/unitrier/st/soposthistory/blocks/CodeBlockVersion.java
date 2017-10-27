@@ -4,6 +4,7 @@ import de.unitrier.st.soposthistory.util.Config;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import java.util.Set;
 
 @Entity
 @DiscriminatorValue(value="2")
@@ -18,6 +19,11 @@ public class CodeBlockVersion extends PostBlockVersion {
 
     public CodeBlockVersion(int postId, int postHistoryId) {
         super(postId, postHistoryId);
+    }
+
+    @Override
+    public boolean isSelected(Set<Integer> postBlockTypeFilter) {
+        return postBlockTypeFilter.contains(CodeBlockVersion.postBlockTypeId);
     }
 
     @Override
