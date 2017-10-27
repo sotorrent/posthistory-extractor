@@ -10,6 +10,10 @@ import de.unitrier.st.stringsimilarity.util.InputTooShortException;
 import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -687,5 +691,17 @@ class PostVersionHistoryTest {
                 Config.DEFAULT.withCodeBackupSimilarityMetric(null))
         );
         assertEquals(0.0, codeBlock1.compareTo(codeBlock2, Config.EMPTY));
+    }
+
+    @Test
+    void testReadFromDirectory() {
+        Path testDataDir = Paths.get("testdata");
+        List<PostVersionList> postVersionList = PostVersionList.readFromDirectory(testDataDir);
+        try {
+            // one of the files in the test data directory is a license file, which should be ignored
+            assertEquals(Files.list(testDataDir).count()-1, postVersionList.size());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
