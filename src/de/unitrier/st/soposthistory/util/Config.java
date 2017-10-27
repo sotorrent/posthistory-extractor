@@ -26,6 +26,15 @@ public class Config {
         this.codeSimilarityThreshold = codeSimilarityThreshold;
     }
 
+    public static final Config EMPTY = new Config(
+            (str1, str2) -> 0.0,
+            null,
+            Double.POSITIVE_INFINITY,
+            (str1, str2) -> 0.0,
+            null,
+            Double.POSITIVE_INFINITY
+    );
+
     //TODO: update this after evaluation
     public static final Config DEFAULT = new Config(
             de.unitrier.st.stringsimilarity.set.Variants::fourGramOverlap,
@@ -71,6 +80,9 @@ public class Config {
     }
 
     public Config withTextSimilarityThreshold(double textSimilarityThreshold){
+        if (textSimilarityThreshold < 0.0 || textSimilarityThreshold > 1.0) {
+            throw new IllegalArgumentException("Similarity threshold must be in range [0.0, 1.0]");
+        }
         return new Config(textSimilarityMetric, textBackupSimilarityMetric, textSimilarityThreshold,
                 codeSimilarityMetric, codeBackupSimilarityMetric, codeSimilarityThreshold);
     }
@@ -86,6 +98,9 @@ public class Config {
     }
 
     public Config withCodeSimilarityThreshold(double codeSimilarityThreshold){
+        if (textSimilarityThreshold < 0.0 || textSimilarityThreshold > 1.0) {
+            throw new IllegalArgumentException("Similarity threshold must be in range [0.0, 1.0]");
+        }
         return new Config(textSimilarityMetric, textBackupSimilarityMetric, textSimilarityThreshold,
                 codeSimilarityMetric, codeBackupSimilarityMetric, codeSimilarityThreshold);
     }

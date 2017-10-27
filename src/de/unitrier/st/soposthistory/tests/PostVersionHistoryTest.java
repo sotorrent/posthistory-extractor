@@ -678,6 +678,17 @@ class PostVersionHistoryTest {
     }
 
     @Test
+    void testConfiguration() {
+        // text
+        assertThrows(IllegalArgumentException.class, () -> Config.EMPTY.withTextSimilarityThreshold(-1.0));
+        assertThrows(IllegalArgumentException.class, () -> Config.EMPTY.withTextSimilarityThreshold(+1.1));
+
+        // code
+        assertThrows(IllegalArgumentException.class, () -> Config.EMPTY.withCodeSimilarityThreshold(-1.0));
+        assertThrows(IllegalArgumentException.class, () -> Config.EMPTY.withCodeSimilarityThreshold(+1.1));
+    }
+
+    @Test
     void testBackupMetric() {
         // text blocks
         TextBlockVersion textBlock1 = new TextBlockVersion(1, 1);
@@ -686,10 +697,10 @@ class PostVersionHistoryTest {
         textBlock2.setContent("ac");
 
         textBlock1.compareTo(textBlock2, Config.DEFAULT); // no exception
-
         assertThrows(InputTooShortException.class, () -> textBlock1.compareTo(textBlock2,
                 Config.DEFAULT.withTextBackupSimilarityMetric(null))
         );
+        assertEquals(0.0, textBlock1.compareTo(textBlock2, Config.EMPTY));
 
         // code blocks
         CodeBlockVersion codeBlock1 = new CodeBlockVersion(1, 1);
@@ -698,9 +709,9 @@ class PostVersionHistoryTest {
         codeBlock2.setContent("bar");
 
         codeBlock1.compareTo(codeBlock2, Config.DEFAULT); // no exception
-
         assertThrows(InputTooShortException.class, () -> codeBlock1.compareTo(codeBlock2,
                 Config.DEFAULT.withCodeBackupSimilarityMetric(null))
         );
+        assertEquals(0.0, codeBlock1.compareTo(codeBlock2, Config.EMPTY));
     }
 }
