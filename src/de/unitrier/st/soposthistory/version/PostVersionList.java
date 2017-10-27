@@ -42,11 +42,13 @@ public class PostVersionList extends LinkedList<PostVersion> {
         diffs = new PostBlockDiffList();
     }
 
-    public void readFromCSV(String dir, int postId, int postTypeId) {
-        readFromCSV(dir, postId, postTypeId, true);
+    public static PostVersionList readFromCSV(String dir, int postId, int postTypeId) {
+        return readFromCSV(dir, postId, postTypeId, true);
     }
 
-    public void readFromCSV(String dir, int postId, int postTypeId, boolean processVersionHistory) {
+    public static PostVersionList readFromCSV(String dir, int postId, int postTypeId, boolean processVersionHistory) {
+        PostVersionList postVersionList = new PostVersionList();
+
         Path pathToCSVFile = Paths.get(dir, postId + ".csv");
         CSVParser parser;
         try {
@@ -88,20 +90,22 @@ public class PostVersionList extends LinkedList<PostVersion> {
                     PostVersion postVersion = postHistory.toPostVersion();
                     postVersion.extractUrlsFromTextBlocks();
 
-                    this.add(postVersion);
+                    postVersionList.add(postVersion);
                 }
             }
 
             // sort list according to PostHistoryId, because order in CSV may not be chronologically
-            this.sort();
+            postVersionList.sort();
 
             if (processVersionHistory) {
-                processVersionHistory();
+                postVersionList.processVersionHistory();
             }
 
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        return postVersionList;
     }
 
     public void sort() {

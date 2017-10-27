@@ -35,8 +35,7 @@ class PostVersionHistoryTest {
 
     @Test
     void testReadPostHistoryAnswer1109108() {
-        PostVersionList a_1109108 = new PostVersionList();
-        a_1109108.readFromCSV("testdata", 1109108, 2);
+        PostVersionList a_1109108 = PostVersionList.readFromCSV("testdata", 1109108, 2);
 
         assertEquals(7, a_1109108.size());
 
@@ -64,8 +63,7 @@ class PostVersionHistoryTest {
 
     @Test
     void testReadPostHistoryAnswer3145655() {
-        PostVersionList a_3145655 = new PostVersionList();
-        a_3145655.readFromCSV("testdata", 3145655, 2);
+        PostVersionList a_3145655 = PostVersionList.readFromCSV("testdata", 3145655, 2);
 
         assertEquals(7, a_3145655.size());
 
@@ -93,8 +91,7 @@ class PostVersionHistoryTest {
 
     @Test
     void testReadPostHistoryAnswer9855338() {
-        PostVersionList a_9855338 = new PostVersionList();
-        a_9855338.readFromCSV("testdata", 9855338, 2);
+        PostVersionList a_9855338 = PostVersionList.readFromCSV("testdata", 9855338, 2);
 
         assertEquals(11, a_9855338.size());
 
@@ -122,8 +119,7 @@ class PostVersionHistoryTest {
 
     @Test
     void testReadPostHistoryAnswer2581754() {
-        PostVersionList a_2581754 = new PostVersionList();
-        a_2581754.readFromCSV("testdata", 2581754, 2);
+        PostVersionList a_2581754 = PostVersionList.readFromCSV("testdata", 2581754, 2);
 
         assertEquals(8, a_2581754.size());
 
@@ -157,8 +153,7 @@ class PostVersionHistoryTest {
 
     @Test
     void testReadPostHistoryAnswer20991163() {
-        PostVersionList a_20991163 = new PostVersionList();
-        a_20991163.readFromCSV("testdata", 20991163, 2);
+        PostVersionList a_20991163 = PostVersionList.readFromCSV("testdata", 20991163, 2);
 
         // this post should only consist of one code block (not an empty text block at the end)
         assertEquals(1, a_20991163.size());
@@ -172,8 +167,7 @@ class PostVersionHistoryTest {
 
     @Test
     void testReadPostHistoryAnswer32012927() {
-        PostVersionList a_32012927 = new PostVersionList();
-        a_32012927.readFromCSV("testdata", 32012927, 2);
+        PostVersionList a_32012927 = PostVersionList.readFromCSV("testdata", 32012927, 2);
 
         assertEquals(4, a_32012927.size());
 
@@ -187,8 +181,7 @@ class PostVersionHistoryTest {
 
     @Test
     void testReadPostHistoryAnswer10734905() {
-        PostVersionList a_10734905 = new PostVersionList();
-        a_10734905.readFromCSV("testdata", 10734905, 2);
+        PostVersionList a_10734905 = PostVersionList.readFromCSV("testdata", 10734905, 2);
 
         assertEquals(1, a_10734905.size());
 
@@ -210,8 +203,7 @@ class PostVersionHistoryTest {
 
     @Test
     void testReadPostHistoryAnswer31965641() {
-        PostVersionList a_31965641 = new PostVersionList();
-        a_31965641.readFromCSV("testdata", 31965641, 2);
+        PostVersionList a_31965641 = PostVersionList.readFromCSV("testdata", 31965641, 2);
 
         assertEquals(1, a_31965641.size());
 
@@ -232,8 +224,7 @@ class PostVersionHistoryTest {
 
     @Test
     void testRootPostBlockVersionIdAnswer3758880() {
-        PostVersionList a_3758880 = new PostVersionList();
-        a_3758880.readFromCSV("testdata", 3758880, 2);
+        PostVersionList a_3758880 = PostVersionList.readFromCSV("testdata", 3758880, 2);
 
         // there are 11 versions of this post
         assertEquals(11, a_3758880.size());
@@ -273,8 +264,7 @@ class PostVersionHistoryTest {
 
     @Test
     void testReadPostHistoryQuestion22360443() {
-        PostVersionList q_22360443 = new PostVersionList();
-        q_22360443.readFromCSV("testdata", 22360443, 1);
+        PostVersionList q_22360443 = PostVersionList.readFromCSV("testdata", 22360443, 1);
 
         assertEquals(2, q_22360443.size());
 
@@ -306,8 +296,7 @@ class PostVersionHistoryTest {
     @Test
     @Ignore
     void testRootPostBlocksQuestion3758880() {
-        PostVersionList q_3758880 = new PostVersionList();
-        q_3758880.readFromCSV("testdata", 3758880, 1);
+        PostVersionList q_3758880 = PostVersionList.readFromCSV("testdata", 3758880, 1);
 
         assertEquals(11, q_3758880.size());
 
@@ -316,8 +305,7 @@ class PostVersionHistoryTest {
 
     @Test
     void testStackSnippetCodeBlocksAnswer32143330() {
-        PostVersionList a_32143330 = new PostVersionList();
-        a_32143330.readFromCSV("testdata", 32143330, 2);
+        PostVersionList a_32143330 = PostVersionList.readFromCSV("testdata", 32143330, 2);
 
         assertEquals(4, a_32143330.size());
 
@@ -341,8 +329,7 @@ class PostVersionHistoryTest {
 
     @Test
     void testStackSnippetCodeBlocksAnswer26044128() {
-        PostVersionList a_26044128 = new PostVersionList();
-        a_26044128.readFromCSV("testdata", 26044128, 2);
+        PostVersionList a_26044128 = PostVersionList.readFromCSV("testdata", 26044128, 2);
 
         assertEquals(12, a_26044128.size());
 
@@ -365,8 +352,7 @@ class PostVersionHistoryTest {
 
     @Test
     void testAlternativeCodeBlockQuestion32342082() {
-        PostVersionList q_32342082 = new PostVersionList();
-        q_32342082.readFromCSV("testdata", 32342082, 1);
+        PostVersionList q_32342082 = PostVersionList.readFromCSV("testdata", 32342082, 1);
 
         assertEquals(8, q_32342082.size());
 
@@ -387,8 +373,7 @@ class PostVersionHistoryTest {
 
     @Test
     void testCodeTagCodeBlockQuestion19175014() {
-        PostVersionList q_19175014 = new PostVersionList();
-        q_19175014.readFromCSV("testdata", 19175014, 1);
+        PostVersionList q_19175014 = PostVersionList.readFromCSV("testdata", 19175014, 1);
 
         assertEquals(2, q_19175014.size());
 
@@ -407,8 +392,7 @@ class PostVersionHistoryTest {
 
     @Test
     void testVersionOrderQuestion3381751() {
-        PostVersionList q_3381751 = new PostVersionList();
-        q_3381751.readFromCSV("testdata", 3381751, 1);
+        PostVersionList q_3381751 = PostVersionList.readFromCSV("testdata", 3381751, 1);
 
         PostVersion previousVersion = q_3381751.get(0);
         for (int i = 1; i < q_3381751.size(); i++) {
@@ -419,8 +403,7 @@ class PostVersionHistoryTest {
 
     @Test
     void testScriptTagCodeBlockQuestion3381751() {
-        PostVersionList q_3381751 = new PostVersionList();
-        q_3381751.readFromCSV("testdata", 3381751, 1);
+        PostVersionList q_3381751 = PostVersionList.readFromCSV("testdata", 3381751, 1);
 
         assertEquals(15, q_3381751.size());
 
@@ -439,8 +422,7 @@ class PostVersionHistoryTest {
 
     @Test
     void testScriptTagInIndentedCodeBlockQuestion28598648() {
-        PostVersionList q_28598648 = new PostVersionList();
-        q_28598648.readFromCSV("testdata", 28598648, 1);
+        PostVersionList q_28598648 = PostVersionList.readFromCSV("testdata", 28598648, 1);
 
         assertEquals(2, q_28598648.size());
 
@@ -460,8 +442,7 @@ class PostVersionHistoryTest {
     @Test
     void testPredecessorAssignmentAnswer3758880(){
         // tests if posts blocks are set more than once as predecessor
-        PostVersionList a_3758880 = new PostVersionList();
-        a_3758880.readFromCSV("testdata", 3758880, 2, false);
+        PostVersionList a_3758880 = PostVersionList.readFromCSV("testdata", 3758880, 2, false);
 
         a_3758880.processVersionHistory(PostVersionList.PostBlockTypeFilter.TEXT);
 
@@ -482,8 +463,7 @@ class PostVersionHistoryTest {
     @Test
     void testPredecessorAssignmentQuestion37625877(){
         // tests predecessor assignment if two versions have two equal text blocks
-        PostVersionList q_37625877 = new PostVersionList();
-        q_37625877.readFromCSV("testdata", 37625877, 1, false);
+        PostVersionList q_37625877 = PostVersionList.readFromCSV("testdata", 37625877, 1, false);
 
         q_37625877.processVersionHistory(PostVersionList.PostBlockTypeFilter.TEXT);
 
@@ -499,8 +479,7 @@ class PostVersionHistoryTest {
     @Test
     void testPredecessorAssignmentAnswer42070509(){
         // tests predecessor assignment if version i has three code blocks that are equal to four code blocks in version i+1
-        PostVersionList a_42070509 = new PostVersionList();
-        a_42070509.readFromCSV("testdata", 42070509, 2, false);
+        PostVersionList a_42070509 = PostVersionList.readFromCSV("testdata", 42070509, 2, false);
 
         a_42070509.processVersionHistory(PostVersionList.PostBlockTypeFilter.CODE);
 
@@ -519,8 +498,7 @@ class PostVersionHistoryTest {
 
     @Test
     void testPredecessorAssignmentQuestion23459881(){
-        PostVersionList q_23459881 = new PostVersionList();
-        q_23459881.readFromCSV("testdata", 23459881, 1, true);
+        PostVersionList q_23459881 = PostVersionList.readFromCSV("testdata", 23459881, 1, true);
 
         PostVersion version_2 = q_23459881.get(1);
         testPredecessorSimilarities(version_2);
@@ -560,8 +538,7 @@ class PostVersionHistoryTest {
 
     @Test
     void testPredecessorAssignmentQuestion36082771(){
-        PostVersionList q_36082771 = new PostVersionList();
-        q_36082771.readFromCSV("testdata", 36082771, 1, true);
+        PostVersionList q_36082771 = PostVersionList.readFromCSV("testdata", 36082771, 1, true);
 
         PostVersion version_2 = q_36082771.get(1);
         testPredecessorSimilarities(version_2);
@@ -608,8 +585,7 @@ class PostVersionHistoryTest {
 
     @Test
     void testPredecessorAssignmentQuestion18276636(){
-        PostVersionList q_18276636 = new PostVersionList();
-        q_18276636.readFromCSV("testdata", 18276636, 1, true);
+        PostVersionList q_18276636 = PostVersionList.readFromCSV("testdata", 18276636, 1, true);
 
         PostVersion version_2 = q_18276636.get(1);
         testPredecessorSimilarities(version_2);
@@ -654,8 +630,7 @@ class PostVersionHistoryTest {
 
     @Test
     void testBrokenTextBlockQuestion15372744() {
-        PostVersionList q_15372744 = new PostVersionList();
-        q_15372744.readFromCSV("testdata", 15372744, 1);
+        PostVersionList q_15372744 = PostVersionList.readFromCSV("testdata", 15372744, 1);
 
         // version 1 contains a broken text block, which has an indented line. Stack Overflow displays this correctly  (see https://stackoverflow.com/revisions/15372744/1)
         PostVersion version_1 = q_15372744.get(0);
@@ -670,8 +645,7 @@ class PostVersionHistoryTest {
 
     @Test
     void testPostBlockTypeFilter3758880(){
-        PostVersionList q_3758880 = new PostVersionList();
-        q_3758880.readFromCSV("testdata", 3758880, 1);
+        PostVersionList q_3758880 = PostVersionList.readFromCSV("testdata", 3758880, 1);
         // This caused a null pointer exception before (last commit: d37e6e38c8c15efe743e35141561742d7ef91ede),
         // because some filter checks were missing.
         q_3758880.processVersionHistory(PostVersionList.PostBlockTypeFilter.CODE);
