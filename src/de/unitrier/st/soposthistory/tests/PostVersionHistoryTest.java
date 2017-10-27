@@ -698,8 +698,13 @@ class PostVersionHistoryTest {
         Path testDataDir = Paths.get("testdata");
         List<PostVersionList> postVersionList = PostVersionList.readFromDirectory(testDataDir);
         try {
-            // one of the files in the test data directory is a license file, which should be ignored
-            assertEquals(Files.list(testDataDir).count()-1, postVersionList.size());
+            assertEquals(Files.list(testDataDir).filter(
+                    file -> file
+                            .getFileName()
+                            .toString()
+                            .endsWith(".csv"))
+                            .count(),
+                    postVersionList.size());
         } catch (IOException e) {
             e.printStackTrace();
         }
