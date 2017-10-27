@@ -4,14 +4,15 @@ import org.hibernate.StatelessSession;
 
 import java.io.IOException;
 import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
+import java.util.stream.Collectors;
 
 public class Util {
     public static void insertList(StatelessSession session, List list) {
@@ -61,32 +62,20 @@ public class Util {
         return logger;
     }
 
-    public static<T> List<T> visitFiles(Path dir, Function<Path, T> visitor) {
-        // switch to Java 8 Files.list()?
-
+    public static<T> List<T> processFiles(Path dir, Predicate<Path> filter, Function<Path, T> map) {
         // ensure that input directory exists
         if (!Files.exists(dir)) {
             throw new IllegalArgumentException("Directory not found: " + dir);
         }
 
-        List<T> list = new LinkedList<>();
-
         try {
-            Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
-                @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
-                        throws IOException {
-                    T result = visitor.apply(file);
-                    if (result != null) {
-                        list.add(result);
-                    }
-                    return FileVisitResult.CONTINUE;
-                }
-            });
+            return Files.list(dir)
+                        .filter(filter)
+                        .map(map)
+                        .collect(Collectors.toList());
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        return list;
+        return new ArrayList<>();
     }
 }
