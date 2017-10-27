@@ -21,12 +21,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import static de.unitrier.st.soposthistory.util.Util.visitFiles;
+import static de.unitrier.st.soposthistory.util.Util.processFiles;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PostVersionList extends LinkedList<PostVersion> {
-
     //TODO: Add methods to extract history of code or text blocks (either ignoring versions where only blocks of the other type changed (global) or where one particular block did not change (local)
+
+    private int postId;
 
     /*
      * Enum type used to configure method processVersionHistory()
@@ -37,9 +38,10 @@ public class PostVersionList extends LinkedList<PostVersion> {
 
     private final PostBlockDiffList diffs;
 
-    public PostVersionList() {
+    public PostVersionList(int postId) {
         super();
-        diffs = new PostBlockDiffList();
+        this.postId = postId;
+        this.diffs = new PostBlockDiffList();
     }
 
     public static PostVersionList readFromCSV(String dir, int postId, int postTypeId) {
@@ -47,7 +49,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
     }
 
     public static PostVersionList readFromCSV(String dir, int postId, int postTypeId, boolean processVersionHistory) {
-        PostVersionList postVersionList = new PostVersionList();
+        PostVersionList postVersionList = new PostVersionList(postId);
 
         Path pathToCSVFile = Paths.get(dir, postId + ".csv");
         CSVParser parser;
@@ -109,18 +111,14 @@ public class PostVersionList extends LinkedList<PostVersion> {
     }
 
     public static List<PostVersionList> readFromDirectory(Path dir) {
-        return visitFiles(dir, (file -> {
-            if (file.getFileName().toString().endsWith(".csv")) {
-                int postId = Integer.parseInt(file.toFile().getName().replace(".csv", ""));
-                return PostVersionList.readFromCSV(
+        return processFiles(dir,
+                file -> file.getFileName().toString().endsWith(".csv"),
+                file -> PostVersionList.readFromCSV(
                         dir.toString(),
-                        postId,
+                        Integer.parseInt(file.toFile().getName().replace(".csv", "")),
                         0 // cannot determine this from file name or file content
-                );
-            } else {
-                return null;
-            }
-        }));
+                )
+        );
     }
 
     public void sort() {
@@ -307,14 +305,12 @@ public class PostVersionList extends LinkedList<PostVersion> {
 
     @Override
     public String toString() {
-        StringBuilder str = new StringBuilder();
-
+        StringBuilder result = new StringBuilder("PostVersionList for PostId " + postId + ":\n");
         for (PostVersion version : this) {
-            str.append(version.toString());
-            str.append("\n");
+            result.append(version.toString());
+            result.append("\n");
         }
-
-        return str.toString();
+        return result.toString();
     }
 
 }

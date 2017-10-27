@@ -323,7 +323,7 @@ public class PostHistoryIterator {
 
                         if (postTypeId == 1 || postTypeId == 2) { // question or answer
                             // retrieve data from post history...
-                            PostVersionList postVersionList = new PostVersionList();
+                            PostVersionList postVersionList = new PostVersionList(postId);
 
                             // get all PostHistory entries for current PostId, order them chronologically
                             String currentPostHistoryQuery = String.format("FROM PostHistory " +
