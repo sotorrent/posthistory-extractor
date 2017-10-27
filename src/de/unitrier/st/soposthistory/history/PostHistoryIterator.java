@@ -42,18 +42,9 @@ public class PostHistoryIterator {
     private String[] tags;
 
     static {
-        // ensure that log dir exists
-        try {
-            if (!Files.exists(logFileDir)) {
-                Files.createDirectory(logFileDir);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         // configure logger
         try {
-            logger = getClassLogger(PostHistoryIterator.class, true);
+            logger = getClassLogger(PostHistoryIterator.class);
         } catch (IOException e) {
             e.printStackTrace();
         }

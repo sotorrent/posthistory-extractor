@@ -41,7 +41,7 @@ public class PostHistoryList extends LinkedList<PostHistory> {
 
         // configure logger
         try {
-            logger = getClassLogger(PostHistoryList.class, true);
+            logger = getClassLogger(PostHistoryList.class);
         } catch (IOException e) {
             e.printStackTrace();
         }
