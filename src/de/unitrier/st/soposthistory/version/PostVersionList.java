@@ -110,11 +110,11 @@ public class PostVersionList extends LinkedList<PostVersion> {
 
     public static List<PostVersionList> readFromDirectory(Path dir) {
         return visitFiles(dir, (file -> {
-            if (file.getFileName().toString().startsWith("completed_")
-                    && file.getFileName().toString().endsWith(".csv")) {
+            if (file.getFileName().toString().endsWith(".csv")) {
+                int postId = Integer.parseInt(file.toString().replace(".csv", ""));
                 return PostVersionList.readFromCSV(
                         file.toString(),
-                        Integer.parseInt(file.toString().replace(".csv", "")),
+                        postId,
                         0 // cannot determine this from file name or file content
                 );
             } else {
