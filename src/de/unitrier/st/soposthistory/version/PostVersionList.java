@@ -125,7 +125,8 @@ public class PostVersionList extends LinkedList<PostVersion> {
     /**
      * Set root post blocks and compute similarity and diffs between two matched versions of a block.
      *
-     * @param filter Either text blocks, code blocks, or both can be processed (mainly needed for evaluation of similarity metrics).
+     * @param filter Either text blocks, code blocks, or both can be processed (mainly needed for evaluation of similarity metrics)
+     * @param config Configuration with similarity metrics and thresholds
      */
     public void processVersionHistory(PostBlockTypeFilter filter, Config config) {
         for (int i=0; i<this.size(); i++) {
