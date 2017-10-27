@@ -3,10 +3,11 @@ package de.unitrier.st.soposthistory.util;
 import org.hibernate.StatelessSession;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Logger;
@@ -58,5 +59,32 @@ public class Util {
         logger.addHandler(fileHandler);
 
         return logger;
+    }
+
+    public static<T> List<T> visitFiles(Path dir, Function<Path, T> visitor) {
+        // ensure that input directory exists
+        if (!Files.exists(dir)) {
+            throw new IllegalArgumentException("Directory not found: " + dir);
+        }
+
+        List<T> list = new LinkedList<>();
+
+        try {
+            Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+                        throws IOException {
+                    T result = visitor.apply(file);
+                    if (result != null) {
+                        list.add(result);
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return list;
     }
 }

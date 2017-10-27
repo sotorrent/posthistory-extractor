@@ -14,14 +14,14 @@ import org.hibernate.StatelessSession;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import static de.unitrier.st.soposthistory.util.Util.visitFiles;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PostVersionList extends LinkedList<PostVersion> {
@@ -106,6 +106,21 @@ public class PostVersionList extends LinkedList<PostVersion> {
         }
 
         return postVersionList;
+    }
+
+    public static List<PostVersionList> readFromDirectory(Path dir) {
+        return visitFiles(dir, (file -> {
+            if (file.getFileName().toString().startsWith("completed_")
+                    && file.getFileName().toString().endsWith(".csv")) {
+                return PostVersionList.readFromCSV(
+                        file.toString(),
+                        Integer.parseInt(file.toString().replace(".csv", "")),
+                        0 // cannot determine this from file name or file content
+                );
+            } else {
+                return null;
+            }
+        }));
     }
 
     public void sort() {
