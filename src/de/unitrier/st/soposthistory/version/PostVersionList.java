@@ -1,5 +1,6 @@
 package de.unitrier.st.soposthistory.version;
 
+import com.google.common.collect.Sets;
 import de.unitrier.st.soposthistory.blocks.CodeBlockVersion;
 import de.unitrier.st.soposthistory.blocks.PostBlockVersion;
 import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
@@ -18,10 +19,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 
 import static de.unitrier.st.soposthistory.util.Util.getClassLogger;
@@ -53,13 +51,6 @@ public class PostVersionList extends LinkedList<PostVersion> {
                 .withQuoteMode(QuoteMode.MINIMAL)
                 .withEscape('\\')
                 .withFirstRecordAsHeader();
-    }
-
-    /*
-     * Enum type used to configure method processVersionHistory()
-     */
-    public enum PostBlockTypeFilter {
-        TEXT, CODE, BOTH
     }
 
     private final PostBlockDiffList diffs;
@@ -163,28 +154,28 @@ public class PostVersionList extends LinkedList<PostVersion> {
     }
 
     public void processVersionHistory() {
-        processVersionHistory(PostBlockTypeFilter.BOTH, Config.DEFAULT);
+        processVersionHistory(Sets.newHashSet(TextBlockVersion.postBlockTypeId, CodeBlockVersion.postBlockTypeId));
     }
 
-    public void processVersionHistory(PostBlockTypeFilter filter) {
-        processVersionHistory(filter, Config.DEFAULT);
+    public void processVersionHistory(Set<Integer> postBlockTypeFilter) {
+        processVersionHistory(postBlockTypeFilter, Config.DEFAULT);
     }
 
     public void processVersionHistory(Config config) {
-        processVersionHistory(PostBlockTypeFilter.BOTH, config);
+        processVersionHistory(Sets.newHashSet(TextBlockVersion.postBlockTypeId, CodeBlockVersion.postBlockTypeId), config);
     }
 
     /**
      * Set root post blocks and compute similarity and diffs between two matched versions of a block.
      *
-     * @param filter Either text blocks, code blocks, or both can be processed (mainly needed for evaluation of similarity metrics)
+     * @param postBlockTypeFilter Set of postBlockTypeIds (1 for text blocks, 2 for code blocks), mainly needed for evaluation of similarity metrics
      * @param config Configuration with similarity metrics and thresholds
      */
-    public void processVersionHistory(PostBlockTypeFilter filter, Config config) {
+    public void processVersionHistory(Set<Integer> postBlockTypeFilter, Config config) {
         for (int i=0; i<this.size(); i++) {
             PostVersion currentVersion = this.get(i);
 
-            if (filter == PostBlockTypeFilter.BOTH || filter == PostBlockTypeFilter.TEXT) {
+            if (postBlockTypeFilter.contains(TextBlockVersion.postBlockTypeId)) {
                 currentVersion.extractUrlsFromTextBlocks();
             }
 
@@ -197,8 +188,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
                 currentVersion.setPredPostHistoryId(null);
                 // the post blocks in the first version have themselves as root post blocks
                 for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks()) {
-                    if ((currentPostBlock instanceof TextBlockVersion && filter == PostBlockTypeFilter.CODE)
-                            || currentPostBlock instanceof CodeBlockVersion && filter == PostBlockTypeFilter.TEXT) {
+                    if (!currentPostBlock.isSelected(postBlockTypeFilter)) {
                         continue;
                     }
 
@@ -214,7 +204,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
                 // find matching predecessors by (1) equality of content and (2) similarity metric
 
                 // find matching predecessors for text blocks
-                if (filter == PostBlockTypeFilter.BOTH || filter == PostBlockTypeFilter.TEXT) {
+                if (postBlockTypeFilter.contains(TextBlockVersion.postBlockTypeId)) {
                     matchedPredecessors.putAll(currentVersion.findMatchingPredecessors(
                             currentVersion.getTextBlocks(),
                             previousVersion.getTextBlocks(),
@@ -223,7 +213,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
                 }
 
                 // find matching predecessors for text blocks
-                if (filter == PostBlockTypeFilter.BOTH || filter == PostBlockTypeFilter.CODE) {
+                if (postBlockTypeFilter.contains(CodeBlockVersion.postBlockTypeId)) {
                     matchedPredecessors.putAll(currentVersion.findMatchingPredecessors(
                             currentVersion.getCodeBlocks(),
                             previousVersion.getCodeBlocks(),
@@ -233,8 +223,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
 
                 // set predecessors of text and code blocks if only one predecessor matches and if this predecessor is only matched by one block in the current version
                 for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks()) {
-                    if ((currentPostBlock instanceof TextBlockVersion && filter == PostBlockTypeFilter.CODE)
-                            || currentPostBlock instanceof CodeBlockVersion && filter == PostBlockTypeFilter.TEXT) {
+                    if (!currentPostBlock.isSelected(postBlockTypeFilter)) {
                         continue;
                     }
 
@@ -253,8 +242,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
 
                 // next, try to set remaining predecessors using context (neighboring blocks of post block and matching predecessor)
                 for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks()) {
-                    if ((currentPostBlock instanceof TextBlockVersion && filter == PostBlockTypeFilter.CODE)
-                            || currentPostBlock instanceof CodeBlockVersion && filter == PostBlockTypeFilter.TEXT) {
+                    if (!currentPostBlock.isSelected(postBlockTypeFilter)) {
                         continue;
                     }
 
@@ -266,8 +254,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
 
                 // finally, set the remaining predecessors using the order in the post (localId)
                 for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks()) {
-                    if ((currentPostBlock instanceof TextBlockVersion && filter == PostBlockTypeFilter.CODE)
-                            || currentPostBlock instanceof CodeBlockVersion && filter == PostBlockTypeFilter.TEXT) {
+                    if (!currentPostBlock.isSelected(postBlockTypeFilter)) {
                         continue;
                     }
 
@@ -279,8 +266,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
 
                 // set root post block for all post blocks
                 for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks()) {
-                    if ((currentPostBlock instanceof TextBlockVersion && filter == PostBlockTypeFilter.CODE)
-                            || currentPostBlock instanceof CodeBlockVersion && filter == PostBlockTypeFilter.TEXT) {
+                    if (!currentPostBlock.isSelected(postBlockTypeFilter)) {
                         continue;
                     }
 
@@ -345,10 +331,17 @@ public class PostVersionList extends LinkedList<PostVersion> {
     }
 
     public List<PostBlockLifeSpan> extractPostBlockLifeSpans() {
-        return extractPostBlockLifeSpans(PostBlockTypeFilter.BOTH);
+        return extractPostBlockLifeSpans(Sets.newHashSet(
+                TextBlockVersion.postBlockTypeId,
+                CodeBlockVersion.postBlockTypeId));
     }
 
-    public List<PostBlockLifeSpan> extractPostBlockLifeSpans(PostBlockTypeFilter filter) {
+    public List<PostBlockLifeSpan> extractPostBlockLifeSpans(Set<Integer> postBlockTypeFilter) {
+        /* Extraction can only be done once for each PostBlockVersion!
+         * First processing text blocks and then processing code blocks is possible, but processing all blocks together
+         * and then again extracting text or code blocks does not work, because the processed-flag is already set.
+         */
+
         List<PostBlockLifeSpan> lifeSpans = new LinkedList<>();
 
         if (!this.sorted) {
@@ -358,8 +351,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
         for (PostVersion currentPostVersion : this) {
             for (PostBlockVersion currentPostBlockVersion : currentPostVersion.getPostBlocks()) {
                 // apply filter
-                if ((currentPostBlockVersion instanceof TextBlockVersion && filter == PostBlockTypeFilter.CODE)
-                        || currentPostBlockVersion instanceof CodeBlockVersion && filter == PostBlockTypeFilter.TEXT) {
+                if (!currentPostBlockVersion.isSelected(postBlockTypeFilter)) {
                     continue;
                 }
 
@@ -377,12 +369,12 @@ public class PostVersionList extends LinkedList<PostVersion> {
 
     @Override
     public String toString() {
-        StringBuilder result = new StringBuilder("PostVersionList for PostId " + postId + ":\n");
+        StringBuilder sb = new StringBuilder();
         for (PostVersion version : this) {
-            result.append(version.toString());
-            result.append("\n");
+            sb.append(version.toString());
+            sb.append("\n");
         }
-        return result.toString();
+        return "PostVersionList (PostId=" + postId + "):\n" + sb;
     }
 
 }

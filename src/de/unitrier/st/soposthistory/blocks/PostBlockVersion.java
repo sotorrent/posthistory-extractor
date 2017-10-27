@@ -526,6 +526,8 @@ public abstract class PostBlockVersion {
         return matchingPredecessors;
     }
 
+    abstract public boolean isSelected(Set<Integer> postBlockTypeFilter);
+
     @Override
     public String toString() {
         return "PostBlockVersion: " + getContent();

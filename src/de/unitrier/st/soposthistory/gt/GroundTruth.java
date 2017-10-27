@@ -1,8 +1,8 @@
 package de.unitrier.st.soposthistory.gt;
 
+import com.google.common.collect.Sets;
 import de.unitrier.st.soposthistory.blocks.CodeBlockVersion;
 import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
-import de.unitrier.st.soposthistory.version.PostVersionList;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -16,6 +16,7 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -128,10 +129,10 @@ public class GroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
     }
 
     public List<PostBlockLifeSpan> extractPostBlockLifeSpans() {
-        return extractPostBlockLifeSpans(PostVersionList.PostBlockTypeFilter.BOTH);
+        return extractPostBlockLifeSpans(Sets.newHashSet(TextBlockVersion.postBlockTypeId, CodeBlockVersion.postBlockTypeId));
     }
 
-    public List<PostBlockLifeSpan> extractPostBlockLifeSpans(PostVersionList.PostBlockTypeFilter filter) {
+    public List<PostBlockLifeSpan> extractPostBlockLifeSpans(Set<Integer> postBlockTypeFilter) {
         List<List<PostBlockLifeSpanVersion>> orderedVersions = getOrderedVersion();
 
         List<PostBlockLifeSpan> lifeSpans = new LinkedList<>();
@@ -142,8 +143,7 @@ public class GroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
 
             for (PostBlockLifeSpanVersion currentLifeSpanVersion : currentVersion) {
                 // apply filter
-                if ((currentLifeSpanVersion.getPostBlockTypeId() == TextBlockVersion.postBlockTypeId && filter == PostVersionList.PostBlockTypeFilter.CODE)
-                        || (currentLifeSpanVersion.getPostBlockTypeId() == CodeBlockVersion.postBlockTypeId && filter == PostVersionList.PostBlockTypeFilter.TEXT)) {
+                if (!currentLifeSpanVersion.isSelected(postBlockTypeFilter)) {
                     continue;
                 }
 
@@ -206,11 +206,25 @@ public class GroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
                 .mapToInt(Integer::intValue)
                 .sum();
 
-        if (lifeSpanVersionCount != this.size()) {
-            throw new IllegalStateException("There number of lifespan versions differs from the number of verions in the ground truth.");
+        if ((postBlockTypeFilter.equals(Sets.newHashSet(TextBlockVersion.postBlockTypeId, CodeBlockVersion.postBlockTypeId)) && lifeSpanVersionCount != this.size())
+                || (postBlockTypeFilter.equals(Sets.newHashSet(TextBlockVersion.postBlockTypeId)) && lifeSpanVersionCount != this.getTextBlocks().size())
+                || (postBlockTypeFilter.equals(Sets.newHashSet(CodeBlockVersion.postBlockTypeId)) && lifeSpanVersionCount != this.getCodeBlocks().size())) {
+            throw new IllegalStateException("The number of lifespan versions differs from the number of versions in the ground truth.");
         }
 
         return lifeSpans;
+    }
+
+    public List<PostBlockLifeSpanVersion> getTextBlocks() {
+        return this.stream()
+                .filter(v -> v.getPostBlockTypeId() == TextBlockVersion.postBlockTypeId)
+                .collect(Collectors.toList());
+    }
+
+    public List<PostBlockLifeSpanVersion> getCodeBlocks() {
+        return this.stream()
+                .filter(v -> v.getPostBlockTypeId() == CodeBlockVersion.postBlockTypeId)
+                .collect(Collectors.toList());
     }
 
     @Override

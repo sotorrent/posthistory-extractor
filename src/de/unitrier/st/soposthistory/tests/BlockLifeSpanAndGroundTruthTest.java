@@ -1,5 +1,8 @@
 package de.unitrier.st.soposthistory.tests;
 
+import com.google.common.collect.Sets;
+import de.unitrier.st.soposthistory.blocks.CodeBlockVersion;
+import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
 import de.unitrier.st.soposthistory.gt.GroundTruth;
 import de.unitrier.st.soposthistory.gt.PostBlockLifeSpan;
 import de.unitrier.st.soposthistory.gt.PostBlockLifeSpanVersion;
@@ -50,7 +53,7 @@ class BlockLifeSpanAndGroundTruthTest {
 
         assertThat(original, is(original));
         assertThat(original, is(not(differentPostId)));
-        assertThat(original, is(differentPostHistoryId));
+        assertThat(original, is(not(differentPostHistoryId)));
         assertThat(original, is(not(differentPostBlockTypeId)));
         assertThat(original, is(not(differentVersion)));
         assertThat(original, is(not(differentLocalId)));
@@ -61,27 +64,45 @@ class BlockLifeSpanAndGroundTruthTest {
     @Test
     void testPostBlockLifeSpanExtraction() {
         PostVersionList a_3758880 = PostVersionList.readFromCSV(pathToHistory, 22037280, 2);
-        List<PostBlockLifeSpan> lifeSpans = a_3758880.extractPostBlockLifeSpans();
-
         GroundTruth a_22037280_gt = GroundTruth.readFromCSV(pathToGT, 22037280);
+
+        List<PostBlockLifeSpan> lifeSpans = a_3758880.extractPostBlockLifeSpans();
         List<PostBlockLifeSpan> lifeSpansGT = a_22037280_gt.extractPostBlockLifeSpans();
-
         assertEquals(lifeSpans.size(), lifeSpansGT.size());
-
         for (int i=0; i<lifeSpans.size(); i++) {
-            PostBlockLifeSpan currentLifeSpan = lifeSpans.get(i);
-            PostBlockLifeSpan currentLifeSpanGT = lifeSpansGT.get(i);
-
-            assertEquals(currentLifeSpanGT.size(), currentLifeSpan.size());
-
-            for (int j=0; j<currentLifeSpan.size(); j++) {
-                PostBlockLifeSpanVersion currentLifeSpanVersion = currentLifeSpan.get(j);
-                PostBlockLifeSpanVersion currentLifeSpanVersionGT = currentLifeSpanGT.get(j);
-
-                assertEquals(currentLifeSpanVersionGT, currentLifeSpanVersion);
-            }
+            assertThat(lifeSpans.get(i), is(lifeSpansGT.get(i)));
         }
     }
+
+    @Test
+    void testPostBlockLifeSpanExtractionFilter() {
+        PostVersionList a_3758880 = PostVersionList.readFromCSV(pathToHistory, 22037280, 2);
+        GroundTruth a_22037280_gt = GroundTruth.readFromCSV(pathToGT, 22037280);
+
+        // text
+        List<PostBlockLifeSpan> textBlockLifeSpans = a_3758880.extractPostBlockLifeSpans(
+                Sets.newHashSet(TextBlockVersion.postBlockTypeId));
+        List<PostBlockLifeSpan> textLifeSpansGT = a_22037280_gt.extractPostBlockLifeSpans(
+                Sets.newHashSet(TextBlockVersion.postBlockTypeId)
+        );
+        assertEquals(textBlockLifeSpans.size(), textLifeSpansGT.size());
+        for (int i=0; i<textBlockLifeSpans.size(); i++) {
+            assertThat(textBlockLifeSpans.get(i), is(textLifeSpansGT.get(i)));
+        }
+
+        // code
+        List<PostBlockLifeSpan> codeBlockLifeSpans = a_3758880.extractPostBlockLifeSpans(
+                Sets.newHashSet(CodeBlockVersion.postBlockTypeId));
+        List<PostBlockLifeSpan> codeLifeSpansGT = a_22037280_gt.extractPostBlockLifeSpans(
+                Sets.newHashSet(CodeBlockVersion.postBlockTypeId)
+        );
+        assertEquals(codeBlockLifeSpans.size(), codeLifeSpansGT.size());
+        for (int i=0; i<codeBlockLifeSpans.size(); i++) {
+            assertThat(codeBlockLifeSpans.get(i), is(codeLifeSpansGT.get(i)));
+        }
+    }
+
+
 
 
 //    @Test

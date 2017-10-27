@@ -1,5 +1,7 @@
 package de.unitrier.st.soposthistory.gt;
 
+import java.util.Set;
+
 public class PostBlockLifeSpanVersion {
     // data in CSV
     private int postId;
@@ -114,14 +116,20 @@ public class PostBlockLifeSpanVersion {
         this.processed = processed;
     }
 
+    public boolean isSelected(Set<Integer> postBlockTypeFilter) {
+        return postBlockTypeFilter.contains(postBlockTypeId);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o instanceof PostBlockLifeSpanVersion) {
             PostBlockLifeSpanVersion other = (PostBlockLifeSpanVersion) o;
-            return (this.version == other.version
+            return (this.postId == other.postId
+                    && this.postHistoryId == other.postHistoryId
                     && this.postBlockTypeId == other.postBlockTypeId
                     && this.localId == other.localId
-                    && this.postId == other.postId);
+                    && this.version == other.version
+            );
         } else {
             return false;
         }
