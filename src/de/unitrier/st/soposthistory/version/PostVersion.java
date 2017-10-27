@@ -195,6 +195,7 @@ public class PostVersion {
      * Rules for matching: (1) equality of content, (2) similarity metric, (3) order in post.
      * @param currentVersionPostBlocks Text or code blocks from current post version
      * @param previousVersionPostBlocks Text or code blocks from previous post version
+     * @param config Configuration with similarity metrics and thresholds
      * @param <T> Either TextBlockVersion or CodeBlockVersion
      * @return Map with matched predecessor post blocks and number of times they were matched
      */
