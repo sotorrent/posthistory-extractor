@@ -31,6 +31,8 @@ public class PostVersion {
     // internal
     private final List<PostBlockVersion> postBlocks;
     private final List<PostVersionUrl> urls;
+    private PostVersion pred;
+    private PostVersion succ;
 
     public PostVersion() {
         // database
@@ -42,6 +44,8 @@ public class PostVersion {
         // internal
         this.postBlocks = new LinkedList<>();
         this.urls = new LinkedList<>();
+        this.pred = null;
+        this.succ = null;
     }
 
     public PostVersion(Integer postId, Integer postHistoryId, Integer postTypeId) {
@@ -167,6 +171,24 @@ public class PostVersion {
                 .stream()
                 .map(PostBlockVersion::getContent)
                 .collect(Collectors.joining("\n"));
+    }
+
+    @Transient
+    public PostVersion getPred() {
+        return pred;
+    }
+
+    public void setPred(PostVersion pred) {
+        this.pred = pred;
+    }
+
+    @Transient
+    public PostVersion getSucc() {
+        return succ;
+    }
+
+    public void setSucc(PostVersion succ) {
+        this.succ = succ;
     }
 
     public void insertPostBlocks(StatelessSession session) {
