@@ -62,6 +62,8 @@ public class Util {
     }
 
     public static<T> List<T> visitFiles(Path dir, Function<Path, T> visitor) {
+        // switch to Java 8 Files.list()?
+
         // ensure that input directory exists
         if (!Files.exists(dir)) {
             throw new IllegalArgumentException("Directory not found: " + dir);
