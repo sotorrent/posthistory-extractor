@@ -1,28 +1,41 @@
-package de.unitrier.st.soposthistory.util;
+package de.unitrier.st.soposthistory.gt;
 
 public class PostBlockLifeSpanVersion {
+    // data in CSV
     private int postId;
     private int postHistoryId;
     private int postBlockTypeId;
-    private int version;
     private int localId;
     private Integer predLocalId;
     private Integer succLocalId;
     private String comment;
+    // not in CSV
+    private int version;
+    // internal
+    private boolean processed;
 
-    public PostBlockLifeSpanVersion(int postId, int postHistoryId, int postBlockTypeId, int version, int localId) {
-        this(postId, postHistoryId, postBlockTypeId, version, localId, null, null);
+    public PostBlockLifeSpanVersion(int postId, int postHistoryId, int postBlockTypeId, int localId) {
+        this(postId, postHistoryId, postBlockTypeId, localId, null, null, "", -1);
     }
 
-    public PostBlockLifeSpanVersion(int postId, int postHistoryId, int postBlockTypeId, int version, int localId, Integer predLocalId, Integer succLocalId) {
+    public PostBlockLifeSpanVersion(int postId, int postHistoryId, int postBlockTypeId, int localId,
+                                    Integer predLocalId, Integer succLocalId, String comment) {
+        this(postId, postHistoryId, postBlockTypeId, localId, predLocalId, succLocalId, comment, -1);
+    }
+
+    public PostBlockLifeSpanVersion(int postId, int postHistoryId, int postBlockTypeId, int localId,
+                                    Integer predLocalId, Integer succLocalId, String comment, int version) {
         this.postId = postId;
         this.postHistoryId = postHistoryId;
         this.postBlockTypeId = postBlockTypeId;
-        this.version = version;
         this.localId = localId;
         this.predLocalId = predLocalId;
         this.succLocalId = succLocalId;
-        this.comment = "";
+        this.comment = comment;
+        // not in CSV
+        this.version = version;
+        // internal
+        this.processed = false;
     }
 
     public int getPostId() {
@@ -41,8 +54,12 @@ public class PostBlockLifeSpanVersion {
         this.postHistoryId = postHistoryId;
     }
 
-    public Integer getPostBlockTypeId() {
+    public int getPostBlockTypeId() {
         return postBlockTypeId;
+    }
+
+    public void setPostBlockTypeId(int postBlockTypeId) {
+        this.postBlockTypeId = postBlockTypeId;
     }
 
     public void setPostBlockTypeId(Integer postBlockTypeId) {
@@ -89,6 +106,14 @@ public class PostBlockLifeSpanVersion {
         this.comment = comment;
     }
 
+    public boolean isProcessed() {
+        return processed;
+    }
+
+    public void setProcessed(boolean processed) {
+        this.processed = processed;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o instanceof PostBlockLifeSpanVersion) {
@@ -104,7 +129,8 @@ public class PostBlockLifeSpanVersion {
 
     @Override
     public String toString() {
-        return "(" + version + "," + localId + ")";
+        return postId + ";" + postHistoryId + ";" + postBlockTypeId + ";" + localId + ";" + predLocalId + ";"
+                + succLocalId + ";" + comment + ";" + version;
     }
 
 }

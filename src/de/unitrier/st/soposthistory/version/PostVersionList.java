@@ -4,12 +4,14 @@ import de.unitrier.st.soposthistory.blocks.CodeBlockVersion;
 import de.unitrier.st.soposthistory.blocks.PostBlockVersion;
 import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
 import de.unitrier.st.soposthistory.diffs.PostBlockDiffList;
+import de.unitrier.st.soposthistory.gt.PostBlockLifeSpan;
 import de.unitrier.st.soposthistory.history.PostHistory;
 import de.unitrier.st.soposthistory.urls.Link;
 import de.unitrier.st.soposthistory.util.Config;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.csv.QuoteMode;
 import org.hibernate.StatelessSession;
 
 import java.io.IOException;
@@ -20,14 +22,38 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
+import static de.unitrier.st.soposthistory.util.Util.getClassLogger;
 import static de.unitrier.st.soposthistory.util.Util.processFiles;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PostVersionList extends LinkedList<PostVersion> {
     //TODO: Add methods to extract history of code or text blocks (either ignoring versions where only blocks of the other type changed (global) or where one particular block did not change (local)
 
+    private static Logger logger = null;
+    private static final CSVFormat csvFormatVersionList;
+
     private int postId;
+    private boolean sorted;
+
+    static {
+        // configure logger
+        try {
+            logger = getClassLogger(PostVersionList.class, false);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // configure CSV format for ground truth
+        csvFormatVersionList = CSVFormat.DEFAULT
+                .withHeader("Id", "PostId", "UserId", "PostHistoryTypeId", "RevisionGUID", "CreationDate", "Text", "UserDisplayName", "Comment")
+                .withDelimiter(';')
+                .withQuote('"')
+                .withQuoteMode(QuoteMode.MINIMAL)
+                .withEscape('\\')
+                .withFirstRecordAsHeader();
+    }
 
     /*
      * Enum type used to configure method processVersionHistory()
@@ -41,25 +67,33 @@ public class PostVersionList extends LinkedList<PostVersion> {
     public PostVersionList(int postId) {
         super();
         this.postId = postId;
+        this.sorted = false;
         this.diffs = new PostBlockDiffList();
     }
 
-    public static PostVersionList readFromCSV(String dir, int postId, int postTypeId) {
+    public static PostVersionList readFromCSV(Path dir, int postId, int postTypeId) {
         return readFromCSV(dir, postId, postTypeId, true);
     }
 
-    public static PostVersionList readFromCSV(String dir, int postId, int postTypeId, boolean processVersionHistory) {
-        PostVersionList postVersionList = new PostVersionList(postId);
+    public static PostVersionList readFromCSV(Path dir, int postId, int postTypeId, boolean processVersionHistory) {
+        // ensure that input directory exists
+        if (!Files.exists(dir)) {
+            throw new IllegalArgumentException("Directory does not exist: " + dir);
+        }
 
-        Path pathToCSVFile = Paths.get(dir, postId + ".csv");
+        PostVersionList postVersionList = new PostVersionList(postId);
+        Path pathToCSVFile = Paths.get(dir.toString(), postId + ".csv");
+
         CSVParser parser;
         try {
             parser = CSVParser.parse(
                     pathToCSVFile.toFile(),
                     StandardCharsets.UTF_8,
-                    CSVFormat.DEFAULT.withHeader().withDelimiter(';')
+                    csvFormatVersionList
             );
             parser.getHeaderMap();
+
+            logger.info("Reading version data from CSV file " + pathToCSVFile.toFile().toString() + " ...");
 
             List<CSVRecord> records = parser.getRecords();
 
@@ -114,7 +148,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
         return processFiles(dir,
                 file -> file.getFileName().toString().endsWith(".csv"),
                 file -> PostVersionList.readFromCSV(
-                        dir.toString(),
+                        dir,
                         Integer.parseInt(file.toFile().getName().replace(".csv", "")),
                         0 // cannot determine this from file name or file content
                 )
@@ -125,6 +159,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
         this.sort((v1, v2) ->
                 v1.getPostHistoryId() < v2.getPostHistoryId() ? -1 : v1.getPostHistoryId() > v2.getPostHistoryId() ? 1 : 0
         );
+        this.sorted = true;
     }
 
     public void processVersionHistory() {
@@ -158,6 +193,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
 
             if (predIndex == -1) {
                 // current is first element
+                currentVersion.setPred(null);
                 currentVersion.setPredPostHistoryId(null);
                 // the post blocks in the first version have themselves as root post blocks
                 for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks()) {
@@ -166,10 +202,12 @@ public class PostVersionList extends LinkedList<PostVersion> {
                         continue;
                     }
 
+                    currentPostBlock.setRootPostBlock(currentPostBlock);
                     currentPostBlock.setRootPostBlockId(currentPostBlock.getId());
                 }
             } else {
                 PostVersion previousVersion = this.get(predIndex);
+                currentVersion.setPred(this.get(predIndex));
                 currentVersion.setPredPostHistoryId(this.get(predIndex).getPostHistoryId());
                 Map<PostBlockVersion, Integer> matchedPredecessors = new HashMap<>();
 
@@ -207,6 +245,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
                             // the matched predecessor is only matched for currentPostBlock
                             if (matchingPredecessor.isAvailable()) {
                                 currentPostBlock.setPred(matchingPredecessor);
+                                matchingPredecessor.setSucc(currentPostBlock);
                             }
                         }
                     }
@@ -247,9 +286,11 @@ public class PostVersionList extends LinkedList<PostVersion> {
 
                     if (currentPostBlock.getPred() == null) {
                         // block has no predecessor -> set itself as root post block
+                        currentPostBlock.setRootPostBlock(currentPostBlock);
                         currentPostBlock.setRootPostBlockId(currentPostBlock.getId());
                     } else {
                         // block has predecessor -> set root post block of predecessor as root post block of this block
+                        currentPostBlock.setRootPostBlock(currentPostBlock.getPred().getRootPostBlock());
                         currentPostBlock.setRootPostBlockId(currentPostBlock.getPred().getRootPostBlockId());
                     }
                 }
@@ -301,6 +342,37 @@ public class PostVersionList extends LinkedList<PostVersion> {
                 }
             }
         }
+    }
+
+    public List<PostBlockLifeSpan> extractPostBlockLifeSpans() {
+        return extractPostBlockLifeSpans(PostBlockTypeFilter.BOTH);
+    }
+
+    public List<PostBlockLifeSpan> extractPostBlockLifeSpans(PostBlockTypeFilter filter) {
+        List<PostBlockLifeSpan> lifeSpans = new LinkedList<>();
+
+        if (!this.sorted) {
+            sort();
+        }
+
+        for (PostVersion currentPostVersion : this) {
+            for (PostBlockVersion currentPostBlockVersion : currentPostVersion.getPostBlocks()) {
+                // apply filter
+                if ((currentPostBlockVersion instanceof TextBlockVersion && filter == PostBlockTypeFilter.CODE)
+                        || currentPostBlockVersion instanceof CodeBlockVersion && filter == PostBlockTypeFilter.TEXT) {
+                    continue;
+                }
+
+                // skip blocks that have previously been processed
+                if (currentPostBlockVersion.isProcessed()) {
+                    continue;
+                }
+
+                lifeSpans.add(PostBlockLifeSpan.fromPostBlockVersion(currentPostBlockVersion));
+            }
+        }
+
+        return lifeSpans;
     }
 
     @Override

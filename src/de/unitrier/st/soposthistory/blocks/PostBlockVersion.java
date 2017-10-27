@@ -64,11 +64,14 @@ public abstract class PostBlockVersion {
     private final LineDiff lineDiff;
     private List<diff_match_patch.Diff> predDiff;
     private PostBlockVersion pred;
+    private PostBlockVersion succ;
+    private PostBlockVersion rootPostBlock;
     private boolean isAvailable; // false if this post block is set as a predecessor of a block in the next version
     private List<PostBlockVersion> matchingPredecessors;
     private Map<PostBlockVersion, Double> predecessorSimilarities;
     private double maxSimilarity;
     private double similarityThreshold;
+    private boolean processed; // for extraction of PostBlockLifeSpan
 
     public PostBlockVersion() {
         // database
@@ -89,12 +92,15 @@ public abstract class PostBlockVersion {
         this.contentBuilder = new StringBuilder();
         this.lineDiff = new LineDiff();
         this.pred = null;
+        this.succ = null;
+        this.rootPostBlock = null;
         this.predDiff = null;
         this.isAvailable = true;
         this.matchingPredecessors = new LinkedList<>();
         this.predecessorSimilarities = new HashMap<>();
         this.maxSimilarity = -1;
         this.similarityThreshold = -1;
+        this.processed = false;
     }
 
     public PostBlockVersion(int postId, int postHistoryId) {
@@ -295,6 +301,7 @@ public abstract class PostBlockVersion {
             PostBlockVersion matchingPredecessor = matchingPredecessors.get(pos);
             if (matchingPredecessor.isAvailable()) {
                 setPred(matchingPredecessor);
+                matchingPredecessor.setSucc(this);
                 logger.info("LocalID used for predecessor selection (PostId: " + postId + "; PostHistoryId: "
                         + postHistoryId + "; LocalId: " + localId +"; PredSimilarity: "
                         + predecessorSimilarities.get(matchingPredecessor)
@@ -340,6 +347,7 @@ public abstract class PostBlockVersion {
                         && afterPostBlock.getPred() != null && afterPostBlock.getPred() == afterMatchingPredecessor) {
                     if (matchingPredecessor.isAvailable()) {
                         setPred(matchingPredecessor);
+                        matchingPredecessor.setSucc(this);
                         return true;
                     }
                 }
@@ -350,6 +358,7 @@ public abstract class PostBlockVersion {
                         && afterPostBlock.getPred() != null && afterPostBlock.getPred() == afterMatchingPredecessor) {
                     if (matchingPredecessor.isAvailable()) {
                         setPred(matchingPredecessor);
+                        matchingPredecessor.setSucc(this);
                         return true;
                     }
                 }
@@ -357,6 +366,33 @@ public abstract class PostBlockVersion {
         }
 
         return false;
+    }
+
+    @Transient
+    public PostBlockVersion getSucc() {
+        return succ;
+    }
+
+    public void setSucc(PostBlockVersion succ) {
+        this.succ = succ;
+    }
+
+    @Transient
+    public PostBlockVersion getRootPostBlock() {
+        return rootPostBlock;
+    }
+
+    public void setRootPostBlock(PostBlockVersion rootPostBlock) {
+        this.rootPostBlock = rootPostBlock;
+    }
+
+    @Transient
+    public boolean isProcessed() {
+        return processed;
+    }
+
+    public void setProcessed(boolean processed) {
+        this.processed = processed;
     }
 
     public void append(String line) {
