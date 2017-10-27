@@ -5,7 +5,6 @@ import de.unitrier.st.soposthistory.blocks.PostBlockVersion;
 import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
 
 import java.util.LinkedList;
-import java.util.List;
 
 public class PostBlockLifeSpan extends LinkedList<PostBlockLifeSpanVersion> {
     private int postId;
@@ -59,27 +58,6 @@ public class PostBlockLifeSpan extends LinkedList<PostBlockLifeSpanVersion> {
         }
 
         return lifeSpan;
-    }
-
-    public static int getVersionCount(List<PostBlockLifeSpan> postBlockLifeSpans) {
-        int versionCount = 0;
-        for (PostBlockLifeSpan postBlockLifeSpan : postBlockLifeSpans) {
-            versionCount += postBlockLifeSpan.size();
-        }
-        return versionCount;
-    }
-
-    public static String toString(LinkedList<PostBlockLifeSpan> postBlockLifeSpans) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("number of snapshots: ");
-        sb.append(getVersionCount(postBlockLifeSpans));
-        sb.append("\n");
-
-        for (PostBlockLifeSpan postBlockLifeSpan : postBlockLifeSpans) {
-            sb.append(postBlockLifeSpan);
-        }
-
-        return sb.toString();
     }
 
     public int getPostId() {
