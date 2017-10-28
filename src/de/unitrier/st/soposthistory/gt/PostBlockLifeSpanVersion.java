@@ -103,18 +103,12 @@ public class PostBlockLifeSpanVersion {
         return postBlockTypeFilter.contains(postBlockTypeId);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (o instanceof PostBlockLifeSpanVersion) {
-            PostBlockLifeSpanVersion other = (PostBlockLifeSpanVersion) o;
-            return (this.postId == other.postId
-                    && this.postHistoryId == other.postHistoryId
-                    && this.postBlockTypeId == other.postBlockTypeId
-                    && this.localId == other.localId
-            );
-        } else {
-            return false;
-        }
+    public boolean equals(PostBlockLifeSpanVersion other) {
+        return (this.postId == other.postId
+                && this.postHistoryId == other.postHistoryId
+                && this.postBlockTypeId == other.postBlockTypeId
+                && this.localId == other.localId
+        );
     }
 
     @Override
