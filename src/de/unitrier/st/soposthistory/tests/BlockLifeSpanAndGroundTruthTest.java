@@ -3,6 +3,7 @@ package de.unitrier.st.soposthistory.tests;
 import com.google.common.collect.Sets;
 import de.unitrier.st.soposthistory.blocks.CodeBlockVersion;
 import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
+import de.unitrier.st.soposthistory.gt.PostBlockConnection;
 import de.unitrier.st.soposthistory.gt.PostGroundTruth;
 import de.unitrier.st.soposthistory.gt.PostBlockLifeSpan;
 import de.unitrier.st.soposthistory.gt.PostBlockLifeSpanVersion;
@@ -14,9 +15,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BlockLifeSpanAndGroundTruthTest {
@@ -50,13 +51,13 @@ class BlockLifeSpanAndGroundTruthTest {
         PostBlockLifeSpanVersion differentPredId = new PostBlockLifeSpanVersion(4711, 42, 1, 0, 1, 0,"");
         PostBlockLifeSpanVersion differentSuccId = new PostBlockLifeSpanVersion(4711, 42, 1, 0, 0, 1, "");
 
-        assertThat(original, is(original));
-        assertThat(original, is(not(differentPostId)));
-        assertThat(original, is(not(differentPostHistoryId)));
-        assertThat(original, is(not(differentPostBlockTypeId)));
-        assertThat(original, is(not(differentLocalId)));
-        assertThat(original, is(differentPredId));
-        assertThat(original, is(differentSuccId));
+        assertTrue(original.equals(original));
+        assertFalse(original.equals(differentPostId));
+        assertFalse(original.equals(differentPostHistoryId));
+        assertFalse(original.equals(differentPostBlockTypeId));
+        assertFalse(original.equals(differentLocalId));
+        assertTrue(original.equals(differentPredId));
+        assertTrue(original.equals(differentSuccId));
     }
 
     @Test
@@ -69,7 +70,7 @@ class BlockLifeSpanAndGroundTruthTest {
         assertEquals(lifeSpans.size(), lifeSpansGT.size());
         assertEquals(5, lifeSpans.size());
         for (int i=0; i<lifeSpans.size(); i++) {
-            assertThat(lifeSpans.get(i), is(lifeSpansGT.get(i)));
+            assertTrue(lifeSpans.get(i).equals(lifeSpansGT.get(i)));
         }
     }
 
@@ -87,7 +88,7 @@ class BlockLifeSpanAndGroundTruthTest {
         assertEquals(textBlockLifeSpans.size(), textLifeSpansGT.size());
         assertEquals(3, textBlockLifeSpans.size());
         for (int i=0; i<textBlockLifeSpans.size(); i++) {
-            assertThat(textBlockLifeSpans.get(i), is(textLifeSpansGT.get(i)));
+            assertTrue(textBlockLifeSpans.get(i).equals(textLifeSpansGT.get(i)));
         }
 
         // code
@@ -99,10 +100,25 @@ class BlockLifeSpanAndGroundTruthTest {
         assertEquals(codeBlockLifeSpans.size(), codeLifeSpansGT.size());
         assertEquals(2, codeBlockLifeSpans.size());
         for (int i=0; i<codeBlockLifeSpans.size(); i++) {
-            assertThat(codeBlockLifeSpans.get(i), is(codeLifeSpansGT.get(i)));
+            assertTrue(codeBlockLifeSpans.get(i).equals(codeLifeSpansGT.get(i)));
         }
 
         // TODO: Lorik: assertEquals(6, connectionsOfAllVersionsGroundTruth_text.size());???
+    }
+
+    @Test
+    void testPostBlockConnectionExtraction() {
+        PostVersionList a_22037280 = PostVersionList.readFromCSV(pathToHistory, 22037280, 2);
+        PostGroundTruth a_22037280_gt = PostGroundTruth.readFromCSV(pathToGT, 22037280);
+
+        List<PostBlockLifeSpan> lifeSpans = a_22037280.extractPostBlockLifeSpans();
+        List<PostBlockLifeSpan> lifeSpansGT = a_22037280_gt.extractPostBlockLifeSpans();
+
+        Set<PostBlockConnection> connections = PostBlockConnection.extractFromPostBlockLifeSpan(lifeSpans);
+        Set<PostBlockConnection> connectionsGT = PostBlockConnection.extractFromPostBlockLifeSpan(lifeSpansGT);
+
+        assertEquals(connections.size(), connectionsGT.size());
+        assertTrue(PostBlockConnection.equals(connections, connectionsGT));
     }
 
 //    @Test
