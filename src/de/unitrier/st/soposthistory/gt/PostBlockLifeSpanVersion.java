@@ -11,22 +11,15 @@ public class PostBlockLifeSpanVersion {
     private Integer predLocalId;
     private Integer succLocalId;
     private String comment;
-    // not in CSV
-    private int version;
     // internal
     private boolean processed;
 
     public PostBlockLifeSpanVersion(int postId, int postHistoryId, int postBlockTypeId, int localId) {
-        this(postId, postHistoryId, postBlockTypeId, localId, null, null, "", -1);
+        this(postId, postHistoryId, postBlockTypeId, localId, null, null, "");
     }
 
     public PostBlockLifeSpanVersion(int postId, int postHistoryId, int postBlockTypeId, int localId,
                                     Integer predLocalId, Integer succLocalId, String comment) {
-        this(postId, postHistoryId, postBlockTypeId, localId, predLocalId, succLocalId, comment, -1);
-    }
-
-    public PostBlockLifeSpanVersion(int postId, int postHistoryId, int postBlockTypeId, int localId,
-                                    Integer predLocalId, Integer succLocalId, String comment, int version) {
         this.postId = postId;
         this.postHistoryId = postHistoryId;
         this.postBlockTypeId = postBlockTypeId;
@@ -34,8 +27,6 @@ public class PostBlockLifeSpanVersion {
         this.predLocalId = predLocalId;
         this.succLocalId = succLocalId;
         this.comment = comment;
-        // not in CSV
-        this.version = version;
         // internal
         this.processed = false;
     }
@@ -66,14 +57,6 @@ public class PostBlockLifeSpanVersion {
 
     public void setPostBlockTypeId(Integer postBlockTypeId) {
         this.postBlockTypeId = postBlockTypeId;
-    }
-
-    public int getVersion() {
-        return version;
-    }
-
-    public void setVersion(int version) {
-        this.version = version;
     }
 
     public int getLocalId() {
@@ -128,7 +111,6 @@ public class PostBlockLifeSpanVersion {
                     && this.postHistoryId == other.postHistoryId
                     && this.postBlockTypeId == other.postBlockTypeId
                     && this.localId == other.localId
-                    && this.version == other.version
             );
         } else {
             return false;
@@ -138,7 +120,7 @@ public class PostBlockLifeSpanVersion {
     @Override
     public String toString() {
         return postId + ";" + postHistoryId + ";" + postBlockTypeId + ";" + localId + ";" + predLocalId + ";"
-                + succLocalId + ";" + comment + ";" + version;
+                + succLocalId + ";" + comment + ";";
     }
 
 }

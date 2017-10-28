@@ -23,16 +23,17 @@ import java.util.stream.Collectors;
 import static de.unitrier.st.soposthistory.util.Util.getClassLogger;
 import static de.unitrier.st.soposthistory.util.Util.processFiles;
 
-public class GroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
+public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
     private static Logger logger = null;
     private static final CSVFormat csvFormatGT;
 
     private int postId;
+    private List<List<PostBlockLifeSpanVersion>> orderedByVersion;
 
     static {
         // configure logger
         try {
-            logger = getClassLogger(GroundTruth.class, false);
+            logger = getClassLogger(PostGroundTruth.class, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -48,18 +49,19 @@ public class GroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
                 .withFirstRecordAsHeader();
     }
 
-    public GroundTruth(int postId) {
+    public PostGroundTruth(int postId) {
         this.postId = postId;
+        this.orderedByVersion = new LinkedList<>();
     }
 
-    public static GroundTruth readFromCSV(Path dir, int postId) {
+    public static PostGroundTruth readFromCSV(Path dir, int postId) {
         // ensure that input directory exists
         if (!Files.exists(dir)) {
             throw new IllegalArgumentException("Directory does not exist: " + dir);
         }
 
         Path pathToCSVFile = Paths.get(dir.toString(), "completed_" + postId + ".csv");
-        GroundTruth gt = new GroundTruth(postId);
+        PostGroundTruth gt = new PostGroundTruth(postId);
 
         try (CSVParser csvParser = new CSVParser(new FileReader(pathToCSVFile.toFile()), csvFormatGT)) {
             logger.info("Reading GT from CSV file " + pathToCSVFile.toFile().toString() + " ...");
@@ -84,14 +86,15 @@ public class GroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
         }
 
         gt.sort();
+        gt.orderByVersions();
 
         return gt;
     }
 
-    public static List<GroundTruth> readFromDirectory(Path dir) {
+    public static List<PostGroundTruth> readFromDirectory(Path dir) {
         return processFiles(dir,
                 file -> file.getFileName().toString().startsWith("completed_") && file.getFileName().toString().endsWith(".csv"),
-                file -> GroundTruth.readFromCSV(
+                file -> PostGroundTruth.readFromCSV(
                             dir,
                             Integer.parseInt(file.toFile().getName()
                                     .replace("completed_", "")
@@ -111,9 +114,7 @@ public class GroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
         });
     }
 
-    public List<List<PostBlockLifeSpanVersion>> getOrderedVersion() {
-        List<List<PostBlockLifeSpanVersion>> orderedVersions = new LinkedList<>();
-
+    private void orderByVersions() {
         Map<Integer, List<PostBlockLifeSpanVersion>> versionsPerPostHistoryId = this.stream()
                 .collect(Collectors.groupingBy(PostBlockLifeSpanVersion::getPostHistoryId));
 
@@ -122,10 +123,8 @@ public class GroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
 
         for (int postHistoryId : postHistoryIds) {
             List<PostBlockLifeSpanVersion> versions = versionsPerPostHistoryId.get(postHistoryId);
-            orderedVersions.add(versions);
+            orderedByVersion.add(versions);
         }
-
-        return orderedVersions;
     }
 
     public List<PostBlockLifeSpan> extractPostBlockLifeSpans() {
@@ -133,13 +132,11 @@ public class GroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
     }
 
     public List<PostBlockLifeSpan> extractPostBlockLifeSpans(Set<Integer> postBlockTypeFilter) {
-        List<List<PostBlockLifeSpanVersion>> orderedVersions = getOrderedVersion();
-
         List<PostBlockLifeSpan> lifeSpans = new LinkedList<>();
 
-        for (int i=0; i<orderedVersions.size(); i++) {
+        for (int i = 0; i< orderedByVersion.size(); i++) {
 
-            List<PostBlockLifeSpanVersion> currentVersion = orderedVersions.get(i);
+            List<PostBlockLifeSpanVersion> currentVersion = orderedByVersion.get(i);
 
             for (PostBlockLifeSpanVersion currentLifeSpanVersion : currentVersion) {
                 // apply filter
@@ -154,13 +151,12 @@ public class GroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
 
                 // find successor of this lifespan version
                 int versionCount = 0;
-                while (i+versionCount < orderedVersions.size()) {
+                while (i+versionCount < orderedByVersion.size()) {
                     // skip life span versions that have already been processed
                     if (currentLifeSpanVersion.isProcessed()) {
                         break;
                     }
 
-                    currentLifeSpanVersion.setVersion(versionCount+1);
                     currentLifeSpanVersion.setProcessed(true);
                     lifeSpan.add(currentLifeSpanVersion);
 
@@ -169,7 +165,7 @@ public class GroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
                         break;
                     }
 
-                    List<PostBlockLifeSpanVersion> nextVersion = orderedVersions.get(i+versionCount+1);
+                    List<PostBlockLifeSpanVersion> nextVersion = orderedByVersion.get(i+versionCount+1);
 
                     final int succLocalId = currentLifeSpanVersion.getSuccLocalId();
                     List<PostBlockLifeSpanVersion> nextLifeSpanVersionCandidates = nextVersion.stream()
@@ -229,7 +225,7 @@ public class GroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
 
     @Override
     public String toString() {
-        StringBuilder result = new StringBuilder("GroundTruth for PostId " + postId + ":\n");
+        StringBuilder result = new StringBuilder("PostGroundTruth for PostId " + postId + ":\n");
         for (PostBlockLifeSpanVersion version : this) {
             result.append(version);
             result.append("\n");

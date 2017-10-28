@@ -3,7 +3,7 @@ package de.unitrier.st.soposthistory.tests;
 import com.google.common.collect.Sets;
 import de.unitrier.st.soposthistory.blocks.CodeBlockVersion;
 import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
-import de.unitrier.st.soposthistory.gt.GroundTruth;
+import de.unitrier.st.soposthistory.gt.PostGroundTruth;
 import de.unitrier.st.soposthistory.gt.PostBlockLifeSpan;
 import de.unitrier.st.soposthistory.gt.PostBlockLifeSpanVersion;
 import de.unitrier.st.soposthistory.version.PostVersionList;
@@ -25,7 +25,7 @@ class BlockLifeSpanAndGroundTruthTest {
 
     @Test
     void testReadFromDirectory() {
-        List<GroundTruth> groundTruthList = GroundTruth.readFromDirectory(pathToGT);
+        List<PostGroundTruth> postGroundTruthList = PostGroundTruth.readFromDirectory(pathToGT);
         try {
             assertEquals(Files.list(pathToGT).filter(
                     file -> file
@@ -33,7 +33,7 @@ class BlockLifeSpanAndGroundTruthTest {
                             .toString()
                             .endsWith(".csv"))
                             .count(),
-                    groundTruthList.size());
+                    postGroundTruthList.size());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -42,20 +42,18 @@ class BlockLifeSpanAndGroundTruthTest {
     @Test
     void testPostBlockLifeSpanVersionsEqual(){
         // compare two PostBlockLifeSpanVersions
-        PostBlockLifeSpanVersion original = new PostBlockLifeSpanVersion(4711, 42, 1, 0, 0, 0, "", 1);
-        PostBlockLifeSpanVersion differentPostId = new PostBlockLifeSpanVersion(4712, 42, 1, 0, 0, 0, "", 1);
-        PostBlockLifeSpanVersion differentPostHistoryId = new PostBlockLifeSpanVersion(4711, 43, 1, 0, 0, 0, "", 1);
-        PostBlockLifeSpanVersion differentPostBlockTypeId = new PostBlockLifeSpanVersion(4711, 42, 2, 0, 0, 0, "", 1);
-        PostBlockLifeSpanVersion differentVersion = new PostBlockLifeSpanVersion(4711, 42, 1, 1, 0, 0, "", 2);
-        PostBlockLifeSpanVersion differentLocalId = new PostBlockLifeSpanVersion(4711, 42, 1, 1, 0, 0, "", 1);
-        PostBlockLifeSpanVersion differentPredId = new PostBlockLifeSpanVersion(4711, 42, 1, 0, 1, 0,"", 1);
-        PostBlockLifeSpanVersion differentSuccId = new PostBlockLifeSpanVersion(4711, 42, 1, 0, 0, 1, "", 1);
+        PostBlockLifeSpanVersion original = new PostBlockLifeSpanVersion(4711, 42, 1, 0, 0, 0, "");
+        PostBlockLifeSpanVersion differentPostId = new PostBlockLifeSpanVersion(4712, 42, 1, 0, 0, 0, "");
+        PostBlockLifeSpanVersion differentPostHistoryId = new PostBlockLifeSpanVersion(4711, 43, 1, 0, 0, 0, "");
+        PostBlockLifeSpanVersion differentPostBlockTypeId = new PostBlockLifeSpanVersion(4711, 42, 2, 0, 0, 0, "");
+        PostBlockLifeSpanVersion differentLocalId = new PostBlockLifeSpanVersion(4711, 42, 1, 1, 0, 0, "");
+        PostBlockLifeSpanVersion differentPredId = new PostBlockLifeSpanVersion(4711, 42, 1, 0, 1, 0,"");
+        PostBlockLifeSpanVersion differentSuccId = new PostBlockLifeSpanVersion(4711, 42, 1, 0, 0, 1, "");
 
         assertThat(original, is(original));
         assertThat(original, is(not(differentPostId)));
         assertThat(original, is(not(differentPostHistoryId)));
         assertThat(original, is(not(differentPostBlockTypeId)));
-        assertThat(original, is(not(differentVersion)));
         assertThat(original, is(not(differentLocalId)));
         assertThat(original, is(differentPredId));
         assertThat(original, is(differentSuccId));
@@ -63,12 +61,13 @@ class BlockLifeSpanAndGroundTruthTest {
 
     @Test
     void testPostBlockLifeSpanExtraction() {
-        PostVersionList a_3758880 = PostVersionList.readFromCSV(pathToHistory, 22037280, 2);
-        GroundTruth a_22037280_gt = GroundTruth.readFromCSV(pathToGT, 22037280);
+        PostVersionList a_22037280 = PostVersionList.readFromCSV(pathToHistory, 22037280, 2);
+        PostGroundTruth a_22037280_gt = PostGroundTruth.readFromCSV(pathToGT, 22037280);
 
-        List<PostBlockLifeSpan> lifeSpans = a_3758880.extractPostBlockLifeSpans();
+        List<PostBlockLifeSpan> lifeSpans = a_22037280.extractPostBlockLifeSpans();
         List<PostBlockLifeSpan> lifeSpansGT = a_22037280_gt.extractPostBlockLifeSpans();
         assertEquals(lifeSpans.size(), lifeSpansGT.size());
+        assertEquals(5, lifeSpans.size());
         for (int i=0; i<lifeSpans.size(); i++) {
             assertThat(lifeSpans.get(i), is(lifeSpansGT.get(i)));
         }
@@ -76,38 +75,38 @@ class BlockLifeSpanAndGroundTruthTest {
 
     @Test
     void testPostBlockLifeSpanExtractionFilter() {
-        PostVersionList a_3758880 = PostVersionList.readFromCSV(pathToHistory, 22037280, 2);
-        GroundTruth a_22037280_gt = GroundTruth.readFromCSV(pathToGT, 22037280);
+        PostVersionList a_22037280 = PostVersionList.readFromCSV(pathToHistory, 22037280, 2);
+        PostGroundTruth a_22037280_gt = PostGroundTruth.readFromCSV(pathToGT, 22037280);
 
         // text
-        List<PostBlockLifeSpan> textBlockLifeSpans = a_3758880.extractPostBlockLifeSpans(
+        List<PostBlockLifeSpan> textBlockLifeSpans = a_22037280.extractPostBlockLifeSpans(
                 Sets.newHashSet(TextBlockVersion.postBlockTypeId));
         List<PostBlockLifeSpan> textLifeSpansGT = a_22037280_gt.extractPostBlockLifeSpans(
                 Sets.newHashSet(TextBlockVersion.postBlockTypeId)
         );
         assertEquals(textBlockLifeSpans.size(), textLifeSpansGT.size());
+        assertEquals(3, textBlockLifeSpans.size());
         for (int i=0; i<textBlockLifeSpans.size(); i++) {
             assertThat(textBlockLifeSpans.get(i), is(textLifeSpansGT.get(i)));
         }
 
         // code
-        List<PostBlockLifeSpan> codeBlockLifeSpans = a_3758880.extractPostBlockLifeSpans(
+        List<PostBlockLifeSpan> codeBlockLifeSpans = a_22037280.extractPostBlockLifeSpans(
                 Sets.newHashSet(CodeBlockVersion.postBlockTypeId));
         List<PostBlockLifeSpan> codeLifeSpansGT = a_22037280_gt.extractPostBlockLifeSpans(
                 Sets.newHashSet(CodeBlockVersion.postBlockTypeId)
         );
         assertEquals(codeBlockLifeSpans.size(), codeLifeSpansGT.size());
+        assertEquals(2, codeBlockLifeSpans.size());
         for (int i=0; i<codeBlockLifeSpans.size(); i++) {
             assertThat(codeBlockLifeSpans.get(i), is(codeLifeSpansGT.get(i)));
         }
+
+        // TODO: Lorik: assertEquals(6, connectionsOfAllVersionsGroundTruth_text.size());???
     }
-
-
-
 
 //    @Test
 //    void testGroundTruthExtractionOfCSV(){
-//        GroundTruthExtractionOfCSVs groundTruthExtractionOfCSVs = new GroundTruthExtractionOfCSVs(Paths.get("testdata", "Samples_test", "fewCompletedFiles").toString());
 //
 //        // testing text
 //        assertNull(groundTruthExtractionOfCSVs.getAllConnectionsOfAllConsecutiveVersions_text(4711));    // post with id 4711 is not listed in ground truth
@@ -138,30 +137,7 @@ class BlockLifeSpanAndGroundTruthTest {
 //        assertEquals(new Integer(4),connectionsOfAllVersions_code.get(2).get(1).getLeftLocalId());
 //        assertEquals(new Integer(4),connectionsOfAllVersions_code.get(2).get(1).getRightLocalId());
 //    }
-//
-//    @Test
-//    void testExtractionsForOnePost() {
-//
-//        int postId = 22037280;
-//
-//        GroundTruthExtractionOfCSVs groundTruthExtractionOfCSVs = new GroundTruthExtractionOfCSVs(pathToFewCompletedFiles);
-//        ConnectionsOfAllVersions connectionsOfAllVersionsGroundTruth_text = groundTruthExtractionOfCSVs.getAllConnectionsOfAllConsecutiveVersions_text(postId);
-//        ConnectionsOfAllVersions connectionsOfAllVersionsGroundTruth_code = groundTruthExtractionOfCSVs.getAllConnectionsOfAllConsecutiveVersions_code(postId);
-//
-//        PostVersionsListManagement postVersionsListManagement = new PostVersionsListManagement(pathToFewCompletedFiles);
-//        postVersionsListManagement.getPostVersionListWithID(postId).processVersionHistory();
-//        ConnectionsOfAllVersions connectionsOfAllVersionsComputedMetric_text = postVersionsListManagement.getAllConnectionsOfAllConsecutiveVersions_text(postId);
-//        ConnectionsOfAllVersions connectionsOfAllVersionsComputedMetric_code = postVersionsListManagement.getAllConnectionsOfAllConsecutiveVersions_code(postId);
-//
-//
-//        assertEquals(6, connectionsOfAllVersionsGroundTruth_text.size());
-//
-//        assertThat(connectionsOfAllVersionsComputedMetric_text, is(connectionsOfAllVersionsComputedMetric_text));
-//        assertThat(connectionsOfAllVersionsComputedMetric_code, is(connectionsOfAllVersionsComputedMetric_code));
-//
-//    }
-//
-//
+
 //    @Test
 //    void testNumberOfPredecessorsOfOnePost() {
 //        int postId = 3758880;
