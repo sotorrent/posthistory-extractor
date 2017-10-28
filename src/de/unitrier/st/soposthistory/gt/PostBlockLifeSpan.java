@@ -26,7 +26,6 @@ public class PostBlockLifeSpan extends LinkedList<PostBlockLifeSpanVersion> {
         PostBlockLifeSpan lifeSpan = new PostBlockLifeSpan(postIdFirst, postBlockTypeIdFirst);
         PostBlockVersion currentVersion = firstVersion;
 
-        int versionCount = 1;
         while (currentVersion != null) {
             int postId = currentVersion.getPostId();
             if (postId != postIdFirst) {
@@ -42,8 +41,6 @@ public class PostBlockLifeSpan extends LinkedList<PostBlockLifeSpanVersion> {
             PostBlockLifeSpanVersion newLifeSpanVersion = new PostBlockLifeSpanVersion(
                     postId, postHistoryId, postBlockTypeId, localId
             );
-            newLifeSpanVersion.setVersion(versionCount);
-            versionCount++;
 
             if (currentVersion.getPred() != null) {
                 newLifeSpanVersion.setPredLocalId(currentVersion.getPred().getLocalId());
