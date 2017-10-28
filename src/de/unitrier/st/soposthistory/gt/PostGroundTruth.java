@@ -13,10 +13,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -51,7 +48,7 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
 
     public PostGroundTruth(int postId) {
         this.postId = postId;
-        this.orderedByVersion = new LinkedList<>();
+        this.orderedByVersion = null;
     }
 
     public static PostGroundTruth readFromCSV(Path dir, int postId) {
@@ -115,6 +112,8 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
     }
 
     private void orderByVersions() {
+        orderedByVersion = new LinkedList<>();
+
         Map<Integer, List<PostBlockLifeSpanVersion>> versionsPerPostHistoryId = this.stream()
                 .collect(Collectors.groupingBy(PostBlockLifeSpanVersion::getPostHistoryId));
 
@@ -132,10 +131,9 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
     }
 
     public List<PostBlockLifeSpan> extractPostBlockLifeSpans(Set<Integer> postBlockTypeFilter) {
-        List<PostBlockLifeSpan> lifeSpans = new LinkedList<>();
+        List<PostBlockLifeSpan> postBlockLifeSpans = new LinkedList<>();
 
         for (int i = 0; i< orderedByVersion.size(); i++) {
-
             List<PostBlockLifeSpanVersion> currentVersion = orderedByVersion.get(i);
 
             for (PostBlockLifeSpanVersion currentLifeSpanVersion : currentVersion) {
@@ -192,12 +190,12 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
                 }
 
                 if (lifeSpan.size() > 0) {
-                    lifeSpans.add(lifeSpan);
+                    postBlockLifeSpans.add(lifeSpan);
                 }
             }
         }
 
-        int lifeSpanVersionCount = lifeSpans.stream()
+        int lifeSpanVersionCount = postBlockLifeSpans.stream()
                 .map(List::size)
                 .mapToInt(Integer::intValue)
                 .sum();
@@ -208,7 +206,7 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
             throw new IllegalStateException("The number of lifespan versions differs from the number of versions in the ground truth.");
         }
 
-        return lifeSpans;
+        return postBlockLifeSpans;
     }
 
     public List<PostBlockLifeSpanVersion> getTextBlocks() {
