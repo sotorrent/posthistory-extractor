@@ -65,26 +65,18 @@ public class PostBlockLifeSpan extends LinkedList<PostBlockLifeSpanVersion> {
         return postBlockTypeId;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (o instanceof PostBlockLifeSpan) {
-            PostBlockLifeSpan other = (PostBlockLifeSpan) o;
-
-            if (this.size() != other.size()) {
-                return false;
-            }
-
-            for (int i=0; i<this.size(); i++) {
-                if (!this.get(i).equals(other.get(i))) {
-                    return false;
-                }
-            }
-
-            return true;
-
-        } else {
+    public boolean equals(PostBlockLifeSpan other) {
+        if (this.size() != other.size()) {
             return false;
         }
+
+        for (int i=0; i<this.size(); i++) {
+            if (!this.get(i).equals(other.get(i))) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     @Override
