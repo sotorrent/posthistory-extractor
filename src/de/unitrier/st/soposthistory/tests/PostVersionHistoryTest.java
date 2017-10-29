@@ -707,4 +707,32 @@ class PostVersionHistoryTest {
             e.printStackTrace();
         }
     }
+
+    @Test
+    void testGetPossibleConnections(){
+        PostVersionList a_22037280 = PostVersionList.readFromCSV(pathToTestData, 22037280, 2);
+
+        assertEquals(7, a_22037280.size());
+
+        for (PostVersion postVersion : a_22037280) {
+            assertEquals(3, postVersion.getTextBlocks().size());
+            assertEquals(2, postVersion.getCodeBlocks().size());
+        }
+
+        Set set = new HashSet<>();
+        assertEquals(0, a_22037280.getPossibleConnections(set));
+
+        set.add(1); // only text blocks
+        int possibleTextConnections = a_22037280.getPossibleConnections(set);
+        assertEquals(6*9, possibleTextConnections); // 6 versions with each 9=3*3 possible text connections
+
+        set.clear();
+        set.add(2); // only code blocks
+        int possibleCodeConnections = a_22037280.getPossibleConnections(set);
+        assertEquals(6*4, possibleCodeConnections); // 6 versions with each 4=2*2 possible text connections
+
+        set.add(1);
+        int possibleConnections = a_22037280.getPossibleConnections(set);
+        assertEquals(6*4 + 6*9, possibleConnections); // 6 versions with each 4=2*2 possible text connections
+    }
 }
