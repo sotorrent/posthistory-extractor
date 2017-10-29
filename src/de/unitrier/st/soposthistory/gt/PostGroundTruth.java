@@ -15,12 +15,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static de.unitrier.st.soposthistory.util.Util.getClassLogger;
 import static de.unitrier.st.soposthistory.util.Util.processFiles;
 
 public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
+
+    public static final Pattern fileNamePattern = Pattern.compile("completed_(\\d+)\\.csv");
     private static Logger logger = null;
     private static final CSVFormat csvFormatGT;
 
@@ -90,13 +94,18 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
 
     public static List<PostGroundTruth> readFromDirectory(Path dir) {
         return processFiles(dir,
-                file -> file.getFileName().toString().startsWith("completed_") && file.getFileName().toString().endsWith(".csv"),
-                file -> PostGroundTruth.readFromCSV(
-                            dir,
-                            Integer.parseInt(file.toFile().getName()
-                                    .replace("completed_", "")
-                                    .replace(".csv", ""))
-                )
+                file -> fileNamePattern.matcher(file.toFile().getName()).matches(),
+                file -> {
+                    Matcher m = fileNamePattern.matcher(file.toFile().getName());
+                    if (m.find()) {
+                        return PostGroundTruth.readFromCSV(
+                                dir,
+                                Integer.parseInt(m.group(1))
+                        );
+                    } else {
+                        throw new IllegalArgumentException("Invalid file name for a ground truth CSV.");
+                    }
+                }
         );
     }
 
