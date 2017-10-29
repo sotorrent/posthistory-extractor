@@ -21,6 +21,7 @@ import java.nio.file.*;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import static de.unitrier.st.soposthistory.util.Util.getClassLogger;
 import static de.unitrier.st.soposthistory.util.Util.processFiles;
@@ -29,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class PostVersionList extends LinkedList<PostVersion> {
     //TODO: Add methods to extract history of code or text blocks (either ignoring versions where only blocks of the other type changed (global) or where one particular block did not change (local)
 
+    public static final Pattern fileNamePattern = Pattern.compile("(\\d+)\\.csv");
     private static Logger logger = null;
     private static final CSVFormat csvFormatVersionList;
 
@@ -137,7 +139,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
 
     public static List<PostVersionList> readFromDirectory(Path dir) {
         return processFiles(dir,
-                file -> file.getFileName().toString().endsWith(".csv"),
+                file -> fileNamePattern.matcher(file.toFile().getName()).matches(),
                 file -> PostVersionList.readFromCSV(
                         dir,
                         Integer.parseInt(file.toFile().getName().replace(".csv", "")),
@@ -365,6 +367,37 @@ public class PostVersionList extends LinkedList<PostVersion> {
         }
 
         return lifeSpans;
+    }
+
+    public int getPossibleConnections(Set<Integer> postBlockTypeFilter) {
+        int possibleConnections = 0;
+
+        for (int i=1; i<this.size(); i++) {
+            PostVersion currentVersion = this.get(i);
+            PostVersion previousVersion = this.get(i-1);
+
+            if (postBlockTypeFilter.contains(TextBlockVersion.postBlockTypeId)) {
+                int currentVersionTextBlocks = Math.toIntExact(currentVersion.getTextBlocks().stream()
+                        .filter(b -> b.isSelected(postBlockTypeFilter))
+                        .count());
+                int previousVersionTextBlocks = Math.toIntExact(previousVersion.getTextBlocks().stream()
+                        .filter(b -> b.isSelected(postBlockTypeFilter))
+                        .count());
+                possibleConnections += currentVersionTextBlocks * previousVersionTextBlocks;
+            }
+
+            if (postBlockTypeFilter.contains(CodeBlockVersion.postBlockTypeId)) {
+                int currentVersionCodeBlocks = Math.toIntExact(currentVersion.getCodeBlocks().stream()
+                        .filter(b -> b.isSelected(postBlockTypeFilter))
+                        .count());
+                int previousVersionCodeBlocks = Math.toIntExact(previousVersion.getCodeBlocks().stream()
+                        .filter(b -> b.isSelected(postBlockTypeFilter))
+                        .count());
+                possibleConnections += currentVersionCodeBlocks * previousVersionCodeBlocks;
+            }
+        }
+
+        return possibleConnections;
     }
 
     @Override

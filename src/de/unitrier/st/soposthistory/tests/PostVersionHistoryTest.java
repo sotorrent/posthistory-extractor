@@ -700,10 +700,7 @@ class PostVersionHistoryTest {
         List<PostVersionList> postVersionList = PostVersionList.readFromDirectory(pathToTestData);
         try {
             assertEquals(Files.list(pathToTestData).filter(
-                    file -> file
-                            .getFileName()
-                            .toString()
-                            .endsWith(".csv"))
+                    file -> PostVersionList.fileNamePattern.matcher(file.toFile().getName()).matches())
                             .count(),
                     postVersionList.size());
         } catch (IOException e) {
