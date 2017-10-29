@@ -719,7 +719,7 @@ class PostVersionHistoryTest {
             assertEquals(2, postVersion.getCodeBlocks().size());
         }
 
-        Set set = new HashSet<>();
+        Set<Integer> set = new HashSet<>();
         assertEquals(0, a_22037280.getPossibleConnections(set));
 
         set.add(1); // only text blocks
@@ -729,10 +729,10 @@ class PostVersionHistoryTest {
         set.clear();
         set.add(2); // only code blocks
         int possibleCodeConnections = a_22037280.getPossibleConnections(set);
-        assertEquals(6*4, possibleCodeConnections); // 6 versions with each 4=2*2 possible text connections
+        assertEquals(6*4, possibleCodeConnections); // 6 versions with each 4=2*2 possible code connections
 
         set.add(1);
         int possibleConnections = a_22037280.getPossibleConnections(set);
-        assertEquals(6*4 + 6*9, possibleConnections); // 6 versions with each 4=2*2 possible text connections
+        assertEquals(6*4 + 6*9, possibleConnections); // 6 versions with each 4=2*2 and 9=3*3 possible connections
     }
 }
