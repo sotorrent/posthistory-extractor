@@ -29,8 +29,8 @@ public class PostVersion {
     private Integer predPostHistoryId;
     private Integer succPostHistoryId;
     // internal
-    private final List<PostBlockVersion> postBlocks;
-    private final List<PostVersionUrl> urls;
+    private List<PostBlockVersion> postBlocks;
+    private List<PostVersionUrl> urls;
     private PostVersion pred;
     private PostVersion succ;
 
@@ -39,13 +39,8 @@ public class PostVersion {
         this.postId = null;
         this.postTypeId = null;
         this.postHistoryId = null;
-        this.predPostHistoryId = null;
-        this.succPostHistoryId = null;
-        // internal
-        this.postBlocks = new LinkedList<>();
-        this.urls = new LinkedList<>();
-        this.pred = null;
-        this.succ = null;
+        // database + internal
+        this.reset();
     }
 
     public PostVersion(Integer postId, Integer postHistoryId, Integer postTypeId) {
@@ -53,6 +48,18 @@ public class PostVersion {
         this.postId = postId;
         this.postHistoryId = postHistoryId;
         this.postTypeId = postTypeId;
+        this.postBlocks = new LinkedList<>();
+    }
+
+    // reset data set in PostVersionList.processVersionHistory (needed for metrics comparison)
+    public void reset() {
+        // reset everything except for post id, post history id, post type id, and post blocks
+        this.predPostHistoryId = null;
+        this.succPostHistoryId = null;
+        // internal
+        this.urls = new LinkedList<>();
+        this.pred = null;
+        this.succ = null;
     }
 
     @Id

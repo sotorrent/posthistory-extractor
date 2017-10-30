@@ -62,7 +62,7 @@ public abstract class PostBlockVersion {
     protected int succCount;
     // internal
     private StringBuilder contentBuilder;
-    private final LineDiff lineDiff;
+    private LineDiff lineDiff;
     private List<diff_match_patch.Diff> predDiff;
     private PostBlockVersion pred;
     private PostBlockVersion succ;
@@ -76,10 +76,27 @@ public abstract class PostBlockVersion {
 
     public PostBlockVersion() {
         // database
-        this.postVersionId = null;
-        this.localId = null;
         this.postId = null;
         this.postHistoryId = null;
+        this.localId = null;
+        this.content = null;
+        this.length = 0;
+        this.lineCount = 0;
+        // database + internal
+        this.reset();
+    }
+
+    public PostBlockVersion(int postId, int postHistoryId) {
+        this();
+        this.postId = postId;
+        this.postHistoryId = postHistoryId;
+    }
+
+    // reset data set in PostVersionList.processVersionHistory (needed for metrics comparison)
+    public void reset() {
+        // reset everything except for post id, post history id, local id, content, length, and line count
+        // database
+        this.postVersionId = null;
         this.content = null;
         this.length = 0;
         this.lineCount = 0;
@@ -102,12 +119,6 @@ public abstract class PostBlockVersion {
         this.maxSimilarity = -1;
         this.similarityThreshold = -1;
         this.processed = false;
-    }
-
-    public PostBlockVersion(int postId, int postHistoryId) {
-        this();
-        this.postId = postId;
-        this.postHistoryId = postHistoryId;
     }
 
     @Id
