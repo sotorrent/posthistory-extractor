@@ -9,10 +9,7 @@ import de.unitrier.st.soposthistory.util.Config;
 import org.hibernate.StatelessSession;
 
 import javax.persistence.*;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static de.unitrier.st.soposthistory.util.Util.insertList;
@@ -246,6 +243,30 @@ public class PostVersion {
         }
 
         return matchedPredecessors;
+    }
+
+    public int getPossibleConnections() {
+        return getPossibleConnections(PostBlockVersion.getAllPostBlockTypeIdFilters());
+    }
+
+    public int getPossibleConnections(Set<Integer> postBlockTypeFilter) {
+        int possibleConnections = 0;
+
+        if (pred != null) {
+            if (postBlockTypeFilter.contains(TextBlockVersion.postBlockTypeId)) {
+                int textBlockCount = getTextBlocks().size();
+                int predTextBlockCount = pred.getTextBlocks().size();
+                possibleConnections += textBlockCount * predTextBlockCount;
+            }
+
+            if (postBlockTypeFilter.contains(CodeBlockVersion.postBlockTypeId)) {
+                int codeBlockCount = getCodeBlocks().size();
+                int predCodeBlockCount = pred.getCodeBlocks().size();
+                possibleConnections += codeBlockCount * predCodeBlockCount;
+            }
+        }
+
+        return possibleConnections;
     }
 
     @Override

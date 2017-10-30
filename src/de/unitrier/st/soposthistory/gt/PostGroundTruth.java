@@ -29,7 +29,8 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
     private static final CSVFormat csvFormatGT;
 
     private int postId;
-    private List<List<PostBlockLifeSpanVersion>> orderedByVersion;
+    List<Integer> postHistoryIds;
+    private Map<Integer, List<PostBlockLifeSpanVersion>> versions; // postHistoryId -> PostBlockLifeSpanVersions
 
     static {
         // configure logger
@@ -52,7 +53,7 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
 
     public PostGroundTruth(int postId) {
         this.postId = postId;
-        this.orderedByVersion = null;
+        this.versions = null;
     }
 
     public static PostGroundTruth readFromCSV(Path dir, int postId) {
@@ -121,17 +122,17 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
     }
 
     private void orderByVersions() {
-        orderedByVersion = new LinkedList<>();
+        versions = new HashMap<>();
 
         Map<Integer, List<PostBlockLifeSpanVersion>> versionsPerPostHistoryId = this.stream()
                 .collect(Collectors.groupingBy(PostBlockLifeSpanVersion::getPostHistoryId));
 
-        List<Integer> postHistoryIds = new LinkedList<>(versionsPerPostHistoryId.keySet());
+        postHistoryIds = new LinkedList<>(versionsPerPostHistoryId.keySet());
         postHistoryIds.sort(Integer::compare);
 
         for (int postHistoryId : postHistoryIds) {
             List<PostBlockLifeSpanVersion> versions = versionsPerPostHistoryId.get(postHistoryId);
-            orderedByVersion.add(versions);
+            this.versions.put(postHistoryId, versions);
         }
     }
 
@@ -142,8 +143,8 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
     public List<PostBlockLifeSpan> getPostBlockLifeSpans(Set<Integer> postBlockTypeFilter) {
         List<PostBlockLifeSpan> postBlockLifeSpans = new LinkedList<>();
 
-        for (int i = 0; i< orderedByVersion.size(); i++) {
-            List<PostBlockLifeSpanVersion> currentVersion = orderedByVersion.get(i);
+        for (int i = 0; i< postHistoryIds.size(); i++) {
+            List<PostBlockLifeSpanVersion> currentVersion = versions.get(postHistoryIds.get(i));
 
             for (PostBlockLifeSpanVersion currentLifeSpanVersion : currentVersion) {
                 // apply filter
@@ -158,7 +159,7 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
 
                 // find successor of this lifespan version
                 int versionCount = 0;
-                while (i+versionCount < orderedByVersion.size()) {
+                while (i+versionCount < postHistoryIds.size()) {
                     // skip life span versions that have already been processed
                     if (currentLifeSpanVersion.isProcessed()) {
                         break;
@@ -172,7 +173,7 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
                         break;
                     }
 
-                    List<PostBlockLifeSpanVersion> nextVersion = orderedByVersion.get(i+versionCount+1);
+                    List<PostBlockLifeSpanVersion> nextVersion = versions.get(postHistoryIds.get(i+versionCount+1));
 
                     final int succLocalId = currentLifeSpanVersion.getSuccLocalId();
                     List<PostBlockLifeSpanVersion> nextLifeSpanVersionCandidates = nextVersion.stream()
@@ -237,9 +238,9 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
     public int getPossibleConnections(Set<Integer> postBlockTypeFilter) {
         int possibleConnections = 0;
 
-        for (int i=1; i<orderedByVersion.size(); i++) {
-            List<PostBlockLifeSpanVersion> currentVersion = orderedByVersion.get(i);
-            List<PostBlockLifeSpanVersion> previousVersion = orderedByVersion.get(i-1);
+        for (int i = 1; i< postHistoryIds.size(); i++) {
+            List<PostBlockLifeSpanVersion> currentVersion = versions.get(postHistoryIds.get(i));
+            List<PostBlockLifeSpanVersion> previousVersion = versions.get(postHistoryIds.get(i-1));
 
             if (postBlockTypeFilter.contains(TextBlockVersion.postBlockTypeId)) {
                 int currentVersionTextBlocks = Math.toIntExact(currentVersion.stream()
@@ -263,6 +264,10 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
         }
 
         return possibleConnections;
+    }
+
+    public List<PostBlockLifeSpanVersion> getPostVersion(int postHistoryId) {
+        return versions.get(postHistoryId);
     }
 
     @Override

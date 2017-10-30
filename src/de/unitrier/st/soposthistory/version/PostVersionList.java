@@ -436,6 +436,15 @@ public class PostVersionList extends LinkedList<PostVersion> {
         return postHistoryIds;
     }
 
+    public PostVersion getPostVersion(int postHistoryId) {
+        for (PostVersion version : this) {
+            if (version.getPostHistoryId() == postHistoryId) {
+                return version;
+            }
+        }
+        return null;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
