@@ -48,11 +48,11 @@ public class Config {
     public static final Config METRICS_COMPARISON = new Config(
             false,
             false,
-            de.unitrier.st.stringsimilarity.set.Variants::fourGramOverlap,
-            de.unitrier.st.stringsimilarity.edit.Variants::levenshtein,
+            (str1, str2) -> 0.0,
+            null,
             0.6,
-            de.unitrier.st.stringsimilarity.set.Variants::fourGramOverlap,
-            de.unitrier.st.stringsimilarity.edit.Variants::levenshtein,
+            (str1, str2) -> 0.0,
+            null,
             0.6
     );
 
