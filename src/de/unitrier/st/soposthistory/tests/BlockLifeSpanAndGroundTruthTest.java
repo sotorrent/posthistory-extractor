@@ -80,9 +80,10 @@ class BlockLifeSpanAndGroundTruthTest {
 
         // text
         List<PostBlockLifeSpan> textBlockLifeSpans = a_22037280.extractPostBlockLifeSpans(
-                Sets.newHashSet(TextBlockVersion.postBlockTypeId));
+                TextBlockVersion.getPostBlockTypeIdFilter()
+        );
         List<PostBlockLifeSpan> textLifeSpansGT = a_22037280_gt.extractPostBlockLifeSpans(
-                Sets.newHashSet(TextBlockVersion.postBlockTypeId)
+                TextBlockVersion.getPostBlockTypeIdFilter()
         );
         assertEquals(textBlockLifeSpans.size(), textLifeSpansGT.size());
         assertEquals(3, textBlockLifeSpans.size());
@@ -92,17 +93,16 @@ class BlockLifeSpanAndGroundTruthTest {
 
         // code
         List<PostBlockLifeSpan> codeBlockLifeSpans = a_22037280.extractPostBlockLifeSpans(
-                Sets.newHashSet(CodeBlockVersion.postBlockTypeId));
+                CodeBlockVersion.getPostBlockTypeIdFilter()
+        );
         List<PostBlockLifeSpan> codeLifeSpansGT = a_22037280_gt.extractPostBlockLifeSpans(
-                Sets.newHashSet(CodeBlockVersion.postBlockTypeId)
+                CodeBlockVersion.getPostBlockTypeIdFilter()
         );
         assertEquals(codeBlockLifeSpans.size(), codeLifeSpansGT.size());
         assertEquals(2, codeBlockLifeSpans.size());
         for (int i=0; i<codeBlockLifeSpans.size(); i++) {
             assertTrue(codeBlockLifeSpans.get(i).equals(codeLifeSpansGT.get(i)));
         }
-
-        // TODO: Lorik: assertEquals(6, connectionsOfAllVersionsGroundTruth_text.size());???
     }
 
     @Test
@@ -124,6 +124,16 @@ class BlockLifeSpanAndGroundTruthTest {
                 PostBlockConnection.intersection(connections, connectionsGT),
                 connections)
         );
+    }
+
+    @Test
+    void testPostBlockPossibleConnectionsComparison() {
+        int postId = 22037280;
+        PostVersionList a_22037280 = PostVersionList.readFromCSV(pathToHistory, postId, 2);
+        PostGroundTruth a_22037280_gt = PostGroundTruth.readFromCSV(pathToGT, postId);
+
+        assertEquals(78, a_22037280.getPossibleConnections());
+        assertEquals(a_22037280.getPossibleConnections(), a_22037280_gt.getPossibleConnections());
     }
 
     @Test

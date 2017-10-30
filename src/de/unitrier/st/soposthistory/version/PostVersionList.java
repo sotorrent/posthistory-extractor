@@ -1,6 +1,5 @@
 package de.unitrier.st.soposthistory.version;
 
-import com.google.common.collect.Sets;
 import de.unitrier.st.soposthistory.blocks.CodeBlockVersion;
 import de.unitrier.st.soposthistory.blocks.PostBlockVersion;
 import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
@@ -156,7 +155,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
     }
 
     public void processVersionHistory() {
-        processVersionHistory(Sets.newHashSet(TextBlockVersion.postBlockTypeId, CodeBlockVersion.postBlockTypeId));
+        processVersionHistory(PostBlockVersion.getAllPostBlockTypeIdFilters());
     }
 
     public void processVersionHistory(Set<Integer> postBlockTypeFilter) {
@@ -164,7 +163,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
     }
 
     public void processVersionHistory(Config config) {
-        processVersionHistory(Sets.newHashSet(TextBlockVersion.postBlockTypeId, CodeBlockVersion.postBlockTypeId), config);
+        processVersionHistory(PostBlockVersion.getAllPostBlockTypeIdFilters(), config);
     }
 
     /**
@@ -333,9 +332,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
     }
 
     public List<PostBlockLifeSpan> extractPostBlockLifeSpans() {
-        return extractPostBlockLifeSpans(Sets.newHashSet(
-                TextBlockVersion.postBlockTypeId,
-                CodeBlockVersion.postBlockTypeId));
+        return extractPostBlockLifeSpans(PostBlockVersion.getAllPostBlockTypeIdFilters());
     }
 
     public List<PostBlockLifeSpan> extractPostBlockLifeSpans(Set<Integer> postBlockTypeFilter) {
@@ -369,6 +366,10 @@ public class PostVersionList extends LinkedList<PostVersion> {
         return lifeSpans;
     }
 
+    public int getPossibleConnections() {
+        return getPossibleConnections(PostBlockVersion.getAllPostBlockTypeIdFilters());
+    }
+
     public int getPossibleConnections(Set<Integer> postBlockTypeFilter) {
         int possibleConnections = 0;
 
@@ -377,22 +378,14 @@ public class PostVersionList extends LinkedList<PostVersion> {
             PostVersion previousVersion = this.get(i-1);
 
             if (postBlockTypeFilter.contains(TextBlockVersion.postBlockTypeId)) {
-                int currentVersionTextBlocks = Math.toIntExact(currentVersion.getTextBlocks().stream()
-                        .filter(b -> b.isSelected(postBlockTypeFilter))
-                        .count());
-                int previousVersionTextBlocks = Math.toIntExact(previousVersion.getTextBlocks().stream()
-                        .filter(b -> b.isSelected(postBlockTypeFilter))
-                        .count());
+                int currentVersionTextBlocks = currentVersion.getTextBlocks().size();
+                int previousVersionTextBlocks = previousVersion.getTextBlocks().size();
                 possibleConnections += currentVersionTextBlocks * previousVersionTextBlocks;
             }
 
             if (postBlockTypeFilter.contains(CodeBlockVersion.postBlockTypeId)) {
-                int currentVersionCodeBlocks = Math.toIntExact(currentVersion.getCodeBlocks().stream()
-                        .filter(b -> b.isSelected(postBlockTypeFilter))
-                        .count());
-                int previousVersionCodeBlocks = Math.toIntExact(previousVersion.getCodeBlocks().stream()
-                        .filter(b -> b.isSelected(postBlockTypeFilter))
-                        .count());
+                int currentVersionCodeBlocks = currentVersion.getCodeBlocks().size();
+                int previousVersionCodeBlocks = previousVersion.getCodeBlocks().size();
                 possibleConnections += currentVersionCodeBlocks * previousVersionCodeBlocks;
             }
         }
