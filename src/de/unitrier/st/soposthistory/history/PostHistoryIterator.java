@@ -77,8 +77,8 @@ public class PostHistoryIterator {
     }
 
     public static void createSessionFactory(Path hibernateConfigFilePath) {
-        if (!Files.exists(hibernateConfigFilePath)) {
-            throw new IllegalArgumentException("Hibernate config file not found: " + hibernateConfigFilePath);
+        if (!Files.exists(hibernateConfigFilePath) || Files.isDirectory(hibernateConfigFilePath)) {
+            throw new IllegalArgumentException("Not a valid Hibernate config file: " + hibernateConfigFilePath);
         }
 
         sessionFactory = new Configuration()

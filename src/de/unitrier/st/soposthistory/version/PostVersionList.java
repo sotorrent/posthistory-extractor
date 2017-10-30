@@ -69,7 +69,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
 
     public static PostVersionList readFromCSV(Path dir, int postId, int postTypeId, boolean processVersionHistory) {
         // ensure that input directory exists
-        if (!Files.exists(dir)) {
+        if (!Files.exists(dir) || !Files.isDirectory(dir)) {
             throw new IllegalArgumentException("Directory does not exist: " + dir);
         }
 

@@ -57,7 +57,7 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
 
     public static PostGroundTruth readFromCSV(Path dir, int postId) {
         // ensure that input directory exists
-        if (!Files.exists(dir)) {
+        if (!Files.exists(dir) || !Files.isDirectory(dir)) {
             throw new IllegalArgumentException("Directory does not exist: " + dir);
         }
 
