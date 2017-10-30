@@ -1,15 +1,19 @@
 package de.unitrier.st.soposthistory.tests;
 
 import de.unitrier.st.soposthistory.blocks.CodeBlockVersion;
+import de.unitrier.st.soposthistory.blocks.PostBlockVersion;
 import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
 import de.unitrier.st.soposthistory.gt.*;
+import de.unitrier.st.soposthistory.version.PostVersion;
 import de.unitrier.st.soposthistory.version.PostVersionList;
 import org.junit.jupiter.api.Test;
 
+import javax.xml.soap.Text;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -142,6 +146,30 @@ class BlockLifeSpanAndGroundTruthTest {
 
         assertEquals(manager.getPostHistory().size(), manager.getGroundTruth().size());
         assertThat(manager.getPostHistory().keySet(), is(manager.getGroundTruth().keySet()));
+    }
+
+    @Test
+    void testGetPossibleConnections() {
+        PostVersionList a_22037280 = PostVersionList.readFromCSV(pathToPostHistory, 22037280, 2);
+
+        assertEquals(7, a_22037280.size());
+
+        for (PostVersion postVersion : a_22037280) {
+            assertEquals(3, postVersion.getTextBlocks().size());
+            assertEquals(2, postVersion.getCodeBlocks().size());
+        }
+
+        Set<Integer> set = new HashSet<>();
+        assertEquals(0, a_22037280.getPossibleConnections(set));
+
+        int possibleTextConnections = a_22037280.getPossibleConnections(TextBlockVersion.getPostBlockTypeIdFilter());
+        assertEquals(6 * 9, possibleTextConnections); // 6 versions with each 9=3*3 possible text connections
+
+        int possibleCodeConnections = a_22037280.getPossibleConnections(CodeBlockVersion.getPostBlockTypeIdFilter());
+        assertEquals(6 * 4, possibleCodeConnections); // 6 versions with each 4=2*2 possible code connections
+
+        int possibleConnections = a_22037280.getPossibleConnections(PostBlockVersion.getAllPostBlockTypeIdFilters());
+        assertEquals(6 * 4 + 6 * 9, possibleConnections); // 6 versions with each 4=2*2 and 9=3*3 possible connections
     }
 
 //    @Test
