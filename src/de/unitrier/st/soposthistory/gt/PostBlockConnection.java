@@ -46,6 +46,36 @@ public class PostBlockConnection {
         return true;
     }
 
+    public static Set<PostBlockConnection> intersection(Set<PostBlockConnection> set1, Set<PostBlockConnection> set2) {
+        Set<PostBlockConnection> intersection = new HashSet<>();
+        for (PostBlockConnection current : set1) {
+            for (PostBlockConnection other : set2) {
+                if (current.equals(other)) {
+                    intersection.add(current);
+                    break;
+                }
+            }
+        }
+        return intersection;
+    }
+
+    public static Set<PostBlockConnection> difference(Set<PostBlockConnection> set1, Set<PostBlockConnection> set2) {
+        Set<PostBlockConnection> difference = new HashSet<>(set1);
+        Set<PostBlockConnection> markedForRemoval = new HashSet<>();
+        for (PostBlockConnection current : difference) {
+            for (PostBlockConnection other : set2) {
+                if (current.equals(other)) {
+                    markedForRemoval.add(current);
+                    break;
+                }
+            }
+        }
+        for (PostBlockConnection current : markedForRemoval) {
+            difference.remove(current);
+        }
+        return difference;
+    }
+
     public boolean equals(PostBlockConnection other) {
         return (this.left.equals(other.left) && this.right.equals(other.right));
     }

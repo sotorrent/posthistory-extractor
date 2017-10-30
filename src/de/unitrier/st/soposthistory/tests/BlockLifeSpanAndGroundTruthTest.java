@@ -122,6 +122,8 @@ class BlockLifeSpanAndGroundTruthTest {
                 PostBlockConnection.intersection(connections, connectionsGT),
                 connections)
         );
+
+        assertEquals(0, PostBlockConnection.difference(connections, connectionsGT).size());
     }
 
     @Test
