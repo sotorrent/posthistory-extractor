@@ -169,11 +169,11 @@ public class PostVersionList extends LinkedList<PostVersion> {
     }
 
     public void processVersionHistory(Set<Integer> postBlockTypeFilter) {
-        processVersionHistory(postBlockTypeFilter, Config.DEFAULT);
+        processVersionHistory(Config.DEFAULT, postBlockTypeFilter);
     }
 
     public void processVersionHistory(Config config) {
-        processVersionHistory(PostBlockVersion.getAllPostBlockTypeIdFilters(), config);
+        processVersionHistory(config, PostBlockVersion.getAllPostBlockTypeIdFilters());
     }
 
     /**
@@ -183,7 +183,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
      * @param postBlockTypeFilter Set of postBlockTypeIds (1 for text blocks, 2 for code blocks), mainly needed for evaluation of similarity metrics
      * @param config Configuration with similarity metrics and thresholds
      */
-    public void processVersionHistory(Set<Integer> postBlockTypeFilter, Config config) {
+    public void processVersionHistory(Config config, Set<Integer> postBlockTypeFilter) {
         for (int i=0; i<this.size(); i++) {
             PostVersion currentVersion = this.get(i);
 
@@ -426,6 +426,14 @@ public class PostVersionList extends LinkedList<PostVersion> {
                 .flatMap(List::stream)
                 .filter(b -> b.isSelected(postBlockTypeFilter))
                 .count());
+    }
+
+    public List<Integer> getPostHistoryIds() {
+        List<Integer> postHistoryIds = new ArrayList<>(this.size());
+        for (PostVersion version : this) {
+            postHistoryIds.add(version.getPostHistoryId());
+        }
+        return postHistoryIds;
     }
 
     @Override
