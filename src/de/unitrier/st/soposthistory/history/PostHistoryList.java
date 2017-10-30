@@ -73,8 +73,8 @@ public class PostHistoryList extends LinkedList<PostHistory> {
     }
 
     public static void createSessionFactory(Path hibernateConfigFilePath) {
-        if (!Files.exists(hibernateConfigFilePath)) {
-            throw new IllegalArgumentException("Hibernate config file not found: " + hibernateConfigFilePath);
+        if (!Files.exists(hibernateConfigFilePath) || Files.isDirectory(hibernateConfigFilePath)) {
+            throw new IllegalArgumentException("Invalid Hibernate config file: " + hibernateConfigFilePath);
         }
 
         sessionFactory = new Configuration()
@@ -85,7 +85,7 @@ public class PostHistoryList extends LinkedList<PostHistory> {
 
     public static void readFromCSVAndRetrieve(Path inputFile, Path outputDir) {
         // ensure that input file exists
-        if (!Files.exists(inputFile)) {
+        if (!Files.exists(inputFile) || Files.isDirectory(inputFile)) {
             throw new IllegalArgumentException("Input file not found: " + inputFile);
         }
 

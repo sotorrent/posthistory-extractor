@@ -64,7 +64,7 @@ public class Util {
 
     public static<T> List<T> processFiles(Path dir, Predicate<Path> filter, Function<Path, T> map) {
         // ensure that input directory exists
-        if (!Files.exists(dir)) {
+        if (!Files.exists(dir) || !Files.isDirectory(dir)) {
             throw new IllegalArgumentException("Directory not found: " + dir);
         }
 
