@@ -1,6 +1,5 @@
 package de.unitrier.st.soposthistory.tests;
 
-import com.google.common.collect.Sets;
 import de.unitrier.st.soposthistory.blocks.CodeBlockVersion;
 import de.unitrier.st.soposthistory.blocks.PostBlockVersion;
 import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
@@ -706,5 +705,32 @@ class PostVersionHistoryTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Test
+    void testReset() {
+        PostVersionList a_3758880 = PostVersionList.readFromCSV(pathToTestData, 3758880, 2, false);
+
+        // there are 11 versions of this post
+        assertEquals(11, a_3758880.size());
+
+        // but the post blocks don't have predecessors yet, thus each block has its own lifespan
+        assertEquals(47, a_3758880.getPostBlockVersionCount());
+        assertEquals(a_3758880.getPostBlockVersionCount(), a_3758880.getPostBlockLifeSpans().size());
+
+        a_3758880.processVersionHistory();
+
+        // the post blocks have been extracted
+        assertEquals(10, a_3758880.getPostBlockLifeSpans().size());
+
+        // reset version list
+        a_3758880.reset();
+
+        // there are still 11 versions of this post
+        assertEquals(11, a_3758880.size());
+
+        // but the post blocks again don't have predecessors, thus each block has its own lifespan
+        assertEquals(47, a_3758880.getPostBlockVersionCount());
+        assertEquals(a_3758880.getPostBlockVersionCount(), a_3758880.getPostBlockLifeSpans().size());
     }
 }

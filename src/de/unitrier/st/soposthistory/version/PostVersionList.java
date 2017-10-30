@@ -35,6 +35,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
 
     private int postId;
     private boolean sorted;
+    private PostBlockDiffList diffs;
 
     static {
         // configure logger
@@ -54,13 +55,22 @@ public class PostVersionList extends LinkedList<PostVersion> {
                 .withFirstRecordAsHeader();
     }
 
-    private final PostBlockDiffList diffs;
-
     public PostVersionList(int postId) {
         super();
         this.postId = postId;
         this.sorted = false;
         this.diffs = new PostBlockDiffList();
+    }
+
+    public void reset() {
+        this.sorted = false;
+        this.diffs = new PostBlockDiffList();
+        for (PostVersion currentVersion : this) {
+            for (PostBlockVersion currentPostBlockVersion : currentVersion.getPostBlocks()) {
+                currentPostBlockVersion.reset();
+            }
+            currentVersion.reset();
+        }
     }
 
     public static PostVersionList readFromCSV(Path dir, int postId, int postTypeId) {
@@ -167,7 +177,8 @@ public class PostVersionList extends LinkedList<PostVersion> {
     }
 
     /**
-     * Set root post blocks and compute similarity and diffs between two matched versions of a block.
+     * Match post blocks between two versions, set root post blocks, and compute the diffs between two matched versions
+     * of a post block.
      *
      * @param postBlockTypeFilter Set of postBlockTypeIds (1 for text blocks, 2 for code blocks), mainly needed for evaluation of similarity metrics
      * @param config Configuration with similarity metrics and thresholds
@@ -176,7 +187,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
         for (int i=0; i<this.size(); i++) {
             PostVersion currentVersion = this.get(i);
 
-            if (postBlockTypeFilter.contains(TextBlockVersion.postBlockTypeId)) {
+            if (config.getExtractUrls() && postBlockTypeFilter.contains(TextBlockVersion.postBlockTypeId)) {
                 currentVersion.extractUrlsFromTextBlocks();
             }
 
@@ -291,8 +302,10 @@ public class PostVersionList extends LinkedList<PostVersion> {
             }
         }
 
-        // calculate diffs
-        diffs.fromPostVersionList(this);
+        if (config.getComputeDiffs()) {
+            // compute diffs
+            diffs.fromPostVersionList(this);
+        }
     }
 
     public PostBlockDiffList getDiffs() {
@@ -331,16 +344,11 @@ public class PostVersionList extends LinkedList<PostVersion> {
         }
     }
 
-    public List<PostBlockLifeSpan> extractPostBlockLifeSpans() {
-        return extractPostBlockLifeSpans(PostBlockVersion.getAllPostBlockTypeIdFilters());
+    public List<PostBlockLifeSpan> getPostBlockLifeSpans() {
+        return getPostBlockLifeSpans(PostBlockVersion.getAllPostBlockTypeIdFilters());
     }
 
-    public List<PostBlockLifeSpan> extractPostBlockLifeSpans(Set<Integer> postBlockTypeFilter) {
-        /* Extraction can only be done once for each PostBlockVersion!
-         * First processing text blocks and then processing code blocks is possible, but processing all blocks together
-         * and then again extracting text or code blocks does not work, because the processed-flag is already set.
-         */
-
+    public List<PostBlockLifeSpan> getPostBlockLifeSpans(Set<Integer> postBlockTypeFilter) {
         List<PostBlockLifeSpan> lifeSpans = new LinkedList<>();
 
         if (!this.sorted) {
@@ -360,6 +368,13 @@ public class PostVersionList extends LinkedList<PostVersion> {
                 }
 
                 lifeSpans.add(PostBlockLifeSpan.fromPostBlockVersion(currentPostBlockVersion));
+            }
+        }
+
+        // reset flag "processed"
+        for (PostVersion currentPostVersion : this) {
+            for (PostBlockVersion currentPostBlockVersion : currentPostVersion.getPostBlocks()) {
+                currentPostBlockVersion.setProcessed(false);
             }
         }
 
@@ -391,6 +406,26 @@ public class PostVersionList extends LinkedList<PostVersion> {
         }
 
         return possibleConnections;
+    }
+
+    public int getPostBlockVersionCount() {
+        return getPostBlockVersionCount(PostBlockVersion.getAllPostBlockTypeIdFilters());
+    }
+
+    public int getTextBlockVersionCount() {
+        return getPostBlockVersionCount(TextBlockVersion.getPostBlockTypeIdFilter());
+    }
+
+    public int getCodeBlockVersionCount() {
+        return getPostBlockVersionCount(CodeBlockVersion.getPostBlockTypeIdFilter());
+    }
+
+    public int getPostBlockVersionCount(Set<Integer> postBlockTypeFilter) {
+        return Math.toIntExact(this.stream()
+                .map(PostVersion::getPostBlocks)
+                .flatMap(List::stream)
+                .filter(b -> b.isSelected(postBlockTypeFilter))
+                .count());
     }
 
     @Override
