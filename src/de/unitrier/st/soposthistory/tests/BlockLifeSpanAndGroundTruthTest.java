@@ -8,7 +8,6 @@ import de.unitrier.st.soposthistory.version.PostVersion;
 import de.unitrier.st.soposthistory.version.PostVersionList;
 import org.junit.jupiter.api.Test;
 
-import javax.xml.soap.Text;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -142,10 +141,14 @@ class BlockLifeSpanAndGroundTruthTest {
 
     @Test
     void testMetricComparisonManager() {
-        MetricComparisonManager manager = MetricComparisonManager.create(pathToPostIdList, pathToPostHistory, pathToGroundTruth);
+        MetricComparisonManager manager = MetricComparisonManager.create(
+                "TestManager", pathToPostIdList, pathToPostHistory, pathToGroundTruth
+        );
 
-        assertEquals(manager.getPostHistory().size(), manager.getGroundTruth().size());
-        assertThat(manager.getPostHistory().keySet(), is(manager.getGroundTruth().keySet()));
+        assertEquals(manager.getPostVersionLists().size(), manager.getPostGroundTruth().size());
+        assertThat(manager.getPostVersionLists().keySet(), is(manager.getPostGroundTruth().keySet()));
+
+        // TODO: Lorik: add tests
     }
 
     @Test
@@ -258,7 +261,7 @@ class BlockLifeSpanAndGroundTruthTest {
 //
 //        GroundTruthExtractionOfCSVs groundTruthExtractionOfCSVs = new GroundTruthExtractionOfCSVs(Paths.get("testdata","Samples_test",  "representative CSVs").toString());
 //
-//        for (ConnectionsOfAllVersions connectionsOfAllVersions : groundTruthExtractionOfCSVs.getGroundTruth()) {
+//        for (ConnectionsOfAllVersions connectionsOfAllVersions : groundTruthExtractionOfCSVs.getPostGroundTruth()) {
 //            for (ConnectionsOfTwoVersions connectionsOfTwoVersions : connectionsOfAllVersions) {
 //
 //                for (int i = 0; i < connectionsOfTwoVersions.size(); i++) {

@@ -1,39 +1,41 @@
 package de.unitrier.st.soposthistory.gt;
 
 import de.unitrier.st.soposthistory.version.PostVersionList;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
-import org.apache.commons.csv.QuoteMode;
+import org.apache.commons.csv.*;
 
+import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.nio.file.Paths;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.logging.Logger;
 
 import static de.unitrier.st.soposthistory.util.Util.getClassLogger;
 
 // TODO: move to metrics comparison project
-
 public class MetricComparisonManager {
     private static Logger logger = null;
     private static final CSVFormat csvFormatPostIds;
+    private static final CSVFormat csvFormatMetricComparison;
 
-    private Map<Integer, PostGroundTruth> groundTruth;
-    private Map<Integer, PostVersionList> postHistory;
+    private String name;
+    private Set<Integer> postIds;
+    private Map<Integer, List<Integer>> postHistoryIds;
+    private Map<Integer, PostGroundTruth> postGroundTruth;
+    private Map<Integer, PostVersionList> postVersionLists;
     private List<BiFunction<String, String, Double>> similarityMetrics;
     private List<Double> similarityThresholds;
+
+    private List<MetricComparison> metricComparisons;
 
     static {
         // configure logger
         try {
-            logger = getClassLogger(PostGroundTruth.class, false);
+            logger = getClassLogger(MetricComparisonManager.class, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -46,24 +48,41 @@ public class MetricComparisonManager {
                 .withQuoteMode(QuoteMode.MINIMAL)
                 .withEscape('\\')
                 .withFirstRecordAsHeader();
+
+        // configure CSV format for metric comparison results
+        csvFormatMetricComparison = CSVFormat.DEFAULT
+                .withHeader("Sample", "Metric", "Threshold", "PostId", "PostHistoryId", "RuntimeText", "TruePositivesText", "TrueNegativesText", "FalsePositivesText", "FalseNegativesText", "RuntimeCode", "TruePositivesCode", "TrueNegativesCode", "FalsePositivesCode", "FalseNegativesCode")
+                .withDelimiter(';')
+                .withQuote('"')
+                .withQuoteMode(QuoteMode.MINIMAL)
+                .withEscape('\\')
+                .withNullString("null")
+                .withFirstRecordAsHeader();
     }
 
-    private MetricComparisonManager() {
-        groundTruth = new HashMap<>();
-        postHistory = new HashMap<>();
+    private MetricComparisonManager(String name) {
+        this.name = name;
+        postIds = new HashSet<>();
+        postHistoryIds = new HashMap<>();
+        postGroundTruth = new HashMap<>();
+        postVersionLists = new HashMap<>();
         similarityMetrics = new LinkedList<>();
         similarityThresholds = new LinkedList<>();
+        metricComparisons = new LinkedList<>();
         addSimilarityMetrics();
         addSimilarityThresholds();
     }
 
-    public static MetricComparisonManager create(Path postIdPath, Path postHistoryPath, Path groundTruthPath) {
+    public static MetricComparisonManager create(String name,
+                                                 Path postIdPath,
+                                                 Path postHistoryPath,
+                                                 Path groundTruthPath) {
         // ensure that input file exists (directories are tested in read methods)
         if (!Files.exists(postIdPath) || Files.isDirectory(postIdPath)) {
             throw new IllegalArgumentException("File not found: " + postIdPath);
         }
 
-        MetricComparisonManager manager = new MetricComparisonManager();
+        MetricComparisonManager manager = new MetricComparisonManager(name);
 
         try (CSVParser csvParser = new CSVParser(new FileReader(postIdPath.toFile()), csvFormatPostIds)) {
             logger.info("Reading PostIds from CSV file " + postIdPath.toFile().toString() + " ...");
@@ -72,6 +91,9 @@ public class MetricComparisonManager {
                 int postId = Integer.parseInt(currentRecord.get("PostId"));
                 int postTypeId = Integer.parseInt(currentRecord.get("PostTypeId"));
                 int versionCount = Integer.parseInt(currentRecord.get("VersionCount"));
+
+                // add post id to set
+                manager.postIds.add(postId);
 
                 // read post version list
                 PostVersionList postVersionList = PostVersionList.readFromCSV(
@@ -84,7 +106,8 @@ public class MetricComparisonManager {
                     );
                 }
 
-                manager.postHistory.put(postId, postVersionList);
+                manager.postVersionLists.put(postId, postVersionList);
+                manager.postHistoryIds.put(postId, postVersionList.getPostHistoryIds());
 
                 // read ground truth
                 PostGroundTruth postGroundTruth = PostGroundTruth.readFromCSV(groundTruthPath, postId);
@@ -94,7 +117,7 @@ public class MetricComparisonManager {
                             "from number of possible connections in post history.");
                 }
 
-                manager.groundTruth.put(postId, postGroundTruth);
+                manager.postGroundTruth.put(postId, postGroundTruth);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -103,12 +126,85 @@ public class MetricComparisonManager {
         return manager;
     }
 
-    public Map<Integer, PostGroundTruth> getGroundTruth() {
-        return groundTruth;
+    public void compareMetrics() {
+        prepareComparison();
+
+        for (MetricComparison metricComparison : metricComparisons) {
+            metricComparison.start();
+        }
     }
 
-    public Map<Integer, PostVersionList> getPostHistory() {
-        return postHistory;
+    private void prepareComparison() {
+        for (int postId : postIds) {
+            for (BiFunction<String, String, Double> similarityMetric : similarityMetrics) {
+                for (double similarityThreshold : similarityThresholds) {
+                    MetricComparison metricComparison = new MetricComparison(
+                            postId,
+                            postVersionLists.get(postId),
+                            postGroundTruth.get(postId),
+                            similarityMetric,
+                            similarityThreshold
+                    );
+                    metricComparisons.add(metricComparison);
+                }
+            }
+        }
+    }
+
+    public void writeToCSV(Path outputDir) {
+        if (!Files.exists(outputDir) || !Files.isDirectory(outputDir)) {
+            throw new IllegalArgumentException("Invalid output directory: " + outputDir);
+        }
+
+        File outputFile = Paths.get(outputDir.toString(), name + ".csv").toFile();
+
+        if (outputFile.exists()) {
+            if (!outputFile.delete()) {
+                throw new IllegalStateException("Error while deleting output file: " + outputFile);
+            }
+        }
+
+        // TODO: Test CSV export
+
+        // write metric comparison results
+        logger.info("Writing metric comparison results to CSV file " + outputFile.getName() + " ...");
+        try (CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(outputFile), csvFormatMetricComparison)) {
+            // header is automatically written
+            for (MetricComparison metricComparison : metricComparisons) {
+                int postId = metricComparison.getPostId();
+                List<Integer> postHistoryIdsForPost = postHistoryIds.get(postId);
+
+                for (int postHistoryId : postHistoryIdsForPost) {
+                    csvPrinter.printRecord(
+                            name,
+                            metricComparison.getSimilarityMetric().getClass().getSimpleName(),
+                            metricComparison.getSimilarityThreshold(),
+                            postId,
+                            postHistoryId,
+                            metricComparison.getRuntimeText(),
+                            metricComparison.getTruePositivesText().get(postHistoryId),
+                            metricComparison.getTrueNegativesText().get(postHistoryId),
+                            metricComparison.getFalsePositivesText().get(postHistoryId),
+                            metricComparison.getFalseNegativesText().get(postHistoryId),
+                            metricComparison.getRuntimeCode(),
+                            metricComparison.getTruePositivesCode().get(postHistoryId),
+                            metricComparison.getTrueNegativesCode().get(postHistoryId),
+                            metricComparison.getFalsePositivesCode().get(postHistoryId),
+                            metricComparison.getFalseNegativesCode().get(postHistoryId)
+                    );
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Map<Integer, PostGroundTruth> getPostGroundTruth() {
+        return postGroundTruth;
+    }
+
+    public Map<Integer, PostVersionList> getPostVersionLists() {
+        return postVersionLists;
     }
 
     private void addSimilarityThresholds() {
