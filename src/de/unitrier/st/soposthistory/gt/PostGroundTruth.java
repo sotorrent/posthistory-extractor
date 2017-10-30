@@ -135,11 +135,11 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
         }
     }
 
-    public List<PostBlockLifeSpan> extractPostBlockLifeSpans() {
-        return extractPostBlockLifeSpans(PostBlockVersion.getAllPostBlockTypeIdFilters());
+    public List<PostBlockLifeSpan> getPostBlockLifeSpans() {
+        return getPostBlockLifeSpans(PostBlockVersion.getAllPostBlockTypeIdFilters());
     }
 
-    public List<PostBlockLifeSpan> extractPostBlockLifeSpans(Set<Integer> postBlockTypeFilter) {
+    public List<PostBlockLifeSpan> getPostBlockLifeSpans(Set<Integer> postBlockTypeFilter) {
         List<PostBlockLifeSpan> postBlockLifeSpans = new LinkedList<>();
 
         for (int i = 0; i< orderedByVersion.size(); i++) {

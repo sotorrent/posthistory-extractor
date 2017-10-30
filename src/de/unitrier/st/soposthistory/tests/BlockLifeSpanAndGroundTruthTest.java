@@ -61,8 +61,8 @@ class BlockLifeSpanAndGroundTruthTest {
         PostVersionList a_22037280 = PostVersionList.readFromCSV(pathToPostHistory, postId, 2);
         PostGroundTruth a_22037280_gt = PostGroundTruth.readFromCSV(pathToGroundTruth, postId);
 
-        List<PostBlockLifeSpan> lifeSpans = a_22037280.extractPostBlockLifeSpans();
-        List<PostBlockLifeSpan> lifeSpansGT = a_22037280_gt.extractPostBlockLifeSpans();
+        List<PostBlockLifeSpan> lifeSpans = a_22037280.getPostBlockLifeSpans();
+        List<PostBlockLifeSpan> lifeSpansGT = a_22037280_gt.getPostBlockLifeSpans();
         assertEquals(lifeSpans.size(), lifeSpansGT.size());
         assertEquals(5, lifeSpans.size());
         for (int i=0; i<lifeSpans.size(); i++) {
@@ -77,10 +77,10 @@ class BlockLifeSpanAndGroundTruthTest {
         PostGroundTruth a_22037280_gt = PostGroundTruth.readFromCSV(pathToGroundTruth, postId);
 
         // text
-        List<PostBlockLifeSpan> textBlockLifeSpans = a_22037280.extractPostBlockLifeSpans(
+        List<PostBlockLifeSpan> textBlockLifeSpans = a_22037280.getPostBlockLifeSpans(
                 TextBlockVersion.getPostBlockTypeIdFilter()
         );
-        List<PostBlockLifeSpan> textLifeSpansGT = a_22037280_gt.extractPostBlockLifeSpans(
+        List<PostBlockLifeSpan> textLifeSpansGT = a_22037280_gt.getPostBlockLifeSpans(
                 TextBlockVersion.getPostBlockTypeIdFilter()
         );
         assertEquals(textBlockLifeSpans.size(), textLifeSpansGT.size());
@@ -90,10 +90,10 @@ class BlockLifeSpanAndGroundTruthTest {
         }
 
         // code
-        List<PostBlockLifeSpan> codeBlockLifeSpans = a_22037280.extractPostBlockLifeSpans(
+        List<PostBlockLifeSpan> codeBlockLifeSpans = a_22037280.getPostBlockLifeSpans(
                 CodeBlockVersion.getPostBlockTypeIdFilter()
         );
-        List<PostBlockLifeSpan> codeLifeSpansGT = a_22037280_gt.extractPostBlockLifeSpans(
+        List<PostBlockLifeSpan> codeLifeSpansGT = a_22037280_gt.getPostBlockLifeSpans(
                 CodeBlockVersion.getPostBlockTypeIdFilter()
         );
         assertEquals(codeBlockLifeSpans.size(), codeLifeSpansGT.size());
@@ -109,11 +109,11 @@ class BlockLifeSpanAndGroundTruthTest {
         PostVersionList a_22037280 = PostVersionList.readFromCSV(pathToPostHistory, postId, 2);
         PostGroundTruth a_22037280_gt = PostGroundTruth.readFromCSV(pathToGroundTruth, postId);
 
-        List<PostBlockLifeSpan> lifeSpans = a_22037280.extractPostBlockLifeSpans();
-        List<PostBlockLifeSpan> lifeSpansGT = a_22037280_gt.extractPostBlockLifeSpans();
+        List<PostBlockLifeSpan> lifeSpans = a_22037280.getPostBlockLifeSpans();
+        List<PostBlockLifeSpan> lifeSpansGT = a_22037280_gt.getPostBlockLifeSpans();
 
-        Set<PostBlockConnection> connections = PostBlockConnection.extractFromPostBlockLifeSpan(lifeSpans);
-        Set<PostBlockConnection> connectionsGT = PostBlockConnection.extractFromPostBlockLifeSpan(lifeSpansGT);
+        Set<PostBlockConnection> connections = PostBlockConnection.fromPostBlockLifeSpans(lifeSpans);
+        Set<PostBlockConnection> connectionsGT = PostBlockConnection.fromPostBlockLifeSpans(lifeSpansGT);
 
         assertEquals(connections.size(), connectionsGT.size());
         assertTrue(PostBlockConnection.equals(connections, connectionsGT));
