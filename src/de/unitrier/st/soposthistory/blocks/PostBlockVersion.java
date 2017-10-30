@@ -1,5 +1,6 @@
 package de.unitrier.st.soposthistory.blocks;
 
+import com.google.common.collect.Sets;
 import de.unitrier.st.soposthistory.diffs.LineDiff;
 import de.unitrier.st.soposthistory.diffs.diff_match_patch;
 import de.unitrier.st.soposthistory.util.Config;
@@ -527,6 +528,10 @@ public abstract class PostBlockVersion {
     }
 
     abstract public boolean isSelected(Set<Integer> postBlockTypeFilter);
+
+    public static Set<Integer> getAllPostBlockTypeIdFilters() {
+        return Sets.newHashSet(TextBlockVersion.postBlockTypeId, CodeBlockVersion.postBlockTypeId);
+    }
 
     @Override
     public String toString() {

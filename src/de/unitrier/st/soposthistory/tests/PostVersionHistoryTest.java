@@ -450,7 +450,7 @@ class PostVersionHistoryTest {
         // tests if posts blocks are set more than once as predecessor
         PostVersionList a_3758880 = PostVersionList.readFromCSV(pathToTestData, 3758880, 2, false);
 
-        a_3758880.processVersionHistory(Sets.newHashSet(TextBlockVersion.postBlockTypeId));
+        a_3758880.processVersionHistory(TextBlockVersion.getPostBlockTypeIdFilter());
 
         // we consider the most recent version here
         List<Integer> predecessorList = new LinkedList<>();
@@ -471,7 +471,7 @@ class PostVersionHistoryTest {
         // tests predecessor assignment if two versions have two equal text blocks
         PostVersionList q_37625877 = PostVersionList.readFromCSV(pathToTestData, 37625877, 1, false);
 
-        q_37625877.processVersionHistory(Sets.newHashSet(TextBlockVersion.postBlockTypeId));
+        q_37625877.processVersionHistory(TextBlockVersion.getPostBlockTypeIdFilter());
 
         PostVersion version_1 = q_37625877.get(0);
         PostVersion version_2 = q_37625877.get(1);
@@ -487,7 +487,7 @@ class PostVersionHistoryTest {
         // tests predecessor assignment if version i has three code blocks that are equal to four code blocks in version i+1
         PostVersionList a_42070509 = PostVersionList.readFromCSV(pathToTestData, 42070509, 2, false);
 
-        a_42070509.processVersionHistory(Sets.newHashSet(CodeBlockVersion.postBlockTypeId));
+        a_42070509.processVersionHistory(CodeBlockVersion.getPostBlockTypeIdFilter());
 
         PostVersion version_1 = a_42070509.get(0);
         PostVersion version_2 = a_42070509.get(1);
@@ -654,7 +654,7 @@ class PostVersionHistoryTest {
         PostVersionList q_3758880 = PostVersionList.readFromCSV(pathToTestData, 3758880, 1);
         // This caused a null pointer exception before (last commit: d37e6e38c8c15efe743e35141561742d7ef91ede),
         // because some filter checks were missing.
-        q_3758880.processVersionHistory(Sets.newHashSet(CodeBlockVersion.postBlockTypeId));
+        q_3758880.processVersionHistory(CodeBlockVersion.getPostBlockTypeIdFilter());
     }
 
     @Test

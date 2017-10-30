@@ -1,7 +1,7 @@
 package de.unitrier.st.soposthistory.gt;
 
-import com.google.common.collect.Sets;
 import de.unitrier.st.soposthistory.blocks.CodeBlockVersion;
+import de.unitrier.st.soposthistory.blocks.PostBlockVersion;
 import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -136,7 +136,7 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
     }
 
     public List<PostBlockLifeSpan> extractPostBlockLifeSpans() {
-        return extractPostBlockLifeSpans(Sets.newHashSet(TextBlockVersion.postBlockTypeId, CodeBlockVersion.postBlockTypeId));
+        return extractPostBlockLifeSpans(PostBlockVersion.getAllPostBlockTypeIdFilters());
     }
 
     public List<PostBlockLifeSpan> extractPostBlockLifeSpans(Set<Integer> postBlockTypeFilter) {
@@ -209,9 +209,9 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
                 .mapToInt(Integer::intValue)
                 .sum();
 
-        if ((postBlockTypeFilter.equals(Sets.newHashSet(TextBlockVersion.postBlockTypeId, CodeBlockVersion.postBlockTypeId)) && lifeSpanVersionCount != this.size())
-                || (postBlockTypeFilter.equals(Sets.newHashSet(TextBlockVersion.postBlockTypeId)) && lifeSpanVersionCount != this.getTextBlocks().size())
-                || (postBlockTypeFilter.equals(Sets.newHashSet(CodeBlockVersion.postBlockTypeId)) && lifeSpanVersionCount != this.getCodeBlocks().size())) {
+        if ((postBlockTypeFilter.equals(PostBlockVersion.getAllPostBlockTypeIdFilters()) && lifeSpanVersionCount != this.size())
+                || (postBlockTypeFilter.equals(TextBlockVersion.getPostBlockTypeIdFilter()) && lifeSpanVersionCount != this.getTextBlocks().size())
+                || (postBlockTypeFilter.equals(CodeBlockVersion.getPostBlockTypeIdFilter()) && lifeSpanVersionCount != this.getCodeBlocks().size())) {
             throw new IllegalStateException("The number of lifespan versions differs from the number of versions in the ground truth.");
         }
 
@@ -228,6 +228,41 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
         return this.stream()
                 .filter(v -> v.getPostBlockTypeId() == CodeBlockVersion.postBlockTypeId)
                 .collect(Collectors.toList());
+    }
+
+    public int getPossibleConnections() {
+        return getPossibleConnections(PostBlockVersion.getAllPostBlockTypeIdFilters());
+    }
+
+    public int getPossibleConnections(Set<Integer> postBlockTypeFilter) {
+        int possibleConnections = 0;
+
+        for (int i=1; i<orderedByVersion.size(); i++) {
+            List<PostBlockLifeSpanVersion> currentVersion = orderedByVersion.get(i);
+            List<PostBlockLifeSpanVersion> previousVersion = orderedByVersion.get(i-1);
+
+            if (postBlockTypeFilter.contains(TextBlockVersion.postBlockTypeId)) {
+                int currentVersionTextBlocks = Math.toIntExact(currentVersion.stream()
+                        .filter(b -> b.getPostBlockTypeId() == TextBlockVersion.postBlockTypeId)
+                        .count());
+                int previousVersionTextBlocks = Math.toIntExact(previousVersion.stream()
+                        .filter(b -> b.getPostBlockTypeId() == TextBlockVersion.postBlockTypeId)
+                        .count());
+                possibleConnections += currentVersionTextBlocks * previousVersionTextBlocks;
+            }
+
+            if (postBlockTypeFilter.contains(CodeBlockVersion.postBlockTypeId)) {
+                int currentVersionCodeBlocks = Math.toIntExact(currentVersion.stream()
+                        .filter(b -> b.getPostBlockTypeId() == CodeBlockVersion.postBlockTypeId)
+                        .count());
+                int previousVersionCodeBlocks = Math.toIntExact(previousVersion.stream()
+                        .filter(b -> b.getPostBlockTypeId() == CodeBlockVersion.postBlockTypeId)
+                        .count());
+                possibleConnections += currentVersionCodeBlocks * previousVersionCodeBlocks;
+            }
+        }
+
+        return possibleConnections;
     }
 
     @Override

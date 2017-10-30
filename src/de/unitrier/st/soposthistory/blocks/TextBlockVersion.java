@@ -1,5 +1,6 @@
 package de.unitrier.st.soposthistory.blocks;
 
+import com.google.common.collect.Sets;
 import de.unitrier.st.soposthistory.util.Config;
 
 import javax.persistence.DiscriminatorValue;
@@ -17,6 +18,10 @@ public class TextBlockVersion extends PostBlockVersion {
 
     public TextBlockVersion(int postId, int postHistoryId) {
         super(postId, postHistoryId);
+    }
+
+    public static Set<Integer> getPostBlockTypeIdFilter() {
+        return Sets.newHashSet(TextBlockVersion.postBlockTypeId);
     }
 
     @Override
