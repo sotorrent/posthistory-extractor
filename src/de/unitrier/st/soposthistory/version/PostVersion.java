@@ -3,6 +3,8 @@ package de.unitrier.st.soposthistory.version;
 import de.unitrier.st.soposthistory.blocks.CodeBlockVersion;
 import de.unitrier.st.soposthistory.blocks.PostBlockVersion;
 import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
+import de.unitrier.st.soposthistory.gt.PostBlockConnection;
+import de.unitrier.st.soposthistory.gt.PostBlockLifeSpanVersion;
 import de.unitrier.st.soposthistory.urls.Link;
 import de.unitrier.st.soposthistory.urls.PostVersionUrl;
 import de.unitrier.st.soposthistory.util.Config;
@@ -243,6 +245,37 @@ public class PostVersion {
         }
 
         return matchedPredecessors;
+    }
+
+    public Set<PostBlockConnection> getConnections() {
+        return getConnections(PostBlockVersion.getAllPostBlockTypeIdFilters());
+    }
+
+    public Set<PostBlockConnection> getConnections(Set<Integer> postBlockTypeFilter) {
+        HashSet<PostBlockConnection> connections = new HashSet<>();
+
+        for (PostBlockVersion currentBlock : postBlocks) {
+            if (currentBlock.isSelected(postBlockTypeFilter) && currentBlock.getPred() != null) {
+                PostBlockVersion predBlock = currentBlock.getPred();
+                Integer predBlockLocalId = predBlock.getLocalId();
+                Integer predBlockPredLocalId = predBlock.getPred() != null ? predBlock.getPred().getLocalId() : null;
+                Integer succBlockLocalId = currentBlock.getSucc() != null ? currentBlock.getSucc().getLocalId() : null;
+
+                PostBlockLifeSpanVersion currentLifeSpanVersion = new PostBlockLifeSpanVersion(
+                        postId, postHistoryId, currentBlock.getPostBlockTypeId(), currentBlock.getLocalId(),
+                        predBlockLocalId, succBlockLocalId
+                );
+
+                PostBlockLifeSpanVersion predLifeSpanVersion = new PostBlockLifeSpanVersion(
+                        postId, predBlock.getPostHistoryId(), predBlock.getPostBlockTypeId(), predBlock.getLocalId(),
+                        predBlockPredLocalId, currentBlock.getLocalId()
+                );
+
+                connections.add(new PostBlockConnection(predLifeSpanVersion, currentLifeSpanVersion));
+            }
+        }
+
+        return connections;
     }
 
     public int getPossibleConnections() {

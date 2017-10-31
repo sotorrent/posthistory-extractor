@@ -1,7 +1,6 @@
 package de.unitrier.st.soposthistory.gt;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class PostBlockConnection {
