@@ -19,6 +19,11 @@ public class PostBlockLifeSpanVersion {
     }
 
     public PostBlockLifeSpanVersion(int postId, int postHistoryId, int postBlockTypeId, int localId,
+                                    Integer predLocalId, Integer succLocalId) {
+        this(postId, postHistoryId, postBlockTypeId, localId, predLocalId, succLocalId, "");
+    }
+
+    public PostBlockLifeSpanVersion(int postId, int postHistoryId, int postBlockTypeId, int localId,
                                     Integer predLocalId, Integer succLocalId, String comment) {
         this.postId = postId;
         this.postHistoryId = postHistoryId;

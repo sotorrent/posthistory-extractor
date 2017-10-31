@@ -4,6 +4,7 @@ import de.unitrier.st.soposthistory.blocks.CodeBlockVersion;
 import de.unitrier.st.soposthistory.blocks.PostBlockVersion;
 import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
 import de.unitrier.st.soposthistory.diffs.PostBlockDiffList;
+import de.unitrier.st.soposthistory.gt.PostBlockConnection;
 import de.unitrier.st.soposthistory.gt.PostBlockLifeSpan;
 import de.unitrier.st.soposthistory.history.PostHistory;
 import de.unitrier.st.soposthistory.urls.Link;
@@ -344,10 +345,12 @@ public class PostVersionList extends LinkedList<PostVersion> {
         }
     }
 
+    // TODO: do we need this for the GT app or metrics comparison?
     public List<PostBlockLifeSpan> getPostBlockLifeSpans() {
         return getPostBlockLifeSpans(PostBlockVersion.getAllPostBlockTypeIdFilters());
     }
 
+    // TODO: do we need this for the GT app or metrics comparison?
     public List<PostBlockLifeSpan> getPostBlockLifeSpans(Set<Integer> postBlockTypeFilter) {
         List<PostBlockLifeSpan> lifeSpans = new LinkedList<>();
 
@@ -379,6 +382,14 @@ public class PostVersionList extends LinkedList<PostVersion> {
         }
 
         return lifeSpans;
+    }
+
+    public Set<PostBlockConnection> getConnections(Set<Integer> postBlockTypeFilter) {
+        Set<PostBlockConnection> connections = new HashSet<>();
+        for (PostVersion currentVersion : this) {
+            connections.addAll(currentVersion.getConnections(postBlockTypeFilter));
+        }
+        return connections;
     }
 
     public int getPossibleConnections() {

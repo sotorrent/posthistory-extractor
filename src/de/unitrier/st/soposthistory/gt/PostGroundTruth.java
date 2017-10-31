@@ -136,10 +136,12 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
         }
     }
 
+    // TODO: do we need this for the GT app or metrics comparison?
     public List<PostBlockLifeSpan> getPostBlockLifeSpans() {
         return getPostBlockLifeSpans(PostBlockVersion.getAllPostBlockTypeIdFilters());
     }
 
+    // TODO: do we need this for the GT app or metrics comparison?
     public List<PostBlockLifeSpan> getPostBlockLifeSpans(Set<Integer> postBlockTypeFilter) {
         List<PostBlockLifeSpan> postBlockLifeSpans = new LinkedList<>();
 
@@ -231,6 +233,10 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
                 .collect(Collectors.toList());
     }
 
+    public List<PostBlockLifeSpanVersion> getPostVersion(int postHistoryId) {
+        return versions.get(postHistoryId);
+    }
+
     public int getPossibleConnections() {
         return getPossibleConnections(PostBlockVersion.getAllPostBlockTypeIdFilters());
     }
@@ -264,10 +270,6 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
         }
 
         return possibleConnections;
-    }
-
-    public List<PostBlockLifeSpanVersion> getPostVersion(int postHistoryId) {
-        return versions.get(postHistoryId);
     }
 
     @Override
