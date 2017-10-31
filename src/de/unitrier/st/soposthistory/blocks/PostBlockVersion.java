@@ -544,6 +544,10 @@ public abstract class PostBlockVersion {
         return Sets.newHashSet(TextBlockVersion.postBlockTypeId, CodeBlockVersion.postBlockTypeId);
     }
 
+    public static int getPostBlockTypeId(PostBlockVersion postBlockVersion) {
+        return postBlockVersion instanceof TextBlockVersion ? TextBlockVersion.postBlockTypeId : CodeBlockVersion.postBlockTypeId;
+    }
+
     @Override
     public String toString() {
         return "PostBlockVersion: " + getContent();

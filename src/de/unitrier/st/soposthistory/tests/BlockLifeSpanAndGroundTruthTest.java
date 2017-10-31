@@ -115,8 +115,8 @@ class BlockLifeSpanAndGroundTruthTest {
         List<PostBlockLifeSpan> lifeSpans = a_22037280.getPostBlockLifeSpans();
         List<PostBlockLifeSpan> lifeSpansGT = a_22037280_gt.getPostBlockLifeSpans();
 
-        Set<PostBlockConnection> connections = PostBlockConnection.fromPostBlockLifeSpans(lifeSpans);
-        Set<PostBlockConnection> connectionsGT = PostBlockConnection.fromPostBlockLifeSpans(lifeSpansGT);
+        Set<PostBlockConnection> connections = PostBlockLifeSpan.toPostBlockConnections(lifeSpans);
+        Set<PostBlockConnection> connectionsGT = PostBlockLifeSpan.toPostBlockConnections(lifeSpansGT);
 
         assertEquals(connections.size(), connectionsGT.size());
         assertTrue(PostBlockConnection.equals(connections, connectionsGT));

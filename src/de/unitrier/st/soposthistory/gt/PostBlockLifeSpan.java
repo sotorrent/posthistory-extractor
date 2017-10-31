@@ -1,18 +1,18 @@
 package de.unitrier.st.soposthistory.gt;
 
-import de.unitrier.st.soposthistory.blocks.CodeBlockVersion;
 import de.unitrier.st.soposthistory.blocks.PostBlockVersion;
-import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
 
-import java.util.LinkedList;
+import java.util.*;
 
 public class PostBlockLifeSpan extends LinkedList<PostBlockLifeSpanVersion> {
     private int postId;
     private int postBlockTypeId;
+    private Map<Integer, PostBlockLifeSpanVersion> postHistoryIdToLifeSpanVersion;
 
     public PostBlockLifeSpan(int postId, int postBlockTypeId) {
         this.postId = postId;
         this.postBlockTypeId = postBlockTypeId;
+        this.postHistoryIdToLifeSpanVersion = new HashMap<>();
     }
 
     public static PostBlockLifeSpan fromPostBlockVersion(PostBlockVersion firstVersion) {
@@ -21,7 +21,7 @@ public class PostBlockLifeSpan extends LinkedList<PostBlockLifeSpanVersion> {
         }
 
         int postIdFirst = firstVersion.getPostId();
-        int postBlockTypeIdFirst = firstVersion instanceof TextBlockVersion ? TextBlockVersion.postBlockTypeId : CodeBlockVersion.postBlockTypeId;
+        int postBlockTypeIdFirst = PostBlockVersion.getPostBlockTypeId(firstVersion);
 
         PostBlockLifeSpan lifeSpan = new PostBlockLifeSpan(postIdFirst, postBlockTypeIdFirst);
         PostBlockVersion currentVersion = firstVersion;
@@ -31,7 +31,7 @@ public class PostBlockLifeSpan extends LinkedList<PostBlockLifeSpanVersion> {
             if (postId != postIdFirst) {
                 throw new IllegalStateException("PostIds in life span do not match.");
             }
-            int postBlockTypeId = currentVersion instanceof TextBlockVersion ? TextBlockVersion.postBlockTypeId : CodeBlockVersion.postBlockTypeId;
+            int postBlockTypeId = PostBlockVersion.getPostBlockTypeId(currentVersion);
             if (postBlockTypeId != postBlockTypeIdFirst) {
                 throw new IllegalStateException("PostBlockTypeIds in life span do not match.");
             }
@@ -57,12 +57,44 @@ public class PostBlockLifeSpan extends LinkedList<PostBlockLifeSpanVersion> {
         return lifeSpan;
     }
 
+    @Override
+    public boolean add(PostBlockLifeSpanVersion e) {
+        boolean result = super.add(e);
+        postHistoryIdToLifeSpanVersion.put(e.getPostHistoryId(), e);
+        return result;
+    }
+
     public int getPostId() {
         return postId;
     }
 
     public int getPostBlockTypeId() {
         return postBlockTypeId;
+    }
+
+    public Set<Integer> getPostHistoryIds() {
+        return postHistoryIdToLifeSpanVersion.keySet();
+    }
+
+    public PostBlockLifeSpanVersion getPostBlockLifeSpanVersion(int postHistoryId) {
+        return postHistoryIdToLifeSpanVersion.get(postHistoryId);
+    }
+
+    public Set<PostBlockConnection> toPostBlockConnection() {
+        Set<PostBlockConnection> postBlockConnections = new HashSet<>();
+        // in a life span, all versions except the first one have predecessors
+        for (int i=1; i<size(); i++) {
+            postBlockConnections.add(new PostBlockConnection(get(i-1), get(i)));
+        }
+        return postBlockConnections;
+    }
+
+    public static Set<PostBlockConnection> toPostBlockConnections(List<PostBlockLifeSpan> lifeSpans) {
+        Set<PostBlockConnection> postBlockConnections = new HashSet<>();
+        for (PostBlockLifeSpan lifeSpan : lifeSpans) {
+            postBlockConnections.addAll(lifeSpan.toPostBlockConnection());
+        }
+        return postBlockConnections;
     }
 
     public boolean equals(PostBlockLifeSpan other) {
