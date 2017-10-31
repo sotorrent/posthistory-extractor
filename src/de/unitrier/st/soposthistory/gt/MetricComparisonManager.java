@@ -113,7 +113,7 @@ public class MetricComparisonManager {
                 PostGroundTruth postGroundTruth = PostGroundTruth.readFromCSV(groundTruthPath, postId);
 
                 if (postGroundTruth.getPossibleConnections() != postVersionList.getPossibleConnections()) {
-                    throw new IllegalArgumentException("Number of possible connections in ground truth is different" +
+                    throw new IllegalArgumentException("Number of possible connections in ground truth is different " +
                             "from number of possible connections in post history.");
                 }
 

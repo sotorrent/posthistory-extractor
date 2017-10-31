@@ -397,9 +397,23 @@ public class PostVersionList extends LinkedList<PostVersion> {
     }
 
     public int getPossibleConnections(Set<Integer> postBlockTypeFilter) {
+        // we cannot use PostVersion.getPossibleConnections() here, because the pred-References may not have been set yet
         int possibleConnections = 0;
-        for (PostVersion version : this) {
-            possibleConnections += version.getPossibleConnections(postBlockTypeFilter);
+        for (int i=1; i<this.size(); i++) {
+            PostVersion currentVersion = this.get(i);
+            PostVersion previousVersion = this.get(i-1);
+
+            if (postBlockTypeFilter.contains(TextBlockVersion.postBlockTypeId)) {
+                int currentVersionTextBlocks = currentVersion.getTextBlocks().size();
+                int previousVersionTextBlocks = previousVersion.getTextBlocks().size();
+                possibleConnections += currentVersionTextBlocks * previousVersionTextBlocks;
+            }
+
+            if (postBlockTypeFilter.contains(CodeBlockVersion.postBlockTypeId)) {
+                int currentVersionCodeBlocks = currentVersion.getCodeBlocks().size();
+                int previousVersionCodeBlocks = previousVersion.getCodeBlocks().size();
+                possibleConnections += currentVersionCodeBlocks * previousVersionCodeBlocks;
+            }
         }
         return possibleConnections;
     }
