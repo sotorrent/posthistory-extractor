@@ -13,23 +13,6 @@ public class PostBlockConnection {
         this.right = right;
     }
 
-    public static Set<PostBlockConnection> fromPostBlockLifeSpans(PostBlockLifeSpan lifeSpan) {
-        Set<PostBlockConnection> postBlockConnections = new HashSet<>();
-        // in a life span, all versions except the first one have predecessors
-        for (int i=1; i<lifeSpan.size(); i++) {
-            postBlockConnections.add(new PostBlockConnection(lifeSpan.get(i-1), lifeSpan.get(i)));
-        }
-        return postBlockConnections;
-    }
-
-    public static Set<PostBlockConnection> fromPostBlockLifeSpans(List<PostBlockLifeSpan> lifeSpans) {
-        Set<PostBlockConnection> postBlockConnections = new HashSet<>();
-        for (PostBlockLifeSpan lifeSpan : lifeSpans) {
-            postBlockConnections.addAll(fromPostBlockLifeSpans(lifeSpan));
-        }
-        return postBlockConnections;
-    }
-
     public static boolean equals(Set<PostBlockConnection> set1, Set<PostBlockConnection> set2) {
         for (PostBlockConnection current : set1) {
             boolean equal = false;
