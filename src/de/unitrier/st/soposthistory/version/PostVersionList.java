@@ -187,6 +187,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
     public void processVersionHistory(Config config, Set<Integer> postBlockTypeFilter) {
         for (int i=0; i<this.size(); i++) {
             PostVersion currentVersion = this.get(i);
+            currentVersion.setProcessed(true);
 
             if (config.getExtractUrls() && postBlockTypeFilter.contains(TextBlockVersion.postBlockTypeId)) {
                 currentVersion.extractUrlsFromTextBlocks();
@@ -402,18 +403,8 @@ public class PostVersionList extends LinkedList<PostVersion> {
         for (int i=1; i<this.size(); i++) {
             PostVersion currentVersion = this.get(i);
             PostVersion previousVersion = this.get(i-1);
-
-            if (postBlockTypeFilter.contains(TextBlockVersion.postBlockTypeId)) {
-                int currentVersionTextBlocks = currentVersion.getTextBlocks().size();
-                int previousVersionTextBlocks = previousVersion.getTextBlocks().size();
-                possibleConnections += currentVersionTextBlocks * previousVersionTextBlocks;
-            }
-
-            if (postBlockTypeFilter.contains(CodeBlockVersion.postBlockTypeId)) {
-                int currentVersionCodeBlocks = currentVersion.getCodeBlocks().size();
-                int previousVersionCodeBlocks = previousVersion.getCodeBlocks().size();
-                possibleConnections += currentVersionCodeBlocks * previousVersionCodeBlocks;
-            }
+            // this also works if post history has not been extracted yet
+            possibleConnections += currentVersion.getPossibleConnections(previousVersion, postBlockTypeFilter);
         }
         return possibleConnections;
     }

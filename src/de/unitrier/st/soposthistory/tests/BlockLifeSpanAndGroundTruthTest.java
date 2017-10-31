@@ -19,6 +19,7 @@ import java.util.Set;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class BlockLifeSpanAndGroundTruthTest {
     private static Path pathToPostIdList = Paths.get("testdata/postIds.csv");
@@ -173,6 +174,20 @@ class BlockLifeSpanAndGroundTruthTest {
 
         int possibleConnections = a_22037280.getPossibleConnections(PostBlockVersion.getAllPostBlockTypeIdFilters());
         assertEquals(6 * 4 + 6 * 9, possibleConnections); // 6 versions with each 4=2*2 and 9=3*3 possible connections
+
+        // compare results of getPossibleConnections() for PostVersion and PostVersionList
+        possibleConnections = 0;
+        for (PostVersion current : a_22037280) {
+            possibleConnections += current.getPossibleConnections();
+        }
+        assertEquals(a_22037280.getPossibleConnections(), possibleConnections);
+
+        // check if IllegalStateException is thrown in case post history has not been processed yet
+        // (and thus the predecessor, which is needed to determine the possible connections, has not been set yet for the post versions)
+        a_22037280 = PostVersionList.readFromCSV(pathToPostHistory, 22037280, 2, false);
+        for (PostVersion current : a_22037280) {
+            assertThrows(IllegalStateException.class, current::getPossibleConnections);
+        }
     }
 
 //    @Test
