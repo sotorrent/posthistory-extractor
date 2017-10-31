@@ -80,6 +80,7 @@ public class PostBlockLifeSpan extends LinkedList<PostBlockLifeSpanVersion> {
         return postHistoryIdToLifeSpanVersion.get(postHistoryId);
     }
 
+    // TODO: do we need this for the GT app or metrics comparison?
     public Set<PostBlockConnection> toPostBlockConnections() {
         Set<PostBlockConnection> postBlockConnections = new HashSet<>();
         // in a life span, all versions except the first one have predecessors
@@ -89,6 +90,7 @@ public class PostBlockLifeSpan extends LinkedList<PostBlockLifeSpanVersion> {
         return postBlockConnections;
     }
 
+    // TODO: do we need this for the GT app or metrics comparison?
     public static Set<PostBlockConnection> toPostBlockConnections(List<PostBlockLifeSpan> lifeSpans) {
         Set<PostBlockConnection> postBlockConnections = new HashSet<>();
         for (PostBlockLifeSpan lifeSpan : lifeSpans) {
