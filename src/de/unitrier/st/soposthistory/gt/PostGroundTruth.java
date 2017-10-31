@@ -237,16 +237,88 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
         return versions.get(postHistoryId);
     }
 
+    public Set<PostBlockConnection> getConnections() {
+        return getConnections(PostBlockVersion.getAllPostBlockTypeIdFilters());
+    }
+
+    public Set<PostBlockConnection> getConnections(Set<Integer> postBlockTypeFilter) {
+        Set<PostBlockConnection> connections = new HashSet<>();
+        for (int postHistoryId : postHistoryIds) {
+            connections.addAll(getConnections(postHistoryId, postBlockTypeFilter));
+        }
+        return connections;
+    }
+
+    public Set<PostBlockConnection> getConnections(int postHistoryId) {
+        return getConnections(postHistoryId, PostBlockVersion.getAllPostBlockTypeIdFilters());
+    }
+
+    public Set<PostBlockConnection> getConnections(int postHistoryId, Set<Integer> postBlockTypeFilter) {
+        Set<PostBlockConnection> connections = new HashSet<>();
+        int index = postHistoryIds.indexOf(postHistoryId);
+
+        if (index >= 1) {
+            // first version cannot have connections
+            List<PostBlockLifeSpanVersion> currentVersion = getPostVersion(postHistoryId);
+            List<PostBlockLifeSpanVersion> previousVersion = getPostVersion(postHistoryIds.get(index-1));
+
+            for (PostBlockLifeSpanVersion currentLifeSpanVersion : currentVersion) {
+                // apply filter
+                if (currentLifeSpanVersion.isSelected(postBlockTypeFilter)) {
+                    // search for matching lifespan version(s) in previous post version
+                    final int predLocalId = currentLifeSpanVersion.getPredLocalId();
+                    final int postBlockTypeId = currentLifeSpanVersion.getPostBlockTypeId();
+                    List<PostBlockLifeSpanVersion> predLifeSpanVersionCandidates = previousVersion.stream()
+                            .filter(v -> v.getLocalId() == predLocalId && v.getPostBlockTypeId() == postBlockTypeId)
+                            .collect(Collectors.toList());
+
+                    if (predLifeSpanVersionCandidates.size() == 0) {
+                        throw new IllegalStateException("No predecessor found.");
+                    }
+
+                    if (predLifeSpanVersionCandidates.size() > 1) {
+                        throw new IllegalStateException("More than one successor found.");
+                    }
+
+                    PostBlockLifeSpanVersion predLifeSpanVersion = predLifeSpanVersionCandidates.get(0);
+
+                    if (!currentLifeSpanVersion.getPredLocalId().equals(predLifeSpanVersion.getLocalId()) ||
+                            !predLifeSpanVersion.getSuccLocalId().equals(currentLifeSpanVersion.getLocalId())) {
+                        throw new IllegalStateException("Predecessor and Successor LocalIds do not match.");
+                    }
+
+                    connections.add(new PostBlockConnection(predLifeSpanVersion, currentLifeSpanVersion));
+                }
+            }
+        }
+
+        return connections;
+    }
+
     public int getPossibleConnections() {
         return getPossibleConnections(PostBlockVersion.getAllPostBlockTypeIdFilters());
     }
 
     public int getPossibleConnections(Set<Integer> postBlockTypeFilter) {
         int possibleConnections = 0;
+        for (int postHistoryId : postHistoryIds) {
+            possibleConnections += getPossibleConnections(postHistoryId, postBlockTypeFilter);
+        }
+        return possibleConnections;
+    }
 
-        for (int i = 1; i< postHistoryIds.size(); i++) {
-            List<PostBlockLifeSpanVersion> currentVersion = versions.get(postHistoryIds.get(i));
-            List<PostBlockLifeSpanVersion> previousVersion = versions.get(postHistoryIds.get(i-1));
+    public int getPossibleConnections(int postHistoryId) {
+        return getPossibleConnections(postHistoryId, PostBlockVersion.getAllPostBlockTypeIdFilters());
+    }
+
+    public int getPossibleConnections(int postHistoryId, Set<Integer> postBlockTypeFilter) {
+        int possibleConnections = 0;
+        int index = postHistoryIds.indexOf(postHistoryId);
+
+        if (index >= 1) {
+            // first version cannot have connections
+            List<PostBlockLifeSpanVersion> currentVersion = versions.get(postHistoryIds.get(index));
+            List<PostBlockLifeSpanVersion> previousVersion = versions.get(postHistoryIds.get(index-1));
 
             if (postBlockTypeFilter.contains(TextBlockVersion.postBlockTypeId)) {
                 int currentVersionTextBlocks = Math.toIntExact(currentVersion.stream()
@@ -270,6 +342,10 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
         }
 
         return possibleConnections;
+    }
+
+    public List<Integer> getPostHistoryIds() {
+        return postHistoryIds;
     }
 
     @Override
