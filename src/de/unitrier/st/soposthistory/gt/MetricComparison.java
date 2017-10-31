@@ -39,9 +39,14 @@ public class MetricComparison {
                             BiFunction<String, String, Double> similarityMetric,
                             double similarityThreshold) {
         this.postId = postId;
-        this.postHistoryIds = postVersionList.getPostHistoryIds();
         this.postVersionList = postVersionList;
         this.postGroundTruth = postGroundTruth;
+        this.postHistoryIds = postVersionList.getPostHistoryIds();
+
+        if (!postGroundTruth.getPostHistoryIds().equals(postHistoryIds)) {
+            throw new IllegalArgumentException("PostHistoryIds in postVersionList and postGroundTruth differ.");
+        }
+
         this.similarityMetric = similarityMetric;
         this.similarityThreshold = similarityThreshold;
         // text
