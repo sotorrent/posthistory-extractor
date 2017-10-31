@@ -21,7 +21,7 @@ public class PostBlockLifeSpan extends LinkedList<PostBlockLifeSpanVersion> {
         }
 
         int postIdFirst = firstVersion.getPostId();
-        int postBlockTypeIdFirst = PostBlockVersion.getPostBlockTypeId(firstVersion);
+        int postBlockTypeIdFirst = firstVersion.getPostBlockTypeId();
 
         PostBlockLifeSpan lifeSpan = new PostBlockLifeSpan(postIdFirst, postBlockTypeIdFirst);
         PostBlockVersion currentVersion = firstVersion;
@@ -31,7 +31,7 @@ public class PostBlockLifeSpan extends LinkedList<PostBlockLifeSpanVersion> {
             if (postId != postIdFirst) {
                 throw new IllegalStateException("PostIds in life span do not match.");
             }
-            int postBlockTypeId = PostBlockVersion.getPostBlockTypeId(currentVersion);
+            int postBlockTypeId = currentVersion.getPostBlockTypeId();
             if (postBlockTypeId != postBlockTypeIdFirst) {
                 throw new IllegalStateException("PostBlockTypeIds in life span do not match.");
             }
@@ -80,7 +80,7 @@ public class PostBlockLifeSpan extends LinkedList<PostBlockLifeSpanVersion> {
         return postHistoryIdToLifeSpanVersion.get(postHistoryId);
     }
 
-    public Set<PostBlockConnection> toPostBlockConnection() {
+    public Set<PostBlockConnection> toPostBlockConnections() {
         Set<PostBlockConnection> postBlockConnections = new HashSet<>();
         // in a life span, all versions except the first one have predecessors
         for (int i=1; i<size(); i++) {
@@ -92,7 +92,7 @@ public class PostBlockLifeSpan extends LinkedList<PostBlockLifeSpanVersion> {
     public static Set<PostBlockConnection> toPostBlockConnections(List<PostBlockLifeSpan> lifeSpans) {
         Set<PostBlockConnection> postBlockConnections = new HashSet<>();
         for (PostBlockLifeSpan lifeSpan : lifeSpans) {
-            postBlockConnections.addAll(lifeSpan.toPostBlockConnection());
+            postBlockConnections.addAll(lifeSpan.toPostBlockConnections());
         }
         return postBlockConnections;
     }
