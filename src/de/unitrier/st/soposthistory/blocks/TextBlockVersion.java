@@ -25,6 +25,11 @@ public class TextBlockVersion extends PostBlockVersion {
     }
 
     @Override
+    public int getPostBlockTypeId() {
+        return TextBlockVersion.postBlockTypeId;
+    }
+
+    @Override
     public boolean isSelected(Set<Integer> postBlockTypeFilter) {
         return postBlockTypeFilter.contains(TextBlockVersion.postBlockTypeId);
     }
