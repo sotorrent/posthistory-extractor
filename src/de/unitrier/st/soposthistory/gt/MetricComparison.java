@@ -59,6 +59,8 @@ public class MetricComparison {
         this.falsePositivesCode = new HashMap<>();
         this.trueNegativesCode = new HashMap<>();
         this.falseNegativesCode = new HashMap<>();
+
+        stopWatch = new StopWatch();
     }
 
     public void start() {
