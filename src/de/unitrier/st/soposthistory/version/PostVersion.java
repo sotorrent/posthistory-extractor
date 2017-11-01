@@ -32,7 +32,6 @@ public class PostVersion {
     private List<PostVersionUrl> urls;
     private PostVersion pred;
     private PostVersion succ;
-    private boolean processed; // used to determine of post history has already been processed
 
     public PostVersion() {
         // database
@@ -60,7 +59,6 @@ public class PostVersion {
         this.urls = new LinkedList<>();
         this.pred = null;
         this.succ = null;
-        this.processed = false;
     }
 
     @Id
@@ -195,15 +193,6 @@ public class PostVersion {
         return succ;
     }
 
-    @Transient
-    public boolean isProcessed() {
-        return processed;
-    }
-
-    public void setProcessed(boolean processed) {
-        this.processed = processed;
-    }
-
     public void setSucc(PostVersion succ) {
         this.succ = succ;
     }
@@ -263,10 +252,6 @@ public class PostVersion {
     }
 
     public Set<PostBlockConnection> getConnections(Set<Integer> postBlockTypeFilter) {
-        if (!processed) {
-            throw new IllegalStateException("Post history has not been processed yet.");
-        }
-
         HashSet<PostBlockConnection> connections = new HashSet<>();
 
         for (PostBlockVersion currentBlock : postBlocks) {
@@ -298,15 +283,7 @@ public class PostVersion {
     }
 
     public int getPossibleConnections(Set<Integer> postBlockTypeFilter) {
-        if (!isProcessed()) {
-            throw new IllegalStateException("Post history has not been processed yet.");
-        }
-
-        return getPossibleConnections(this.pred, postBlockTypeFilter);
-    }
-
-    public int getPossibleConnections(PostVersion pred, Set<Integer> postBlockTypeFilter) {
-        // this also works if the post history has not been processed yet (meaning pred is not set yet for this PostVersion)
+        // this only works if the post version list has already been sorted (meaning pred is set for this PostVersion)
         int possibleConnections = 0;
         if (pred != null) {
             if (postBlockTypeFilter.contains(TextBlockVersion.postBlockTypeId)) {
