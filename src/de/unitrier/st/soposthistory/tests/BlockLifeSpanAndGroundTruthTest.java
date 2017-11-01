@@ -1,5 +1,6 @@
 package de.unitrier.st.soposthistory.tests;
 
+import com.google.common.collect.Lists;
 import de.unitrier.st.soposthistory.blocks.CodeBlockVersion;
 import de.unitrier.st.soposthistory.blocks.PostBlockVersion;
 import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
@@ -12,9 +13,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
@@ -137,6 +136,36 @@ class BlockLifeSpanAndGroundTruthTest {
 
         assertEquals(78, a_22037280.getPossibleConnections());
         assertEquals(a_22037280.getPossibleConnections(), a_22037280_gt.getPossibleConnections());
+    }
+
+    @Test
+    void testGetConnections(){
+        int postId = 22037280;
+        PostVersionList a_22037280 = PostVersionList.readFromCSV(pathToPostHistory, postId, 2);
+        PostGroundTruth a_22037280_gt = PostGroundTruth.readFromCSV(pathToGroundTruth, postId);
+
+        List<Integer> postVersionListPostHistoryIDs = a_22037280.getPostHistoryIds();
+        List<Integer> groundTruthPostHistoryIDs = a_22037280_gt.getPostHistoryIds();
+
+        assertEquals(postVersionListPostHistoryIDs, groundTruthPostHistoryIDs);
+
+
+        for (Integer postHistoryId : groundTruthPostHistoryIDs) {
+            LinkedList<PostBlockConnection> postBlockConnections = Lists.newLinkedList(a_22037280.getPostVersion(postHistoryId).getConnections());
+            LinkedList<PostBlockConnection> postBlockConnectionsGT = Lists.newLinkedList(a_22037280_gt.getConnections(postHistoryId));
+
+            assertEquals(postBlockConnections.size(), postBlockConnectionsGT.size());
+
+            postBlockConnections.sort(PostBlockConnection.comparator);
+            postBlockConnectionsGT.sort(PostBlockConnection.comparator);
+
+            for (int i=0; i<postBlockConnections.size(); i++){
+                assertEquals(postBlockConnections.get(i).getRight().getPostId(), postBlockConnectionsGT.get(i).getRight().getPostId());
+                assertEquals(postBlockConnections.get(i).getRight().getPostHistoryId(), postBlockConnectionsGT.get(i).getRight().getPostHistoryId());
+                assertEquals(postBlockConnections.get(i).getRight().getLocalId(), postBlockConnectionsGT.get(i).getRight().getLocalId());
+                assertEquals(postBlockConnections.get(i).getRight().getPostBlockTypeId(), postBlockConnectionsGT.get(i).getRight().getPostBlockTypeId());
+            }
+        }
     }
 
     @Test
