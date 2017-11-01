@@ -17,7 +17,7 @@ public class MetricComparison {
     private PostGroundTruth postGroundTruth;
     private BiFunction<String, String, Double> similarityMetric;
     private double similarityThreshold;
-    StopWatch stopWatch;
+    private StopWatch stopWatch;
 
     // text
     private long runtimeText;
