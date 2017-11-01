@@ -183,9 +183,13 @@ class BlockLifeSpanAndGroundTruthTest {
 
     @Test
     void testGetPossibleConnections() {
-        PostVersionList a_22037280 = PostVersionList.readFromCSV(pathToPostHistory, 22037280, 2);
+        int postId = 22037280;
+        PostVersionList a_22037280 = PostVersionList.readFromCSV(pathToPostHistory, postId, 2);
+        PostGroundTruth a_22037280_gt = PostGroundTruth.readFromCSV(pathToGroundTruth, postId);
 
         assertEquals(7, a_22037280.size());
+
+        assertEquals(a_22037280.getPossibleConnections(), a_22037280_gt.getPossibleConnections());
 
         for (PostVersion postVersion : a_22037280) {
             assertEquals(3, postVersion.getTextBlocks().size());
