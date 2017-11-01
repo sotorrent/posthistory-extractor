@@ -177,6 +177,7 @@ public class MetricComparisonManager {
                 for (int postHistoryId : postHistoryIdsForPost) {
                     csvPrinter.printRecord(
                             name,
+                            // TODO: This is not correct, we need the method name (Sebastian: I'll try to find a solution)
                             metricComparison.getSimilarityMetric().getClass().getSimpleName(),
                             metricComparison.getSimilarityThreshold(),
                             postId,
