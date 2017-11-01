@@ -1,6 +1,6 @@
 package de.unitrier.st.soposthistory.tests;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import de.unitrier.st.soposthistory.blocks.CodeBlockVersion;
 import de.unitrier.st.soposthistory.blocks.PostBlockVersion;
 import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
@@ -13,7 +13,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
@@ -136,6 +138,34 @@ class BlockLifeSpanAndGroundTruthTest {
 
         assertEquals(78, a_22037280.getPossibleConnections());
         assertEquals(a_22037280.getPossibleConnections(), a_22037280_gt.getPossibleConnections());
+    }
+
+    @Test
+    void testPostBlockConnectionEquals() {
+        PostBlockLifeSpanVersion v1_1 = new PostBlockLifeSpanVersion(1, 1, 1, 1);
+        PostBlockLifeSpanVersion v1_2 = new PostBlockLifeSpanVersion(1, 1, 1, 1);
+        PostBlockLifeSpanVersion v2 = new PostBlockLifeSpanVersion(1, 2, 1, 1);
+        PostBlockLifeSpanVersion v3 = new PostBlockLifeSpanVersion(1, 3, 1, 1);
+        PostBlockLifeSpanVersion v4 = new PostBlockLifeSpanVersion(1, 4, 1, 1);
+
+        // test equality of PostBlockLifeSpanVersions
+        assertEquals(v1_1.getPostId(), v1_2.getPostId());
+        assertEquals(v1_1.getPostHistoryId(), v1_2.getPostHistoryId());
+        assertEquals(v1_1.getPostBlockTypeId(), v1_2.getPostBlockTypeId());
+        assertEquals(v1_1.getLocalId(), v1_2.getLocalId());
+
+        // test equality of PostBlockConnections
+        PostBlockConnection connection1 = new PostBlockConnection(v1_1, v2);
+        PostBlockConnection connection2 = new PostBlockConnection(v1_2, v2);
+        assertTrue(connection1.equals(connection2));
+
+        // test equaliy of a set of PostBlockConnections
+        PostBlockConnection connection3 = new PostBlockConnection(v1_2, v2);
+        PostBlockConnection connection4 = new PostBlockConnection(v3, v4);
+        assertTrue(PostBlockConnection.equals(
+                Sets.newHashSet(connection1, connection2, connection3, connection4),
+                Sets.newHashSet(connection1, connection2, connection3, connection4))
+        );
     }
 
     @Test
