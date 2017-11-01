@@ -144,27 +144,16 @@ class BlockLifeSpanAndGroundTruthTest {
         PostVersionList a_22037280 = PostVersionList.readFromCSV(pathToPostHistory, postId, 2);
         PostGroundTruth a_22037280_gt = PostGroundTruth.readFromCSV(pathToGroundTruth, postId);
 
-        List<Integer> postVersionListPostHistoryIDs = a_22037280.getPostHistoryIds();
-        List<Integer> groundTruthPostHistoryIDs = a_22037280_gt.getPostHistoryIds();
+        List<Integer> postVersionListPostHistoryIds = a_22037280.getPostHistoryIds();
+        List<Integer> groundTruthPostHistoryIds = a_22037280_gt.getPostHistoryIds();
 
-        assertEquals(postVersionListPostHistoryIDs, groundTruthPostHistoryIDs);
+        assertEquals(postVersionListPostHistoryIds, groundTruthPostHistoryIds);
 
+        for (Integer postHistoryId : groundTruthPostHistoryIds) {
+            Set<PostBlockConnection> postBlockConnections = a_22037280.getPostVersion(postHistoryId).getConnections();
+            Set<PostBlockConnection> postBlockConnectionsGT = a_22037280_gt.getConnections(postHistoryId);
 
-        for (Integer postHistoryId : groundTruthPostHistoryIDs) {
-            LinkedList<PostBlockConnection> postBlockConnections = Lists.newLinkedList(a_22037280.getPostVersion(postHistoryId).getConnections());
-            LinkedList<PostBlockConnection> postBlockConnectionsGT = Lists.newLinkedList(a_22037280_gt.getConnections(postHistoryId));
-
-            assertEquals(postBlockConnections.size(), postBlockConnectionsGT.size());
-
-            postBlockConnections.sort(PostBlockConnection.comparator);
-            postBlockConnectionsGT.sort(PostBlockConnection.comparator);
-
-            for (int i=0; i<postBlockConnections.size(); i++){
-                assertEquals(postBlockConnections.get(i).getRight().getPostId(), postBlockConnectionsGT.get(i).getRight().getPostId());
-                assertEquals(postBlockConnections.get(i).getRight().getPostHistoryId(), postBlockConnectionsGT.get(i).getRight().getPostHistoryId());
-                assertEquals(postBlockConnections.get(i).getRight().getLocalId(), postBlockConnectionsGT.get(i).getRight().getLocalId());
-                assertEquals(postBlockConnections.get(i).getRight().getPostBlockTypeId(), postBlockConnectionsGT.get(i).getRight().getPostBlockTypeId());
-            }
+            assertTrue(PostBlockConnection.equals(postBlockConnections, postBlockConnectionsGT));
         }
     }
 
