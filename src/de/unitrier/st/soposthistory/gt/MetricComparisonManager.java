@@ -534,4 +534,16 @@ public class MetricComparisonManager {
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::fiveGramSimilarityKondrak05);
         similarityMetricsNames.add("fiveGramSimilarityKondrak05");
     }
+
+    public MetricComparison getMetricComparison(int postId, String similarityMetricName, double similarityThreshold){
+        for(MetricComparison metricComparison : metricComparisons){
+            if(metricComparison.getPostId() == postId
+                && metricComparison.getSimilarityThreshold() == similarityThreshold
+                    && metricComparison.getSimilarityMetricName().equals(similarityMetricName)){
+                return metricComparison;
+            }
+        }
+
+        return null;
+    }
 }
