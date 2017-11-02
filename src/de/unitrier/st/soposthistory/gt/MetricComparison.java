@@ -6,7 +6,10 @@ import de.unitrier.st.soposthistory.util.Config;
 import de.unitrier.st.soposthistory.version.PostVersionList;
 import org.apache.commons.lang3.time.StopWatch;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.BiFunction;
 
 // TODO: move to metrics comparison project
@@ -75,7 +78,9 @@ public class MetricComparison {
 
         stopWatch.reset();
         stopWatch.start();
-        postVersionList.processVersionHistory(config, TextBlockVersion.getPostBlockTypeIdFilter());
+        try {
+            postVersionList.processVersionHistory(config, TextBlockVersion.getPostBlockTypeIdFilter());
+        }catch(NullPointerException e){}
         stopWatch.stop();
         runtimeText = stopWatch.getTime();
 
@@ -83,7 +88,9 @@ public class MetricComparison {
 
         stopWatch.reset();
         stopWatch.start();
-        postVersionList.processVersionHistory(config, CodeBlockVersion.getPostBlockTypeIdFilter());
+        try{
+            postVersionList.processVersionHistory(config, CodeBlockVersion.getPostBlockTypeIdFilter());
+        }catch(NullPointerException e){}
         stopWatch.stop();
         runtimeCode = stopWatch.getTime();
 
@@ -92,6 +99,39 @@ public class MetricComparison {
 
     private void getResults() {
         // TODO: Lorik
+        for(Integer postHistoryId : postHistoryIds){
+            // text
+            try {
+                Set<PostBlockConnection> postBlockConnections_text = postVersionList.getPostVersion(postHistoryId).getConnections(TextBlockVersion.getPostBlockTypeIdFilter());
+                Set<PostBlockConnection> postBlockConnections_text_gt = postGroundTruth.getConnections(postHistoryId, TextBlockVersion.getPostBlockTypeIdFilter());
+
+                falseNegativesText.put(postHistoryId, Math.abs(PostBlockConnection.difference(postBlockConnections_text_gt, postBlockConnections_text).size()));
+                truePositivesText.put(postHistoryId, Math.abs(PostBlockConnection.intersection(postBlockConnections_text_gt, postBlockConnections_text).size()));
+                falsePositivesText.put(postHistoryId, Math.abs(PostBlockConnection.difference(postBlockConnections_text, postBlockConnections_text_gt).size()));
+                trueNegativesText.put(postHistoryId, Math.abs(postGroundTruth.getPossibleConnections(postHistoryId) - (PostBlockConnection.union(postBlockConnections_text_gt, postBlockConnections_text).size())));
+            }catch(NullPointerException e){
+                falseNegativesText.put(postHistoryId, null);
+                truePositivesText.put(postHistoryId, null);
+                falsePositivesText.put(postHistoryId, null);
+                trueNegativesText.put(postHistoryId, null);
+            }
+
+            // code
+            try {
+                Set<PostBlockConnection> postBlockConnections_code = postVersionList.getPostVersion(postHistoryId).getConnections(CodeBlockVersion.getPostBlockTypeIdFilter());
+                Set<PostBlockConnection> postBlockConnections_code_gt = postGroundTruth.getConnections(postHistoryId, CodeBlockVersion.getPostBlockTypeIdFilter());
+
+                falseNegativesCode.put(postHistoryId, PostBlockConnection.difference(postBlockConnections_code_gt, postBlockConnections_code).size());
+                truePositivesCode.put(postHistoryId, PostBlockConnection.intersection(postBlockConnections_code_gt, postBlockConnections_code).size());
+                falsePositivesCode.put(postHistoryId, PostBlockConnection.difference(postBlockConnections_code, postBlockConnections_code_gt).size());
+                trueNegativesCode.put(postHistoryId, postGroundTruth.getPossibleConnections(postHistoryId) - (PostBlockConnection.union(postBlockConnections_code_gt, postBlockConnections_code).size()));
+            }catch(NullPointerException e){
+                falseNegativesCode.put(postHistoryId, null);
+                truePositivesCode.put(postHistoryId, null);
+                falsePositivesCode.put(postHistoryId, null);
+                trueNegativesCode.put(postHistoryId, null);
+            }
+        }
     }
 
     public BiFunction<String, String, Double> getSimilarityMetric() {
