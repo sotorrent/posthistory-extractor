@@ -78,9 +78,7 @@ public class MetricComparison {
 
         stopWatch.reset();
         stopWatch.start();
-        try {
-            postVersionList.processVersionHistory(config, TextBlockVersion.getPostBlockTypeIdFilter());
-        }catch(NullPointerException e){}
+        postVersionList.processVersionHistory(config, TextBlockVersion.getPostBlockTypeIdFilter());
         stopWatch.stop();
         runtimeText = stopWatch.getTime();
 
@@ -88,9 +86,7 @@ public class MetricComparison {
 
         stopWatch.reset();
         stopWatch.start();
-        try{
-            postVersionList.processVersionHistory(config, CodeBlockVersion.getPostBlockTypeIdFilter());
-        }catch(NullPointerException e){}
+        postVersionList.processVersionHistory(config, CodeBlockVersion.getPostBlockTypeIdFilter());
         stopWatch.stop();
         runtimeCode = stopWatch.getTime();
 

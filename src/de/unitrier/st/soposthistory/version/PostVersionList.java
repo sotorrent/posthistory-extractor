@@ -200,6 +200,11 @@ public class PostVersionList extends LinkedList<PostVersion> {
      * @param config Configuration with similarity metrics and thresholds
      */
     public void processVersionHistory(Config config, Set<Integer> postBlockTypeFilter) {
+        // list must be sorted (in particular the pred and succ references must be set)
+        if (!this.isSorted()) {
+            this.sort();
+        }
+
         for (int i=0; i<this.size(); i++) {
             PostVersion currentVersion = this.get(i);
 
@@ -322,6 +327,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
                     throw new IllegalStateException("Wrong successor set for last element.");
                 }
             } else {
+                // current is not last element
                 if (!currentVersion.getSucc().equals(this.get(succIndex))
                         || !currentVersion.getSuccPostHistoryId().equals(this.get(succIndex).getPostHistoryId())) {
                     throw new IllegalStateException("Wrong successor set.");
