@@ -105,10 +105,10 @@ public class MetricComparison {
                 Set<PostBlockConnection> postBlockConnections_text = postVersionList.getPostVersion(postHistoryId).getConnections(TextBlockVersion.getPostBlockTypeIdFilter());
                 Set<PostBlockConnection> postBlockConnections_text_gt = postGroundTruth.getConnections(postHistoryId, TextBlockVersion.getPostBlockTypeIdFilter());
 
-                falseNegativesText.put(postHistoryId, Math.abs(PostBlockConnection.difference(postBlockConnections_text_gt, postBlockConnections_text).size()));
-                truePositivesText.put(postHistoryId, Math.abs(PostBlockConnection.intersection(postBlockConnections_text_gt, postBlockConnections_text).size()));
-                falsePositivesText.put(postHistoryId, Math.abs(PostBlockConnection.difference(postBlockConnections_text, postBlockConnections_text_gt).size()));
-                trueNegativesText.put(postHistoryId, Math.abs(postGroundTruth.getPossibleConnections(postHistoryId) - (PostBlockConnection.union(postBlockConnections_text_gt, postBlockConnections_text).size())));
+                falseNegativesText.put(postHistoryId, PostBlockConnection.difference(postBlockConnections_text_gt, postBlockConnections_text).size());
+                truePositivesText.put(postHistoryId, PostBlockConnection.intersection(postBlockConnections_text_gt, postBlockConnections_text).size());
+                falsePositivesText.put(postHistoryId, PostBlockConnection.difference(postBlockConnections_text, postBlockConnections_text_gt).size());
+                trueNegativesText.put(postHistoryId, postGroundTruth.getPossibleConnections(postHistoryId) - (PostBlockConnection.union(postBlockConnections_text_gt, postBlockConnections_text).size()));
             }catch(NullPointerException e){
                 falseNegativesText.put(postHistoryId, null);
                 truePositivesText.put(postHistoryId, null);
