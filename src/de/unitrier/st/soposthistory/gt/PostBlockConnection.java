@@ -58,6 +58,16 @@ public class PostBlockConnection {
         return difference;
     }
 
+    public static Set<PostBlockConnection> union(Set<PostBlockConnection> set1, Set<PostBlockConnection> set2) {
+        Set<PostBlockConnection> union = new HashSet<>(set1);
+        for (PostBlockConnection current : set2) {
+            if (!union.contains(current)) {
+                union.add(current);
+            }
+        }
+        return union;
+    }
+
     public boolean equals(PostBlockConnection other) {
         return (this.left.equals(other.left) && this.right.equals(other.right));
     }

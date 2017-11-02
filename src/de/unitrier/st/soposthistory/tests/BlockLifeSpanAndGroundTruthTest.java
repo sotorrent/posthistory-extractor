@@ -127,6 +127,11 @@ class BlockLifeSpanAndGroundTruthTest {
                 connections)
         );
 
+        assertTrue(PostBlockConnection.equals(
+                PostBlockConnection.union(connections, connectionsGT),
+                connections)
+        );
+
         assertEquals(0, PostBlockConnection.difference(connections, connectionsGT).size());
     }
 
