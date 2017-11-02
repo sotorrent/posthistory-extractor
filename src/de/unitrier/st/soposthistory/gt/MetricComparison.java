@@ -4,6 +4,7 @@ import de.unitrier.st.soposthistory.blocks.CodeBlockVersion;
 import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
 import de.unitrier.st.soposthistory.util.Config;
 import de.unitrier.st.soposthistory.version.PostVersionList;
+import de.unitrier.st.stringsimilarity.util.InputTooShortException;
 import org.apache.commons.lang3.time.StopWatch;
 
 import java.util.HashMap;
@@ -78,7 +79,12 @@ public class MetricComparison {
 
         stopWatch.reset();
         stopWatch.start();
-        postVersionList.processVersionHistory(config, TextBlockVersion.getPostBlockTypeIdFilter());
+        try {
+            postVersionList.processVersionHistory(config, TextBlockVersion.getPostBlockTypeIdFilter());
+        } catch (InputTooShortException e) {
+            // TODO: Lorik: handle this case, merge start() and getResults()?
+        }
+
         stopWatch.stop();
         runtimeText = stopWatch.getTime();
 
@@ -86,7 +92,11 @@ public class MetricComparison {
 
         stopWatch.reset();
         stopWatch.start();
-        postVersionList.processVersionHistory(config, CodeBlockVersion.getPostBlockTypeIdFilter());
+        try {
+            postVersionList.processVersionHistory(config, CodeBlockVersion.getPostBlockTypeIdFilter());
+        } catch (InputTooShortException e) {
+            // TODO: Lorik: handle this case, merge start() and getResults()?
+        }
         stopWatch.stop();
         runtimeCode = stopWatch.getTime();
 
