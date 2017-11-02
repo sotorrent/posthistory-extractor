@@ -16,6 +16,7 @@ public class MetricComparison {
     private PostVersionList postVersionList;
     private PostGroundTruth postGroundTruth;
     private BiFunction<String, String, Double> similarityMetric;
+    private String similarityMetricName;
     private double similarityThreshold;
     private StopWatch stopWatch;
 
@@ -37,6 +38,7 @@ public class MetricComparison {
                             PostVersionList postVersionList,
                             PostGroundTruth postGroundTruth,
                             BiFunction<String, String, Double> similarityMetric,
+                            String similarityMetricName,
                             double similarityThreshold) {
         this.postId = postId;
         this.postVersionList = postVersionList;
@@ -48,6 +50,7 @@ public class MetricComparison {
         }
 
         this.similarityMetric = similarityMetric;
+        this.similarityMetricName = similarityMetricName;
         this.similarityThreshold = similarityThreshold;
         // text
         this.truePositivesText = new HashMap<>();
@@ -93,6 +96,10 @@ public class MetricComparison {
 
     public BiFunction<String, String, Double> getSimilarityMetric() {
         return similarityMetric;
+    }
+
+    public String getSimilarityMetricName() {
+        return similarityMetricName;
     }
 
     public double getSimilarityThreshold() {
