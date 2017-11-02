@@ -202,6 +202,36 @@ class BlockLifeSpanAndGroundTruthTest {
         assertThat(manager.getPostVersionLists().keySet(), is(manager.getPostGroundTruth().keySet()));
 
         // TODO: Lorik: add tests
+        manager.compareMetrics();
+
+
+        List<Integer> postHistoryIds_3758880 = manager.getPostGroundTruth().get(3758880).getPostHistoryIds();
+        MetricComparison comparison_a_3758880 = manager.getMetricComparison(3758880, "fourGramOverlap", 0.6);
+
+        assertEquals(1, comparison_a_3758880.getTruePositivesText().get(postHistoryIds_3758880.get(1)).intValue());
+        assertEquals(0, comparison_a_3758880.getFalsePositivesText().get(postHistoryIds_3758880.get(1)).intValue());
+        assertEquals(1, comparison_a_3758880.getTrueNegativesText().get(postHistoryIds_3758880.get(1)).intValue());
+        assertEquals(0, comparison_a_3758880.getFalseNegativesText().get(postHistoryIds_3758880.get(1)).intValue());
+
+        assertEquals(2, comparison_a_3758880.getTruePositivesCode().get(postHistoryIds_3758880.get(1)).intValue());
+        assertEquals(0, comparison_a_3758880.getFalsePositivesCode().get(postHistoryIds_3758880.get(1)).intValue());
+        assertEquals(0, comparison_a_3758880.getTrueNegativesCode().get(postHistoryIds_3758880.get(1)).intValue());
+        assertEquals(0, comparison_a_3758880.getFalseNegativesCode().get(postHistoryIds_3758880.get(1)).intValue());
+
+
+        List<Integer> postHistoryIds_22037280 = manager.getPostGroundTruth().get(22037280).getPostHistoryIds();
+        MetricComparison comparison_a_22037280 = manager.getMetricComparison(22037280, "fourGramOverlap", 0.6);
+        assertEquals(3, comparison_a_22037280.getTruePositivesText().get(postHistoryIds_22037280.get(1)).intValue());
+        assertEquals(0, comparison_a_22037280.getFalsePositivesText().get(postHistoryIds_22037280.get(1)).intValue());
+        assertEquals(0, comparison_a_22037280.getTrueNegativesText().get(postHistoryIds_22037280.get(1)).intValue());
+        assertEquals(0, comparison_a_22037280.getFalseNegativesText().get(postHistoryIds_22037280.get(1)).intValue());
+
+        assertEquals(2, comparison_a_22037280.getTruePositivesCode().get(postHistoryIds_22037280.get(1)).intValue());
+        assertEquals(0, comparison_a_22037280.getFalsePositivesCode().get(postHistoryIds_22037280.get(1)).intValue());
+        assertEquals(0, comparison_a_22037280.getTrueNegativesCode().get(postHistoryIds_22037280.get(1)).intValue());
+        assertEquals(0, comparison_a_22037280.getFalseNegativesCode().get(postHistoryIds_22037280.get(1)).intValue());
+
+        manager.writeToCSV(Paths.get("testdata", "metrics comparison"));
     }
 
     @Test
