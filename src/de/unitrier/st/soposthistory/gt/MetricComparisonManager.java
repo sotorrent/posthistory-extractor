@@ -28,6 +28,7 @@ public class MetricComparisonManager {
     private Map<Integer, PostGroundTruth> postGroundTruth;
     private Map<Integer, PostVersionList> postVersionLists;
     private List<BiFunction<String, String, Double>> similarityMetrics;
+    private List<String> similarityMetricsNames;
     private List<Double> similarityThresholds;
 
     private List<MetricComparison> metricComparisons;
@@ -67,6 +68,7 @@ public class MetricComparisonManager {
         postGroundTruth = new HashMap<>();
         postVersionLists = new HashMap<>();
         similarityMetrics = new LinkedList<>();
+        similarityMetricsNames = new LinkedList<>();
         similarityThresholds = new LinkedList<>();
         metricComparisons = new LinkedList<>();
         addSimilarityMetrics();
@@ -136,13 +138,16 @@ public class MetricComparisonManager {
 
     private void prepareComparison() {
         for (int postId : postIds) {
-            for (BiFunction<String, String, Double> similarityMetric : similarityMetrics) {
-                for (double similarityThreshold : similarityThresholds) {
+            for (double similarityThreshold : similarityThresholds) {
+                for (int i=0; i<similarityMetrics.size(); i++) {
+                    BiFunction<String, String, Double> similarityMetric = similarityMetrics.get(i);
+                    String similarityMetricName = similarityMetricsNames.get(i);
                     MetricComparison metricComparison = new MetricComparison(
                             postId,
                             postVersionLists.get(postId),
                             postGroundTruth.get(postId),
                             similarityMetric,
+                            similarityMetricName,
                             similarityThreshold
                     );
                     metricComparisons.add(metricComparison);
@@ -177,8 +182,7 @@ public class MetricComparisonManager {
                 for (int postHistoryId : postHistoryIdsForPost) {
                     csvPrinter.printRecord(
                             name,
-                            // TODO: This is not correct, we need the method name (Sebastian: I'll try to find a solution)
-                            metricComparison.getSimilarityMetric().getClass().getSimpleName(),
+                            metricComparison.getSimilarityMetricName(),
                             metricComparison.getSimilarityThreshold(),
                             postId,
                             postHistoryId,
@@ -217,183 +221,317 @@ public class MetricComparisonManager {
     private void addSimilarityMetrics() {
         // ****** Edit based *****
         similarityMetrics.add(de.unitrier.st.stringsimilarity.edit.Variants::levenshtein);
+        similarityMetricsNames.add("levenshtein");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.edit.Variants::levenshteinNormalized);
+        similarityMetricsNames.add("levenshteinNormalized");
 
         similarityMetrics.add(de.unitrier.st.stringsimilarity.edit.Variants::damerauLevenshtein);
+        similarityMetricsNames.add("damerauLevenshtein");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.edit.Variants::damerauLevenshteinNormalized);
+        similarityMetricsNames.add("damerauLevenshteinNormalized");
 
         similarityMetrics.add(de.unitrier.st.stringsimilarity.edit.Variants::optimalAlignment);
+        similarityMetricsNames.add("optimalAlignment");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.edit.Variants::optimalAlignmentNormalized);
+        similarityMetricsNames.add("optimalAlignmentNormalized");
 
         similarityMetrics.add(de.unitrier.st.stringsimilarity.edit.Variants::longestCommonSubsequence);
+        similarityMetricsNames.add("longestCommonSubsequence");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.edit.Variants::longestCommonSubsequenceNormalized);
+        similarityMetricsNames.add("longestCommonSubsequenceNormalized");
 
         // ****** Fingerprint based *****
         similarityMetrics.add(de.unitrier.st.stringsimilarity.fingerprint.Variants::winnowingTwoGramJaccard);
+        similarityMetricsNames.add("winnowingTwoGramJaccard");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.fingerprint.Variants::winnowingThreeGramJaccard);
+        similarityMetricsNames.add("winnowingThreeGramJaccard");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.fingerprint.Variants::winnowingFourGramJaccard);
+        similarityMetricsNames.add("winnowingFourGramJaccard");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.fingerprint.Variants::winnowingFiveGramJaccard);
+        similarityMetricsNames.add("winnowingFiveGramJaccard");
 
         similarityMetrics.add(de.unitrier.st.stringsimilarity.fingerprint.Variants::winnowingTwoGramJaccardNormalized);
+        similarityMetricsNames.add("winnowingTwoGramJaccardNormalized");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.fingerprint.Variants::winnowingThreeGramJaccardNormalized);
+        similarityMetricsNames.add("winnowingThreeGramJaccardNormalized");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.fingerprint.Variants::winnowingFourGramJaccardNormalized);
+        similarityMetricsNames.add("winnowingFourGramJaccardNormalized");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.fingerprint.Variants::winnowingFiveGramJaccardNormalized);
+        similarityMetricsNames.add("winnowingFiveGramJaccardNormalized");
 
         similarityMetrics.add(de.unitrier.st.stringsimilarity.fingerprint.Variants::winnowingTwoGramDice);
+        similarityMetricsNames.add("winnowingTwoGramDice");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.fingerprint.Variants::winnowingThreeGramDice);
+        similarityMetricsNames.add("winnowingThreeGramDice");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.fingerprint.Variants::winnowingFourGramDice);
+        similarityMetricsNames.add("winnowingFourGramDice");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.fingerprint.Variants::winnowingFiveGramDice);
+        similarityMetricsNames.add("winnowingFiveGramDice");
 
         similarityMetrics.add(de.unitrier.st.stringsimilarity.fingerprint.Variants::winnowingTwoGramDiceNormalized);
+        similarityMetricsNames.add("winnowingTwoGramDiceNormalized");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.fingerprint.Variants::winnowingThreeGramDiceNormalized);
+        similarityMetricsNames.add("winnowingThreeGramDiceNormalized");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.fingerprint.Variants::winnowingFourGramDiceNormalized);
+        similarityMetricsNames.add("winnowingFourGramDiceNormalized");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.fingerprint.Variants::winnowingFiveGramDiceNormalized);
+        similarityMetricsNames.add("winnowingFiveGramDiceNormalized");
 
         similarityMetrics.add(de.unitrier.st.stringsimilarity.fingerprint.Variants::winnowingTwoGramOverlap);
+        similarityMetricsNames.add("winnowingTwoGramOverlap");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.fingerprint.Variants::winnowingThreeGramOverlap);
+        similarityMetricsNames.add("winnowingThreeGramOverlap");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.fingerprint.Variants::winnowingFourGramOverlap);
+        similarityMetricsNames.add("winnowingFourGramOverlap");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.fingerprint.Variants::winnowingFiveGramOverlap);
+        similarityMetricsNames.add("winnowingFiveGramOverlap");
 
         similarityMetrics.add(de.unitrier.st.stringsimilarity.fingerprint.Variants::winnowingTwoGramOverlapNormalized);
+        similarityMetricsNames.add("winnowingTwoGramOverlapNormalized");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.fingerprint.Variants::winnowingThreeGramOverlapNormalized);
+        similarityMetricsNames.add("winnowingThreeGramOverlapNormalized");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.fingerprint.Variants::winnowingFourGramOverlapNormalized);
+        similarityMetricsNames.add("winnowingFourGramOverlapNormalized");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.fingerprint.Variants::winnowingFiveGramOverlapNormalized);
+        similarityMetricsNames.add("winnowingFiveGramOverlapNormalized");
 
         similarityMetrics.add(de.unitrier.st.stringsimilarity.fingerprint.Variants::winnowingTwoGramLongestCommonSubsequence);
+        similarityMetricsNames.add("winnowingTwoGramLongestCommonSubsequence");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.fingerprint.Variants::winnowingThreeGramLongestCommonSubsequence);
+        similarityMetricsNames.add("winnowingThreeGramLongestCommonSubsequence");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.fingerprint.Variants::winnowingFourGramLongestCommonSubsequence);
+        similarityMetricsNames.add("winnowingFourGramLongestCommonSubsequence");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.fingerprint.Variants::winnowingFiveGramLongestCommonSubsequence);
+        similarityMetricsNames.add("winnowingFiveGramLongestCommonSubsequence");
 
         similarityMetrics.add(de.unitrier.st.stringsimilarity.fingerprint.Variants::winnowingTwoGramLongestCommonSubsequenceNormalized);
+        similarityMetricsNames.add("winnowingTwoGramLongestCommonSubsequenceNormalized");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.fingerprint.Variants::winnowingThreeGramLongestCommonSubsequenceNormalized);
+        similarityMetricsNames.add("winnowingThreeGramLongestCommonSubsequenceNormalized");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.fingerprint.Variants::winnowingFourGramLongestCommonSubsequenceNormalized);
+        similarityMetricsNames.add("winnowingFourGramLongestCommonSubsequenceNormalized");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.fingerprint.Variants::winnowingFiveGramLongestCommonSubsequenceNormalized);
+        similarityMetricsNames.add("winnowingFiveGramLongestCommonSubsequenceNormalized");
 
         similarityMetrics.add(de.unitrier.st.stringsimilarity.fingerprint.Variants::winnowingTwoGramOptimalAlignment);
+        similarityMetricsNames.add("winnowingTwoGramOptimalAlignment");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.fingerprint.Variants::winnowingThreeGramOptimalAlignment);
+        similarityMetricsNames.add("winnowingThreeGramOptimalAlignment");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.fingerprint.Variants::winnowingFourGramOptimalAlignment);
+        similarityMetricsNames.add("winnowingFourGramOptimalAlignment");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.fingerprint.Variants::winnowingFiveGramOptimalAlignment);
+        similarityMetricsNames.add("winnowingFiveGramOptimalAlignment");
 
         similarityMetrics.add(de.unitrier.st.stringsimilarity.fingerprint.Variants::winnowingTwoGramOptimalAlignmentNormalized);
+        similarityMetricsNames.add("winnowingTwoGramOptimalAlignmentNormalized");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.fingerprint.Variants::winnowingThreeGramOptimalAlignmentNormalized);
+        similarityMetricsNames.add("winnowingThreeGramOptimalAlignmentNormalized");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.fingerprint.Variants::winnowingFourGramOptimalAlignmentNormalized);
+        similarityMetricsNames.add("winnowingFourGramOptimalAlignmentNormalized");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.fingerprint.Variants::winnowingFiveGramOptimalAlignmentNormalized);
+        similarityMetricsNames.add("winnowingFiveGramOptimalAlignmentNormalized");
 
         // ****** Profile based *****
         similarityMetrics.add(de.unitrier.st.stringsimilarity.profile.Variants::cosineTokenNormalizedBool);
+        similarityMetricsNames.add("cosineTokenNormalizedBool");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.profile.Variants::cosineTokenNormalizedTermFrequency);
+        similarityMetricsNames.add("cosineTokenNormalizedTermFrequency");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.profile.Variants::cosineTokenNormalizedNormalizedTermFrequency);
+        similarityMetricsNames.add("cosineTokenNormalizedNormalizedTermFrequency");
 
         similarityMetrics.add(de.unitrier.st.stringsimilarity.profile.Variants::cosineTwoGramNormalizedBool);
+        similarityMetricsNames.add("cosineTwoGramNormalizedBool");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.profile.Variants::cosineThreeGramNormalizedBool);
+        similarityMetricsNames.add("cosineThreeGramNormalizedBool");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.profile.Variants::cosineFourGramNormalizedBool);
+        similarityMetricsNames.add("cosineFourGramNormalizedBool");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.profile.Variants::cosineFiveGramNormalizedBool);
+        similarityMetricsNames.add("cosineFiveGramNormalizedBool");
 
         similarityMetrics.add(de.unitrier.st.stringsimilarity.profile.Variants::cosineTwoGramNormalizedTermFrequency);
+        similarityMetricsNames.add("cosineTwoGramNormalizedTermFrequency");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.profile.Variants::cosineThreeGramNormalizedTermFrequency);
+        similarityMetricsNames.add("cosineThreeGramNormalizedTermFrequency");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.profile.Variants::cosineFourGramNormalizedTermFrequency);
+        similarityMetricsNames.add("cosineFourGramNormalizedTermFrequency");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.profile.Variants::cosineFiveGramNormalizedTermFrequency);
+        similarityMetricsNames.add("cosineFiveGramNormalizedTermFrequency");
 
         similarityMetrics.add(de.unitrier.st.stringsimilarity.profile.Variants::cosineTwoGramNormalizedNormalizedTermFrequency);
+        similarityMetricsNames.add("cosineTwoGramNormalizedNormalizedTermFrequency");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.profile.Variants::cosineThreeGramNormalizedNormalizedTermFrequency);
+        similarityMetricsNames.add("cosineThreeGramNormalizedNormalizedTermFrequency");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.profile.Variants::cosineFourGramNormalizedNormalizedTermFrequency);
+        similarityMetricsNames.add("cosineFourGramNormalizedNormalizedTermFrequency");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.profile.Variants::cosineFiveGramNormalizedNormalizedTermFrequency);
+        similarityMetricsNames.add("cosineFiveGramNormalizedNormalizedTermFrequency");
 
         similarityMetrics.add(de.unitrier.st.stringsimilarity.profile.Variants::cosineTwoShingleNormalizedBool);
+        similarityMetricsNames.add("cosineTwoShingleNormalizedBool");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.profile.Variants::cosineThreeShingleNormalizedBool);
+        similarityMetricsNames.add("cosineThreeShingleNormalizedBool");
 
         similarityMetrics.add(de.unitrier.st.stringsimilarity.profile.Variants::cosineTwoShingleNormalizedTermFrequency);
+        similarityMetricsNames.add("cosineTwoShingleNormalizedTermFrequency");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.profile.Variants::cosineThreeShingleNormalizedTermFrequency);
+        similarityMetricsNames.add("cosineThreeShingleNormalizedTermFrequency");
 
         similarityMetrics.add(de.unitrier.st.stringsimilarity.profile.Variants::cosineTwoShingleNormalizedNormalizedTermFrequency);
+        similarityMetricsNames.add("cosineTwoShingleNormalizedNormalizedTermFrequency");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.profile.Variants::cosineThreeShingleNormalizedNormalizedTermFrequency);
+        similarityMetricsNames.add("cosineThreeShingleNormalizedNormalizedTermFrequency");
 
         similarityMetrics.add(de.unitrier.st.stringsimilarity.profile.Variants::manhattanTokenNormalized);
+        similarityMetricsNames.add("manhattanTokenNormalized");
 
         similarityMetrics.add(de.unitrier.st.stringsimilarity.profile.Variants::manhattanTwoGramNormalized);
+        similarityMetricsNames.add("manhattanTwoGramNormalized");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.profile.Variants::manhattanThreeGramNormalized);
+        similarityMetricsNames.add("manhattanThreeGramNormalized");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.profile.Variants::manhattanFourGramNormalized);
+        similarityMetricsNames.add("manhattanFourGramNormalized");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.profile.Variants::manhattanFiveGramNormalized);
+        similarityMetricsNames.add("manhattanFiveGramNormalized");
 
         similarityMetrics.add(de.unitrier.st.stringsimilarity.profile.Variants::manhattanTwoShingleNormalized);
+        similarityMetricsNames.add("manhattanTwoShingleNormalized");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.profile.Variants::manhattanThreeShingleNormalized);
+        similarityMetricsNames.add("manhattanThreeShingleNormalized");
 
         // ****** Set based *****
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::tokenJaccard);
+        similarityMetricsNames.add("tokenJaccard");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::tokenJaccardNormalized);
+        similarityMetricsNames.add("tokenJaccardNormalized");
 
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::twoGramJaccard);
+        similarityMetricsNames.add("twoGramJaccard");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::threeGramJaccard);
+        similarityMetricsNames.add("threeGramJaccard");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::fourGramJaccard);
+        similarityMetricsNames.add("fourGramJaccard");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::fiveGramJaccard);
+        similarityMetricsNames.add("fiveGramJaccard");
 
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::twoGramJaccardNormalized);
+        similarityMetricsNames.add("twoGramJaccardNormalized");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::threeGramJaccardNormalized);
+        similarityMetricsNames.add("threeGramJaccardNormalized");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::fourGramJaccardNormalized);
+        similarityMetricsNames.add("fourGramJaccardNormalized");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::fiveGramJaccardNormalized);
+        similarityMetricsNames.add("fiveGramJaccardNormalized");
 
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::twoGramJaccardNormalizedPadding);
+        similarityMetricsNames.add("twoGramJaccardNormalizedPadding");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::threeGramJaccardNormalizedPadding);
+        similarityMetricsNames.add("threeGramJaccardNormalizedPadding");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::fourGramJaccardNormalizedPadding);
+        similarityMetricsNames.add("fourGramJaccardNormalizedPadding");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::fiveGramJaccardNormalizedPadding);
+        similarityMetricsNames.add("fiveGramJaccardNormalizedPadding");
 
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::twoShingleJaccard);
+        similarityMetricsNames.add("twoShingleJaccard");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::threeShingleJaccard);
+        similarityMetricsNames.add("threeShingleJaccard");
 
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::twoShingleJaccardNormalized);
+        similarityMetricsNames.add("twoShingleJaccardNormalized");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::threeShingleJaccardNormalized);
+        similarityMetricsNames.add("threeShingleJaccardNormalized");
 
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::tokenDice);
+        similarityMetricsNames.add("tokenDice");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::tokenDiceNormalized);
+        similarityMetricsNames.add("tokenDiceNormalized");
 
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::twoGramDice);
+        similarityMetricsNames.add("twoGramDice");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::threeGramDice);
+        similarityMetricsNames.add("threeGramDice");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::fourGramDice);
+        similarityMetricsNames.add("fourGramDice");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::fiveGramDice);
+        similarityMetricsNames.add("fiveGramDice");
 
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::twoGramDiceNormalized);
+        similarityMetricsNames.add("twoGramDiceNormalized");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::threeGramDiceNormalized);
+        similarityMetricsNames.add("threeGramDiceNormalized");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::fourGramDiceNormalized);
+        similarityMetricsNames.add("fourGramDiceNormalized");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::fiveGramDiceNormalized);
+        similarityMetricsNames.add("fiveGramDiceNormalized");
 
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::twoGramDiceNormalizedPadding);
+        similarityMetricsNames.add("twoGramDiceNormalizedPadding");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::threeGramDiceNormalizedPadding);
+        similarityMetricsNames.add("threeGramDiceNormalizedPadding");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::fourGramDiceNormalizedPadding);
+        similarityMetricsNames.add("fourGramDiceNormalizedPadding");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::fiveGramDiceNormalizedPadding);
+        similarityMetricsNames.add("fiveGramDiceNormalizedPadding");
 
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::twoShingleDice);
+        similarityMetricsNames.add("twoShingleDice");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::threeShingleDice);
+        similarityMetricsNames.add("threeShingleDice");
 
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::twoShingleDiceNormalized);
+        similarityMetricsNames.add("twoShingleDiceNormalized");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::threeShingleDiceNormalized);
+        similarityMetricsNames.add("threeShingleDiceNormalized");
 
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::tokenOverlap);
+        similarityMetricsNames.add("tokenOverlap");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::tokenOverlapNormalized);
+        similarityMetricsNames.add("tokenOverlapNormalized");
 
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::twoGramOverlap);
+        similarityMetricsNames.add("twoGramOverlap");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::threeGramOverlap);
+        similarityMetricsNames.add("threeGramOverlap");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::fourGramOverlap);
+        similarityMetricsNames.add("fourGramOverlap");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::fiveGramOverlap);
+        similarityMetricsNames.add("fiveGramOverlap");
 
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::twoGramOverlapNormalized);
+        similarityMetricsNames.add("twoGramOverlapNormalized");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::threeGramOverlapNormalized);
+        similarityMetricsNames.add("threeGramOverlapNormalized");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::fourGramOverlapNormalized);
+        similarityMetricsNames.add("fourGramOverlapNormalized");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::fiveGramOverlapNormalized);
+        similarityMetricsNames.add("fiveGramOverlapNormalized");
 
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::twoGramOverlapNormalizedPadding);
+        similarityMetricsNames.add("twoGramOverlapNormalizedPadding");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::threeGramOverlapNormalizedPadding);
+        similarityMetricsNames.add("threeGramOverlapNormalizedPadding");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::fourGramOverlapNormalizedPadding);
+        similarityMetricsNames.add("fourGramOverlapNormalizedPadding");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::fiveGramOverlapNormalizedPadding);
+        similarityMetricsNames.add("fiveGramOverlapNormalizedPadding");
 
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::twoShingleOverlap);
+        similarityMetricsNames.add("twoShingleOverlap");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::threeShingleOverlap);
+        similarityMetricsNames.add("threeShingleOverlap");
 
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::twoShingleOverlapNormalized);
+        similarityMetricsNames.add("twoShingleOverlapNormalized");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::threeShingleOverlapNormalized);
+        similarityMetricsNames.add("threeShingleOverlapNormalized");
 
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::twoGramSimilarityKondrak05);
+        similarityMetricsNames.add("twoGramSimilarityKondrak05");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::threeGramSimilarityKondrak05);
+        similarityMetricsNames.add("threeGramSimilarityKondrak05");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::fourGramSimilarityKondrak05);
+        similarityMetricsNames.add("fourGramSimilarityKondrak05");
         similarityMetrics.add(de.unitrier.st.stringsimilarity.set.Variants::fiveGramSimilarityKondrak05);
+        similarityMetricsNames.add("fiveGramSimilarityKondrak05");
     }
 }
