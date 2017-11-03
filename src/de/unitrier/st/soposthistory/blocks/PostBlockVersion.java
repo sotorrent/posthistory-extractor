@@ -72,18 +72,25 @@ public abstract class PostBlockVersion {
     private Map<PostBlockVersion, Double> predecessorSimilarities;
     private double maxSimilarity;
     private double similarityThreshold;
-    private boolean processed; // for extraction of PostBlockLifeSpan
+    private boolean lifeSpanExtracted; // for extraction of PostBlockLifeSpan
 
     public PostBlockVersion() {
         // database
+        this.postVersionId = null;
+        this.localId = null;
         this.postId = null;
         this.postHistoryId = null;
-        this.localId = null;
         this.content = null;
         this.length = 0;
         this.lineCount = 0;
+        this.content = null;
+        this.length = 0;
+        this.lineCount = 0;
+        // internal
+        this.contentBuilder = new StringBuilder();
+        this.lineDiff = new LineDiff();
         // database + internal
-        this.reset();
+        this.resetVersionHistory();
     }
 
     public PostBlockVersion(int postId, int postHistoryId) {
@@ -93,13 +100,8 @@ public abstract class PostBlockVersion {
     }
 
     // reset data set in PostVersionList.processVersionHistory (needed for metrics comparison)
-    public void reset() {
-        // reset everything except for post id, post history id, local id, content, length, and line count
+    public void resetVersionHistory() {
         // database
-        this.postVersionId = null;
-        this.content = null;
-        this.length = 0;
-        this.lineCount = 0;
         this.rootPostBlockId = null;
         this.predPostBlockId = null;
         this.predEqual = null;
@@ -107,8 +109,6 @@ public abstract class PostBlockVersion {
         this.predCount = 0;
         this.succCount = 0;
         // internal
-        this.contentBuilder = new StringBuilder();
-        this.lineDiff = new LineDiff();
         this.pred = null;
         this.succ = null;
         this.rootPostBlock = null;
@@ -116,9 +116,9 @@ public abstract class PostBlockVersion {
         this.isAvailable = true;
         this.matchingPredecessors = new LinkedList<>();
         this.predecessorSimilarities = new HashMap<>();
-        this.maxSimilarity = -1;
-        this.similarityThreshold = -1;
-        this.processed = false;
+        this.maxSimilarity = -1.0;
+        this.similarityThreshold = -1.0;
+        this.lifeSpanExtracted = false;
     }
 
     @Id
@@ -399,12 +399,12 @@ public abstract class PostBlockVersion {
     }
 
     @Transient
-    public boolean isProcessed() {
-        return processed;
+    public boolean isLifeSpanExtracted() {
+        return lifeSpanExtracted;
     }
 
-    public void setProcessed(boolean processed) {
-        this.processed = processed;
+    public void setLifeSpanExtracted(boolean lifeSpanExtracted) {
+        this.lifeSpanExtracted = lifeSpanExtracted;
     }
 
     public void append(String line) {
@@ -490,12 +490,17 @@ public abstract class PostBlockVersion {
     }
 
     @Transient
-    protected double getSimilarityThreshold() {
+    public double getSimilarityThreshold() {
         return similarityThreshold;
     }
 
     protected void setSimilarityThreshold(double similarityThreshold) {
         this.similarityThreshold = similarityThreshold;
+    }
+
+    @Transient
+    public double getMaxSimilarity() {
+        return maxSimilarity;
     }
 
     public <T extends PostBlockVersion> List<PostBlockVersion> findMatchingPredecessors(List<T> previousVersionPostBlocks,

@@ -723,8 +723,8 @@ class PostVersionHistoryTest {
         // the post blocks have been extracted
         assertEquals(10, a_3758880.getPostBlockLifeSpans().size());
 
-        // reset version list
-        a_3758880.reset();
+        // resetPostBlockVersionHistory version list
+        a_3758880.resetPostBlockVersionHistory();
 
         // there are still 11 versions of this post
         assertEquals(11, a_3758880.size());

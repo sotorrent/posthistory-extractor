@@ -88,7 +88,7 @@ public class MetricComparison {
         stopWatch.stop();
         runtimeText = stopWatch.getTime();
 
-        postVersionList.reset();
+        postVersionList.resetPostBlockVersionHistory();
 
         stopWatch.reset();
         stopWatch.start();
