@@ -88,9 +88,8 @@ public class MetricComparison {
             } catch (InputTooShortException e) {
                 inputTooShort = true;
             }
-
             stopWatch.stop();
-            runtimeText = stopWatch.getTime();
+            getResultsText();
 
             postVersionList.resetPostBlockVersionHistory();
 
@@ -102,13 +101,12 @@ public class MetricComparison {
                 inputTooShort = true;
             }
             stopWatch.stop();
-            runtimeCode = stopWatch.getTime();
+            getResultsCode();
         }
-
-        getResults();
     }
 
-    private void getResults() {
+    private void getResultsText() {
+        runtimeText = stopWatch.getTime();
         for (Integer postHistoryId : postHistoryIds) {
             // text
             Integer truePositivesTextCount = null;
@@ -128,12 +126,16 @@ public class MetricComparison {
                 falseNegativesTextCount = PostBlockConnection.difference(postBlockConnectionsTextGT, postBlockConnectionsText).size();
             }
 
-            falseNegativesText.put(postHistoryId, falseNegativesTextCount);
             truePositivesText.put(postHistoryId, truePositivesTextCount);
             falsePositivesText.put(postHistoryId, falsePositivesTextCount);
             trueNegativesText.put(postHistoryId, trueNegativesTextCount);
+            falseNegativesText.put(postHistoryId, falseNegativesTextCount);
+        }
+    }
 
-            // Code
+    private void getResultsCode() {
+        runtimeCode = stopWatch.getTime();
+        for (Integer postHistoryId : postHistoryIds) {
             Integer truePositivesCodeCount = null;
             Integer falsePositivesCodeCount = null;
             Integer trueNegativesCodeCount = null;
@@ -151,10 +153,10 @@ public class MetricComparison {
                 falseNegativesCodeCount = PostBlockConnection.difference(postBlockConnectionsCodeGT, postBlockConnectionsCode).size();
             }
 
-            falseNegativesCode.put(postHistoryId, falseNegativesCodeCount);
             truePositivesCode.put(postHistoryId, truePositivesCodeCount);
             falsePositivesCode.put(postHistoryId, falsePositivesCodeCount);
             trueNegativesCode.put(postHistoryId, trueNegativesCodeCount);
+            falseNegativesCode.put(postHistoryId, falseNegativesCodeCount);
         }
     }
 
