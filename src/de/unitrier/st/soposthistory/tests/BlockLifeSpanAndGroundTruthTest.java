@@ -262,12 +262,12 @@ class BlockLifeSpanAndGroundTruthTest {
 
         assertEquals(new Integer(1), comparison_a_3758880.getTruePositivesText().get(version_2_id));
         assertEquals(new Integer(0), comparison_a_3758880.getFalsePositivesText().get(version_2_id));
-        assertEquals(new Integer(4), comparison_a_3758880.getTrueNegativesText().get(version_2_id));
+        assertEquals(new Integer(5), comparison_a_3758880.getTrueNegativesText().get(version_2_id));
         assertEquals(new Integer(0), comparison_a_3758880.getFalseNegativesText().get(version_2_id));
 
         assertEquals(new Integer(2), comparison_a_3758880.getTruePositivesCode().get(version_2_id));
         assertEquals(new Integer(0), comparison_a_3758880.getFalsePositivesCode().get(version_2_id));
-        assertEquals(new Integer(2), comparison_a_3758880.getTrueNegativesCode().get(version_2_id));
+        assertEquals(new Integer(4), comparison_a_3758880.getTrueNegativesCode().get(version_2_id));
         assertEquals(new Integer(0), comparison_a_3758880.getFalseNegativesCode().get(version_2_id));
 
 
@@ -277,12 +277,12 @@ class BlockLifeSpanAndGroundTruthTest {
 
         assertEquals(new Integer(3), comparison_a_22037280.getTruePositivesText().get(version_2_id));
         assertEquals(new Integer(0), comparison_a_22037280.getFalsePositivesText().get(version_2_id));
-        assertEquals(new Integer(3), comparison_a_22037280.getTrueNegativesText().get(version_2_id));
+        assertEquals(new Integer(6), comparison_a_22037280.getTrueNegativesText().get(version_2_id));
         assertEquals(new Integer(0), comparison_a_22037280.getFalseNegativesText().get(version_2_id));
 
         assertEquals(new Integer(2), comparison_a_22037280.getTruePositivesCode().get(version_2_id));
         assertEquals(new Integer(0), comparison_a_22037280.getFalsePositivesCode().get(version_2_id));
-        assertEquals(new Integer(0), comparison_a_22037280.getTrueNegativesCode().get(version_2_id));
+        assertEquals(new Integer(2), comparison_a_22037280.getTrueNegativesCode().get(version_2_id));
         assertEquals(new Integer(0), comparison_a_22037280.getFalseNegativesCode().get(version_2_id));
 
         manager.writeToCSV(outputDir);
