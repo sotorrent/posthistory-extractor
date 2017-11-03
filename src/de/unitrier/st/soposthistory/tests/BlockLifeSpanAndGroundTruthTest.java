@@ -7,6 +7,7 @@ import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
 import de.unitrier.st.soposthistory.gt.*;
 import de.unitrier.st.soposthistory.version.PostVersion;
 import de.unitrier.st.soposthistory.version.PostVersionList;
+import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -193,6 +194,21 @@ class BlockLifeSpanAndGroundTruthTest {
     }
 
     @Test
+    void testProcessVersionHistoryWithIntermediateResetting() {
+        int postId = 22037280;
+        PostVersionList a_22037280 = PostVersionList.readFromCSV(pathToPostHistory, postId, 2, false);
+
+        a_22037280.processVersionHistory(TextBlockVersion.getPostBlockTypeIdFilter());
+        a_22037280.reset();
+        try {
+            a_22037280.processVersionHistory(CodeBlockVersion.getPostBlockTypeIdFilter());
+        }catch (NullPointerException e){
+            Assert.fail();
+        }
+    }
+
+
+    @Test
     void testMetricComparisonManager() {
         MetricComparisonManager manager = MetricComparisonManager.create(
                 "TestManager", pathToPostIdList, pathToPostHistory, pathToGroundTruth
@@ -207,6 +223,7 @@ class BlockLifeSpanAndGroundTruthTest {
 
         List<Integer> postHistoryIds_3758880 = manager.getPostGroundTruth().get(3758880).getPostHistoryIds();
         MetricComparison comparison_a_3758880 = manager.getMetricComparison(3758880, "fourGramOverlap", 0.6);
+
 
         assertEquals(new Integer(1), comparison_a_3758880.getTruePositivesText().get(postHistoryIds_3758880.get(1)));
         assertEquals(new Integer(0), comparison_a_3758880.getFalsePositivesText().get(postHistoryIds_3758880.get(1)));
@@ -230,6 +247,7 @@ class BlockLifeSpanAndGroundTruthTest {
         assertEquals(new Integer(0), comparison_a_22037280.getFalsePositivesCode().get(postHistoryIds_22037280.get(1)));
         assertEquals(new Integer(0), comparison_a_22037280.getTrueNegativesCode().get(postHistoryIds_22037280.get(1)));
         assertEquals(new Integer(0), comparison_a_22037280.getFalseNegativesCode().get(postHistoryIds_22037280.get(1)));
+
 
         manager.writeToCSV(Paths.get("testdata", "metrics comparison"));
     }
