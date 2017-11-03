@@ -47,8 +47,7 @@ public class MetricComparisonManager {
                 .withDelimiter(';')
                 .withQuote('"')
                 .withQuoteMode(QuoteMode.MINIMAL)
-                .withEscape('\\')
-                .withFirstRecordAsHeader();
+                .withEscape('\\');
 
         // configure CSV format for metric comparison results
         csvFormatMetricComparison = CSVFormat.DEFAULT
@@ -57,11 +56,10 @@ public class MetricComparisonManager {
                 .withQuote('"')
                 .withQuoteMode(QuoteMode.MINIMAL)
                 .withEscape('\\')
-                .withNullString("null")
-                .withFirstRecordAsHeader();
+                .withNullString("null");
     }
 
-    private MetricComparisonManager(String name) {
+    private MetricComparisonManager(String name, boolean addDefaultMetricsAndThresholds) {
         this.name = name;
         postIds = new HashSet<>();
         postHistoryIds = new HashMap<>();
@@ -71,22 +69,26 @@ public class MetricComparisonManager {
         similarityMetricsNames = new LinkedList<>();
         similarityThresholds = new LinkedList<>();
         metricComparisons = new LinkedList<>();
-        addSimilarityMetrics();
-        addSimilarityThresholds();
+        if (addDefaultMetricsAndThresholds) {
+            addDefaultSimilarityMetrics();
+            addDefaultSimilarityThresholds();
+        }
     }
 
     public static MetricComparisonManager create(String name,
                                                  Path postIdPath,
                                                  Path postHistoryPath,
-                                                 Path groundTruthPath) {
+                                                 Path groundTruthPath,
+                                                 boolean addDefaultMetricsAndThresholds) {
         // ensure that input file exists (directories are tested in read methods)
         if (!Files.exists(postIdPath) || Files.isDirectory(postIdPath)) {
             throw new IllegalArgumentException("File not found: " + postIdPath);
         }
 
-        MetricComparisonManager manager = new MetricComparisonManager(name);
+        MetricComparisonManager manager = new MetricComparisonManager(name, addDefaultMetricsAndThresholds);
 
-        try (CSVParser csvParser = new CSVParser(new FileReader(postIdPath.toFile()), csvFormatPostIds)) {
+        try (CSVParser csvParser = new CSVParser(new FileReader(postIdPath.toFile()),
+                csvFormatPostIds.withFirstRecordAsHeader())) {
             logger.info("Reading PostIds from CSV file " + postIdPath.toFile().toString() + " ...");
 
             for (CSVRecord currentRecord : csvParser) {
@@ -212,13 +214,22 @@ public class MetricComparisonManager {
         return postVersionLists;
     }
 
-    private void addSimilarityThresholds() {
+    public void addSimilarityThreshold(double threshold) {
+        similarityThresholds.add(threshold);
+    }
+
+    private void addDefaultSimilarityThresholds() {
         for (double threshold=0.3; threshold<0.99; threshold+=0.1) {
             similarityThresholds.add(threshold);
         }
     }
 
-    private void addSimilarityMetrics() {
+    public void addSimilarityMetric(String name, BiFunction<String, String, Double> metric) {
+        similarityMetricsNames.add(name);
+        similarityMetrics.add(metric);
+    }
+
+    private void addDefaultSimilarityMetrics() {
         // ****** Edit based *****
         similarityMetrics.add(de.unitrier.st.stringsimilarity.edit.Variants::levenshtein);
         similarityMetricsNames.add("levenshtein");

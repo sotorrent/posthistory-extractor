@@ -241,17 +241,22 @@ class BlockLifeSpanAndGroundTruthTest {
     @Test
     void testMetricComparisonManager() {
         MetricComparisonManager manager = MetricComparisonManager.create(
-                "TestManager", pathToPostIdList, pathToPostHistory, pathToGroundTruth
+                "TestManager", pathToPostIdList, pathToPostHistory, pathToGroundTruth, false
         );
 
         assertEquals(manager.getPostVersionLists().size(), manager.getPostGroundTruth().size());
         assertThat(manager.getPostVersionLists().keySet(), is(manager.getPostGroundTruth().keySet()));
 
+        manager.addSimilarityMetric(
+                "fourGramOverlap",
+                de.unitrier.st.stringsimilarity.set.Variants::fourGramOverlap
+        );
+        manager.addSimilarityThreshold(0.6);
+
         manager.compareMetrics();
 
         List<Integer> postHistoryIds_3758880 = manager.getPostGroundTruth().get(3758880).getPostHistoryIds();
         MetricComparison comparison_a_3758880 = manager.getMetricComparison(3758880, "fourGramOverlap", 0.6);
-
 
         assertEquals(new Integer(1), comparison_a_3758880.getTruePositivesText().get(postHistoryIds_3758880.get(1)));
         assertEquals(new Integer(0), comparison_a_3758880.getFalsePositivesText().get(postHistoryIds_3758880.get(1)));
