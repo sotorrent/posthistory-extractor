@@ -63,14 +63,11 @@ public class PostVersionList extends LinkedList<PostVersion> {
         this.diffs = new PostBlockDiffList();
     }
 
-    public void reset() {
-        this.sorted = false;
+    // resetPostBlockVersionHistory data set in PostVersionList.processVersionHistory (needed for metrics comparison)
+    public void resetPostBlockVersionHistory() {
         this.diffs = new PostBlockDiffList();
         for (PostVersion currentVersion : this) {
-            for (PostBlockVersion currentPostBlockVersion : currentVersion.getPostBlocks()) {
-                currentPostBlockVersion.reset();
-            }
-            currentVersion.reset();
+            currentVersion.resetPostBlockVersionHistory();
         }
     }
 
@@ -398,7 +395,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
                 }
 
                 // skip blocks that have previously been processed
-                if (currentPostBlockVersion.isProcessed()) {
+                if (currentPostBlockVersion.isLifeSpanExtracted()) {
                     continue;
                 }
 
@@ -406,10 +403,10 @@ public class PostVersionList extends LinkedList<PostVersion> {
             }
         }
 
-        // reset flag "processed"
+        // resetPostBlockVersionHistory flag "processed"
         for (PostVersion currentPostVersion : this) {
             for (PostBlockVersion currentPostBlockVersion : currentPostVersion.getPostBlocks()) {
-                currentPostBlockVersion.setProcessed(false);
+                currentPostBlockVersion.setLifeSpanExtracted(false);
             }
         }
 

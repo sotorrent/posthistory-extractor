@@ -19,9 +19,7 @@ import java.util.Set;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.junit.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class BlockLifeSpanAndGroundTruthTest {
     private static Path pathToPostIdList = Paths.get("testdata/postIds.csv");
@@ -199,11 +197,46 @@ class BlockLifeSpanAndGroundTruthTest {
         int postId = 22037280;
         PostVersionList a_22037280 = PostVersionList.readFromCSV(pathToPostHistory, postId, 2, false);
 
-        a_22037280.processVersionHistory(TextBlockVersion.getPostBlockTypeIdFilter());
-        a_22037280.resetVersionHistory();
-        a_22037280.processVersionHistory(CodeBlockVersion.getPostBlockTypeIdFilter());
+        testPostBlockVersionHistoryReset(a_22037280);
+        a_22037280.processVersionHistory();
+        testPostBlockVersionHistoryProcessed(a_22037280);
+        a_22037280.resetPostBlockVersionHistory();
+        testPostBlockVersionHistoryReset(a_22037280);
+        a_22037280.processVersionHistory();
+        testPostBlockVersionHistoryProcessed(a_22037280);
     }
 
+    private void testPostBlockVersionHistoryReset(PostVersionList postVersionList) {
+        for (PostVersion currentPostVersion : postVersionList) {
+            for (PostBlockVersion currentPostBlockVersion : currentPostVersion.getPostBlocks()) {
+                assertNull(currentPostBlockVersion.getRootPostBlockId());
+                assertNull(currentPostBlockVersion.getPredPostBlockId());
+                assertNull(currentPostBlockVersion.getPredEqual());
+                assertNull(currentPostBlockVersion.getPredSimilarity());
+                assertEquals(0, currentPostBlockVersion.getPredCount());
+                assertEquals(0, currentPostBlockVersion.getSuccCount());
+                assertNull(currentPostBlockVersion.getPred());
+                assertNull(currentPostBlockVersion.getSucc());
+                assertNull(currentPostBlockVersion.getRootPostBlock());
+                assertNull(currentPostBlockVersion.getPredDiff());
+                assertTrue(currentPostBlockVersion.isAvailable());
+                assertEquals(0, currentPostBlockVersion.getMatchingPredecessors().size());
+                assertEquals(0, currentPostBlockVersion.getPredecessorSimilarities().size());
+                assertEquals(-1.0, currentPostBlockVersion.getMaxSimilarity());
+                assertEquals(-1.0, currentPostBlockVersion.getSimilarityThreshold());
+                assertFalse(currentPostBlockVersion.isLifeSpanExtracted());
+            }
+        }
+    }
+
+    private void testPostBlockVersionHistoryProcessed(PostVersionList postVersionList) {
+        for (PostVersion currentPostVersion : postVersionList) {
+            for (PostBlockVersion currentPostBlockVersion : currentPostVersion.getPostBlocks()) {
+                assertNotNull(currentPostBlockVersion.getRootPostBlockId());
+                assertNotNull(currentPostBlockVersion.getRootPostBlock());
+            }
+        }
+    }
 
     @Test
     void testMetricComparisonManager() {
@@ -214,9 +247,7 @@ class BlockLifeSpanAndGroundTruthTest {
         assertEquals(manager.getPostVersionLists().size(), manager.getPostGroundTruth().size());
         assertThat(manager.getPostVersionLists().keySet(), is(manager.getPostGroundTruth().keySet()));
 
-        // TODO: Lorik: add tests
         manager.compareMetrics();
-
 
         List<Integer> postHistoryIds_3758880 = manager.getPostGroundTruth().get(3758880).getPostHistoryIds();
         MetricComparison comparison_a_3758880 = manager.getMetricComparison(3758880, "fourGramOverlap", 0.6);

@@ -36,10 +36,14 @@ public class PostVersion {
     public PostVersion() {
         // database
         this.postId = null;
-        this.postTypeId = null;
         this.postHistoryId = null;
-        // database + internal
-        this.reset();
+        this.postTypeId = null;
+        this.predPostHistoryId = null;
+        this.succPostHistoryId = null;
+        // internal
+        this.pred = null;
+        this.succ = null;
+        this.urls = new LinkedList<>();
     }
 
     public PostVersion(Integer postId, Integer postHistoryId, Integer postTypeId) {
@@ -48,17 +52,6 @@ public class PostVersion {
         this.postHistoryId = postHistoryId;
         this.postTypeId = postTypeId;
         this.postBlocks = new LinkedList<>();
-    }
-
-    // reset data set in PostVersionList.processVersionHistory (needed for metrics comparison)
-    public void reset() {
-        // reset everything except for post id, post history id, post type id, and post blocks
-        this.predPostHistoryId = null;
-        this.succPostHistoryId = null;
-        // internal
-        this.urls = new LinkedList<>();
-        this.pred = null;
-        this.succ = null;
     }
 
     @Id
@@ -245,6 +238,13 @@ public class PostVersion {
         }
 
         return matchedPredecessors;
+    }
+
+    // reset data set in PostVersionList.processVersionHistory (needed for metrics comparison)
+    public void resetPostBlockVersionHistory() {
+        for (PostBlockVersion currentPostBlockVersion : postBlocks) {
+            currentPostBlockVersion.resetVersionHistory();
+        }
     }
 
     public Set<PostBlockConnection> getConnections() {

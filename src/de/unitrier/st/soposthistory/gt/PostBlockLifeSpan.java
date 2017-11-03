@@ -16,7 +16,7 @@ public class PostBlockLifeSpan extends LinkedList<PostBlockLifeSpanVersion> {
     }
 
     public static PostBlockLifeSpan fromPostBlockVersion(PostBlockVersion firstVersion) {
-        if (firstVersion.isProcessed()) {
+        if (firstVersion.isLifeSpanExtracted()) {
             throw new IllegalArgumentException("PostBlockVersion has already been processed: " + firstVersion);
         }
 
@@ -50,7 +50,7 @@ public class PostBlockLifeSpan extends LinkedList<PostBlockLifeSpanVersion> {
             }
 
             lifeSpan.add(newLifeSpanVersion);
-            currentVersion.setProcessed(true);
+            currentVersion.setLifeSpanExtracted(true);
             currentVersion = currentVersion.getSucc();
         }
 
