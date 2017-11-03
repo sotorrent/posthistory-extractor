@@ -83,8 +83,19 @@ public class MetricComparison {
             stopWatch.start();
             try {
                 postVersionList.processVersionHistory(config, TextBlockVersion.getPostBlockTypeIdFilter());
+
+                for (Integer postHistoryId : postHistoryIds) {
+                    Set<PostBlockConnection> postBlockConnections_text = postVersionList.getPostVersion(postHistoryId).getConnections(TextBlockVersion.getPostBlockTypeIdFilter());
+                    Set<PostBlockConnection> postBlockConnections_text_gt = postGroundTruth.getConnections(postHistoryId, TextBlockVersion.getPostBlockTypeIdFilter());
+
+                    falseNegativesText.put(postHistoryId, PostBlockConnection.difference(postBlockConnections_text_gt, postBlockConnections_text).size());
+                    truePositivesText.put(postHistoryId, PostBlockConnection.intersection(postBlockConnections_text_gt, postBlockConnections_text).size());
+                    falsePositivesText.put(postHistoryId, PostBlockConnection.difference(postBlockConnections_text, postBlockConnections_text_gt).size());
+                    trueNegativesText.put(postHistoryId, postGroundTruth.getPossibleConnections(postHistoryId) - (PostBlockConnection.union(postBlockConnections_text_gt, postBlockConnections_text).size()));
+                }
+
             } catch (InputTooShortException e) {
-                // TODO: Lorik: handle this case, merge start() and getResults()?
+                setAllResultsNull();
             }
 
             stopWatch.stop();
@@ -96,52 +107,33 @@ public class MetricComparison {
             stopWatch.start();
             try {
                 postVersionList.processVersionHistory(config, CodeBlockVersion.getPostBlockTypeIdFilter());
+
+                for (Integer postHistoryId : postHistoryIds) {
+                    Set<PostBlockConnection> postBlockConnections_code = postVersionList.getPostVersion(postHistoryId).getConnections(CodeBlockVersion.getPostBlockTypeIdFilter());
+                    Set<PostBlockConnection> postBlockConnections_code_gt = postGroundTruth.getConnections(postHistoryId, CodeBlockVersion.getPostBlockTypeIdFilter());
+
+                    falseNegativesCode.put(postHistoryId, PostBlockConnection.difference(postBlockConnections_code_gt, postBlockConnections_code).size());
+                    truePositivesCode.put(postHistoryId, PostBlockConnection.intersection(postBlockConnections_code_gt, postBlockConnections_code).size());
+                    falsePositivesCode.put(postHistoryId, PostBlockConnection.difference(postBlockConnections_code, postBlockConnections_code_gt).size());
+                    trueNegativesCode.put(postHistoryId, postGroundTruth.getPossibleConnections(postHistoryId) - (PostBlockConnection.union(postBlockConnections_code_gt, postBlockConnections_code).size()));
+                }
             } catch (InputTooShortException e) {
-                // TODO: Lorik: handle this case, merge start() and getResults()?
+                setAllResultsNull();
             }
             stopWatch.stop();
             runtimeCode = stopWatch.getTime();
         }
-
-        getResults();
     }
 
-    private void getResults() {
-        // TODO: Lorik
+    private void setAllResultsNull(){
         for(Integer postHistoryId : postHistoryIds){
-            // text
-            try {
-                Set<PostBlockConnection> postBlockConnections_text = postVersionList.getPostVersion(postHistoryId).getConnections(TextBlockVersion.getPostBlockTypeIdFilter());
-                Set<PostBlockConnection> postBlockConnections_text_gt = postGroundTruth.getConnections(postHistoryId, TextBlockVersion.getPostBlockTypeIdFilter());
-
-                falseNegativesText.put(postHistoryId, PostBlockConnection.difference(postBlockConnections_text_gt, postBlockConnections_text).size());
-                truePositivesText.put(postHistoryId, PostBlockConnection.intersection(postBlockConnections_text_gt, postBlockConnections_text).size());
-                falsePositivesText.put(postHistoryId, PostBlockConnection.difference(postBlockConnections_text, postBlockConnections_text_gt).size());
-                trueNegativesText.put(postHistoryId, postGroundTruth.getPossibleConnections(postHistoryId) - (PostBlockConnection.union(postBlockConnections_text_gt, postBlockConnections_text).size()));
-            }catch(NullPointerException e){
-                falseNegativesText.put(postHistoryId, null);
-                truePositivesText.put(postHistoryId, null);
-                falsePositivesText.put(postHistoryId, null);
-                trueNegativesText.put(postHistoryId, null);
-            }
-
-            // code
-            try {
-                Set<PostBlockConnection> postBlockConnections_code = postVersionList.getPostVersion(postHistoryId).getConnections(CodeBlockVersion.getPostBlockTypeIdFilter());
-                Set<PostBlockConnection> postBlockConnections_code_gt = postGroundTruth.getConnections(postHistoryId, CodeBlockVersion.getPostBlockTypeIdFilter());
-
-                falseNegativesCode.put(postHistoryId, PostBlockConnection.difference(postBlockConnections_code_gt, postBlockConnections_code).size());
-                truePositivesCode.put(postHistoryId, PostBlockConnection.intersection(postBlockConnections_code_gt, postBlockConnections_code).size());
-                falsePositivesCode.put(postHistoryId, PostBlockConnection.difference(postBlockConnections_code, postBlockConnections_code_gt).size());
-                trueNegativesCode.put(postHistoryId, postGroundTruth.getPossibleConnections(postHistoryId) - (PostBlockConnection.union(postBlockConnections_code_gt, postBlockConnections_code).size()));
-            }catch(NullPointerException e){
-                falseNegativesCode.put(postHistoryId, null);
-                truePositivesCode.put(postHistoryId, null);
-                falsePositivesCode.put(postHistoryId, null);
-                trueNegativesCode.put(postHistoryId, null);
-            }
+            falseNegativesCode.put(postHistoryId, null);
+            truePositivesCode.put(postHistoryId, null);
+            falsePositivesCode.put(postHistoryId, null);
+            trueNegativesCode.put(postHistoryId, null);
         }
     }
+
 
     public BiFunction<String, String, Double> getSimilarityMetric() {
         return similarityMetric;
