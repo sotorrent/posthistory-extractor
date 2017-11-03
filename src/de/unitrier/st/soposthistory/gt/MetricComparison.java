@@ -23,6 +23,7 @@ public class MetricComparison {
     final private String similarityMetricName;
     final private double similarityThreshold;
     final private StopWatch stopWatch;
+    private boolean inputTooShort;
 
     // text
     private long runtimeText;
@@ -56,6 +57,7 @@ public class MetricComparison {
         this.similarityMetric = similarityMetric;
         this.similarityMetricName = similarityMetricName;
         this.similarityThreshold = similarityThreshold;
+        this.inputTooShort = false;
         // text
         this.truePositivesText = new HashMap<>();
         this.falsePositivesText = new HashMap<>();
@@ -84,7 +86,7 @@ public class MetricComparison {
             try {
                 postVersionList.processVersionHistory(config, TextBlockVersion.getPostBlockTypeIdFilter());
             } catch (InputTooShortException e) {
-                // TODO: Lorik: handle this case, merge start() and getResults()?
+                inputTooShort = true;
             }
 
             stopWatch.stop();
@@ -97,7 +99,7 @@ public class MetricComparison {
             try {
                 postVersionList.processVersionHistory(config, CodeBlockVersion.getPostBlockTypeIdFilter());
             } catch (InputTooShortException e) {
-                // TODO: Lorik: handle this case, merge start() and getResults()?
+                inputTooShort = true;
             }
             stopWatch.stop();
             runtimeCode = stopWatch.getTime();
@@ -107,39 +109,52 @@ public class MetricComparison {
     }
 
     private void getResults() {
-        // TODO: Lorik
-        for(Integer postHistoryId : postHistoryIds){
+        for (Integer postHistoryId : postHistoryIds) {
             // text
-            try {
-                Set<PostBlockConnection> postBlockConnections_text = postVersionList.getPostVersion(postHistoryId).getConnections(TextBlockVersion.getPostBlockTypeIdFilter());
-                Set<PostBlockConnection> postBlockConnections_text_gt = postGroundTruth.getConnections(postHistoryId, TextBlockVersion.getPostBlockTypeIdFilter());
+            Integer truePositivesTextCount = null;
+            Integer falsePositivesTextCount = null;
+            Integer trueNegativesTextCount = null;
+            Integer falseNegativesTextCount = null;
 
-                falseNegativesText.put(postHistoryId, PostBlockConnection.difference(postBlockConnections_text_gt, postBlockConnections_text).size());
-                truePositivesText.put(postHistoryId, PostBlockConnection.intersection(postBlockConnections_text_gt, postBlockConnections_text).size());
-                falsePositivesText.put(postHistoryId, PostBlockConnection.difference(postBlockConnections_text, postBlockConnections_text_gt).size());
-                trueNegativesText.put(postHistoryId, postGroundTruth.getPossibleConnections(postHistoryId) - (PostBlockConnection.union(postBlockConnections_text_gt, postBlockConnections_text).size()));
-            }catch(NullPointerException e){
-                falseNegativesText.put(postHistoryId, null);
-                truePositivesText.put(postHistoryId, null);
-                falsePositivesText.put(postHistoryId, null);
-                trueNegativesText.put(postHistoryId, null);
+            if (!inputTooShort) {
+                int possibleConnectionsText = postGroundTruth.getPossibleConnections(postHistoryId, TextBlockVersion.getPostBlockTypeIdFilter());
+                Set<PostBlockConnection> postBlockConnectionsText = postVersionList.getPostVersion(postHistoryId).getConnections(TextBlockVersion.getPostBlockTypeIdFilter());
+                Set<PostBlockConnection> postBlockConnectionsTextGT = postGroundTruth.getConnections(postHistoryId, TextBlockVersion.getPostBlockTypeIdFilter());
+
+                truePositivesTextCount = PostBlockConnection.intersection(postBlockConnectionsTextGT, postBlockConnectionsText).size();
+                falsePositivesTextCount = PostBlockConnection.difference(postBlockConnectionsText, postBlockConnectionsTextGT).size();
+
+                trueNegativesTextCount = possibleConnectionsText - (PostBlockConnection.union(postBlockConnectionsTextGT, postBlockConnectionsText).size());
+                falseNegativesTextCount = PostBlockConnection.difference(postBlockConnectionsTextGT, postBlockConnectionsText).size();
             }
 
-            // code
-            try {
-                Set<PostBlockConnection> postBlockConnections_code = postVersionList.getPostVersion(postHistoryId).getConnections(CodeBlockVersion.getPostBlockTypeIdFilter());
-                Set<PostBlockConnection> postBlockConnections_code_gt = postGroundTruth.getConnections(postHistoryId, CodeBlockVersion.getPostBlockTypeIdFilter());
+            falseNegativesText.put(postHistoryId, falseNegativesTextCount);
+            truePositivesText.put(postHistoryId, truePositivesTextCount);
+            falsePositivesText.put(postHistoryId, falsePositivesTextCount);
+            trueNegativesText.put(postHistoryId, trueNegativesTextCount);
 
-                falseNegativesCode.put(postHistoryId, PostBlockConnection.difference(postBlockConnections_code_gt, postBlockConnections_code).size());
-                truePositivesCode.put(postHistoryId, PostBlockConnection.intersection(postBlockConnections_code_gt, postBlockConnections_code).size());
-                falsePositivesCode.put(postHistoryId, PostBlockConnection.difference(postBlockConnections_code, postBlockConnections_code_gt).size());
-                trueNegativesCode.put(postHistoryId, postGroundTruth.getPossibleConnections(postHistoryId) - (PostBlockConnection.union(postBlockConnections_code_gt, postBlockConnections_code).size()));
-            }catch(NullPointerException e){
-                falseNegativesCode.put(postHistoryId, null);
-                truePositivesCode.put(postHistoryId, null);
-                falsePositivesCode.put(postHistoryId, null);
-                trueNegativesCode.put(postHistoryId, null);
+            // Code
+            Integer truePositivesCodeCount = null;
+            Integer falsePositivesCodeCount = null;
+            Integer trueNegativesCodeCount = null;
+            Integer falseNegativesCodeCount = null;
+
+            if (!inputTooShort) {
+                int possibleConnectionsCode = postGroundTruth.getPossibleConnections(postHistoryId, CodeBlockVersion.getPostBlockTypeIdFilter());
+                Set<PostBlockConnection> postBlockConnectionsCode = postVersionList.getPostVersion(postHistoryId).getConnections(CodeBlockVersion.getPostBlockTypeIdFilter());
+                Set<PostBlockConnection> postBlockConnectionsCodeGT = postGroundTruth.getConnections(postHistoryId, CodeBlockVersion.getPostBlockTypeIdFilter());
+
+                truePositivesCodeCount = PostBlockConnection.intersection(postBlockConnectionsCodeGT, postBlockConnectionsCode).size();
+                falsePositivesCodeCount = PostBlockConnection.difference(postBlockConnectionsCode, postBlockConnectionsCodeGT).size();
+
+                trueNegativesCodeCount = possibleConnectionsCode - (PostBlockConnection.union(postBlockConnectionsCodeGT, postBlockConnectionsCode).size());
+                falseNegativesCodeCount = PostBlockConnection.difference(postBlockConnectionsCodeGT, postBlockConnectionsCode).size();
             }
+
+            falseNegativesCode.put(postHistoryId, falseNegativesCodeCount);
+            truePositivesCode.put(postHistoryId, truePositivesCodeCount);
+            falsePositivesCode.put(postHistoryId, falsePositivesCodeCount);
+            trueNegativesCode.put(postHistoryId, trueNegativesCodeCount);
         }
     }
 
