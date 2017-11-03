@@ -22,9 +22,10 @@ import static org.hamcrest.junit.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class BlockLifeSpanAndGroundTruthTest {
-    private static Path pathToPostIdList = Paths.get("testdata/postIds.csv");
+    private static Path pathToPostIdList = Paths.get("testdata", "postIds.csv");
     private static Path pathToPostHistory = Paths.get("testdata");
     private static Path pathToGroundTruth = Paths.get("testdata", "gt");
+    private static Path outputDir = Paths.get("testdata", "metrics comparison");
 
     @Test
     void testReadFromDirectory() {
@@ -257,32 +258,34 @@ class BlockLifeSpanAndGroundTruthTest {
 
         List<Integer> postHistoryIds_3758880 = manager.getPostGroundTruth().get(3758880).getPostHistoryIds();
         MetricComparison comparison_a_3758880 = manager.getMetricComparison(3758880, "fourGramOverlap", 0.6);
+        int version_2_id = postHistoryIds_3758880.get(1);
 
-        assertEquals(new Integer(1), comparison_a_3758880.getTruePositivesText().get(postHistoryIds_3758880.get(1)));
-        assertEquals(new Integer(0), comparison_a_3758880.getFalsePositivesText().get(postHistoryIds_3758880.get(1)));
-        assertEquals(new Integer(1), comparison_a_3758880.getTrueNegativesText().get(postHistoryIds_3758880.get(1)));
-        assertEquals(new Integer(0), comparison_a_3758880.getFalseNegativesText().get(postHistoryIds_3758880.get(1)));
+        assertEquals(new Integer(1), comparison_a_3758880.getTruePositivesText().get(version_2_id));
+        assertEquals(new Integer(0), comparison_a_3758880.getFalsePositivesText().get(version_2_id));
+        assertEquals(new Integer(4), comparison_a_3758880.getTrueNegativesText().get(version_2_id));
+        assertEquals(new Integer(0), comparison_a_3758880.getFalseNegativesText().get(version_2_id));
 
-        assertEquals(new Integer(2), comparison_a_3758880.getTruePositivesCode().get(postHistoryIds_3758880.get(1)));
-        assertEquals(new Integer(0), comparison_a_3758880.getFalsePositivesCode().get(postHistoryIds_3758880.get(1)));
-        assertEquals(new Integer(0), comparison_a_3758880.getTrueNegativesCode().get(postHistoryIds_3758880.get(1)));
-        assertEquals(new Integer(0), comparison_a_3758880.getFalseNegativesCode().get(postHistoryIds_3758880.get(1)));
+        assertEquals(new Integer(2), comparison_a_3758880.getTruePositivesCode().get(version_2_id));
+        assertEquals(new Integer(0), comparison_a_3758880.getFalsePositivesCode().get(version_2_id));
+        assertEquals(new Integer(2), comparison_a_3758880.getTrueNegativesCode().get(version_2_id));
+        assertEquals(new Integer(0), comparison_a_3758880.getFalseNegativesCode().get(version_2_id));
 
 
         List<Integer> postHistoryIds_22037280 = manager.getPostGroundTruth().get(22037280).getPostHistoryIds();
         MetricComparison comparison_a_22037280 = manager.getMetricComparison(22037280, "fourGramOverlap", 0.6);
-        assertEquals(new Integer(3), comparison_a_22037280.getTruePositivesText().get(postHistoryIds_22037280.get(1)));
-        assertEquals(new Integer(0), comparison_a_22037280.getFalsePositivesText().get(postHistoryIds_22037280.get(1)));
-        assertEquals(new Integer(0), comparison_a_22037280.getTrueNegativesText().get(postHistoryIds_22037280.get(1)));
-        assertEquals(new Integer(0), comparison_a_22037280.getFalseNegativesText().get(postHistoryIds_22037280.get(1)));
+        version_2_id = postHistoryIds_22037280.get(1);
 
-        assertEquals(new Integer(2), comparison_a_22037280.getTruePositivesCode().get(postHistoryIds_22037280.get(1)));
-        assertEquals(new Integer(0), comparison_a_22037280.getFalsePositivesCode().get(postHistoryIds_22037280.get(1)));
-        assertEquals(new Integer(0), comparison_a_22037280.getTrueNegativesCode().get(postHistoryIds_22037280.get(1)));
-        assertEquals(new Integer(0), comparison_a_22037280.getFalseNegativesCode().get(postHistoryIds_22037280.get(1)));
+        assertEquals(new Integer(3), comparison_a_22037280.getTruePositivesText().get(version_2_id));
+        assertEquals(new Integer(0), comparison_a_22037280.getFalsePositivesText().get(version_2_id));
+        assertEquals(new Integer(3), comparison_a_22037280.getTrueNegativesText().get(version_2_id));
+        assertEquals(new Integer(0), comparison_a_22037280.getFalseNegativesText().get(version_2_id));
 
+        assertEquals(new Integer(2), comparison_a_22037280.getTruePositivesCode().get(version_2_id));
+        assertEquals(new Integer(0), comparison_a_22037280.getFalsePositivesCode().get(version_2_id));
+        assertEquals(new Integer(0), comparison_a_22037280.getTrueNegativesCode().get(version_2_id));
+        assertEquals(new Integer(0), comparison_a_22037280.getFalseNegativesCode().get(version_2_id));
 
-        manager.writeToCSV(Paths.get("testdata", "metrics comparison"));
+        manager.writeToCSV(outputDir);
     }
 
     @Test
