@@ -15,14 +15,14 @@ import java.util.function.BiFunction;
 
 // TODO: move to metrics comparison project
 public class MetricComparison {
-    private int postId;
-    private List<Integer> postHistoryIds;
-    private PostVersionList postVersionList;
-    private PostGroundTruth postGroundTruth;
-    private BiFunction<String, String, Double> similarityMetric;
-    private String similarityMetricName;
-    private double similarityThreshold;
-    private StopWatch stopWatch;
+    final private int postId;
+    final private List<Integer> postHistoryIds;
+    final private PostVersionList postVersionList;
+    final private PostGroundTruth postGroundTruth;
+    final private BiFunction<String, String, Double> similarityMetric;
+    final private String similarityMetricName;
+    final private double similarityThreshold;
+    final private StopWatch stopWatch;
 
     // text
     private long runtimeText;
@@ -77,28 +77,31 @@ public class MetricComparison {
                 .withCodeSimilarityMetric(similarityMetric)
                 .withCodeSimilarityThreshold(similarityThreshold);
 
-        stopWatch.reset();
-        stopWatch.start();
-        try {
-            postVersionList.processVersionHistory(config, TextBlockVersion.getPostBlockTypeIdFilter());
-        } catch (InputTooShortException e) {
-            // TODO: Lorik: handle this case, merge start() and getResults()?
+        // the post version list is shared by all metric comparisons conducted for the corresponding post
+        synchronized (postVersionList) {
+            stopWatch.reset();
+            stopWatch.start();
+            try {
+                postVersionList.processVersionHistory(config, TextBlockVersion.getPostBlockTypeIdFilter());
+            } catch (InputTooShortException e) {
+                // TODO: Lorik: handle this case, merge start() and getResults()?
+            }
+
+            stopWatch.stop();
+            runtimeText = stopWatch.getTime();
+
+            postVersionList.resetPostBlockVersionHistory();
+
+            stopWatch.reset();
+            stopWatch.start();
+            try {
+                postVersionList.processVersionHistory(config, CodeBlockVersion.getPostBlockTypeIdFilter());
+            } catch (InputTooShortException e) {
+                // TODO: Lorik: handle this case, merge start() and getResults()?
+            }
+            stopWatch.stop();
+            runtimeCode = stopWatch.getTime();
         }
-
-        stopWatch.stop();
-        runtimeText = stopWatch.getTime();
-
-        postVersionList.resetPostBlockVersionHistory();
-
-        stopWatch.reset();
-        stopWatch.start();
-        try {
-            postVersionList.processVersionHistory(config, CodeBlockVersion.getPostBlockTypeIdFilter());
-        } catch (InputTooShortException e) {
-            // TODO: Lorik: handle this case, merge start() and getResults()?
-        }
-        stopWatch.stop();
-        runtimeCode = stopWatch.getTime();
 
         getResults();
     }

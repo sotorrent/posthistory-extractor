@@ -29,7 +29,7 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
     private static final CSVFormat csvFormatGT;
 
     private int postId;
-    List<Integer> postHistoryIds;
+    private List<Integer> postHistoryIds;
     private Map<Integer, List<PostBlockLifeSpanVersion>> versions; // postHistoryId -> PostBlockLifeSpanVersions
 
     static {
