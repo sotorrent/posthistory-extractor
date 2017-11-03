@@ -7,7 +7,6 @@ import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
 import de.unitrier.st.soposthistory.gt.*;
 import de.unitrier.st.soposthistory.version.PostVersion;
 import de.unitrier.st.soposthistory.version.PostVersionList;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -19,8 +18,10 @@ import java.util.List;
 import java.util.Set;
 
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
+import static org.hamcrest.junit.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BlockLifeSpanAndGroundTruthTest {
     private static Path pathToPostIdList = Paths.get("testdata/postIds.csv");
@@ -199,12 +200,8 @@ class BlockLifeSpanAndGroundTruthTest {
         PostVersionList a_22037280 = PostVersionList.readFromCSV(pathToPostHistory, postId, 2, false);
 
         a_22037280.processVersionHistory(TextBlockVersion.getPostBlockTypeIdFilter());
-        a_22037280.reset();
-        try {
-            a_22037280.processVersionHistory(CodeBlockVersion.getPostBlockTypeIdFilter());
-        }catch (NullPointerException e){
-            Assert.fail();
-        }
+        a_22037280.resetVersionHistory();
+        a_22037280.processVersionHistory(CodeBlockVersion.getPostBlockTypeIdFilter());
     }
 
 
