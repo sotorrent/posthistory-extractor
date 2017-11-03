@@ -159,8 +159,11 @@ public class MetricComparisonManager {
     }
 
     public void writeToCSV(Path outputDir) {
-        if (!Files.exists(outputDir) || !Files.isDirectory(outputDir)) {
-            throw new IllegalArgumentException("Invalid output directory: " + outputDir);
+        // create output directory if it does not exist
+        try {
+            Files.createDirectories(outputDir);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         File outputFile = Paths.get(outputDir.toString(), name + ".csv").toFile();
