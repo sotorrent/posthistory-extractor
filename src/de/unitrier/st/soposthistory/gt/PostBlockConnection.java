@@ -59,13 +59,23 @@ public class PostBlockConnection {
     }
 
     public static Set<PostBlockConnection> union(Set<PostBlockConnection> set1, Set<PostBlockConnection> set2) {
+        // TODO: add test case for this method
         Set<PostBlockConnection> union = new HashSet<>(set1);
         for (PostBlockConnection current : set2) {
-            if (!union.contains(current)) {
+            if (!contains(union, current)) {
                 union.add(current);
             }
         }
         return union;
+    }
+
+    public static boolean contains(Set<PostBlockConnection> set, PostBlockConnection connection) {
+        for (PostBlockConnection current : set) {
+            if (current.equals(connection)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean equals(PostBlockConnection other) {

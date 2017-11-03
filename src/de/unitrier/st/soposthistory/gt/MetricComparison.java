@@ -124,6 +124,12 @@ public class MetricComparison {
 
                 trueNegativesTextCount = possibleConnectionsText - (PostBlockConnection.union(postBlockConnectionsTextGT, postBlockConnectionsText).size());
                 falseNegativesTextCount = PostBlockConnection.difference(postBlockConnectionsTextGT, postBlockConnectionsText).size();
+
+                int allConnectionsTextCount = truePositivesTextCount + falsePositivesTextCount + trueNegativesTextCount + falseNegativesTextCount;
+                if (possibleConnectionsText != allConnectionsTextCount) {
+                    throw new IllegalStateException("Invalid result (expected: " + possibleConnectionsText
+                            + "; actual: " + allConnectionsTextCount + ")");
+                }
             }
 
             truePositivesText.put(postHistoryId, truePositivesTextCount);
@@ -151,6 +157,12 @@ public class MetricComparison {
 
                 trueNegativesCodeCount = possibleConnectionsCode - (PostBlockConnection.union(postBlockConnectionsCodeGT, postBlockConnectionsCode).size());
                 falseNegativesCodeCount = PostBlockConnection.difference(postBlockConnectionsCodeGT, postBlockConnectionsCode).size();
+
+                int allConnectionsCodeCount = truePositivesCodeCount + falsePositivesCodeCount + trueNegativesCodeCount + falseNegativesCodeCount;
+                if (possibleConnectionsCode != allConnectionsCodeCount) {
+                    throw new IllegalStateException("Invalid result (expected: " + possibleConnectionsCode
+                            + "; actual: " + allConnectionsCodeCount + ")");
+                }
             }
 
             truePositivesCode.put(postHistoryId, truePositivesCodeCount);
