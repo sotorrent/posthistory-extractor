@@ -265,29 +265,32 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
             for (PostBlockLifeSpanVersion currentLifeSpanVersion : currentVersion) {
                 // apply filter
                 if (currentLifeSpanVersion.isSelected(postBlockTypeFilter)) {
-                    // search for matching lifespan version(s) in previous post version
-                    final int predLocalId = currentLifeSpanVersion.getPredLocalId();
-                    final int postBlockTypeId = currentLifeSpanVersion.getPostBlockTypeId();
-                    List<PostBlockLifeSpanVersion> predLifeSpanVersionCandidates = previousVersion.stream()
-                            .filter(v -> v.getLocalId() == predLocalId && v.getPostBlockTypeId() == postBlockTypeId)
-                            .collect(Collectors.toList());
+                    // first element in a PostBlockLifeSpan -> no connections
+                    if (currentLifeSpanVersion.getPredLocalId() != null) {
+                        // search for matching lifespan version(s) in previous post version
+                        final int predLocalId = currentLifeSpanVersion.getPredLocalId();
+                        final int postBlockTypeId = currentLifeSpanVersion.getPostBlockTypeId();
+                        List<PostBlockLifeSpanVersion> predLifeSpanVersionCandidates = previousVersion.stream()
+                                .filter(v -> v.getLocalId() == predLocalId && v.getPostBlockTypeId() == postBlockTypeId)
+                                .collect(Collectors.toList());
 
-                    if (predLifeSpanVersionCandidates.size() == 0) {
-                        throw new IllegalStateException("No predecessor found.");
+                        if (predLifeSpanVersionCandidates.size() == 0) {
+                            throw new IllegalStateException("No predecessor found.");
+                        }
+
+                        if (predLifeSpanVersionCandidates.size() > 1) {
+                            throw new IllegalStateException("More than one successor found.");
+                        }
+
+                        PostBlockLifeSpanVersion predLifeSpanVersion = predLifeSpanVersionCandidates.get(0);
+
+                        if (!currentLifeSpanVersion.getPredLocalId().equals(predLifeSpanVersion.getLocalId()) ||
+                                !predLifeSpanVersion.getSuccLocalId().equals(currentLifeSpanVersion.getLocalId())) {
+                            throw new IllegalStateException("Predecessor and Successor LocalIds do not match.");
+                        }
+
+                        connections.add(new PostBlockConnection(predLifeSpanVersion, currentLifeSpanVersion));
                     }
-
-                    if (predLifeSpanVersionCandidates.size() > 1) {
-                        throw new IllegalStateException("More than one successor found.");
-                    }
-
-                    PostBlockLifeSpanVersion predLifeSpanVersion = predLifeSpanVersionCandidates.get(0);
-
-                    if (!currentLifeSpanVersion.getPredLocalId().equals(predLifeSpanVersion.getLocalId()) ||
-                            !predLifeSpanVersion.getSuccLocalId().equals(currentLifeSpanVersion.getLocalId())) {
-                        throw new IllegalStateException("Predecessor and Successor LocalIds do not match.");
-                    }
-
-                    connections.add(new PostBlockConnection(predLifeSpanVersion, currentLifeSpanVersion));
                 }
             }
         }
