@@ -89,7 +89,7 @@ public class MetricComparison {
                 inputTooShort = true;
             }
             stopWatch.stop();
-            getResultsText();
+            setResultsText();
 
             postVersionList.resetPostBlockVersionHistory();
 
@@ -101,75 +101,59 @@ public class MetricComparison {
                 inputTooShort = true;
             }
             stopWatch.stop();
-            getResultsCode();
+            setResultsCode();
         }
     }
 
-    private void getResultsText() {
+    private void setResultsText() {
         runtimeText = stopWatch.getTime();
         for (Integer postHistoryId : postHistoryIds) {
-            // text
-            Integer truePositivesTextCount = null;
-            Integer falsePositivesTextCount = null;
-            Integer trueNegativesTextCount = null;
-            Integer falseNegativesTextCount = null;
-
-            if (!inputTooShort) {
-                int possibleConnectionsText = postGroundTruth.getPossibleConnections(postHistoryId, TextBlockVersion.getPostBlockTypeIdFilter());
-                Set<PostBlockConnection> postBlockConnectionsText = postVersionList.getPostVersion(postHistoryId).getConnections(TextBlockVersion.getPostBlockTypeIdFilter());
-                Set<PostBlockConnection> postBlockConnectionsTextGT = postGroundTruth.getConnections(postHistoryId, TextBlockVersion.getPostBlockTypeIdFilter());
-
-                truePositivesTextCount = PostBlockConnection.intersection(postBlockConnectionsTextGT, postBlockConnectionsText).size();
-                falsePositivesTextCount = PostBlockConnection.difference(postBlockConnectionsText, postBlockConnectionsTextGT).size();
-
-                trueNegativesTextCount = possibleConnectionsText - (PostBlockConnection.union(postBlockConnectionsTextGT, postBlockConnectionsText).size());
-                falseNegativesTextCount = PostBlockConnection.difference(postBlockConnectionsTextGT, postBlockConnectionsText).size();
-
-                int allConnectionsTextCount = truePositivesTextCount + falsePositivesTextCount + trueNegativesTextCount + falseNegativesTextCount;
-                if (possibleConnectionsText != allConnectionsTextCount) {
-                    throw new IllegalStateException("Invalid result (expected: " + possibleConnectionsText
-                            + "; actual: " + allConnectionsTextCount + ")");
-                }
-            }
-
-            truePositivesText.put(postHistoryId, truePositivesTextCount);
-            falsePositivesText.put(postHistoryId, falsePositivesTextCount);
-            trueNegativesText.put(postHistoryId, trueNegativesTextCount);
-            falseNegativesText.put(postHistoryId, falseNegativesTextCount);
+            MetricResult result = getResults(postHistoryId, TextBlockVersion.getPostBlockTypeIdFilter());
+            truePositivesText.put(postHistoryId, result.truePositives);
+            falsePositivesText.put(postHistoryId, result.falsePositives);
+            trueNegativesText.put(postHistoryId, result.trueNegatives);
+            falseNegativesText.put(postHistoryId, result.falseNegatives);
         }
     }
 
-    private void getResultsCode() {
+    private void setResultsCode() {
         runtimeCode = stopWatch.getTime();
         for (Integer postHistoryId : postHistoryIds) {
-            Integer truePositivesCodeCount = null;
-            Integer falsePositivesCodeCount = null;
-            Integer trueNegativesCodeCount = null;
-            Integer falseNegativesCodeCount = null;
+            MetricResult result = getResults(postHistoryId, CodeBlockVersion.getPostBlockTypeIdFilter());
+            truePositivesCode.put(postHistoryId, result.truePositives);
+            falsePositivesCode.put(postHistoryId, result.falsePositives);
+            trueNegativesCode.put(postHistoryId, result.trueNegatives);
+            falseNegativesCode.put(postHistoryId, result.falseNegatives);
+        }
+    }
 
-            if (!inputTooShort) {
-                int possibleConnectionsCode = postGroundTruth.getPossibleConnections(postHistoryId, CodeBlockVersion.getPostBlockTypeIdFilter());
-                Set<PostBlockConnection> postBlockConnectionsCode = postVersionList.getPostVersion(postHistoryId).getConnections(CodeBlockVersion.getPostBlockTypeIdFilter());
-                Set<PostBlockConnection> postBlockConnectionsCodeGT = postGroundTruth.getConnections(postHistoryId, CodeBlockVersion.getPostBlockTypeIdFilter());
+    private MetricResult getResults(int postHistoryId, Set<Integer> postBlockTypeFilter) {
+        MetricResult result = new MetricResult();
 
-                truePositivesCodeCount = PostBlockConnection.intersection(postBlockConnectionsCodeGT, postBlockConnectionsCode).size();
-                falsePositivesCodeCount = PostBlockConnection.difference(postBlockConnectionsCode, postBlockConnectionsCodeGT).size();
+        if (!inputTooShort) {
+            int possibleConnections = postGroundTruth.getPossibleConnections(postHistoryId, postBlockTypeFilter);
+            Set<PostBlockConnection> postBlockConnections = postVersionList.getPostVersion(postHistoryId).getConnections(postBlockTypeFilter);
+            Set<PostBlockConnection> postBlockConnectionsGT = postGroundTruth.getConnections(postHistoryId, postBlockTypeFilter);
 
-                trueNegativesCodeCount = possibleConnectionsCode - (PostBlockConnection.union(postBlockConnectionsCodeGT, postBlockConnectionsCode).size());
-                falseNegativesCodeCount = PostBlockConnection.difference(postBlockConnectionsCodeGT, postBlockConnectionsCode).size();
+            int truePositivesCount = PostBlockConnection.intersection(postBlockConnectionsGT, postBlockConnections).size();
+            int falsePositivesCount = PostBlockConnection.difference(postBlockConnections, postBlockConnectionsGT).size();
 
-                int allConnectionsCodeCount = truePositivesCodeCount + falsePositivesCodeCount + trueNegativesCodeCount + falseNegativesCodeCount;
-                if (possibleConnectionsCode != allConnectionsCodeCount) {
-                    throw new IllegalStateException("Invalid result (expected: " + possibleConnectionsCode
-                            + "; actual: " + allConnectionsCodeCount + ")");
-                }
+            int trueNegativesCount = possibleConnections - (PostBlockConnection.union(postBlockConnectionsGT, postBlockConnections).size());
+            int falseNegativesCount = PostBlockConnection.difference(postBlockConnectionsGT, postBlockConnections).size();
+
+            int allConnectionsCount = truePositivesCount + falsePositivesCount + trueNegativesCount + falseNegativesCount;
+            if (possibleConnections != allConnectionsCount) {
+                throw new IllegalStateException("Invalid result (expected: " + possibleConnections
+                        + "; actual: " + allConnectionsCount + ")");
             }
 
-            truePositivesCode.put(postHistoryId, truePositivesCodeCount);
-            falsePositivesCode.put(postHistoryId, falsePositivesCodeCount);
-            trueNegativesCode.put(postHistoryId, trueNegativesCodeCount);
-            falseNegativesCode.put(postHistoryId, falseNegativesCodeCount);
+            result.truePositives = truePositivesCount;
+            result.falsePositives = falsePositivesCount;
+            result.trueNegatives = trueNegativesCount;
+            result.falseNegatives = falseNegativesCount;
         }
+
+        return result;
     }
 
     public BiFunction<String, String, Double> getSimilarityMetric() {
@@ -226,5 +210,12 @@ public class MetricComparison {
 
     public Map<Integer, Integer> getFalseNegativesCode() {
         return falseNegativesCode;
+    }
+
+    private class MetricResult {
+        public Integer truePositives = null;
+        public Integer falsePositives = null;
+        public Integer trueNegatives = null;
+        public Integer falseNegatives = null;
     }
 }
