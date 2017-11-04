@@ -2,23 +2,25 @@ package de.unitrier.st.soposthistory.tests;
 
 import de.unitrier.st.soposthistory.gt.MetricComparison;
 import de.unitrier.st.soposthistory.gt.MetricComparisonManager;
-import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
-import org.apache.commons.csv.QuoteMode;
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-@Ignore
-class IgnoredTest extends BlockLifeSpanAndGroundTruthTest{
+@Disabled
+class DisabledTest extends BlockLifeSpanAndGroundTruthTest {
+    private Path pathToOldMetricComparisons = Paths.get(
+            "testdata", "metrics_comparison", "resultsMetricComparisonOldProject.csv"
+    );
 
     @Test
     void testCompareMetricComparisonManagerWithComparisonFromOldProject() {
@@ -30,30 +32,26 @@ class IgnoredTest extends BlockLifeSpanAndGroundTruthTest{
         List<Integer> postHistoryIds_22037280 = manager.getPostVersionLists().get(22037280).getPostHistoryIds();
 
         manager.compareMetrics();
-        manager.writeToCSV(Paths.get("testdata","metrics comparison"));
+        manager.writeToCSV(outputDir);
 
         CSVParser csvParser;
 
         try {
             csvParser = CSVParser.parse(
-                    Paths.get("testdata", "metrics comparison", "resultsMetricComparisonOldProject.csv").toFile(),
+                    pathToOldMetricComparisons.toFile(),
                     StandardCharsets.UTF_8,
-                    CSVFormat.DEFAULT.withHeader("sample", "metric", "threshold", "postid", "posthistoryid", "runtimetext", "#truepositivestext", "#truenegativestext",
-                            "#falsepositivestext", "#falsenegativestext", "#runtimecode", "#truepositivescode", "#truenegativescode",
-                            "#falsepositivescode", "#falsenegativescode").withDelimiter(';')
-                            .withQuote('"')
-                            .withQuoteMode(QuoteMode.MINIMAL)
-                            .withEscape('\\')
-                            .withFirstRecordAsHeader()
+                    MetricComparisonManager.csvFormatMetricComparison.withFirstRecordAsHeader()
             );
 
             csvParser.getHeaderMap();
             List<CSVRecord> records = csvParser.getRecords();
-            for(CSVRecord record : records){
+            for (CSVRecord record : records) {
                 String metric = record.get("metric");
 
                 Double threshold = Double.valueOf(record.get("threshold"));
-                if((int)(threshold*100) % 10 != 0) { // Comparison manager computes only equal thresholds so unequal thresholds will be skipped
+                // TODO: Lorik: What do you mean by "equal thresholds"
+                // comparison manager computes only equal thresholds so unequal thresholds will be skipped
+                if ((int) (threshold * 100) % 10 != 0) {
                     continue;
                 }
 
@@ -71,7 +69,7 @@ class IgnoredTest extends BlockLifeSpanAndGroundTruthTest{
                 Integer falsePositivesCode = null;
                 Integer falseNegativesCode = null;
 
-                try{
+                try {
                     postHistoryId = Integer.valueOf(record.get("posthistoryid"));
 
                     truePositivesText = Integer.valueOf(record.get("#truepositivestext"));
@@ -83,16 +81,16 @@ class IgnoredTest extends BlockLifeSpanAndGroundTruthTest{
                     trueNegativesCode = Integer.valueOf(record.get("#truenegativescode"));
                     falsePositivesCode = Integer.valueOf(record.get("#falsepositivescode"));
                     falseNegativesCode = Integer.valueOf(record.get("#falsenegativescode"));
-                }catch (NumberFormatException ignored){}
+                } catch (NumberFormatException ignored) {
+                }
 
                 MetricComparison tmpMetricComparison = manager.getMetricComparison(postId, metric, threshold);
 
-
-                if(postHistoryId == null) {
+                if (postHistoryId == null) {
                     List<Integer> postHistoryIds = null;
-                    if(postId == 3758880) {
+                    if (postId == 3758880) {
                         postHistoryIds = postHistoryIds_3758880;
-                    }else if(postId == 22037280){
+                    } else if (postId == 22037280) {
                         postHistoryIds = postHistoryIds_22037280;
                     }
 
@@ -108,9 +106,7 @@ class IgnoredTest extends BlockLifeSpanAndGroundTruthTest{
                         assertNull(tmpMetricComparison.getTrueNegativesCode().get(tmpPostHistoryId));
                         assertNull(tmpMetricComparison.getFalseNegativesCode().get(tmpPostHistoryId));
                     }
-
                 } else {
-
                     // TODO: Check true negatives for text and code
                     assertEquals(tmpMetricComparison.getTruePositivesText().get(postHistoryId), truePositivesText);
                     assertEquals(tmpMetricComparison.getFalsePositivesText().get(postHistoryId), falsePositivesText);
@@ -119,13 +115,10 @@ class IgnoredTest extends BlockLifeSpanAndGroundTruthTest{
                     assertEquals(tmpMetricComparison.getTruePositivesCode().get(postHistoryId), truePositivesCode);
                     assertEquals(tmpMetricComparison.getFalsePositivesCode().get(postHistoryId), falsePositivesCode);
                     assertEquals(tmpMetricComparison.getFalseNegativesCode().get(postHistoryId), falseNegativesCode);
-
                 }
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
 }

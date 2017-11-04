@@ -24,10 +24,10 @@ import static org.hamcrest.junit.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class BlockLifeSpanAndGroundTruthTest {
-    static Path pathToPostIdList = Paths.get("testdata", "postIds.csv");
-    static Path pathToPostHistory = Paths.get("testdata");
-    static Path pathToGroundTruth = Paths.get("testdata", "gt");
-    private static Path outputDir = Paths.get("testdata", "metrics comparison");
+    protected static Path pathToPostIdList = Paths.get("testdata", "postIds.csv");
+    protected static Path pathToPostHistory = Paths.get("testdata");
+    protected static Path pathToGroundTruth = Paths.get("testdata", "gt");
+    protected static Path outputDir = Paths.get("testdata", "metrics comparison");
 
     @Test
     void testReadFromDirectory() {
@@ -43,14 +43,14 @@ class BlockLifeSpanAndGroundTruthTest {
     }
 
     @Test
-    void testPostBlockLifeSpanVersionsEqual(){
+    void testPostBlockLifeSpanVersionsEqual() {
         // compare two PostBlockLifeSpanVersions
         PostBlockLifeSpanVersion original = new PostBlockLifeSpanVersion(4711, 42, 1, 0, 0, 0, "");
         PostBlockLifeSpanVersion differentPostId = new PostBlockLifeSpanVersion(4712, 42, 1, 0, 0, 0, "");
         PostBlockLifeSpanVersion differentPostHistoryId = new PostBlockLifeSpanVersion(4711, 43, 1, 0, 0, 0, "");
         PostBlockLifeSpanVersion differentPostBlockTypeId = new PostBlockLifeSpanVersion(4711, 42, 2, 0, 0, 0, "");
         PostBlockLifeSpanVersion differentLocalId = new PostBlockLifeSpanVersion(4711, 42, 1, 1, 0, 0, "");
-        PostBlockLifeSpanVersion differentPredId = new PostBlockLifeSpanVersion(4711, 42, 1, 0, 1, 0,"");
+        PostBlockLifeSpanVersion differentPredId = new PostBlockLifeSpanVersion(4711, 42, 1, 0, 1, 0, "");
         PostBlockLifeSpanVersion differentSuccId = new PostBlockLifeSpanVersion(4711, 42, 1, 0, 0, 1, "");
 
         assertTrue(original.equals(original));
@@ -72,7 +72,7 @@ class BlockLifeSpanAndGroundTruthTest {
         List<PostBlockLifeSpan> lifeSpansGT = a_22037280_gt.getPostBlockLifeSpans();
         assertEquals(lifeSpans.size(), lifeSpansGT.size());
         assertEquals(5, lifeSpans.size());
-        for (int i=0; i<lifeSpans.size(); i++) {
+        for (int i = 0; i < lifeSpans.size(); i++) {
             assertTrue(lifeSpans.get(i).equals(lifeSpansGT.get(i)));
         }
     }
@@ -92,7 +92,7 @@ class BlockLifeSpanAndGroundTruthTest {
         );
         assertEquals(textBlockLifeSpans.size(), textLifeSpansGT.size());
         assertEquals(3, textBlockLifeSpans.size());
-        for (int i=0; i<textBlockLifeSpans.size(); i++) {
+        for (int i = 0; i < textBlockLifeSpans.size(); i++) {
             assertTrue(textBlockLifeSpans.get(i).equals(textLifeSpansGT.get(i)));
         }
 
@@ -105,7 +105,7 @@ class BlockLifeSpanAndGroundTruthTest {
         );
         assertEquals(codeBlockLifeSpans.size(), codeLifeSpansGT.size());
         assertEquals(2, codeBlockLifeSpans.size());
-        for (int i=0; i<codeBlockLifeSpans.size(); i++) {
+        for (int i = 0; i < codeBlockLifeSpans.size(); i++) {
             assertTrue(codeBlockLifeSpans.get(i).equals(codeLifeSpansGT.get(i)));
         }
     }
@@ -177,7 +177,7 @@ class BlockLifeSpanAndGroundTruthTest {
     }
 
     @Test
-    void testGetConnections(){
+    void testGetConnections() {
         int postId = 22037280;
         PostVersionList a_22037280 = PostVersionList.readFromCSV(pathToPostHistory, postId, 2);
         PostGroundTruth a_22037280_gt = PostGroundTruth.readFromCSV(pathToGroundTruth, postId);
@@ -277,19 +277,19 @@ class BlockLifeSpanAndGroundTruthTest {
 
 
         // second version
-        int version_id = postHistoryIds_3758880.get(1);
-        assertEquals(new Integer(1), comparison_a_3758880.getTruePositivesText().get(version_id));
-        assertEquals(new Integer(0), comparison_a_3758880.getFalsePositivesText().get(version_id));
-        assertEquals(new Integer(5), comparison_a_3758880.getTrueNegativesText().get(version_id));
-        assertEquals(new Integer(0), comparison_a_3758880.getFalseNegativesText().get(version_id));
+        int version_2_id = postHistoryIds_3758880.get(1);
+        assertEquals(new Integer(1), comparison_a_3758880.getTruePositivesText().get(version_2_id));
+        assertEquals(new Integer(0), comparison_a_3758880.getFalsePositivesText().get(version_2_id));
+        assertEquals(new Integer(5), comparison_a_3758880.getTrueNegativesText().get(version_2_id));
+        assertEquals(new Integer(0), comparison_a_3758880.getFalseNegativesText().get(version_2_id));
 
-        assertEquals(new Integer(2), comparison_a_3758880.getTruePositivesCode().get(version_id));
-        assertEquals(new Integer(0), comparison_a_3758880.getFalsePositivesCode().get(version_id));
-        assertEquals(new Integer(4), comparison_a_3758880.getTrueNegativesCode().get(version_id));
-        assertEquals(new Integer(0), comparison_a_3758880.getFalseNegativesCode().get(version_id));
+        assertEquals(new Integer(2), comparison_a_3758880.getTruePositivesCode().get(version_2_id));
+        assertEquals(new Integer(0), comparison_a_3758880.getFalsePositivesCode().get(version_2_id));
+        assertEquals(new Integer(4), comparison_a_3758880.getTrueNegativesCode().get(version_2_id));
+        assertEquals(new Integer(0), comparison_a_3758880.getFalseNegativesCode().get(version_2_id));
 
         // version 3 to 10 only for text blocks (they don't differ)
-        for(int i=2; i<10; i++){
+        for (int i = 2; i < 10; i++) {
             int version_2_to_11_id_text = postHistoryIds_3758880.get(i);
             assertEquals(new Integer(2), comparison_a_3758880.getTruePositivesText().get(version_2_to_11_id_text));
             assertEquals(new Integer(0), comparison_a_3758880.getFalsePositivesText().get(version_2_to_11_id_text));
@@ -304,7 +304,7 @@ class BlockLifeSpanAndGroundTruthTest {
         assertEquals(new Integer(0), comparison_a_3758880.getFalseNegativesText().get(version_11_id_text));
 
         // version 3 and 6 for code
-        List<Integer> versionsOfType1 = Arrays.asList(2,5);
+        List<Integer> versionsOfType1 = Arrays.asList(2, 5);
         for (Integer version : versionsOfType1) {
             int version_3_or_6_id = postHistoryIds_3758880.get(version);
             assertEquals(new Integer(1), comparison_a_3758880.getTruePositivesCode().get(version_3_or_6_id));
@@ -314,7 +314,7 @@ class BlockLifeSpanAndGroundTruthTest {
         }
 
         // version 4,5,7,8,9,10,11 for code
-        List<Integer> versionsOfType2 = Arrays.asList(3,4,6,7,8,9,10);
+        List<Integer> versionsOfType2 = Arrays.asList(3, 4, 6, 7, 8, 9, 10);
         for (Integer version : versionsOfType2) {
             int version_i_id = postHistoryIds_3758880.get(version);
             assertEquals(new Integer(2), comparison_a_3758880.getTruePositivesCode().get(version_i_id));
@@ -322,8 +322,6 @@ class BlockLifeSpanAndGroundTruthTest {
             assertEquals(new Integer(2), comparison_a_3758880.getTrueNegativesCode().get(version_i_id));
             assertEquals(new Integer(0), comparison_a_3758880.getFalseNegativesCode().get(version_i_id));
         }
-
-
 
         /* compare a 22037280 */
         List<Integer> postHistoryIds_22037280 = manager.getPostGroundTruth().get(22037280).getPostHistoryIds();
@@ -341,23 +339,22 @@ class BlockLifeSpanAndGroundTruthTest {
         assertEquals(new Integer(0), comparison_a_22037280.getTrueNegativesCode().get(version_1_id));
         assertEquals(new Integer(0), comparison_a_22037280.getFalseNegativesCode().get(version_1_id));
 
-        for(int i=1; i<postHistoryIds_22037280.size(); i++) {
-            version_id = postHistoryIds_22037280.get(i);
+        for (int i = 1; i < postHistoryIds_22037280.size(); i++) {
+            version_2_id = postHistoryIds_22037280.get(i);
 
-            assertEquals(new Integer(3), comparison_a_22037280.getTruePositivesText().get(version_id));
-            assertEquals(new Integer(0), comparison_a_22037280.getFalsePositivesText().get(version_id));
-            assertEquals(new Integer(6), comparison_a_22037280.getTrueNegativesText().get(version_id));
-            assertEquals(new Integer(0), comparison_a_22037280.getFalseNegativesText().get(version_id));
+            assertEquals(new Integer(3), comparison_a_22037280.getTruePositivesText().get(version_2_id));
+            assertEquals(new Integer(0), comparison_a_22037280.getFalsePositivesText().get(version_2_id));
+            assertEquals(new Integer(6), comparison_a_22037280.getTrueNegativesText().get(version_2_id));
+            assertEquals(new Integer(0), comparison_a_22037280.getFalseNegativesText().get(version_2_id));
 
-            assertEquals(new Integer(2), comparison_a_22037280.getTruePositivesCode().get(version_id));
-            assertEquals(new Integer(0), comparison_a_22037280.getFalsePositivesCode().get(version_id));
-            assertEquals(new Integer(2), comparison_a_22037280.getTrueNegativesCode().get(version_id));
-            assertEquals(new Integer(0), comparison_a_22037280.getFalseNegativesCode().get(version_id));
+            assertEquals(new Integer(2), comparison_a_22037280.getTruePositivesCode().get(version_2_id));
+            assertEquals(new Integer(0), comparison_a_22037280.getFalsePositivesCode().get(version_2_id));
+            assertEquals(new Integer(2), comparison_a_22037280.getTrueNegativesCode().get(version_2_id));
+            assertEquals(new Integer(0), comparison_a_22037280.getFalseNegativesCode().get(version_2_id));
         }
 
         manager.writeToCSV(outputDir);
     }
-
 
 
     @Test
