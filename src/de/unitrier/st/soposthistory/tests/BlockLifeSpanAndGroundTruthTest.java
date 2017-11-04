@@ -530,6 +530,29 @@ class BlockLifeSpanAndGroundTruthTest {
 //        assertEquals(null, textBlocks.get(2).getPred());
 //        assertEquals(new Integer(5), textBlocks.get(2).getLocalId());
 //    }
+    @Test
+    void testNumberOfPredecessorsOfOnePost() {
+        // this checks whether a block can be predecessor of more than one block by choosing a very low threshold.
+
+        int postId = 3758880;
+        PostVersionList a_3758880 = PostVersionList.readFromCSV(pathToPostHistory, postId, 2, false);
+
+        a_3758880.processVersionHistory(
+                Config.DEFAULT
+                        .withTextSimilarityMetric(de.unitrier.st.stringsimilarity.set.Variants::twoGramDice)
+                        .withCodeSimilarityThreshold(0.01),
+                TextBlockVersion.getPostBlockTypeIdFilter());
+
+        List<TextBlockVersion> textBlocks = a_3758880.getLast().getTextBlocks();
+        assertEquals(new Integer(1), textBlocks.get(0).getPred().getLocalId());
+        assertEquals(new Integer(1), textBlocks.get(0).getLocalId());
+
+        assertEquals(new Integer(3), textBlocks.get(1).getPred().getLocalId());
+        assertEquals(new Integer(3), textBlocks.get(1).getLocalId());
+
+        assertEquals(null, textBlocks.get(2).getPred());
+        assertEquals(new Integer(5), textBlocks.get(2).getLocalId());
+    }
 
 //    @Test
 //    void testGroundTruthExtractionOfCSV(){
