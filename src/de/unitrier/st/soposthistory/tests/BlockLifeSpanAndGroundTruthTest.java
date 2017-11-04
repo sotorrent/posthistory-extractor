@@ -5,29 +5,28 @@ import de.unitrier.st.soposthistory.blocks.CodeBlockVersion;
 import de.unitrier.st.soposthistory.blocks.PostBlockVersion;
 import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
 import de.unitrier.st.soposthistory.gt.*;
+import de.unitrier.st.soposthistory.util.Config;
 import de.unitrier.st.soposthistory.version.PostVersion;
 import de.unitrier.st.soposthistory.version.PostVersionList;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
-import org.apache.commons.csv.QuoteMode;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.junit.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class BlockLifeSpanAndGroundTruthTest {
-    private static Path pathToPostIdList = Paths.get("testdata", "postIds.csv");
-    private static Path pathToPostHistory = Paths.get("testdata");
-    private static Path pathToGroundTruth = Paths.get("testdata", "gt");
+    static Path pathToPostIdList = Paths.get("testdata", "postIds.csv");
+    static Path pathToPostHistory = Paths.get("testdata");
+    static Path pathToGroundTruth = Paths.get("testdata", "gt");
     private static Path outputDir = Paths.get("testdata", "metrics comparison");
 
     @Test
@@ -360,113 +359,6 @@ class BlockLifeSpanAndGroundTruthTest {
     }
 
 
-    @Test
-    void testCompareMetricComparisonManagerWithComparisonFromOldProject() {
-        MetricComparisonManager manager = MetricComparisonManager.create(
-                "TestManager", pathToPostIdList, pathToPostHistory, pathToGroundTruth, true
-        );
-
-        List<Integer> postHistoryIds_3758880 = manager.getPostVersionLists().get(3758880).getPostHistoryIds();
-        List<Integer> postHistoryIds_22037280 = manager.getPostVersionLists().get(22037280).getPostHistoryIds();
-
-        manager.compareMetrics();
-        manager.writeToCSV(Paths.get("testdata","metrics comparison"));
-
-        CSVParser csvParser = null;
-
-        try {
-            csvParser = CSVParser.parse(
-                    Paths.get("testdata", "metrics comparison", "resultsMetricComparisonOldProject.csv").toFile(),
-                    StandardCharsets.UTF_8,
-                    CSVFormat.DEFAULT.withHeader("sample", "metric", "threshold", "postid", "posthistoryid", "runtimetext", "#truepositivestext", "#truenegativestext",
-                            "#falsepositivestext", "#falsenegativestext", "#runtimecode", "#truepositivescode", "#truenegativescode",
-                            "#falsepositivescode", "#falsenegativescode").withDelimiter(';')
-                            .withQuote('"')
-                            .withQuoteMode(QuoteMode.MINIMAL)
-                            .withEscape('\\')
-                            .withFirstRecordAsHeader()
-            );
-
-            csvParser.getHeaderMap();
-            List<CSVRecord> records = csvParser.getRecords();
-            for(CSVRecord record : records){
-                String metric = record.get("metric");
-
-                Double threshold = Double.valueOf(record.get("threshold"));
-                if((int)(threshold*100) % 10 != 0) { // Comparison manager computes only equal thresholds so unequal thresholds will be skipped
-                    continue;
-                }
-
-                Integer postId = Integer.valueOf(record.get("postid"));
-
-                Integer postHistoryId = null;
-
-                Integer truePositivesText = null;
-                Integer trueNegativesText = null;
-                Integer falsePositivesText = null;
-                Integer falseNegativesText = null;
-
-                Integer truePositivesCode = null;
-                Integer trueNegativesCode = null;
-                Integer falsePositivesCode = null;
-                Integer falseNegativesCode = null;
-
-                try{
-                    postHistoryId = Integer.valueOf(record.get("posthistoryid"));
-
-                    truePositivesText = Integer.valueOf(record.get("#truepositivestext"));
-                    trueNegativesText = Integer.valueOf(record.get("#truenegativestext"));
-                    falsePositivesText = Integer.valueOf(record.get("#falsepositivestext"));
-                    falseNegativesText = Integer.valueOf(record.get("#falsenegativestext"));
-
-                    truePositivesCode = Integer.valueOf(record.get("#truepositivescode"));
-                    trueNegativesCode = Integer.valueOf(record.get("#truenegativescode"));
-                    falsePositivesCode = Integer.valueOf(record.get("#falsepositivescode"));
-                    falseNegativesCode = Integer.valueOf(record.get("#falsenegativescode"));
-                }catch (NumberFormatException e){}
-
-                MetricComparison tmpMetricComparison = manager.getMetricComparison(postId, metric, threshold);
-
-
-                if(postHistoryId == null) {
-                    List<Integer> postHistoryIds = null;
-                    if(postId == 3758880) {
-                        postHistoryIds = postHistoryIds_3758880;
-                    }else if(postId == 22037280){
-                        postHistoryIds = postHistoryIds_22037280;
-                    }
-
-                    assert postHistoryIds != null;
-                    for (Integer tmpPostHistoryId : postHistoryIds) {
-                        assertNull(tmpMetricComparison.getTruePositivesText().get(tmpPostHistoryId));
-                        assertNull(tmpMetricComparison.getFalsePositivesText().get(tmpPostHistoryId));
-                        assertNull(tmpMetricComparison.getTrueNegativesText().get(tmpPostHistoryId));
-                        assertNull(tmpMetricComparison.getFalseNegativesText().get(tmpPostHistoryId));
-
-                        assertNull(tmpMetricComparison.getTruePositivesCode().get(tmpPostHistoryId));
-                        assertNull(tmpMetricComparison.getFalsePositivesCode().get(tmpPostHistoryId));
-                        assertNull(tmpMetricComparison.getTrueNegativesCode().get(tmpPostHistoryId));
-                        assertNull(tmpMetricComparison.getFalseNegativesCode().get(tmpPostHistoryId));
-                    }
-
-                } else {
-
-                    // TODO: Check true negatives for text and code
-                    assertEquals(tmpMetricComparison.getTruePositivesText().get(postHistoryId), truePositivesText);
-                    assertEquals(tmpMetricComparison.getFalsePositivesText().get(postHistoryId), falsePositivesText);
-                    assertEquals(tmpMetricComparison.getFalseNegativesText().get(postHistoryId), falseNegativesText);
-
-                    assertEquals(tmpMetricComparison.getTruePositivesCode().get(postHistoryId), truePositivesCode);
-                    assertEquals(tmpMetricComparison.getFalsePositivesCode().get(postHistoryId), falsePositivesCode);
-                    assertEquals(tmpMetricComparison.getFalseNegativesCode().get(postHistoryId), falseNegativesCode);
-
-                }
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     @Test
     void testGetPossibleConnections() {
@@ -510,26 +402,6 @@ class BlockLifeSpanAndGroundTruthTest {
         assertEquals(a_22037280.getPossibleConnections(), possibleConnections);
     }
 
-//    @Test
-//    void testNumberOfPredecessorsOfOnePost() {
-//        int postId = 3758880;
-//        PostVersionList a_3758880 = PostVersionList.readFromCSV(pathToPostHistory, postId, 2, false);
-//        PostGroundTruth a_3758880_gt = PostGroundTruth.readFromCSV(pathToGroundTruth, postId);
-//
-//        postVersionsListManagement.getPostVersionListWithID(postId).processVersionHistory(
-//                PostVersionList.PostBlockTypeFilter.TEXT,
-//                Config.DEFAULT.withTextSimilarityMetric(de.unitrier.st.stringsimilarity.set.Variants::twoGramDice));
-//
-//        List<TextBlockVersion> textBlocks = postVersionsListManagement.getPostVersionListWithID(postId).get(postVersionsListManagement.getPostVersionListWithID(postId).size() - 1).getTextBlocks();
-//        assertEquals(new Integer(1), textBlocks.get(0).getPred().getLocalId());
-//        assertEquals(new Integer(1), textBlocks.get(0).getLocalId());
-//
-//        assertEquals(new Integer(3), textBlocks.get(1).getPred().getLocalId());
-//        assertEquals(new Integer(3), textBlocks.get(1).getLocalId());
-//
-//        assertEquals(null, textBlocks.get(2).getPred());
-//        assertEquals(new Integer(5), textBlocks.get(2).getLocalId());
-//    }
     @Test
     void testNumberOfPredecessorsOfOnePost() {
         // this checks whether a block can be predecessor of more than one block by choosing a very low threshold.
