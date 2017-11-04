@@ -222,9 +222,7 @@ public class MetricComparisonManager {
     }
 
     private void addDefaultSimilarityThresholds() {
-        for (double threshold=0.3; threshold<0.99; threshold+=0.1) {
-            similarityThresholds.add(threshold);
-        }
+        similarityThresholds.addAll(Arrays.asList(0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9)); // TODO: add also 0.35, 0.45, 0.55, 0.65, 0.75, 0.85
     }
 
     public void addSimilarityMetric(String name, BiFunction<String, String, Double> metric) {
