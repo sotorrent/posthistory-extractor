@@ -20,7 +20,7 @@ import static de.unitrier.st.soposthistory.util.Util.getClassLogger;
 public class MetricComparisonManager {
     private static Logger logger = null;
     private static final CSVFormat csvFormatPostIds;
-    private static final CSVFormat csvFormatMetricComparison;
+    public static final CSVFormat csvFormatMetricComparison;
 
     private String name;
     private Set<Integer> postIds;
@@ -141,7 +141,7 @@ public class MetricComparisonManager {
     private void prepareComparison() {
         for (int postId : postIds) {
             for (double similarityThreshold : similarityThresholds) {
-                for (int i=0; i<similarityMetrics.size(); i++) {
+                for (int i = 0; i < similarityMetrics.size(); i++) {
                     BiFunction<String, String, Double> similarityMetric = similarityMetrics.get(i);
                     String similarityMetricName = similarityMetricsNames.get(i);
                     MetricComparison metricComparison = new MetricComparison(
@@ -173,8 +173,6 @@ public class MetricComparisonManager {
                 throw new IllegalStateException("Error while deleting output file: " + outputFile);
             }
         }
-
-        // TODO: Test CSV export
 
         // write metric comparison results
         logger.info("Writing metric comparison results to CSV file " + outputFile.getName() + " ...");
@@ -547,11 +545,11 @@ public class MetricComparisonManager {
         similarityMetricsNames.add("fiveGramSimilarityKondrak05");
     }
 
-    public MetricComparison getMetricComparison(int postId, String similarityMetricName, double similarityThreshold){
-        for(MetricComparison metricComparison : metricComparisons){
-            if(metricComparison.getPostId() == postId
-                && metricComparison.getSimilarityThreshold() == similarityThreshold
-                    && metricComparison.getSimilarityMetricName().equals(similarityMetricName)){
+    public MetricComparison getMetricComparison(int postId, String similarityMetricName, double similarityThreshold) {
+        for (MetricComparison metricComparison : metricComparisons) {
+            if (metricComparison.getPostId() == postId
+                    && metricComparison.getSimilarityThreshold() == similarityThreshold
+                    && metricComparison.getSimilarityMetricName().equals(similarityMetricName)) {
                 return metricComparison;
             }
         }
