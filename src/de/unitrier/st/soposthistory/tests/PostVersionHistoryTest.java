@@ -733,4 +733,9 @@ class PostVersionHistoryTest {
         assertEquals(47, a_3758880.getPostBlockVersionCount());
         assertEquals(a_3758880.getPostBlockVersionCount(), a_3758880.getPostBlockLifeSpans().size());
     }
+
+    @Test
+    void testInvalidCharBetweenEncapsulatedTokenAndDelimiter(){
+        PostVersionList a_10049438 = PostVersionList.readFromCSV(pathToTestData, 10049438, 2, false);
+    }
 }
