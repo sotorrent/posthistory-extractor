@@ -70,6 +70,8 @@ public class MetricComparison {
         this.falseNegativesCode = new HashMap<>();
 
         stopWatch = new StopWatch();
+
+        postVersionList.normalizeLinks();
     }
 
     public void start() {
