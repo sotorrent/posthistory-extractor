@@ -359,6 +359,7 @@ class BlockLifeSpanAndGroundTruthTest {
         manager.writeToCSV(outputDir);
     }
 
+
     @Test
     void testCompareMetricComparisonManagerWithComparisonFromOldProject() {
         MetricComparisonManager manager = MetricComparisonManager.create(
@@ -435,6 +436,7 @@ class BlockLifeSpanAndGroundTruthTest {
                         postHistoryIds = postHistoryIds_22037280;
                     }
 
+                    assert postHistoryIds != null;
                     for (Integer tmpPostHistoryId : postHistoryIds) {
                         assertNull(tmpMetricComparison.getTruePositivesText().get(tmpPostHistoryId));
                         assertNull(tmpMetricComparison.getFalsePositivesText().get(tmpPostHistoryId));
@@ -448,9 +450,6 @@ class BlockLifeSpanAndGroundTruthTest {
                     }
 
                 } else {
-
-                    if(postId != 3758880) // TODO: This test case works only for post 3758880 but not for 22037280
-                        continue;
 
                     // TODO: Check true negatives for text and code
                     assertEquals(tmpMetricComparison.getTruePositivesText().get(postHistoryId), truePositivesText);
