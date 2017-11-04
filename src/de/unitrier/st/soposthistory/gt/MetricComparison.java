@@ -27,13 +27,15 @@ public class MetricComparison {
 
     // text
     private long runtimeText;
+    // PostHistoryId -> #false/true positives/negatives
     private Map<Integer, Integer> truePositivesText;
-    private Map<Integer, Integer> falsePositivesText; // TODO: PostHistoryId -> #false positives
+    private Map<Integer, Integer> falsePositivesText;
     private Map<Integer, Integer> trueNegativesText;
     private Map<Integer, Integer> falseNegativesText;
 
     // code
     private long runtimeCode;
+    // PostHistoryId -> #false/true positives/negatives
     private Map<Integer, Integer> truePositivesCode;
     private Map<Integer, Integer> falsePositivesCode;
     private Map<Integer, Integer> trueNegativesCode;
@@ -47,6 +49,8 @@ public class MetricComparison {
                             double similarityThreshold) {
         this.postId = postId;
         this.postVersionList = postVersionList;
+        // normalize links so that post version list and ground truth are comparable
+        postVersionList.normalizeLinks();
         this.postGroundTruth = postGroundTruth;
         this.postHistoryIds = postVersionList.getPostHistoryIds();
 
@@ -70,8 +74,6 @@ public class MetricComparison {
         this.falseNegativesCode = new HashMap<>();
 
         stopWatch = new StopWatch();
-
-        postVersionList.normalizeLinks();
     }
 
     public void start() {
@@ -83,6 +85,7 @@ public class MetricComparison {
 
         // the post version list is shared by all metric comparisons conducted for the corresponding post
         synchronized (postVersionList) {
+            // process version history of text blocks
             stopWatch.reset();
             stopWatch.start();
             try {
@@ -93,8 +96,10 @@ public class MetricComparison {
             stopWatch.stop();
             setResultsText();
 
+            // reset post block version history
             postVersionList.resetPostBlockVersionHistory();
 
+            // process version history of code blocks
             stopWatch.reset();
             stopWatch.start();
             try {
@@ -215,9 +220,9 @@ public class MetricComparison {
     }
 
     private class MetricResult {
-        public Integer truePositives = null;
-        public Integer falsePositives = null;
-        public Integer trueNegatives = null;
-        public Integer falseNegatives = null;
+        Integer truePositives = null;
+        Integer falsePositives = null;
+        Integer trueNegatives = null;
+        Integer falseNegatives = null;
     }
 }
