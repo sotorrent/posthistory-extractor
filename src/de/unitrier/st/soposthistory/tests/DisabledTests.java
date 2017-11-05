@@ -2,37 +2,53 @@ package de.unitrier.st.soposthistory.tests;
 
 import de.unitrier.st.soposthistory.gt.MetricComparison;
 import de.unitrier.st.soposthistory.gt.MetricComparisonManager;
+import de.unitrier.st.soposthistory.version.PostVersionList;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 @Disabled
-class DisabledTest extends BlockLifeSpanAndGroundTruthTest {
-    private Path pathToOldMetricComparisons = Paths.get(
-            "testdata", "metrics_comparison", "resultsMetricComparisonOldProject.csv"
+class DisabledTests {
+    private static Path pathToOldMetricComparisons = Paths.get(
+            "testdata", "metrics_comparison", "results_metric_comparison_old.csv"
     );
+
+    private static Path rootPathToLargeSamples = Paths.get("testdata","samples_10000");
+    private static List<Path> pathsToLargeSamplesFiles = new LinkedList<>();
+
+    static {
+        for(int i=1; i<=10; i++) {
+            pathsToLargeSamplesFiles.add(Paths.get(rootPathToLargeSamples.toString(), "PostId_VersionCount_SO_17-06_sample_10000_" + i, "files"));
+        }
+    }
 
     @Test
     void testCompareMetricComparisonManagerWithComparisonFromOldProject() {
         MetricComparisonManager manager = MetricComparisonManager.create(
-                "TestManager", pathToPostIdList, pathToPostHistory, pathToGroundTruth, true
+                "TestManager", BlockLifeSpanAndGroundTruthTest.pathToPostIdList,
+                BlockLifeSpanAndGroundTruthTest.pathToPostHistory, BlockLifeSpanAndGroundTruthTest.pathToGroundTruth,
+                true
         );
 
         List<Integer> postHistoryIds_3758880 = manager.getPostVersionLists().get(3758880).getPostHistoryIds();
         List<Integer> postHistoryIds_22037280 = manager.getPostVersionLists().get(22037280).getPostHistoryIds();
 
         manager.compareMetrics();
-        manager.writeToCSV(outputDir);
+        manager.writeToCSV(BlockLifeSpanAndGroundTruthTest.outputDir);
 
         CSVParser csvParser;
 
@@ -116,6 +132,58 @@ class DisabledTest extends BlockLifeSpanAndGroundTruthTest {
                     assertEquals(tmpMetricComparison.getFalsePositivesCode().get(postHistoryId), falsePositivesCode);
                     assertEquals(tmpMetricComparison.getFalseNegativesCode().get(postHistoryId), falseNegativesCode);
                 }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    void testLargeSamplesParsable() throws IOException {
+        for (Path currentPath : pathsToLargeSamplesFiles) {
+            File[] postHistoryFiles = currentPath.toFile().listFiles(
+                    (dir, name) -> name.matches(PostVersionList.fileNamePattern.pattern())
+            );
+
+            assertNotNull(postHistoryFiles);
+
+            for (File postHistoryFile : postHistoryFiles) {
+                Matcher fileNameMatcher = PostVersionList.fileNamePattern.matcher(postHistoryFile.getName());
+                if (fileNameMatcher.find()) {
+                    int postId = Integer.parseInt(fileNameMatcher.group(1));
+                    PostVersionList postVersionList = PostVersionList.readFromCSV(currentPath, postId, -1);
+                    postVersionList.normalizeLinks();
+                }
+            }
+        }
+    }
+
+    @Test
+    void comparePossibleMultipleConnectionsWithOldComparisonProject() {
+        CSVParser csvParserOld, csvParserNew;
+        try {
+            // parse old records
+            csvParserOld = CSVParser.parse(
+                    Paths.get(rootPathToLargeSamples.toString(),"possible_multiple_connections_old.csv").toFile(),
+                    StandardCharsets.UTF_8,
+                    MetricComparisonManager.csvFormatMetricComparison.withFirstRecordAsHeader()
+            );
+            csvParserOld.getHeaderMap();
+            List<CSVRecord> oldRecords = csvParserOld.getRecords();
+
+            // parse new records
+            csvParserNew = CSVParser.parse(
+                    Paths.get(rootPathToLargeSamples.toString(),"possible_multiple_connections.csv").toFile(),
+                    StandardCharsets.UTF_8,
+                    MetricComparisonManager.csvFormatMetricComparison.withFirstRecordAsHeader()
+            );
+            csvParserNew.getHeaderMap();
+            List<CSVRecord> newRecords = csvParserNew.getRecords();
+
+            for(int i=0; i<oldRecords.size(); i++) {
+                CSVRecord recordOld = oldRecords.get(i);
+                CSVRecord recordNew = newRecords.get(i);
+                assertEquals(recordOld, recordNew);
             }
         } catch (IOException e) {
             e.printStackTrace();

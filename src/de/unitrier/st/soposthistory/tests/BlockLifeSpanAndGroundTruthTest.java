@@ -24,10 +24,10 @@ import static org.hamcrest.junit.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class BlockLifeSpanAndGroundTruthTest {
-    protected static Path pathToPostIdList = Paths.get("testdata", "postIds.csv");
-    protected static Path pathToPostHistory = Paths.get("testdata");
-    protected static Path pathToGroundTruth = Paths.get("testdata", "gt");
-    protected static Path outputDir = Paths.get("testdata", "metrics comparison");
+    static Path pathToPostIdList = Paths.get("testdata", "postIds.csv");
+    static Path pathToPostHistory = Paths.get("testdata");
+    static Path pathToGroundTruth = Paths.get("testdata", "gt");
+    static Path outputDir = Paths.get("testdata", "metrics comparison");
 
     @Test
     void testReadFromDirectory() {
