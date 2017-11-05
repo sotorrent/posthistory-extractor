@@ -78,4 +78,9 @@ public class Util {
         }
         return new ArrayList<>();
     }
+
+    // beginIndex inclusive, endIndex exclusive
+    public static String replaceStringAt(String str, int beginIndex, int endIndex, String replacement) {
+        return str.substring(0, beginIndex) + replacement + str.substring(endIndex, str.length());
+    }
 }
