@@ -125,6 +125,35 @@ class DisabledTest extends BlockLifeSpanAndGroundTruthTest {
             e.printStackTrace();
         }
     }
+
+    @Test
+    void testSetIfAllPostVersionListsAreParsable() throws IOException {
+
+        List<String> pathToAllDirectories = new LinkedList<>();
+        for(int i=1; i<=10; i++) {
+            pathToAllDirectories.add(Paths.get("testdata","Samples_10000", "PostId_VersionCount_SO_17-06_sample_10000_" + i, "files").toString());
+        }
+
+        for (String path : pathToAllDirectories) {
+            File file = new File(path);
+            File[] allPostHistoriesInFolder = file.listFiles((dir, name) -> name.matches(Pattern.compile("[0-9]+\\.csv").pattern())); // https://stackoverflow.com/questions/4852531/find-files-in-a-folder-using-java
+
+            assert allPostHistoriesInFolder != null;
+            for (File postHistory : allPostHistoriesInFolder) {
+                int postId = Integer.parseInt(postHistory.getName().replace(".csv", ""));
+                PostVersionList tmpPostVersionList;
+                try {
+                    tmpPostVersionList = PostVersionList.readFromCSV(Paths.get(path), postId, 2, false);
+                    tmpPostVersionList.processVersionHistory();
+                    tmpPostVersionList.normalizeLinks();
+                } catch (Exception e) {
+                    System.out.println(postId);
+                }
+            }
+            System.out.println("Finished: " + path);
+        }
+    }
+
     @Test
     void checkPossibleMultipleConnectionsWithOldComparisonProject() {
 
