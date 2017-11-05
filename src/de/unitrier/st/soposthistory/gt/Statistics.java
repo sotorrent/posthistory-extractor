@@ -23,7 +23,6 @@ public class Statistics {
 
     public static void main(String[] args){
         Path pathToPossibleMultipleConnections = Paths.get("testdata", "metrics comparison", "possible multiple connections.csv");
-        // TODO: Lorik: this data is not under version control. Too large?
         Path pathToDirectoryWithPossibleMultipleConnections = Paths.get("testdata", "Samples_possibleMultipleConnections");
 
         Statistics statistics = new Statistics();
