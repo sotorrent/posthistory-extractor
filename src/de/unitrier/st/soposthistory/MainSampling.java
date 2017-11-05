@@ -49,7 +49,7 @@ class MainSampling {
 
         PostHistoryList.createSessionFactory(hibernateConfigFilePath);
 
-        PostHistoryList.readFromCSVAndRetrieve(inputFilePath, outputDirPath);
+        PostHistoryList.readRetrieveAndWrite(inputFilePath, outputDirPath);
 
         PostHistoryList.sessionFactory.close();
     }

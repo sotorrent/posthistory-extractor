@@ -83,7 +83,7 @@ public class PostHistoryList extends LinkedList<PostHistory> {
                 .buildSessionFactory();
     }
 
-    public static void readFromCSVAndRetrieve(Path inputFile, Path outputDir) {
+    public static void readRetrieveAndWrite(Path inputFile, Path outputDir) {
         // ensure that input file exists
         if (!Files.exists(inputFile) || Files.isDirectory(inputFile)) {
             throw new IllegalArgumentException("Input file not found: " + inputFile);
@@ -134,6 +134,14 @@ public class PostHistoryList extends LinkedList<PostHistory> {
             int count=0;
             while (postHistoryIterator.next()) {
                 PostHistory currentPostHistoryEntity = (PostHistory) postHistoryIterator.get(0);
+
+                // replace \" with \\", because the former will be exported as \"", which will lead to an IOException
+                // ("java.io.IOException: (line ...) invalid char between encapsulated token and delimiter")
+                // see post 10049438 and corresponding test case in PostVersionHistoryTest
+                currentPostHistoryEntity.setText(
+                        currentPostHistoryEntity.getText().replace("\\\"", "\\\\\"")
+                );
+
                 this.add(currentPostHistoryEntity);
                 count++;
             }
