@@ -429,7 +429,9 @@ class BlockLifeSpanAndGroundTruthTest {
 
     @Test
     void testNumberOfPredecessorsComputedMetric() {
-        // TODO: Lorik: Add short description what this test case does and why we need it
+        // This test case uses very low thresholds to force a multiple connection possibility.
+        // Then it checks whether a block will be set more than once as a predecessor.
+        // The test is successful if not.
         List<PostVersionList> postVersionLists = PostVersionList.readFromDirectory(pathToPostHistory);
 
         for (PostVersionList postVersionList : postVersionLists) {
