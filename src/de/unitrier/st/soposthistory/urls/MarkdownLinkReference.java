@@ -66,7 +66,9 @@ public class MarkdownLinkReference extends Link {
                             mergedLink.title = link2.title;
                             mergedLink.url = link2.url;
                             mergedLink.fullMatch = link1.fullMatch + "\n" + link2.fullMatch;
-                            mergedLinks.add(mergedLink);
+                            if (mergedLink.url != null && mergedLink.url.length() > 0) {
+                                mergedLinks.add(mergedLink);
+                            }
                         }
                     }
 
