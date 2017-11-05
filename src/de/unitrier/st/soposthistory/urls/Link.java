@@ -45,7 +45,9 @@ public class Link {
             Link extractedLink = new Link();
             extractedLink.fullMatch = matcher.group(0);
             extractedLink.url = matcher.group(0);
-            extractedLinks.add(extractedLink);
+            if (extractedLink.url != null && extractedLink.url.length() > 0) {
+                extractedLinks.add(extractedLink);
+            }
         }
 
         return extractedLinks;
@@ -79,9 +81,11 @@ public class Link {
         // validate the extracted links (possible issues include posts 36273118 and 37625877 with "double[][]" and anchor tags where href does not point to a valid URL)
         LinkedList<Link> validLinks = new LinkedList<>();
         for (Link currentLink : extractedLinks) {
-            Matcher urlMatcher = regex.matcher(currentLink.url.trim());
-            if (urlMatcher.matches()) {
-                validLinks.add(currentLink);
+            if (currentLink.url != null) {
+                Matcher urlMatcher = regex.matcher(currentLink.url.trim());
+                if (urlMatcher.matches()) {
+                    validLinks.add(currentLink);
+                }
             }
         }
 
