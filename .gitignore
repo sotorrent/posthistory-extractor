@@ -44,3 +44,4 @@ target/
 /data
 *.log
 *.lck
+/testdata/Samples_10000

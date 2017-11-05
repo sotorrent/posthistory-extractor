@@ -2,16 +2,20 @@ package de.unitrier.st.soposthistory.tests;
 
 import de.unitrier.st.soposthistory.gt.MetricComparison;
 import de.unitrier.st.soposthistory.gt.MetricComparisonManager;
+import de.unitrier.st.soposthistory.version.PostVersionList;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -116,6 +120,40 @@ class DisabledTest extends BlockLifeSpanAndGroundTruthTest {
                     assertEquals(tmpMetricComparison.getFalsePositivesCode().get(postHistoryId), falsePositivesCode);
                     assertEquals(tmpMetricComparison.getFalseNegativesCode().get(postHistoryId), falseNegativesCode);
                 }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    @Test
+    void checkPossibleMultipleConnectionsWithOldComparisonProject() {
+
+        CSVParser csvParserOld, csvParserNew;
+
+        try {
+            // parse old records
+            csvParserOld = CSVParser.parse(
+                    Paths.get("testdata", "Samples_10000", "possible multiple connections OLD.csv").toFile(),
+                    StandardCharsets.UTF_8,
+                    MetricComparisonManager.csvFormatMetricComparison.withFirstRecordAsHeader()
+            );
+            csvParserOld.getHeaderMap();
+            List<CSVRecord> oldRecords = csvParserOld.getRecords();
+
+            // parse new records
+            csvParserNew = CSVParser.parse(
+                    Paths.get("testdata", "Samples_10000", "possible multiple connections.csv").toFile(),
+                    StandardCharsets.UTF_8,
+                    MetricComparisonManager.csvFormatMetricComparison.withFirstRecordAsHeader()
+            );
+            csvParserNew.getHeaderMap();
+            List<CSVRecord> newRecords = csvParserNew.getRecords();
+
+            for(int i=0; i<oldRecords.size(); i++) {
+                CSVRecord recordOld = oldRecords.get(i);
+                CSVRecord recordNew = newRecords.get(i);
+
+                assertEquals(recordOld, recordNew);
             }
         } catch (IOException e) {
             e.printStackTrace();
