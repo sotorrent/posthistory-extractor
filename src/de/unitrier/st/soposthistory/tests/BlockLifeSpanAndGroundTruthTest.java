@@ -201,10 +201,14 @@ class BlockLifeSpanAndGroundTruthTest {
         PostVersionList a_22037280 = PostVersionList.readFromCSV(pathToPostHistory, postId, 2, false);
 
         testPostBlockVersionHistoryReset(a_22037280);
+        assertNull(a_22037280.get(1).getTextBlocks().get(0).getPred()); // predecessors of post blocks have not been set yet
         a_22037280.processVersionHistory();
+        assertNotNull(a_22037280.get(1).getTextBlocks().get(0).getPred()); // predecessors of post blocks have been set
         testPostBlockVersionHistoryProcessed(a_22037280);
+
         a_22037280.resetPostBlockVersionHistory();
         testPostBlockVersionHistoryReset(a_22037280);
+
         a_22037280.processVersionHistory();
         testPostBlockVersionHistoryProcessed(a_22037280);
     }
@@ -260,7 +264,6 @@ class BlockLifeSpanAndGroundTruthTest {
 
         List<Integer> postHistoryIds_3758880 = manager.getPostGroundTruth().get(3758880).getPostHistoryIds();
         MetricComparison comparison_a_3758880 = manager.getMetricComparison(3758880, "fourGramOverlap", 0.6);
-
 
         /* compare a 3758880 */
         // first version has never predecessors
@@ -426,7 +429,7 @@ class BlockLifeSpanAndGroundTruthTest {
 
     @Test
     void testNumberOfPredecessorsComputedMetric() {
-
+        // TODO: Lorik: Add short description what this test case does and why we need it
         List<PostVersionList> postVersionLists = PostVersionList.readFromDirectory(pathToPostHistory);
 
         for (PostVersionList postVersionList : postVersionLists) {
@@ -456,15 +459,5 @@ class BlockLifeSpanAndGroundTruthTest {
             }
         }
     }
-    
-    @Test
-    void checkWhetherPostVersionListConnectionsWillBeResetRight() {
-        int postId = 3758880;
 
-        PostVersionList a_3758880 = PostVersionList.readFromCSV(pathToPostHistory, postId, 2, false);
-
-        assertNull(a_3758880.get(1).getTextBlocks().get(0).getPred()); // no predecessors have been set yet so it is null
-        a_3758880.processVersionHistory();
-        assertNotNull(a_3758880.get(1).getTextBlocks().get(0).getPred()); // predecessors have been set so it is not null
-    }
 }

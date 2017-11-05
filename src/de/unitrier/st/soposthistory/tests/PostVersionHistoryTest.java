@@ -239,7 +239,7 @@ class PostVersionHistoryTest {
         assertEquals(6, version_1.getPostBlocks().size());
         // root post blocks of first version must be null
         for (PostBlockVersion currentPostBlock : version_1.getPostBlocks()) {
-            assertEquals(currentPostBlock.getId(), (int)currentPostBlock.getRootPostBlockId());
+            assertEquals(currentPostBlock.getId(), (int) currentPostBlock.getRootPostBlockId());
         }
 
         PostVersion version_2 = a_3758880.get(1);
@@ -247,23 +247,23 @@ class PostVersionHistoryTest {
 
         assertEquals(4, version_2.getPostBlocks().size());
         // first code block of second version has first code block of first version as root post block
-        assertEquals((int)version_2.getCodeBlocks().get(0).getRootPostBlockId(),
+        assertEquals((int) version_2.getCodeBlocks().get(0).getRootPostBlockId(),
                 version_1.getCodeBlocks().get(0).getId());
         // second code block of second version has third code block of first version as root post block
-        assertEquals((int)version_2.getCodeBlocks().get(1).getRootPostBlockId(),
+        assertEquals((int) version_2.getCodeBlocks().get(1).getRootPostBlockId(),
                 version_1.getCodeBlocks().get(2).getId());
         // second text block of second version has no predecessor (-> itself as root post block)
-        assertEquals((int)version_2.getTextBlocks().get(0).getRootPostBlockId(),
+        assertEquals((int) version_2.getTextBlocks().get(0).getRootPostBlockId(),
                 version_2.getTextBlocks().get(0).getId());
 
-        PostVersion lastPostVersion = a_3758880.get(a_3758880.size()-1);
+        PostVersion lastPostVersion = a_3758880.get(a_3758880.size() - 1);
         testPredecessorSimilarities(lastPostVersion);
 
         // first code block of last version still has first code block of first version as root post block
-        assertEquals((int)lastPostVersion.getCodeBlocks().get(0).getRootPostBlockId(),
+        assertEquals((int) lastPostVersion.getCodeBlocks().get(0).getRootPostBlockId(),
                 version_1.getCodeBlocks().get(0).getId());
         // first text block of last version has first text block of second version as root post block
-        assertEquals((int)lastPostVersion.getTextBlocks().get(0).getRootPostBlockId(),
+        assertEquals((int) lastPostVersion.getTextBlocks().get(0).getRootPostBlockId(),
                 version_2.getTextBlocks().get(0).getId());
     }
 
@@ -445,7 +445,7 @@ class PostVersionHistoryTest {
     }
 
     @Test
-    void testPredecessorAssignmentAnswer3758880(){
+    void testPredecessorAssignmentAnswer3758880() {
         // tests if posts blocks are set more than once as predecessor
         PostVersionList a_3758880 = PostVersionList.readFromCSV(pathToTestData, 3758880, 2, false);
 
@@ -455,7 +455,7 @@ class PostVersionHistoryTest {
         List<Integer> predecessorList = new LinkedList<>();
         List<TextBlockVersion> textBlocks = a_3758880.getLast().getTextBlocks();
         for (TextBlockVersion currentTextBlock : textBlocks) {
-            if(currentTextBlock.getPred() != null){
+            if (currentTextBlock.getPred() != null) {
                 predecessorList.add(currentTextBlock.getPred().getLocalId());
             }
         }
@@ -466,7 +466,7 @@ class PostVersionHistoryTest {
     }
 
     @Test
-    void testPredecessorAssignmentQuestion37625877(){
+    void testPredecessorAssignmentQuestion37625877() {
         // tests predecessor assignment if two versions have two equal text blocks
         PostVersionList q_37625877 = PostVersionList.readFromCSV(pathToTestData, 37625877, 1, false);
 
@@ -482,7 +482,7 @@ class PostVersionHistoryTest {
     }
 
     @Test
-    void testPredecessorAssignmentAnswer42070509(){
+    void testPredecessorAssignmentAnswer42070509() {
         // tests predecessor assignment if version i has three code blocks that are equal to four code blocks in version i+1
         PostVersionList a_42070509 = PostVersionList.readFromCSV(pathToTestData, 42070509, 2, false);
 
@@ -502,7 +502,7 @@ class PostVersionHistoryTest {
 
 
     @Test
-    void testPredecessorAssignmentQuestion23459881(){
+    void testPredecessorAssignmentQuestion23459881() {
         PostVersionList q_23459881 = PostVersionList.readFromCSV(pathToTestData, 23459881, 1, true);
 
         PostVersion version_2 = q_23459881.get(1);
@@ -542,7 +542,7 @@ class PostVersionHistoryTest {
 
 
     @Test
-    void testPredecessorAssignmentQuestion36082771(){
+    void testPredecessorAssignmentQuestion36082771() {
         PostVersionList q_36082771 = PostVersionList.readFromCSV(pathToTestData, 36082771, 1, true);
 
         PostVersion version_2 = q_36082771.get(1);
@@ -589,7 +589,7 @@ class PostVersionHistoryTest {
 
 
     @Test
-    void testPredecessorAssignmentQuestion18276636(){
+    void testPredecessorAssignmentQuestion18276636() {
         PostVersionList q_18276636 = PostVersionList.readFromCSV(pathToTestData, 18276636, 1, true);
 
         PostVersion version_2 = q_18276636.get(1);
@@ -649,7 +649,7 @@ class PostVersionHistoryTest {
     }
 
     @Test
-    void testPostBlockTypeFilter3758880(){
+    void testPostBlockTypeFilter3758880() {
         PostVersionList q_3758880 = PostVersionList.readFromCSV(pathToTestData, 3758880, 1);
         // This caused a null pointer exception before (last commit: d37e6e38c8c15efe743e35141561742d7ef91ede),
         // because some filter checks were missing.
@@ -735,7 +735,7 @@ class PostVersionHistoryTest {
     }
 
     @Test
-    void testInvalidCharBetweenEncapsulatedTokenAndDelimiter(){
+    void testInvalidCharBetweenEncapsulatedTokenAndDelimiter() {
         PostVersionList a_10049438 = PostVersionList.readFromCSV(pathToTestData, 10049438, 2, false);
     }
 }
