@@ -331,7 +331,7 @@ class BlockLifeSpanAndGroundTruthTest {
         }
 
         // version 4,5,7,8,9,10,11 for code
-        List<Integer> versionsOfType2 = Arrays.asList(3, 4, 6, 7, 8, 9, 10);
+        versions = Arrays.asList(3, 4, 6, 7, 8, 9, 10);
         for (Integer version_number : versions) {
             postHistoryId = postHistoryIds_3758880.get(version_number);
 
