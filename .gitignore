@@ -45,3 +45,4 @@ target/
 *.log
 *.lck
 /testdata/samples_10000
+/testdata/samples_100
