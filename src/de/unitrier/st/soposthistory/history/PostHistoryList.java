@@ -13,11 +13,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static de.unitrier.st.soposthistory.util.Util.getClassLogger;
-import static de.unitrier.st.soposthistory.util.Util.replaceStringAt;
 
 public class PostHistoryList extends LinkedList<PostHistory> {
     // TODO: Merge with PostHistoryIterator?
@@ -25,9 +22,6 @@ public class PostHistoryList extends LinkedList<PostHistory> {
     private static final Path logFileDir  = Paths.get(System.getProperty("user.dir"));
     private static final CSVFormat outputCSVFormat;
     private static final CSVFormat inputCSVFormat;
-    // matches escaped double quote \" but not \\"
-    private static final Pattern escapedDoubleQuoteSingleBackslashPattern = Pattern.compile("(?:^|[^\\\\])(\\\\\")");
-    private static final Pattern escapedDoubleQuoteThreeBackslashesPattern = Pattern.compile("(?:^|[^\\\\])(\\\\\\\\\\\\\")");
 
     private static Logger logger = null;
     public static SessionFactory sessionFactory = null;
@@ -141,38 +135,11 @@ public class PostHistoryList extends LinkedList<PostHistory> {
             while (postHistoryIterator.next()) {
                 PostHistory currentPostHistoryEntity = (PostHistory) postHistoryIterator.get(0);
 
-                // replace \" with \\" (and \\\" with \\\\"), because the former will be exported as \"", which will
-                // lead to an IOException ("java.io.IOException: (line ...) invalid char between encapsulated token and delimiter")
+                // escape back slashes, in particular replace \" with \\", because the former will be exported as \"",
+                // which will lead to an IOException when the CSV file is imported again
+                // ("java.io.IOException: (line ...) invalid char between encapsulated token and delimiter")
                 // see post 10049438 and corresponding test case in PostVersionHistoryTest
-
-                String oldText = currentPostHistoryEntity.getText();
-                String newText = oldText;
-                Matcher matcher = escapedDoubleQuoteSingleBackslashPattern.matcher(oldText);
-                int startIndex = 0;
-                int matchCount = 0;
-
-                while (matcher.find(startIndex)) {
-                    int matchStart = matcher.start(1);
-                    int matchEnd = matcher.end(1);
-                    // with each match, the index shifts one position to the right (because the replacement is one character longer)
-                    newText = replaceStringAt(newText, matchStart+matchCount, matchEnd+matchCount, "\\\\\"");
-                    startIndex = matchStart+1; // allow for overlapping matches
-                    matchCount++;
-                }
-
-                oldText = newText;
-                matcher = escapedDoubleQuoteThreeBackslashesPattern.matcher(oldText);
-                matchCount = 0;
-
-                while (matcher.find()) {
-                    int matchStart = matcher.start(1);
-                    int matchEnd = matcher.end(1);
-                    // with each match, the index shifts one position to the right (because the replacement is one character longer)
-                    newText = replaceStringAt(newText, matchStart+matchCount, matchEnd+matchCount, "\\\\\\\\\"");
-                    matchCount++;
-                }
-
-                currentPostHistoryEntity.setText(newText);
+                currentPostHistoryEntity.setText(currentPostHistoryEntity.getText().replace("\\", "\\\\"));
 
                 this.add(currentPostHistoryEntity);
                 count++;
