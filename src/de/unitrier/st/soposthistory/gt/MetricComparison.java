@@ -29,19 +29,13 @@ public class MetricComparison {
 
     // text
     private double runtimeText;
-    // PostHistoryId -> mean number of #false/true positives/negatives
-    private Map<Integer, Double> truePositivesText;
-    private Map<Integer, Double> falsePositivesText;
-    private Map<Integer, Double> trueNegativesText;
-    private Map<Integer, Double> falseNegativesText;
+    // PostHistoryId -> metric results for text blocks
+    private Map<Integer, MetricResult> resultsText;
 
     // code
     private double runtimeCode;
-    // PostHistoryId -> mean number of #false/true positives/negatives
-    private Map<Integer, Double> truePositivesCode;
-    private Map<Integer, Double> falsePositivesCode;
-    private Map<Integer, Double> trueNegativesCode;
-    private Map<Integer, Double> falseNegativesCode;
+    // PostHistoryId -> metric results for code blocks
+    private Map<Integer, MetricResult> resultsCode;
 
     public MetricComparison(int postId,
                             PostVersionList postVersionList,
@@ -65,16 +59,8 @@ public class MetricComparison {
         this.similarityMetricName = similarityMetricName;
         this.similarityThreshold = similarityThreshold;
         this.inputTooShort = false;
-        // text
-        this.truePositivesText = new HashMap<>();
-        this.falsePositivesText = new HashMap<>();
-        this.trueNegativesText = new HashMap<>();
-        this.falseNegativesText = new HashMap<>();
-        // code
-        this.truePositivesCode = new HashMap<>();
-        this.falsePositivesCode = new HashMap<>();
-        this.trueNegativesCode = new HashMap<>();
-        this.falseNegativesCode = new HashMap<>();
+        this.resultsText = new HashMap<>();
+        this.resultsCode = new HashMap<>();
 
         this.repetitionCount = repetitionCount;
         this.currentRepetition = 0;
@@ -120,71 +106,45 @@ public class MetricComparison {
     }
 
     private void setResultsText() {
-        if (currentRepetition == 1) {
-            // set initial values after first run
-            runtimeText = stopWatch.getTime();
-            for (Integer postHistoryId : postHistoryIds) {
-                MetricResult result = getResults(postHistoryId, TextBlockVersion.getPostBlockTypeIdFilter());
-                truePositivesText.put(postHistoryId, result.truePositives);
-                falsePositivesText.put(postHistoryId, result.falsePositives);
-                trueNegativesText.put(postHistoryId, result.trueNegatives);
-                falseNegativesText.put(postHistoryId, result.falseNegatives);
-            }
-        } else {
-            // sum up values in later runs
-            runtimeText = runtimeText + stopWatch.getTime();
-            for (Integer postHistoryId : postHistoryIds) {
-                MetricResult result = getResults(postHistoryId, TextBlockVersion.getPostBlockTypeIdFilter());
-                truePositivesText.put(postHistoryId, truePositivesText.get(postHistoryId) + result.truePositives);
-                falsePositivesText.put(postHistoryId, falsePositivesText.get(postHistoryId) + result.falsePositives);
-                trueNegativesText.put(postHistoryId, trueNegativesText.get(postHistoryId) + result.trueNegatives);
-                falseNegativesText.put(postHistoryId, falseNegativesText.get(postHistoryId) + result.falseNegatives);
-            }
-        }
-
-        // calculate mean after last run
-        if (currentRepetition == repetitionCount) {
-            runtimeText = runtimeText / (double)repetitionCount;
-            for (Integer postHistoryId : postHistoryIds) {
-                truePositivesText.put(postHistoryId, truePositivesText.get(postHistoryId) / (double)repetitionCount);
-                falsePositivesText.put(postHistoryId, falsePositivesText.get(postHistoryId)  / (double)repetitionCount);
-                trueNegativesText.put(postHistoryId, trueNegativesText.get(postHistoryId) / (double)repetitionCount);
-                falseNegativesText.put(postHistoryId, falseNegativesText.get(postHistoryId)  / (double)repetitionCount);
-            }
-        }
+        runtimeText = setResults(resultsText, runtimeText, TextBlockVersion.getPostBlockTypeIdFilter());
     }
 
     private void setResultsCode() {
-        if (currentRepetition == 1) {
-            // set initial values after first run
-            runtimeCode = stopWatch.getTime();
-            for (Integer postHistoryId : postHistoryIds) {
-                MetricResult result = getResults(postHistoryId, CodeBlockVersion.getPostBlockTypeIdFilter());
-                truePositivesCode.put(postHistoryId, result.truePositives);
-                falsePositivesCode.put(postHistoryId, result.falsePositives);
-                trueNegativesCode.put(postHistoryId, result.trueNegatives);
-                falseNegativesCode.put(postHistoryId, result.falseNegatives);
-            }
-        } else {
-            // sum up values in later runs
-            runtimeCode = runtimeCode + stopWatch.getTime();
-            for (Integer postHistoryId : postHistoryIds) {
-                MetricResult result = getResults(postHistoryId, CodeBlockVersion.getPostBlockTypeIdFilter());
-                truePositivesCode.put(postHistoryId, truePositivesCode.get(postHistoryId) + result.truePositives);
-                falsePositivesCode.put(postHistoryId, falsePositivesCode.get(postHistoryId) + result.falsePositives);
-                trueNegativesCode.put(postHistoryId, trueNegativesCode.get(postHistoryId) + result.trueNegatives);
-                falseNegativesCode.put(postHistoryId, falseNegativesCode.get(postHistoryId) + result.falseNegatives);
-            }
-        }
+        runtimeCode = setResults(resultsCode, runtimeCode, CodeBlockVersion.getPostBlockTypeIdFilter());
+    }
 
-        // calculate mean after last run
-        if (currentRepetition == repetitionCount) {
-            runtimeCode = runtimeCode / (double)repetitionCount;
-            for (Integer postHistoryId : postHistoryIds) {
-                truePositivesCode.put(postHistoryId, truePositivesCode.get(postHistoryId) / (double)repetitionCount);
-                falsePositivesCode.put(postHistoryId, falsePositivesCode.get(postHistoryId)  / (double)repetitionCount);
-                trueNegativesCode.put(postHistoryId, trueNegativesCode.get(postHistoryId) / (double)repetitionCount);
-                falseNegativesCode.put(postHistoryId, falseNegativesCode.get(postHistoryId)  / (double)repetitionCount);
+    private double setResults(Map<Integer, MetricResult> results, double runtime, Set<Integer> postBlockTypeFilter) {
+        if (currentRepetition == 1) {
+            // set initial values after first run, return runtime
+            for (int postHistoryId : postHistoryIds) {
+                MetricResult result = getResults(postHistoryId, postBlockTypeFilter);
+                results.put(postHistoryId, result);
+            }
+            return runtime;
+        } else {
+            if (currentRepetition < repetitionCount) {
+                // sum up values in later runs, return runtime sum
+                for (int postHistoryId : postHistoryIds) {
+                    MetricResult resultInMap = results.get(postHistoryId);
+                    MetricResult newResult = getResults(postHistoryId, postBlockTypeFilter);
+                    resultInMap.truePositives = resultInMap.truePositives + newResult.truePositives;
+                    resultInMap.falsePositives = resultInMap.falsePositives + newResult.falsePositives;
+                    resultInMap.trueNegatives = resultInMap.trueNegatives + newResult.trueNegatives;
+                    resultInMap.falseNegatives = resultInMap.falseNegatives + newResult.falseNegatives;
+                }
+                return runtime + stopWatch.getTime();
+            }
+            else {
+                // calculate mean after last run, return mean runtime
+                for (int postHistoryId : postHistoryIds) {
+                    MetricResult resultInMap = results.get(postHistoryId);
+                    MetricResult newResult = getResults(postHistoryId, postBlockTypeFilter);
+                    resultInMap.truePositives = (resultInMap.truePositives + newResult.truePositives) / (double) repetitionCount;
+                    resultInMap.falsePositives = (resultInMap.falsePositives + newResult.falsePositives) / (double) repetitionCount;
+                    resultInMap.trueNegatives = (resultInMap.trueNegatives + newResult.trueNegatives) / (double) repetitionCount;
+                    resultInMap.falseNegatives = (resultInMap.falseNegatives + newResult.falseNegatives) / (double) repetitionCount;
+                }
+                return (runtime + stopWatch.getTime()) / (double) repetitionCount;
             }
         }
     }
@@ -238,46 +198,39 @@ public class MetricComparison {
         return runtimeText;
     }
 
-    public Map<Integer, Double> getTruePositivesText() {
-        return truePositivesText;
-    }
-
-    public Map<Integer, Double> getFalsePositivesText() {
-        return falsePositivesText;
-    }
-
-    public Map<Integer, Double> getTrueNegativesText() {
-        return trueNegativesText;
-    }
-
-    public Map<Integer, Double> getFalseNegativesText() {
-        return falseNegativesText;
+    public MetricResult getResultsText(int postHistoryId) {
+        return resultsText.get(postHistoryId);
     }
 
     public double getRuntimeCode() {
         return runtimeCode;
     }
 
-    public Map<Integer, Double> getTruePositivesCode() {
-        return truePositivesCode;
+    public MetricResult getResultsCode(int postHistoryId) {
+        return resultsCode.get(postHistoryId);
     }
 
-    public Map<Integer, Double> getFalsePositivesCode() {
-        return falsePositivesCode;
-    }
-
-    public Map<Integer, Double> getTrueNegativesCode() {
-        return trueNegativesCode;
-    }
-
-    public Map<Integer, Double> getFalseNegativesCode() {
-        return falseNegativesCode;
-    }
-
-    private class MetricResult {
+    public class MetricResult {
+        // after last repetition, variables hold mean values
         Double truePositives = null;
         Double falsePositives = null;
         Double trueNegatives = null;
         Double falseNegatives = null;
+
+        public Double getTruePositives() {
+            return truePositives;
+        }
+
+        public Double getFalsePositives() {
+            return falsePositives;
+        }
+
+        public Double getTrueNegatives() {
+            return trueNegatives;
+        }
+
+        public Double getFalseNegatives() {
+            return falseNegatives;
+        }
     }
 }
