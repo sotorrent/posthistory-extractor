@@ -248,7 +248,11 @@ class BlockLifeSpanAndGroundTruthTest {
     @Test
     void testMetricComparisonManager() {
         MetricComparisonManager manager = MetricComparisonManager.create(
-                "TestManager", pathToPostIdList, pathToPostHistory, pathToGroundTruth, false
+                "TestManager",
+                pathToPostIdList,
+                pathToPostHistory,
+                pathToGroundTruth,
+                false
         );
 
         assertEquals(manager.getPostVersionLists().size(), manager.getPostGroundTruth().size());
@@ -268,62 +272,62 @@ class BlockLifeSpanAndGroundTruthTest {
         /* compare a 3758880 */
         // first version has never predecessors
         int version_1_id = postHistoryIds_3758880.get(0);
-        assertEquals(new Integer(0), comparison_a_3758880.getTruePositivesText().get(version_1_id));
-        assertEquals(new Integer(0), comparison_a_3758880.getFalsePositivesText().get(version_1_id));
-        assertEquals(new Integer(0), comparison_a_3758880.getTrueNegativesText().get(version_1_id));
-        assertEquals(new Integer(0), comparison_a_3758880.getFalseNegativesText().get(version_1_id));
+        assertEquals(new Double(0), comparison_a_3758880.getTruePositivesText().get(version_1_id));
+        assertEquals(new Double(0), comparison_a_3758880.getFalsePositivesText().get(version_1_id));
+        assertEquals(new Double(0), comparison_a_3758880.getTrueNegativesText().get(version_1_id));
+        assertEquals(new Double(0), comparison_a_3758880.getFalseNegativesText().get(version_1_id));
 
-        assertEquals(new Integer(0), comparison_a_3758880.getTruePositivesCode().get(version_1_id));
-        assertEquals(new Integer(0), comparison_a_3758880.getFalsePositivesCode().get(version_1_id));
-        assertEquals(new Integer(0), comparison_a_3758880.getTrueNegativesCode().get(version_1_id));
-        assertEquals(new Integer(0), comparison_a_3758880.getFalseNegativesCode().get(version_1_id));
+        assertEquals(new Double(0), comparison_a_3758880.getTruePositivesCode().get(version_1_id));
+        assertEquals(new Double(0), comparison_a_3758880.getFalsePositivesCode().get(version_1_id));
+        assertEquals(new Double(0), comparison_a_3758880.getTrueNegativesCode().get(version_1_id));
+        assertEquals(new Double(0), comparison_a_3758880.getFalseNegativesCode().get(version_1_id));
 
 
         // second version
         int version_2_id = postHistoryIds_3758880.get(1);
-        assertEquals(new Integer(1), comparison_a_3758880.getTruePositivesText().get(version_2_id));
-        assertEquals(new Integer(0), comparison_a_3758880.getFalsePositivesText().get(version_2_id));
-        assertEquals(new Integer(5), comparison_a_3758880.getTrueNegativesText().get(version_2_id));
-        assertEquals(new Integer(0), comparison_a_3758880.getFalseNegativesText().get(version_2_id));
+        assertEquals(new Double(1), comparison_a_3758880.getTruePositivesText().get(version_2_id));
+        assertEquals(new Double(0), comparison_a_3758880.getFalsePositivesText().get(version_2_id));
+        assertEquals(new Double(5), comparison_a_3758880.getTrueNegativesText().get(version_2_id));
+        assertEquals(new Double(0), comparison_a_3758880.getFalseNegativesText().get(version_2_id));
 
-        assertEquals(new Integer(2), comparison_a_3758880.getTruePositivesCode().get(version_2_id));
-        assertEquals(new Integer(0), comparison_a_3758880.getFalsePositivesCode().get(version_2_id));
-        assertEquals(new Integer(4), comparison_a_3758880.getTrueNegativesCode().get(version_2_id));
-        assertEquals(new Integer(0), comparison_a_3758880.getFalseNegativesCode().get(version_2_id));
+        assertEquals(new Double(2), comparison_a_3758880.getTruePositivesCode().get(version_2_id));
+        assertEquals(new Double(0), comparison_a_3758880.getFalsePositivesCode().get(version_2_id));
+        assertEquals(new Double(4), comparison_a_3758880.getTrueNegativesCode().get(version_2_id));
+        assertEquals(new Double(0), comparison_a_3758880.getFalseNegativesCode().get(version_2_id));
 
         // version 3 to 10 only for text blocks (they don't differ)
         for (int i = 2; i < 10; i++) {
             int version_2_to_11_id_text = postHistoryIds_3758880.get(i);
-            assertEquals(new Integer(2), comparison_a_3758880.getTruePositivesText().get(version_2_to_11_id_text));
-            assertEquals(new Integer(0), comparison_a_3758880.getFalsePositivesText().get(version_2_to_11_id_text));
-            assertEquals(new Integer(2), comparison_a_3758880.getTrueNegativesText().get(version_2_to_11_id_text));
-            assertEquals(new Integer(0), comparison_a_3758880.getFalseNegativesText().get(version_2_to_11_id_text));
+            assertEquals(new Double(2), comparison_a_3758880.getTruePositivesText().get(version_2_to_11_id_text));
+            assertEquals(new Double(0), comparison_a_3758880.getFalsePositivesText().get(version_2_to_11_id_text));
+            assertEquals(new Double(2), comparison_a_3758880.getTrueNegativesText().get(version_2_to_11_id_text));
+            assertEquals(new Double(0), comparison_a_3758880.getFalseNegativesText().get(version_2_to_11_id_text));
         }
 
         int version_11_id_text = postHistoryIds_3758880.get(10);
-        assertEquals(new Integer(2), comparison_a_3758880.getTruePositivesText().get(version_11_id_text));
-        assertEquals(new Integer(0), comparison_a_3758880.getFalsePositivesText().get(version_11_id_text));
-        assertEquals(new Integer(4), comparison_a_3758880.getTrueNegativesText().get(version_11_id_text));
-        assertEquals(new Integer(0), comparison_a_3758880.getFalseNegativesText().get(version_11_id_text));
+        assertEquals(new Double(2), comparison_a_3758880.getTruePositivesText().get(version_11_id_text));
+        assertEquals(new Double(0), comparison_a_3758880.getFalsePositivesText().get(version_11_id_text));
+        assertEquals(new Double(4), comparison_a_3758880.getTrueNegativesText().get(version_11_id_text));
+        assertEquals(new Double(0), comparison_a_3758880.getFalseNegativesText().get(version_11_id_text));
 
         // version 3 and 6 for code
         List<Integer> versionsOfType1 = Arrays.asList(2, 5);
         for (Integer version : versionsOfType1) {
             int version_3_or_6_id = postHistoryIds_3758880.get(version);
-            assertEquals(new Integer(1), comparison_a_3758880.getTruePositivesCode().get(version_3_or_6_id));
-            assertEquals(new Integer(0), comparison_a_3758880.getFalsePositivesCode().get(version_3_or_6_id));
-            assertEquals(new Integer(2), comparison_a_3758880.getTrueNegativesCode().get(version_3_or_6_id));
-            assertEquals(new Integer(1), comparison_a_3758880.getFalseNegativesCode().get(version_3_or_6_id));
+            assertEquals(new Double(1), comparison_a_3758880.getTruePositivesCode().get(version_3_or_6_id));
+            assertEquals(new Double(0), comparison_a_3758880.getFalsePositivesCode().get(version_3_or_6_id));
+            assertEquals(new Double(2), comparison_a_3758880.getTrueNegativesCode().get(version_3_or_6_id));
+            assertEquals(new Double(1), comparison_a_3758880.getFalseNegativesCode().get(version_3_or_6_id));
         }
 
         // version 4,5,7,8,9,10,11 for code
         List<Integer> versionsOfType2 = Arrays.asList(3, 4, 6, 7, 8, 9, 10);
         for (Integer version : versionsOfType2) {
             int version_i_id = postHistoryIds_3758880.get(version);
-            assertEquals(new Integer(2), comparison_a_3758880.getTruePositivesCode().get(version_i_id));
-            assertEquals(new Integer(0), comparison_a_3758880.getFalsePositivesCode().get(version_i_id));
-            assertEquals(new Integer(2), comparison_a_3758880.getTrueNegativesCode().get(version_i_id));
-            assertEquals(new Integer(0), comparison_a_3758880.getFalseNegativesCode().get(version_i_id));
+            assertEquals(new Double(2), comparison_a_3758880.getTruePositivesCode().get(version_i_id));
+            assertEquals(new Double(0), comparison_a_3758880.getFalsePositivesCode().get(version_i_id));
+            assertEquals(new Double(2), comparison_a_3758880.getTrueNegativesCode().get(version_i_id));
+            assertEquals(new Double(0), comparison_a_3758880.getFalseNegativesCode().get(version_i_id));
         }
 
         /* compare a 22037280 */
@@ -332,28 +336,28 @@ class BlockLifeSpanAndGroundTruthTest {
 
         version_1_id = postHistoryIds_22037280.get(0);
 
-        assertEquals(new Integer(0), comparison_a_22037280.getTruePositivesText().get(version_1_id));
-        assertEquals(new Integer(0), comparison_a_22037280.getFalsePositivesText().get(version_1_id));
-        assertEquals(new Integer(0), comparison_a_22037280.getTrueNegativesText().get(version_1_id));
-        assertEquals(new Integer(0), comparison_a_22037280.getFalseNegativesText().get(version_1_id));
+        assertEquals(new Double(0), comparison_a_22037280.getTruePositivesText().get(version_1_id));
+        assertEquals(new Double(0), comparison_a_22037280.getFalsePositivesText().get(version_1_id));
+        assertEquals(new Double(0), comparison_a_22037280.getTrueNegativesText().get(version_1_id));
+        assertEquals(new Double(0), comparison_a_22037280.getFalseNegativesText().get(version_1_id));
 
-        assertEquals(new Integer(0), comparison_a_22037280.getTruePositivesCode().get(version_1_id));
-        assertEquals(new Integer(0), comparison_a_22037280.getFalsePositivesCode().get(version_1_id));
-        assertEquals(new Integer(0), comparison_a_22037280.getTrueNegativesCode().get(version_1_id));
-        assertEquals(new Integer(0), comparison_a_22037280.getFalseNegativesCode().get(version_1_id));
+        assertEquals(new Double(0), comparison_a_22037280.getTruePositivesCode().get(version_1_id));
+        assertEquals(new Double(0), comparison_a_22037280.getFalsePositivesCode().get(version_1_id));
+        assertEquals(new Double(0), comparison_a_22037280.getTrueNegativesCode().get(version_1_id));
+        assertEquals(new Double(0), comparison_a_22037280.getFalseNegativesCode().get(version_1_id));
 
         for (int i = 1; i < postHistoryIds_22037280.size(); i++) {
             version_2_id = postHistoryIds_22037280.get(i);
 
-            assertEquals(new Integer(3), comparison_a_22037280.getTruePositivesText().get(version_2_id));
-            assertEquals(new Integer(0), comparison_a_22037280.getFalsePositivesText().get(version_2_id));
-            assertEquals(new Integer(6), comparison_a_22037280.getTrueNegativesText().get(version_2_id));
-            assertEquals(new Integer(0), comparison_a_22037280.getFalseNegativesText().get(version_2_id));
+            assertEquals(new Double(3), comparison_a_22037280.getTruePositivesText().get(version_2_id));
+            assertEquals(new Double(0), comparison_a_22037280.getFalsePositivesText().get(version_2_id));
+            assertEquals(new Double(6), comparison_a_22037280.getTrueNegativesText().get(version_2_id));
+            assertEquals(new Double(0), comparison_a_22037280.getFalseNegativesText().get(version_2_id));
 
-            assertEquals(new Integer(2), comparison_a_22037280.getTruePositivesCode().get(version_2_id));
-            assertEquals(new Integer(0), comparison_a_22037280.getFalsePositivesCode().get(version_2_id));
-            assertEquals(new Integer(2), comparison_a_22037280.getTrueNegativesCode().get(version_2_id));
-            assertEquals(new Integer(0), comparison_a_22037280.getFalseNegativesCode().get(version_2_id));
+            assertEquals(new Double(2), comparison_a_22037280.getTruePositivesCode().get(version_2_id));
+            assertEquals(new Double(0), comparison_a_22037280.getFalsePositivesCode().get(version_2_id));
+            assertEquals(new Double(2), comparison_a_22037280.getTrueNegativesCode().get(version_2_id));
+            assertEquals(new Double(0), comparison_a_22037280.getFalseNegativesCode().get(version_2_id));
         }
 
         manager.writeToCSV(outputDir);
