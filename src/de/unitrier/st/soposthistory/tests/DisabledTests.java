@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 
+import static de.unitrier.st.soposthistory.history.PostHistoryIterator.logger;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Disabled
@@ -165,6 +166,8 @@ class DisabledTests {
 
     @Test
     void comparePossibleMultipleConnectionsWithOldComparisonProject() {
+        // This test case "fails" because the extraction of post blocks has been changed what results in a different file.
+
         File oldFile = Paths.get(Statistics.pathToMultipleConnectionsDir.toString(),
                 "multiple_possible_connections_old.csv").toFile();
         File newFile = Statistics.pathToMultipleConnectionsFile.toFile();
@@ -219,7 +222,47 @@ class DisabledTests {
                         possiblePredecessorLocalIds, possibleSuccessorLocalIds));
             }
 
-            // TODO: Lorik: Compare oldResults and newResults
+
+            for (MultipleConnectionsResultNew multipleConnectionsResultNew : newResults) {
+
+                int newPostId = multipleConnectionsResultNew.postId;
+                int newPostHistoryId = multipleConnectionsResultNew.postHistoryId;
+                int newLocalId = multipleConnectionsResultNew.localId;
+
+                int newPostBlockTypeId = multipleConnectionsResultNew.postBlockTypeId;
+                int newPossiblePredecessorsCount = multipleConnectionsResultNew.possiblePredecessorsCount;
+                int newPossibleSuccessorsCount = multipleConnectionsResultNew.possibleSuccessorsCount;
+                String newPossiblePredecessorLocalIds = multipleConnectionsResultNew.possiblePredecessorLocalIds;
+                String newPossibleSuccessorLocalIds = multipleConnectionsResultNew.possibleSuccessorLocalIds;
+
+                for (MultipleConnectionsResultOld multipleConnectionsResultOld : oldResults) {
+                    int oldPostId = multipleConnectionsResultOld.postId;
+                    int oldPostHistoryId = multipleConnectionsResultOld.postHistoryId;
+                    int oldLocalId = multipleConnectionsResultOld.localId;
+
+                    int oldPostBlockTypeId = multipleConnectionsResultOld.postBlockTypeId;
+                    int oldNumberOfPossibleSuccessorsOrPredecessors = multipleConnectionsResultOld.numberOfPossibleSuccessorsOrPredecessors;
+                    String oldPossiblePredOrSuccLocalIds = multipleConnectionsResultOld.possiblePredOrSuccLocalIds;
+
+                    if (newPostId == oldPostId
+                            && newPostHistoryId == oldPostHistoryId
+                            && newLocalId == oldLocalId) {
+
+                        assertEquals(newPostBlockTypeId, oldPostBlockTypeId);
+
+                        if (oldPossiblePredOrSuccLocalIds.equals(newPossiblePredecessorLocalIds)) {
+                            assertEquals(oldNumberOfPossibleSuccessorsOrPredecessors, newPossiblePredecessorsCount);
+                        } else if (oldPossiblePredOrSuccLocalIds.equals(newPossibleSuccessorLocalIds)) {
+                            assertEquals(oldNumberOfPossibleSuccessorsOrPredecessors, newPossibleSuccessorsCount);
+
+                        } else {
+                            logger.warning("post with id " + newPostId + " differs between old and new file possible multiple connections.csv");
+                        }
+
+                        break;
+                    }
+                }
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
