@@ -214,7 +214,49 @@ class DisabledTests {
                         possiblePredecessorLocalIds, possibleSuccessorLocalIds));
             }
 
-            // TODO: Lorik: Compare oldResults and newResults
+
+            for (MultipleConnectionsResultNew multipleConnectionsResultNew : newResults) {
+
+                int newPostId = multipleConnectionsResultNew.postId;
+                int newPostHistoryId = multipleConnectionsResultNew.postHistoryId;
+                int newLocalId = multipleConnectionsResultNew.localId;
+
+                int newPostBlockTypeId = multipleConnectionsResultNew.postBlockTypeId;
+                int newPossiblePredecessorsCount = multipleConnectionsResultNew.possiblePredecessorsCount;
+                int newPossibleSuccessorsCount = multipleConnectionsResultNew.possibleSuccessorsCount;
+                String newPossiblePredecessorLocalIds = multipleConnectionsResultNew.possiblePredecessorLocalIds;
+                String newPossibleSuccessorLocalIds = multipleConnectionsResultNew.possibleSuccessorLocalIds;
+
+                for (MultipleConnectionsResultOld multipleConnectionsResultOld : oldResults) {
+                    int oldPostId = multipleConnectionsResultOld.postId;
+                    int oldPostHistoryId = multipleConnectionsResultOld.postHistoryId;
+                    int oldLocalId = multipleConnectionsResultOld.localId;
+
+                    int oldPostBlockTypeId = multipleConnectionsResultOld.postBlockTypeId;
+                    int oldNumberOfPossibleSuccessorsOrPredecessors = multipleConnectionsResultOld.numberOfPossibleSuccessorsOrPredecessors;
+                    String oldPossiblePredOrSuccLocalIds = multipleConnectionsResultOld.possiblePredOrSuccLocalIds;
+
+                    if (newPostId == oldPostId
+                            && newPostHistoryId == oldPostHistoryId
+                            && newLocalId == oldLocalId) {
+
+                        assertEquals(newPostBlockTypeId, oldPostBlockTypeId);
+
+                        if (oldPossiblePredOrSuccLocalIds.equals(newPossiblePredecessorLocalIds)) {
+                            assertEquals(oldNumberOfPossibleSuccessorsOrPredecessors, newPossiblePredecessorsCount);
+                        } else if (oldPossiblePredOrSuccLocalIds.equals(newPossibleSuccessorLocalIds)) {
+                            assertEquals(oldNumberOfPossibleSuccessorsOrPredecessors, newPossibleSuccessorsCount);
+
+                        } else {
+                            System.out.println(oldPostId + ", " + oldPostHistoryId + ", " + oldLocalId + ", " + oldPossiblePredOrSuccLocalIds);
+                            System.out.println(newPostId + ", " + newPostHistoryId + ", " + newLocalId + ", " + newPossiblePredecessorLocalIds + ", " + newPossibleSuccessorLocalIds);
+                            System.out.println();
+                        }
+
+                        break;
+                    }
+                }
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
