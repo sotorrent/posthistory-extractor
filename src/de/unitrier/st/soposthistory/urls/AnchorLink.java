@@ -19,7 +19,10 @@ public class AnchorLink extends Link {
             extractedLink.url = matcher.group(1);
             extractedLink.title = matcher.group(2);
             extractedLink.anchor = matcher.group(3);
-            extractedLinks.add(extractedLink);
+            // e.g., <a href=""> </a>
+            if (extractedLink.url != null && extractedLink.url.length() > 0) {
+                extractedLinks.add(extractedLink);
+            }
         }
 
         return extractedLinks;

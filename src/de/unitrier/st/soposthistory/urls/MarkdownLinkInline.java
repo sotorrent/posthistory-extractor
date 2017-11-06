@@ -27,7 +27,10 @@ public class MarkdownLinkInline extends Link {
             extractedLink.anchor = matcher.group(1);
             extractedLink.url = matcher.group(2);
             extractedLink.title = matcher.group(3);
-            extractedLinks.add(extractedLink);
+            // e.g., [`tr///`]()
+            if (extractedLink.url != null && extractedLink.url.length() > 0) {
+                extractedLinks.add(extractedLink);
+            }
         }
 
         return extractedLinks;
