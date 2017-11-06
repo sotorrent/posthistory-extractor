@@ -404,7 +404,7 @@ class BlockLifeSpanAndGroundTruthTest {
 
     @Test
     void testNumberOfPredecessorsOfOnePost() {
-        // this checks whether a block can be predecessor of more than one block by choosing a very low threshold.
+        // this checks whether a block can be predecessor of more than one block when choosing a very low threshold.
 
         int postId = 3758880;
         PostVersionList a_3758880 = PostVersionList.readFromCSV(pathToPostHistory, postId, 2, false);
@@ -429,9 +429,9 @@ class BlockLifeSpanAndGroundTruthTest {
 
     @Test
     void testNumberOfPredecessorsComputedMetric() {
-        // This test case uses very low thresholds to force a multiple connection possibility.
-        // Then it checks whether a block will be set more than once as a predecessor.
-        // The test is successful if not.
+        // This test case uses very low thresholds to provoke multiple possible connection between post blocks.
+        // Then it checks whether a block will be set more than once as a predecessor (which should not happen).
+
         List<PostVersionList> postVersionLists = PostVersionList.readFromDirectory(pathToPostHistory);
 
         for (PostVersionList postVersionList : postVersionLists) {
