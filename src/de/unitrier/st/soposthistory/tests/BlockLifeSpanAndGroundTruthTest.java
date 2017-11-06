@@ -27,7 +27,7 @@ class BlockLifeSpanAndGroundTruthTest {
     static Path pathToPostIdList = Paths.get("testdata", "postIds.csv");
     static Path pathToPostHistory = Paths.get("testdata");
     static Path pathToGroundTruth = Paths.get("testdata", "gt");
-    static Path outputDir = Paths.get("testdata", "metrics comparison");
+    static Path outputDir = Paths.get("testdata", "metrics_comparison");
 
     @Test
     void testReadFromDirectory() {

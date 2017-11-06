@@ -1,179 +1,183 @@
 package de.unitrier.st.soposthistory.gt;
 
 import de.unitrier.st.soposthistory.blocks.PostBlockVersion;
-import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
+import de.unitrier.st.soposthistory.version.PostVersion;
 import de.unitrier.st.soposthistory.version.PostVersionList;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.csv.*;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
-// TODO: revise and move to metrics comparison project
+import static de.unitrier.st.soposthistory.util.Util.getClassLogger;
+
+// TODO: move to metrics comparison project
 public class Statistics {
+    private static Logger logger = null;
 
-    public static void main(String[] args){
-        Path pathToPossibleMultipleConnections = Paths.get("testdata", "metrics comparison", "possible multiple connections.csv");
-        // TODO: Lorik: this data is not under version control. Too large?
-        Path pathToDirectoryWithPossibleMultipleConnections = Paths.get("testdata", "Samples_possibleMultipleConnections");
+    private static final Path rootPathToLargeSamples = Paths.get("testdata", "samples_10000");
+    public static final List<Path> pathsToLargeSamplesFiles = getLargeSampleFilesPaths();
+    public static final Path pathToMultipleConnectionsDir = Paths.get("testdata", "multiple_connections");
+    public static final Path pathToMultipleConnectionsFile = Paths.get(pathToMultipleConnectionsDir.toString(), "multiple_possible_connections.csv");
 
-        Statistics statistics = new Statistics();
-        statistics.findPostsWithPossibleMultipleConnections(pathToPossibleMultipleConnections);
-        statistics.copyPostsWithPossibleMultipleConnectionsIntoOwnDirectory(
-                pathToPossibleMultipleConnections,
-                pathToDirectoryWithPossibleMultipleConnections);
-    }
+    private static final CSVFormat csvFormatMultipleConnections;
 
-    List<String> pathToAllDirectories = new LinkedList<>();
-
-    private Statistics(){
-        for(int i=1; i<=10; i++) {
-            pathToAllDirectories.add(Paths.get("testdata","Samples_10000", "PostId_VersionCount_SO_17-06_sample_10000_" + i, "files").toString());
-        }
-        // TODO: remove this later. Only for testing purposes:
-        // pathToAllDirectories.add(Paths.get("testdata").toString());
-    }
-
-
-    private void findPostsWithPossibleMultipleConnections(Path pathToWriteFile) {
-
-        StringBuilder output = new StringBuilder();
-
-        output.append("postId;postHistoryId;localId;blockTypeId;possiblePredOrSuccLocalIds;numberOfPossibleSuccessorsOrPredecessors\n");
-
-        for (String path : pathToAllDirectories) {
-            List<PostVersionList> postVersionLists = PostVersionList.readFromDirectory(Paths.get(path));
-
-            for (PostVersionList postVersionList : postVersionLists) {
-                for (int j = 0; j < postVersionList.size(); j++) {
-                    if (j > 0) {
-                        for (int k = 0; k < postVersionList.get(j).getPostBlocks().size(); k++) {
-                            PostBlockVersion postBlockVersion = postVersionList.get(j).getPostBlocks().get(k);
-                            LinkedList<Integer> possiblePreds = new LinkedList<>();
-                            for (int l = 0; l < postVersionList.get(j - 1).getPostBlocks().size(); l++) {
-                                PostBlockVersion postBlockVersionPred = postVersionList.get(j - 1).getPostBlocks().get(l);
-
-                                if (postBlockVersion.getContent().equals(postBlockVersionPred.getContent()))
-                                    possiblePreds.add(postBlockVersionPred.getLocalId());
-                            }
-
-                            if (possiblePreds.size() > 1) {
-                                output
-                                        .append(postVersionList.getFirst().getPostId())
-                                        .append(";")
-                                        .append(postVersionList.get(j).getPostHistoryId())
-                                        .append(";")
-                                        .append(postVersionList.get(j).getPostBlocks().get(k).getLocalId())
-                                        .append(";")
-                                        .append(postVersionList.get(j).getPostBlocks().get(k) instanceof TextBlockVersion ? 1 : 2)
-                                        .append(";")
-                                        // .append("localIdsOfPossiblePreds:")
-                                        .append(possiblePreds)
-                                        .append(";")
-                                        .append(possiblePreds.size())
-                                        .append("\n");
-                            }
-                        }
-                    }
-
-                    if (j < postVersionList.size() - 1) {
-                        for (int k = 0; k < postVersionList.get(j).getPostBlocks().size(); k++) {
-                            PostBlockVersion postBlockVersion = postVersionList.get(j).getPostBlocks().get(k);
-                            LinkedList<Integer> possibleSuccs = new LinkedList<>();
-                            for (int l = 0; l < postVersionList.get(j + 1).getPostBlocks().size(); l++) {
-                                PostBlockVersion postBlockVersionSucc = postVersionList.get(j + 1).getPostBlocks().get(l);
-
-                                if (postBlockVersion.getContent().equals(postBlockVersionSucc.getContent()))
-                                    possibleSuccs.add(postBlockVersionSucc.getLocalId());
-                            }
-
-                            if (possibleSuccs.size() > 1) {
-                                output
-                                        .append(postVersionList.getFirst().getPostId())
-                                        .append(";")
-                                        .append(postVersionList.get(j).getPostHistoryId())
-                                        .append(";")
-                                        .append(postVersionList.get(j).getPostBlocks().get(k).getLocalId())
-                                        .append(";")
-                                        .append(postVersionList.get(j).getPostBlocks().get(k) instanceof TextBlockVersion ? 1 : 2)
-                                        .append(";")
-                                        // .append("local-ids of possible succs: ")
-                                        .append(possibleSuccs)
-                                        .append(";")
-                                        .append(possibleSuccs.size())
-                                        .append("\n");
-                            }
-                        }
-                    }
-                }
-            }
-
-            System.out.println("Finished: " + path);
-        }
-
+    static {
+        // configure logger
         try {
-            PrintWriter printWriter = new PrintWriter(pathToWriteFile.toString());
-            printWriter.write(output.toString());
-            printWriter.flush();
-            printWriter.close();
-
-        } catch (FileNotFoundException e) {
-            System.err.println("Couldn't write file: possible multiple connections.csv");
-        }
-    }
-
-    private void copyPostsWithPossibleMultipleConnectionsIntoOwnDirectory(Path pathToPossibleMultipleConnectionsFile, Path pathToDirectoryToCopy){
-
-        // get all postIds of file possible multiple connections.csv
-        List<Integer> postIdsOfAffectedPosts = new ArrayList<>();
-        CSVParser csvParser;
-        try {
-            csvParser = CSVParser.parse(
-                    pathToPossibleMultipleConnectionsFile.toFile(),
-                    StandardCharsets.UTF_8,
-                    MetricComparisonManager.csvFormatMetricComparison.withFirstRecordAsHeader()
-            );
-
-            csvParser.getHeaderMap();
-            List<CSVRecord> records = null;
-
-            records = csvParser.getRecords();
-
-            for(CSVRecord record : records){
-                postIdsOfAffectedPosts.add(Integer.valueOf(record.get("postId")));
-            }
-
+            logger = getClassLogger(Statistics.class, true);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+        // configure CSV format
+        csvFormatMultipleConnections = CSVFormat.DEFAULT
+                .withHeader("PostId", "PostHistoryId", "LocalId", "PostBlockTypeId", "PossiblePredecessorsCount", "PossibleSuccessorsCount", "PossiblePredecessorLocalIds", "PossibleSuccessorLocalIds")
+                .withDelimiter(';')
+                .withQuote('"')
+                .withQuoteMode(QuoteMode.MINIMAL)
+                .withEscape('\\');
+    }
 
-        for (String pathToDirectory : pathToAllDirectories) {
-            File file = new File(pathToDirectory);
-            File[] allPostVersionListsInFolder = file.listFiles((dir, name) -> name.matches(PostVersionList.fileNamePattern.pattern())); // https://stackoverflow.com/questions/4852531/find-files-in-a-folder-using-java
+    private static List<Path> getLargeSampleFilesPaths() {
+        ArrayList<Path> pathsToLargeSamplesFiles = new ArrayList<>(10);
+        for (int i = 1; i <= 10; i++) {
+            pathsToLargeSamplesFiles.add(Paths.get(rootPathToLargeSamples.toString(), "PostId_VersionCount_SO_17-06_sample_10000_" + i, "files"));
+        }
+        return pathsToLargeSamplesFiles;
+    }
 
-            assert allPostVersionListsInFolder != null;
-            for (File postVersionListFile : allPostVersionListsInFolder) {
-                Integer tmpPostId = Integer.valueOf(postVersionListFile.getName().replace(".csv", ""));
-                if (postIdsOfAffectedPosts.contains(tmpPostId)) {
-                    try {
-                        Files.copy(
-                                postVersionListFile.toPath(),
-                                Paths.get(pathToDirectoryToCopy.toString(), tmpPostId + ".csv"));
-                    } catch (IOException e) {
-                        e.printStackTrace();
+    public static void main(String[] args) {
+        Statistics statistics = new Statistics();
+        statistics.getMultiplePossibleConnections();
+    }
+
+    private void getMultiplePossibleConnections() {
+        try (CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(
+                pathToMultipleConnectionsFile.toFile()),
+                csvFormatMultipleConnections
+        )) {
+            logger.info("Starting extraction of possible connections...");
+
+            // header is automatically written
+            for (Path currentSampleFiles : pathsToLargeSamplesFiles) {
+                logger.info("Started with sample: " + currentSampleFiles);
+
+                List<PostVersionList> postVersionLists = PostVersionList.readFromDirectory(currentSampleFiles);
+
+                for (PostVersionList postVersionList : postVersionLists) {
+                    for (int i = 0; i < postVersionList.size(); i++) {
+                        PostVersion currentVersion = postVersionList.get(i);
+                        PostVersion previousVersion = null;
+                        if (i > 0) {
+                            previousVersion = postVersionList.get(i - 1);
+                        }
+                        PostVersion nextVersion = null;
+                        if (i < postVersionList.size() - 1) {
+                            nextVersion = postVersionList.get(i + 1);
+                        }
+
+                        for (PostBlockVersion currentVersionPostBlock : currentVersion.getPostBlocks()) {
+                            LinkedList<PostBlockVersion> possiblePredecessors = new LinkedList<>();
+                            LinkedList<PostBlockVersion> possibleSuccessors = new LinkedList<>();
+
+                            if (previousVersion != null) {
+                                // get possible predecessors
+                                for (PostBlockVersion previousVersionPostBlock : previousVersion.getPostBlocks()) {
+                                    if (currentVersionPostBlock.getContent().equals(previousVersionPostBlock.getContent())) {
+                                        possiblePredecessors.add(previousVersionPostBlock);
+                                    }
+                                }
+                            }
+
+                            if (nextVersion != null) {
+                                // get possible successors
+                                for (PostBlockVersion nextVersionPostBlock : nextVersion.getPostBlocks()) {
+                                    if (currentVersionPostBlock.getContent().equals(nextVersionPostBlock.getContent())) {
+                                        possibleSuccessors.add(nextVersionPostBlock);
+                                    }
+                                }
+                            }
+
+                            // write to CSV
+                            if (possiblePredecessors.size() > 1 || possibleSuccessors.size() > 1) {
+                                csvPrinter.printRecord(
+                                        currentVersion.getPostId(),
+                                        currentVersion.getPostHistoryId(),
+                                        currentVersionPostBlock.getLocalId(),
+                                        currentVersionPostBlock.getPostBlockTypeId(),
+                                        possiblePredecessors.size(),
+                                        possibleSuccessors.size(),
+                                        Arrays.toString(possiblePredecessors.stream()
+                                                    .map(PostBlockVersion::getLocalId)
+                                                    .collect(Collectors.toList())
+                                                    .toArray()),
+                                        Arrays.toString(possibleSuccessors.stream()
+                                                .map(PostBlockVersion::getLocalId)
+                                                .collect(Collectors.toList())
+                                                .toArray())
+                                );
+                            }
+                        }
                     }
                 }
+                logger.info("Finished sample: " + currentSampleFiles);
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
+
+    // TODO: Lorik: Do we still need this?
+//    private void copyPostsWithPossibleMultipleConnectionsIntoOwnDirectory() {
+//        // get all postIds of file possible multiple connections.csv
+//        List<Integer> postIdsOfAffectedPosts = new ArrayList<>();
+//        CSVParser csvParser;
+//        try {
+//            csvParser = CSVParser.parse(
+//                    pathToMultipleConnectionsFile.toFile(),
+//                    StandardCharsets.UTF_8,
+//                    MetricComparisonManager.csvFormatMetricComparison.withFirstRecordAsHeader()
+//            );
+//
+//            csvParser.getHeaderMap();
+//            List<CSVRecord> records = null;
+//
+//            records = csvParser.getRecords();
+//
+//            for (CSVRecord record : records) {
+//                postIdsOfAffectedPosts.add(Integer.valueOf(record.get("postId")));
+//            }
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//
+//        for (Path pathToDirectory : pathsToLargeSamplesFiles) {
+//            File file = pathToDirectory.toFile();
+//            File[] allPostVersionListsInFolder = file.listFiles((dir, name) -> name.matches(PostVersionList.fileNamePattern.pattern())); // https://stackoverflow.com/questions/4852531/find-files-in-a-folder-using-java
+//
+//            assert allPostVersionListsInFolder != null;
+//            for (File postVersionListFile : allPostVersionListsInFolder) {
+//                Integer tmpPostId = Integer.valueOf(postVersionListFile.getName().replace(".csv", ""));
+//                if (postIdsOfAffectedPosts.contains(tmpPostId)) {
+//                    try {
+//                        Files.copy(
+//                                postVersionListFile.toPath(),
+//                                Paths.get(pathToDirectoryToCopy.toString(), tmpPostId + ".csv"));
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        }
+//    }
 }
