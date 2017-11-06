@@ -16,16 +16,27 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 
-import static de.unitrier.st.soposthistory.history.PostHistoryIterator.logger;
+import static de.unitrier.st.soposthistory.util.Util.getClassLogger;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Disabled
 class DisabledTests {
+    private static Logger logger;
+
     private static Path pathToOldMetricComparisons = Paths.get(
             "testdata", "metrics_comparison", "results_metric_comparison_old.csv"
     );
+
+    static {
+        try {
+            logger = getClassLogger(DisabledTests.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Test
     void testCompareMetricComparisonManagerWithComparisonFromOldProject() {
@@ -166,7 +177,7 @@ class DisabledTests {
 
     @Test
     void comparePossibleMultipleConnectionsWithOldComparisonProject() {
-        // This test case "fails" because the extraction of post blocks has been changed what results in a different file.
+        // This test case "fails" because the extraction of post blocks has been changed since the creation of the old file.
 
         File oldFile = Paths.get(Statistics.pathToMultipleConnectionsDir.toString(),
                 "multiple_possible_connections_old.csv").toFile();
@@ -222,9 +233,8 @@ class DisabledTests {
                         possiblePredecessorLocalIds, possibleSuccessorLocalIds));
             }
 
-
+            // compare old and new results
             for (MultipleConnectionsResultNew multipleConnectionsResultNew : newResults) {
-
                 int newPostId = multipleConnectionsResultNew.postId;
                 int newPostHistoryId = multipleConnectionsResultNew.postHistoryId;
                 int newLocalId = multipleConnectionsResultNew.localId;
@@ -256,7 +266,8 @@ class DisabledTests {
                             assertEquals(oldNumberOfPossibleSuccessorsOrPredecessors, newPossibleSuccessorsCount);
 
                         } else {
-                            logger.warning("post with id " + newPostId + " differs between old and new file possible multiple connections.csv");
+                            logger.warning("Entry (" + newPostId + "," + newPostHistoryId + "," + newLocalId
+                                    + ") in new file differs from old file with multiple possible connections.");
                         }
 
                         break;
