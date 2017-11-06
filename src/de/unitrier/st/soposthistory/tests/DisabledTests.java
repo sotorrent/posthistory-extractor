@@ -128,8 +128,17 @@ class DisabledTests {
     }
 
     @Test
-    void testLargeSamplesParsable() throws IOException {
-        for (Path currentPath : Statistics.pathsToLargeSamplesFiles) {
+    void testSmallSamplesParsable() {
+        testSamples(Statistics.pathsToSmallSamplesFiles);
+    }
+
+    @Test
+    void testLargeSamplesParsable() {
+        testSamples(Statistics.pathsToLargeSamplesFiles);
+    }
+
+    private void testSamples(List<Path> paths) {
+        for (Path currentPath : paths) {
             File[] postHistoryFiles = currentPath.toFile().listFiles(
                     (dir, name) -> name.matches(PostVersionList.fileNamePattern.pattern())
             );
