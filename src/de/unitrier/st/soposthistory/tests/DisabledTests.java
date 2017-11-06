@@ -17,9 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Disabled
 class DisabledTests {
@@ -151,8 +149,10 @@ class DisabledTests {
                 Matcher fileNameMatcher = PostVersionList.fileNamePattern.matcher(postHistoryFile.getName());
                 if (fileNameMatcher.find()) {
                     int postId = Integer.parseInt(fileNameMatcher.group(1));
+                    // no exception should be thrown for the following two lines
                     PostVersionList postVersionList = PostVersionList.readFromCSV(currentPath, postId, -1);
                     postVersionList.normalizeLinks();
+                    assertTrue(postVersionList.size() > 0);
                 }
             }
         }
