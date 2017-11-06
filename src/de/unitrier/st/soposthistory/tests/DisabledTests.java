@@ -54,8 +54,7 @@ class DisabledTests {
                 String metric = record.get("metric");
 
                 Double threshold = Double.valueOf(record.get("threshold"));
-                // TODO: Lorik: What do you mean by "equal thresholds"
-                // comparison manager computes only equal thresholds so unequal thresholds will be skipped
+                // comparison manager computes only thresholds mod 0.10 by now so unequal thresholds will be skipped
                 if ((int) (threshold * 100) % 10 != 0) {
                     continue;
                 }
