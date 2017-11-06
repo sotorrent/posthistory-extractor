@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 
+import static de.unitrier.st.soposthistory.history.PostHistoryIterator.logger;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Disabled
@@ -165,6 +166,8 @@ class DisabledTests {
 
     @Test
     void comparePossibleMultipleConnectionsWithOldComparisonProject() {
+        // This test case "fails" because the extraction of post blocks has been changed what results in a different file.
+
         File oldFile = Paths.get(Statistics.pathToMultipleConnectionsDir.toString(),
                 "multiple_possible_connections_old.csv").toFile();
         File newFile = Statistics.pathToMultipleConnectionsFile.toFile();
@@ -253,9 +256,7 @@ class DisabledTests {
                             assertEquals(oldNumberOfPossibleSuccessorsOrPredecessors, newPossibleSuccessorsCount);
 
                         } else {
-                            System.out.println(oldPostId + ", " + oldPostHistoryId + ", " + oldLocalId + ", " + oldPossiblePredOrSuccLocalIds);
-                            System.out.println(newPostId + ", " + newPostHistoryId + ", " + newLocalId + ", " + newPossiblePredecessorLocalIds + ", " + newPossibleSuccessorLocalIds);
-                            System.out.println();
+                            logger.warning("post with id " + newPostId + " differs between old and new file possible multiple connections.csv");
                         }
 
                         break;
