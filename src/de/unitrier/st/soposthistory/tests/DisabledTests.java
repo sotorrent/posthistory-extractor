@@ -99,27 +99,32 @@ class DisabledTests {
                         postHistoryIds = postHistoryIds_22037280;
                     }
 
-                    assert postHistoryIds != null;
+                    assertNotNull(postHistoryIds);
                     for (Integer tmpPostHistoryId : postHistoryIds) {
-                        assertNull(tmpMetricComparison.getTruePositivesText().get(tmpPostHistoryId));
-                        assertNull(tmpMetricComparison.getFalsePositivesText().get(tmpPostHistoryId));
-                        assertNull(tmpMetricComparison.getTrueNegativesText().get(tmpPostHistoryId));
-                        assertNull(tmpMetricComparison.getFalseNegativesText().get(tmpPostHistoryId));
+                        MetricComparison.MetricResult resultsText = tmpMetricComparison.getResultsText(tmpPostHistoryId);
+                        assertNull(resultsText.getTruePositives());
+                        assertNull(resultsText.getFalsePositives());
+                        assertNull(resultsText.getTrueNegatives());
+                        assertNull(resultsText.getFalseNegatives());
 
-                        assertNull(tmpMetricComparison.getTruePositivesCode().get(tmpPostHistoryId));
-                        assertNull(tmpMetricComparison.getFalsePositivesCode().get(tmpPostHistoryId));
-                        assertNull(tmpMetricComparison.getTrueNegativesCode().get(tmpPostHistoryId));
-                        assertNull(tmpMetricComparison.getFalseNegativesCode().get(tmpPostHistoryId));
+                        MetricComparison.MetricResult resultsCode = tmpMetricComparison.getResultsCode(tmpPostHistoryId);
+                        assertNull(resultsCode.getTruePositives());
+                        assertNull(resultsCode.getFalsePositives());
+                        assertNull(resultsCode.getTrueNegatives());
+                        assertNull(resultsCode.getFalseNegatives());
+
                     }
                 } else {
                     // TODO: Check true negatives for text and code
-                    assertEquals(tmpMetricComparison.getTruePositivesText().get(postHistoryId), truePositivesText);
-                    assertEquals(tmpMetricComparison.getFalsePositivesText().get(postHistoryId), falsePositivesText);
-                    assertEquals(tmpMetricComparison.getFalseNegativesText().get(postHistoryId), falseNegativesText);
+                    MetricComparison.MetricResult resultsText = tmpMetricComparison.getResultsText(postHistoryId);
+                    assertEquals(truePositivesText, resultsText.getTruePositives());
+                    assertEquals(falsePositivesText, resultsText.getFalsePositives());
+                    assertEquals(falseNegativesText, resultsText.getFalseNegatives());
 
-                    assertEquals(tmpMetricComparison.getTruePositivesCode().get(postHistoryId), truePositivesCode);
-                    assertEquals(tmpMetricComparison.getFalsePositivesCode().get(postHistoryId), falsePositivesCode);
-                    assertEquals(tmpMetricComparison.getFalseNegativesCode().get(postHistoryId), falseNegativesCode);
+                    MetricComparison.MetricResult resultsCode = tmpMetricComparison.getResultsCode(postHistoryId);
+                    assertEquals(truePositivesCode, resultsCode.getTruePositives());
+                    assertEquals(falsePositivesCode, resultsCode.getFalsePositives());
+                    assertEquals(falseNegativesCode, resultsCode.getFalseNegatives());
                 }
             }
         } catch (IOException e) {
