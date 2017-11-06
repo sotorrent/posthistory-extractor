@@ -48,7 +48,7 @@ public class PostHistoryList extends LinkedList<PostHistory> {
 
         // configure CSV format for input
         inputCSVFormat = CSVFormat.DEFAULT
-                .withHeader("PostId", "PostTypeId")
+                .withHeader("PostId", "PostTypeId", "VersionCount")
                 .withDelimiter(';')
                 .withQuote('"')
                 .withQuoteMode(QuoteMode.MINIMAL)
@@ -135,12 +135,11 @@ public class PostHistoryList extends LinkedList<PostHistory> {
             while (postHistoryIterator.next()) {
                 PostHistory currentPostHistoryEntity = (PostHistory) postHistoryIterator.get(0);
 
-                // replace \" with \\", because the former will be exported as \"", which will lead to an IOException
+                // escape back slashes, in particular replace \" with \\", because the former will be exported as \"",
+                // which will lead to an IOException when the CSV file is imported again
                 // ("java.io.IOException: (line ...) invalid char between encapsulated token and delimiter")
                 // see post 10049438 and corresponding test case in PostVersionHistoryTest
-                currentPostHistoryEntity.setText(
-                        currentPostHistoryEntity.getText().replace("\\\"", "\\\\\"")
-                );
+                currentPostHistoryEntity.setText(currentPostHistoryEntity.getText().replace("\\", "\\\\"));
 
                 this.add(currentPostHistoryEntity);
                 count++;
