@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 
@@ -160,27 +161,98 @@ class DisabledTests {
             csvParserOld = CSVParser.parse(
                     oldFile,
                     StandardCharsets.UTF_8,
-                    MetricComparisonManager.csvFormatMetricComparison.withFirstRecordAsHeader()
+                    Statistics.csvFormatMultipleConnections.withFirstRecordAsHeader()
+                        .withHeader("postId", "postHistoryId", "localId", "blockTypeId",
+                                "possiblePredOrSuccLocalIds", "numberOfPossibleSuccessorsOrPredecessors")
             );
-            csvParserOld.getHeaderMap();
             List<CSVRecord> oldRecords = csvParserOld.getRecords();
+            List<MultipleConnectionsResultOld> oldResults = new ArrayList<>(oldRecords.size());
+
+            for (CSVRecord record : oldRecords) {
+                int postId = Integer.parseInt(record.get("postId"));
+                int postHistoryId = Integer.parseInt(record.get("postHistoryId"));
+                int localId = Integer.parseInt(record.get("localId"));
+                int postBlockTypeId = Integer.parseInt(record.get("blockTypeId"));
+                String possiblePredOrSuccLocalIds = record.get("possiblePredOrSuccLocalIds");
+                int numberOfPossibleSuccessorsOrPredecessors = Integer.parseInt(record.get("numberOfPossibleSuccessorsOrPredecessors"));
+
+                oldResults.add(new MultipleConnectionsResultOld(postId, postHistoryId, localId, postBlockTypeId,
+                        possiblePredOrSuccLocalIds, numberOfPossibleSuccessorsOrPredecessors));
+            }
 
             // parse new records
             csvParserNew = CSVParser.parse(
                     newFile,
                     StandardCharsets.UTF_8,
-                    MetricComparisonManager.csvFormatMetricComparison.withFirstRecordAsHeader()
+                    Statistics.csvFormatMultipleConnections.withFirstRecordAsHeader()
             );
-            csvParserNew.getHeaderMap();
-            List<CSVRecord> newRecords = csvParserNew.getRecords();
 
-            for(int i=0; i<oldRecords.size(); i++) {
-                CSVRecord recordOld = oldRecords.get(i);
-                CSVRecord recordNew = newRecords.get(i);
-                assertEquals(recordOld, recordNew);
+            List<CSVRecord> newRecords = csvParserNew.getRecords();
+            List<MultipleConnectionsResultNew> newResults = new ArrayList<>(newRecords.size());
+
+            for (CSVRecord record : newRecords) {
+                int postId = Integer.parseInt(record.get("PostId"));
+                int postHistoryId = Integer.parseInt(record.get("PostHistoryId"));
+                int localId = Integer.parseInt(record.get("LocalId"));
+                int postBlockTypeId = Integer.parseInt(record.get("PostBlockTypeId"));
+                int possiblePredecessorsCount = Integer.parseInt(record.get("PossiblePredecessorsCount"));
+                int possibleSuccessorsCount = Integer.parseInt(record.get("PossibleSuccessorsCount"));
+                String possiblePredecessorLocalIds = record.get("PossiblePredecessorLocalIds");
+                String possibleSuccessorLocalIds = record.get("PossibleSuccessorLocalIds");
+
+                newResults.add(new MultipleConnectionsResultNew(postId, postHistoryId, localId, postBlockTypeId,
+                        possiblePredecessorsCount, possibleSuccessorsCount,
+                        possiblePredecessorLocalIds, possibleSuccessorLocalIds));
             }
+
+            // TODO: Lorik: Compare oldResults and newResults
+
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private class MultipleConnectionsResultOld {
+        int postId;
+        int postHistoryId;
+        int localId;
+        int postBlockTypeId;
+        String possiblePredOrSuccLocalIds;
+        int numberOfPossibleSuccessorsOrPredecessors;
+
+        MultipleConnectionsResultOld(int postId, int postHistoryId, int localId, int postBlockTypeId,
+                                     String possiblePredOrSuccLocalIds,
+                                     int numberOfPossibleSuccessorsOrPredecessors) {
+            this.postId = postId;
+            this.postHistoryId = postHistoryId;
+            this.localId = localId;
+            this.postBlockTypeId = postBlockTypeId;
+            this.possiblePredOrSuccLocalIds = possiblePredOrSuccLocalIds;
+            this.numberOfPossibleSuccessorsOrPredecessors = numberOfPossibleSuccessorsOrPredecessors;
+        }
+    }
+
+    private class MultipleConnectionsResultNew {
+        int postId;
+        int postHistoryId;
+        int localId;
+        int postBlockTypeId;
+        int possiblePredecessorsCount;
+        int possibleSuccessorsCount;
+        String possiblePredecessorLocalIds;
+        String possibleSuccessorLocalIds;
+
+        MultipleConnectionsResultNew(int postId, int postHistoryId, int localId, int postBlockTypeId,
+                                     int possiblePredecessorsCount, int possibleSuccessorsCount,
+                                     String possiblePredecessorLocalIds, String possibleSuccessorLocalIds) {
+            this.postId = postId;
+            this.postHistoryId = postHistoryId;
+            this.localId = localId;
+            this.postBlockTypeId = postBlockTypeId;
+            this.possiblePredecessorsCount = possiblePredecessorsCount;
+            this.possibleSuccessorsCount = possibleSuccessorsCount;
+            this.possiblePredecessorLocalIds = possiblePredecessorLocalIds;
+            this.possibleSuccessorLocalIds = possibleSuccessorLocalIds;
         }
     }
 }

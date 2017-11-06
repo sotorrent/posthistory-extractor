@@ -27,7 +27,7 @@ public class Statistics {
     public static final Path pathToMultipleConnectionsDir = Paths.get("testdata", "multiple_connections");
     public static final Path pathToMultipleConnectionsFile = Paths.get(pathToMultipleConnectionsDir.toString(), "multiple_possible_connections.csv");
 
-    private static final CSVFormat csvFormatMultipleConnections;
+    public static final CSVFormat csvFormatMultipleConnections;
 
     static {
         // configure logger
