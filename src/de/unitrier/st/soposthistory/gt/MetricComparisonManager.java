@@ -225,6 +225,9 @@ public class MetricComparisonManager {
                 List<Integer> postHistoryIdsForPost = postHistoryIds.get(postId);
 
                 for (int postHistoryId : postHistoryIdsForPost) {
+                    MetricComparison.MetricResult resultsText = metricComparison.getResultsText(postHistoryId);
+                    MetricComparison.MetricResult resultsCode = metricComparison.getResultsCode(postHistoryId);
+
                     csvPrinter.printRecord(
                             name,
                             metricComparison.getSimilarityMetricName(),
@@ -232,15 +235,15 @@ public class MetricComparisonManager {
                             postId,
                             postHistoryId,
                             metricComparison.getRuntimeText(),
-                            metricComparison.getTruePositivesText().get(postHistoryId),
-                            metricComparison.getTrueNegativesText().get(postHistoryId),
-                            metricComparison.getFalsePositivesText().get(postHistoryId),
-                            metricComparison.getFalseNegativesText().get(postHistoryId),
+                            resultsText.truePositives,
+                            resultsText.falsePositives,
+                            resultsText.trueNegatives,
+                            resultsText.falseNegatives,
                             metricComparison.getRuntimeCode(),
-                            metricComparison.getTruePositivesCode().get(postHistoryId),
-                            metricComparison.getTrueNegativesCode().get(postHistoryId),
-                            metricComparison.getFalsePositivesCode().get(postHistoryId),
-                            metricComparison.getFalseNegativesCode().get(postHistoryId)
+                            resultsCode.truePositives,
+                            resultsCode.falsePositives,
+                            resultsCode.trueNegatives,
+                            resultsCode.falseNegatives
                     );
                 }
             }
