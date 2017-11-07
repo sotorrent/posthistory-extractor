@@ -81,4 +81,12 @@ public class PostBlockConnection {
     public boolean equals(PostBlockConnection other) {
         return (this.left.equals(other.left) && this.right.equals(other.right));
     }
+
+    public PostBlockLifeSpanVersion getLeft() {
+        return left;
+    }
+
+    public PostBlockLifeSpanVersion getRight() {
+        return right;
+    }
 }
