@@ -1,5 +1,6 @@
 package de.unitrier.st.soposthistory.gt;
 
+import de.unitrier.st.soposthistory.blocks.PostBlockVersion;
 import de.unitrier.st.soposthistory.version.PostVersionList;
 import org.apache.commons.csv.*;
 
@@ -161,11 +162,53 @@ public class MetricComparisonManager {
     }
 
     public boolean validate() {
-        boolean isValid = false;
-
         // TODO: validation of post version list and GT similar to test case
+        List<PostGroundTruth> postsGroundTruths = new ArrayList<>(this.getPostGroundTruth().values());
+        List<PostVersionList> postVersionLists = new ArrayList<>(this.getPostVersionLists().values());
 
-        return isValid;
+
+        // check whether postIds correspond
+        if (postsGroundTruths.size() != postVersionLists.size())
+            return false;
+
+        for (PostVersionList postVersionList : postVersionLists) {
+            int postId = postVersionList.getFirst().getPostId();
+            boolean postIsInGT = false;
+            for (PostGroundTruth postsGroundTruth : postsGroundTruths) {
+                int postIdGT = postsGroundTruth.getFirst().getPostId();
+                if (postId == postIdGT) {
+                    postIsInGT = true;
+                    break;
+                }
+            }
+
+            if(!postIsInGT)
+                return false;
+        }
+
+        // check whether blocks correspond in type and local id
+        for (PostVersionList postVersionList : postVersionLists) {
+            int postId = postVersionList.getFirst().getPostId();
+
+            for (PostGroundTruth postsGroundTruth : postsGroundTruths) {
+                int postIdGT = postsGroundTruth.getFirst().getPostId();
+                if (postId == postIdGT) {
+
+                    List<PostBlockConnection> postBlockConnectionSet_postVersionList = new LinkedList<>(postVersionList.getConnections(PostBlockVersion.getAllPostBlockTypeIdFilters()));
+                    List<PostBlockConnection> postBlockConnectionSet_postGroundTruth = new LinkedList<>(postsGroundTruth.getConnections(PostBlockVersion.getAllPostBlockTypeIdFilters()));
+
+                    for (int i=0; i<postBlockConnectionSet_postVersionList.size(); i++) {
+                        if ((postBlockConnectionSet_postVersionList.get(i).getRight().getLocalId() !=  postBlockConnectionSet_postGroundTruth.get(i).getRight().getLocalId())
+                            || (postBlockConnectionSet_postVersionList.get(i).getRight().getPostBlockTypeId() != postBlockConnectionSet_postGroundTruth.get(i).getRight().getPostBlockTypeId()))
+                            return false;
+                    }
+
+                    break;
+                }
+            }
+        }
+
+        return true;
     }
 
     public void compareMetrics() {
