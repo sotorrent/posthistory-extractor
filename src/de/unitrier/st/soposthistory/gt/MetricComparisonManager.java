@@ -132,6 +132,7 @@ public class MetricComparisonManager {
                 PostVersionList postVersionList = PostVersionList.readFromCSV(
                         postHistoryPath, postId, postTypeId, false
                 );
+                postVersionList.normalizeLinks();
 
                 if (postVersionList.size() != versionCount) {
                     throw new IllegalArgumentException("Version count expected to be " + versionCount
