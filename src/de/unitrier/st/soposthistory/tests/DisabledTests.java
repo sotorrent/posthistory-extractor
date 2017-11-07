@@ -2,6 +2,7 @@ package de.unitrier.st.soposthistory.tests;
 
 import de.unitrier.st.soposthistory.gt.MetricComparison;
 import de.unitrier.st.soposthistory.gt.MetricComparisonManager;
+import de.unitrier.st.soposthistory.gt.PostGroundTruth;
 import de.unitrier.st.soposthistory.gt.Statistics;
 import de.unitrier.st.soposthistory.version.PostVersionList;
 import org.apache.commons.csv.CSVParser;
@@ -322,5 +323,53 @@ class DisabledTests {
             this.possiblePredecessorLocalIds = possiblePredecessorLocalIds;
             this.possibleSuccessorLocalIds = possibleSuccessorLocalIds;
         }
+    }
+
+
+    @Test
+    void checkSamples() {
+        List<String> sampleUniqueSuffixes = new ArrayList<>();
+        sampleUniqueSuffixes.add("17-06_sample_100_1");
+        sampleUniqueSuffixes.add("17-06_sample_100_1+");
+        sampleUniqueSuffixes.add("17-06_sample_100_2");
+        sampleUniqueSuffixes.add("17-06_sample_100_2+");
+        // sampleUniqueSuffixes.add("17-06_sample_unclearMatching");
+        sampleUniqueSuffixes.add("Java_17-06_sample_100_1");
+        sampleUniqueSuffixes.add("Java_17-06_sample_100_2");
+
+        for (String pathSuffix : sampleUniqueSuffixes) {
+
+            MetricComparisonManager manager = MetricComparisonManager.create(
+                    "TestManager",
+                    Paths.get("testdata", "Samples_100", "PostId_VersionCount_SO_" + pathSuffix, "PostId_VersionCount_SO_" + pathSuffix + ".csv"),
+                    Paths.get("testdata", "Samples_100","PostId_VersionCount_SO_" + pathSuffix, "files"),
+                    Paths.get("testdata", "Samples_100", "PostId_VersionCount_SO_" + pathSuffix, "completed"),
+                    false
+            );
+
+            List<PostGroundTruth> postsGroundTruths = new ArrayList<>(manager.getPostGroundTruth().values());
+            List<PostVersionList> postVersionLists = new ArrayList<>(manager.getPostVersionLists().values());
+
+
+            // check whether postIds correspond
+            assertEquals(postsGroundTruths.size(), postVersionLists.size());
+
+            for (PostVersionList postVersionList : postVersionLists) {
+                int postId = postVersionList.getFirst().getPostId();
+                boolean postIsInGT = false;
+                for (PostGroundTruth postsGroundTruth : postsGroundTruths) {
+                    int postIdGT = postsGroundTruth.getFirst().getPostId();
+                    if (postId == postIdGT) {
+                        postIsInGT = true;
+                        break;
+                    }
+                }
+                assertTrue(postIsInGT);
+            }
+
+            // TODO: check whether blocks correspond in type and sizes
+
+        }
+
     }
 }
