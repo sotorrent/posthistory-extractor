@@ -328,6 +328,7 @@ class DisabledTests {
     @Test
     void checkSamples() {
         List<String> sampleUniqueSuffixes = new ArrayList<>();
+
         sampleUniqueSuffixes.add("17-06_sample_100_1");
         sampleUniqueSuffixes.add("17-06_sample_100_1+");
         sampleUniqueSuffixes.add("17-06_sample_100_2");
@@ -335,7 +336,7 @@ class DisabledTests {
         sampleUniqueSuffixes.add("Java_17-06_sample_100_1");
         sampleUniqueSuffixes.add("Java_17-06_sample_100_2");
         sampleUniqueSuffixes.add("17_06_sample_unclearMatching");
-        // sampleUniqueSuffixes.add("17-06_sample_100_multiple_possible_links");
+        sampleUniqueSuffixes.add("17-06_sample_100_multiple_possible_links");
 
         for (String pathSuffix : sampleUniqueSuffixes) {
 
