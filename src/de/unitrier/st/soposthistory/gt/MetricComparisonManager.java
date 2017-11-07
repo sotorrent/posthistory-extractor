@@ -160,6 +160,14 @@ public class MetricComparisonManager {
         return manager;
     }
 
+    public boolean validate() {
+        boolean isValid = false;
+
+        // TODO: validation of post version list and GT similar to test case
+
+        return isValid;
+    }
+
     public void compareMetrics() {
         prepareComparison();
 
