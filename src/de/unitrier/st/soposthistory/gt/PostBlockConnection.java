@@ -28,6 +28,22 @@ public class PostBlockConnection {
         return true;
     }
 
+    public static boolean matches(Set<PostBlockConnection> set1, Set<PostBlockConnection> set2) {
+        for (PostBlockConnection current : set1) {
+            boolean match = false;
+            for (PostBlockConnection other : set2) {
+                if (current.matches(other)) {
+                    match = true;
+                    break;
+                }
+            }
+            if (!match) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public static Set<PostBlockConnection> intersection(Set<PostBlockConnection> set1, Set<PostBlockConnection> set2) {
         Set<PostBlockConnection> intersection = new HashSet<>();
         for (PostBlockConnection current : set1) {
@@ -80,6 +96,14 @@ public class PostBlockConnection {
 
     public boolean equals(PostBlockConnection other) {
         return (this.left.equals(other.left) && this.right.equals(other.right));
+    }
+
+    public boolean matches(PostBlockConnection other) {
+        boolean matchingLocalIds = this.left.getLocalId() == other.left.getLocalId()
+                && this.right.getLocalId() == other.right.getLocalId();
+        boolean matchingPostBlockTypes = this.left.getPostBlockTypeId() == other.left.getPostBlockTypeId()
+                && this.right.getPostBlockTypeId() == other.right.getPostBlockTypeId();
+        return matchingLocalIds && matchingPostBlockTypes;
     }
 
     public PostBlockLifeSpanVersion getLeft() {

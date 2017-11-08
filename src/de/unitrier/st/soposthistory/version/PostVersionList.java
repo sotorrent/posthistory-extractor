@@ -413,6 +413,10 @@ public class PostVersionList extends LinkedList<PostVersion> {
         return lifeSpans;
     }
 
+    public Set<PostBlockConnection> getConnections() {
+        return getConnections(PostBlockVersion.getAllPostBlockTypeIdFilters());
+    }
+
     public Set<PostBlockConnection> getConnections(Set<Integer> postBlockTypeFilter) {
         Set<PostBlockConnection> connections = new HashSet<>();
         for (PostVersion currentVersion : this) {
@@ -475,6 +479,10 @@ public class PostVersionList extends LinkedList<PostVersion> {
             }
         }
         return null;
+    }
+
+    public int getPostId() {
+        return postId;
     }
 
     @Override
