@@ -126,21 +126,20 @@ public class MetricComparison {
             for (int postHistoryId : postHistoryIds) {
                 MetricResult resultInMap = results.get(postHistoryId);
                 MetricResult newResult = getResults(postHistoryId, postBlockTypeFilter);
-                if ((resultInMap.truePositives != null &&
-                     resultInMap.falsePositives != null &&
-                     resultInMap.trueNegatives != null &&
-                     resultInMap.falseNegatives != null)
-                    &&
-                    (newResult.truePositives != null &&
-                     newResult.falsePositives != null &&
-                     newResult.trueNegatives != null &&
-                     newResult.falseNegatives != null)
-                    &&
-                   (!resultInMap.truePositives.equals(newResult.truePositives) ||
-                    !resultInMap.falsePositives.equals(newResult.falsePositives) ||
-                    !resultInMap.trueNegatives.equals(newResult.trueNegatives) ||
-                    !resultInMap.falseNegatives.equals(newResult.falseNegatives))) {
+                boolean truePositivesEqual = (resultInMap.truePositives == null && newResult.truePositives == null)
+                        || (resultInMap.truePositives != null && newResult.truePositives != null
+                            && resultInMap.truePositives.equals(newResult.truePositives));
+                boolean falsePositivesEqual = (resultInMap.falsePositives == null && newResult.falsePositives == null)
+                        || (resultInMap.falsePositives != null && newResult.falsePositives != null
+                            && resultInMap.falsePositives.equals(newResult.falsePositives));
+                boolean trueNegativesEqual = (resultInMap.trueNegatives == null &&  newResult.trueNegatives == null)
+                        || (resultInMap.trueNegatives != null &&  newResult.trueNegatives != null
+                            && resultInMap.trueNegatives.equals(newResult.trueNegatives));
+                boolean falseNegativesEqual = (resultInMap.falseNegatives == null && newResult.falseNegatives == null)
+                        ||(resultInMap.falseNegatives != null && newResult.falseNegatives != null
+                            && resultInMap.falseNegatives.equals(newResult.falseNegatives));
 
+                if (!truePositivesEqual || !falsePositivesEqual || !trueNegativesEqual || !falseNegativesEqual) {
                     throw new IllegalStateException("Metric results changed from repetition "
                             + (currentRepetition-1) + " to " + currentRepetition);
                 }
