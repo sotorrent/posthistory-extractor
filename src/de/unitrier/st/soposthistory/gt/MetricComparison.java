@@ -180,6 +180,12 @@ public class MetricComparison {
             result.falsePositives = falsePositivesCount;
             result.trueNegatives = trueNegativesCount;
             result.falseNegatives = falseNegativesCount;
+
+            result.numberOfBlocks = 0;
+            if(postBlockTypeFilter.contains(TextBlockVersion.postBlockTypeId))
+                result.numberOfBlocks += postVersionList.getPostVersion(postHistoryId).getTextBlocks().size();
+            if(postBlockTypeFilter.contains(CodeBlockVersion.postBlockTypeId))
+                result.numberOfBlocks += postVersionList.getPostVersion(postHistoryId).getCodeBlocks().size();
         }
 
         return result;
@@ -223,6 +229,7 @@ public class MetricComparison {
         Integer falsePositives = null;
         Integer trueNegatives = null;
         Integer falseNegatives = null;
+        Integer numberOfBlocks = null;
 
         public Integer getTruePositives() {
             return truePositives;
@@ -238,6 +245,10 @@ public class MetricComparison {
 
         public Integer getFalseNegatives() {
             return falseNegatives;
+        }
+
+        public Integer getNumberOfBlocks() {
+            return numberOfBlocks;
         }
     }
 }
