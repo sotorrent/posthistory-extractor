@@ -48,3 +48,6 @@ target/
 /testdata/samples_gt
 /testdata/samples_test
 /testdata/metrics_comparison/TestManager.csv
+testdata/Samples_100/
+testdata/Samples_10000/
+testdata/Samples_possibleMultipleConnections/
