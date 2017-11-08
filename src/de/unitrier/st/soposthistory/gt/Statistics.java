@@ -22,11 +22,12 @@ import static de.unitrier.st.soposthistory.util.Util.getClassLogger;
 public class Statistics {
     private static Logger logger = null;
 
-    // TODO: refactor paths (see also paths in test suite "DisabledTests"
-    private static final Path rootPathToSmallSamples = Paths.get("testdata", "samples_100");
-    public static final List<Path> pathsToSmallSamplesFiles = getSmallSampleFilesPaths(rootPathToSmallSamples);
-    private static final Path rootPathToLargeSamples = Paths.get("testdata", "samples_10000");
-    public static final List<Path> pathsToLargeSamplesFiles = getLargeSampleFilesPaths(rootPathToLargeSamples);
+    private static final Path rootPathToGTSamples = Paths.get("testdata", "samples_gt");
+    public static final List<Path> pathsToGTSamples = getGTSamples(rootPathToGTSamples);
+
+    private static final Path rootPathToTestSamples = Paths.get("testdata", "samples_test");
+    public static final List<Path> pathsToTestSamples = getTestSamples(rootPathToTestSamples);
+
     public static final Path pathToMultipleConnectionsDir = Paths.get("testdata", "multiple_connections");
     public static final Path pathToMultipleConnectionsFile = Paths.get(pathToMultipleConnectionsDir.toString(), "multiple_possible_connections.csv");
 
@@ -49,27 +50,28 @@ public class Statistics {
                 .withEscape('\\');
     }
 
-    private static List<Path> getSmallSampleFilesPaths(Path rootPathToSmallSamples) {
-        ArrayList<Path> pathsToSmallSamplesFiles = new ArrayList<>(7);
-        // samples with GT
-        pathsToSmallSamplesFiles.add(Paths.get(rootPathToSmallSamples.toString(), "PostId_VersionCount_SO_17-06_sample_100_1", "files"));
-        pathsToSmallSamplesFiles.add(Paths.get(rootPathToSmallSamples.toString(), "PostId_VersionCount_SO_17-06_sample_100_2", "files"));
-        pathsToSmallSamplesFiles.add(Paths.get(rootPathToSmallSamples.toString(), "PostId_VersionCount_SO_17-06_sample_100_1+", "files"));
-        pathsToSmallSamplesFiles.add(Paths.get(rootPathToSmallSamples.toString(), "PostId_VersionCount_SO_17-06_sample_100_2+", "files"));
-        pathsToSmallSamplesFiles.add(Paths.get(rootPathToSmallSamples.toString(), "PostId_VersionCount_SO_Java_17-06_sample_100_1", "files"));
-        pathsToSmallSamplesFiles.add(Paths.get(rootPathToSmallSamples.toString(), "PostId_VersionCount_SO_Java_17-06_sample_100_2", "files"));
-        // test data
-        pathsToSmallSamplesFiles.add(Paths.get(rootPathToSmallSamples.toString(), "PostId_VersionCount_SO_17-06_sample_100_most_versions", "files"));
-        return pathsToSmallSamplesFiles;
+    private static List<Path> getGTSamples(Path rootPathToGTSamples) {
+        ArrayList<Path> pathsToGTSamples = new ArrayList<>(6);
+        pathsToGTSamples.add(Paths.get(rootPathToGTSamples.toString(), "PostId_VersionCount_SO_17-06_sample_100_1"));
+        pathsToGTSamples.add(Paths.get(rootPathToGTSamples.toString(), "PostId_VersionCount_SO_17-06_sample_100_2"));
+        pathsToGTSamples.add(Paths.get(rootPathToGTSamples.toString(), "PostId_VersionCount_SO_17-06_sample_100_1+"));
+        pathsToGTSamples.add(Paths.get(rootPathToGTSamples.toString(), "PostId_VersionCount_SO_17-06_sample_100_2+"));
+        pathsToGTSamples.add(Paths.get(rootPathToGTSamples.toString(), "PostId_VersionCount_SO_Java_17-06_sample_100_1"));
+        pathsToGTSamples.add(Paths.get(rootPathToGTSamples.toString(), "PostId_VersionCount_SO_Java_17-06_sample_100_2"));
+        pathsToGTSamples.add(Paths.get(rootPathToGTSamples.toString(), "PostId_VersionCount_SO_17_06_sample_unclear_matching"));
+        pathsToGTSamples.add(Paths.get(rootPathToGTSamples.toString(), "PostId_VersionCount_SO_17-06_sample_100_multiple_possible_links"));
+        return pathsToGTSamples;
     }
 
-    private static List<Path> getLargeSampleFilesPaths(Path rootPathToLargeSamples) {
-        ArrayList<Path> pathsToLargeSamplesFiles = new ArrayList<>(10);
+    private static List<Path> getTestSamples(Path rootPathToTestSamples) {
+        ArrayList<Path> pathsToTestSamples = new ArrayList<>(11);
+        // 100er sample with many versions
+        pathsToTestSamples.add(Paths.get(rootPathToTestSamples.toString(), "PostId_VersionCount_SO_17-06_sample_100_most_versions"));
         for (int i = 1; i <= 10; i++) {
             // test data
-            pathsToLargeSamplesFiles.add(Paths.get(rootPathToLargeSamples.toString(), "PostId_VersionCount_SO_17-06_sample_10000_" + i, "files"));
+            pathsToTestSamples.add(Paths.get(rootPathToTestSamples.toString(), "PostId_VersionCount_SO_17-06_sample_10000_" + i));
         }
-        return pathsToLargeSamplesFiles;
+        return pathsToTestSamples;
     }
 
     public static void main(String[] args) {
@@ -85,10 +87,11 @@ public class Statistics {
             logger.info("Starting extraction of possible connections...");
 
             // header is automatically written
-            for (Path currentSampleFiles : pathsToLargeSamplesFiles) {
-                logger.info("Started with sample: " + currentSampleFiles);
+            for (Path currentSample : pathsToTestSamples) {
+                logger.info("Started with sample: " + currentSample);
 
-                List<PostVersionList> postVersionLists = PostVersionList.readFromDirectory(currentSampleFiles);
+                Path postVersionListDir = Paths.get(currentSample.toString(), "files");
+                List<PostVersionList> postVersionLists = PostVersionList.readFromDirectory(postVersionListDir);
 
                 for (PostVersionList postVersionList : postVersionLists) {
                     for (int i = 0; i < postVersionList.size(); i++) {
@@ -146,7 +149,7 @@ public class Statistics {
                         }
                     }
                 }
-                logger.info("Finished sample: " + currentSampleFiles);
+                logger.info("Finished sample: " + currentSample);
             }
         } catch (IOException e) {
             e.printStackTrace();
