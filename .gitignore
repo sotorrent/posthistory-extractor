@@ -47,4 +47,5 @@ target/
 *.lck
 /testdata/samples_gt
 /testdata/samples_test
+/testdata/samples_comparison
 /testdata/metrics_comparison/TestManager.csv
