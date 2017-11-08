@@ -1,5 +1,6 @@
 package de.unitrier.st.soposthistory.history;
 
+import de.unitrier.st.soposthistory.util.Util;
 import org.apache.commons.csv.*;
 import org.hibernate.*;
 import org.hibernate.cfg.Configuration;
@@ -84,30 +85,22 @@ public class PostHistoryList extends LinkedList<PostHistory> {
     }
 
     public static void readRetrieveAndWrite(Path inputFile, Path outputDir) {
-        // ensure that input file exists
-        if (!Files.exists(inputFile) || Files.isDirectory(inputFile)) {
-            throw new IllegalArgumentException("Input file not found: " + inputFile);
-        }
-
-        // ensure that output dir exists, but is empty
         try {
-            Files.deleteIfExists(outputDir);
-            Files.createDirectories(outputDir);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            Util.ensureFileExists(inputFile);
+            Util.ensureEmptyDirectoryExists(outputDir);
 
-        logger.info("Reading file " + inputFile.getFileName() + " ...");
+            logger.info("Reading file " + inputFile.getFileName() + " ...");
 
-        try (CSVParser csvParser = new CSVParser(new FileReader(inputFile.toFile()), inputCSVFormat)) {
+            try (CSVParser csvParser = new CSVParser(new FileReader(inputFile.toFile()), inputCSVFormat)) {
 
-            for (CSVRecord currentRecord : csvParser) {
-                int postId = Integer.parseInt(currentRecord.get("PostId"));
-                int postTypeId = Integer.parseInt(currentRecord.get("PostTypeId"));
+                for (CSVRecord currentRecord : csvParser) {
+                    int postId = Integer.parseInt(currentRecord.get("PostId"));
+                    int postTypeId = Integer.parseInt(currentRecord.get("PostTypeId"));
 
-                PostHistoryList currentPostHistoryList = new PostHistoryList(postId, postTypeId);
-                currentPostHistoryList.retrieveFromDatabase();
-                currentPostHistoryList.writeToCSV(outputDir);
+                    PostHistoryList currentPostHistoryList = new PostHistoryList(postId, postTypeId);
+                    currentPostHistoryList.retrieveFromDatabase();
+                    currentPostHistoryList.writeToCSV(outputDir);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();

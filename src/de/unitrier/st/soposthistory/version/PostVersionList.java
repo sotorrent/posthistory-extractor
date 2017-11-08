@@ -35,6 +35,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
     private static final CSVFormat csvFormatVersionList;
 
     private int postId;
+    private int postTypeId;
     private boolean sorted;
     private PostBlockDiffList diffs;
 
@@ -56,9 +57,10 @@ public class PostVersionList extends LinkedList<PostVersion> {
                 .withFirstRecordAsHeader();
     }
 
-    public PostVersionList(int postId) {
+    public PostVersionList(int postId, int postTypeId) {
         super();
         this.postId = postId;
+        this.postTypeId = postTypeId;
         this.sorted = false;
         this.diffs = new PostBlockDiffList();
     }
@@ -85,7 +87,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
             throw new IllegalArgumentException("Directory does not exist: " + dir);
         }
 
-        PostVersionList postVersionList = new PostVersionList(postId);
+        PostVersionList postVersionList = new PostVersionList(postId, postTypeId);
         Path pathToCSVFile = Paths.get(dir.toString(), postId + ".csv");
 
         CSVParser parser;
@@ -483,6 +485,10 @@ public class PostVersionList extends LinkedList<PostVersion> {
 
     public int getPostId() {
         return postId;
+    }
+
+    public int getPostTypeId() {
+        return postTypeId;
     }
 
     @Override
