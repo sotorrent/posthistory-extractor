@@ -1,7 +1,8 @@
 package de.unitrier.st.soposthistory.tests;
 
-import de.unitrier.st.soposthistory.blocks.PostBlockVersion;
-import de.unitrier.st.soposthistory.gt.*;
+import de.unitrier.st.soposthistory.gt.MetricComparison;
+import de.unitrier.st.soposthistory.gt.MetricComparisonManager;
+import de.unitrier.st.soposthistory.gt.Statistics;
 import de.unitrier.st.soposthistory.version.PostVersionList;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -14,7 +15,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -328,6 +328,7 @@ class DisabledTests {
     @Test
     void checkSamples() {
         List<String> sampleUniqueSuffixes = new ArrayList<>();
+
         sampleUniqueSuffixes.add("17-06_sample_100_1");
         sampleUniqueSuffixes.add("17-06_sample_100_1+");
         sampleUniqueSuffixes.add("17-06_sample_100_2");
@@ -335,7 +336,7 @@ class DisabledTests {
         sampleUniqueSuffixes.add("Java_17-06_sample_100_1");
         sampleUniqueSuffixes.add("Java_17-06_sample_100_2");
         sampleUniqueSuffixes.add("17_06_sample_unclearMatching");
-        // sampleUniqueSuffixes.add("17-06_sample_100_multiple_possible_links");
+        sampleUniqueSuffixes.add("17-06_sample_100_multiple_possible_links");
 
         for (String pathSuffix : sampleUniqueSuffixes) {
 
@@ -347,51 +348,7 @@ class DisabledTests {
                     false
             );
 
-            List<PostGroundTruth> postsGroundTruths = new ArrayList<>(manager.getPostGroundTruth().values());
-            List<PostVersionList> postVersionLists = new ArrayList<>(manager.getPostVersionLists().values());
-
-
-            // check whether postIds correspond
-            assertEquals(postsGroundTruths.size(), postVersionLists.size());
-
-            for (PostVersionList postVersionList : postVersionLists) {
-                int postId = postVersionList.getFirst().getPostId();
-                boolean postIsInGT = false;
-                for (PostGroundTruth postsGroundTruth : postsGroundTruths) {
-                    int postIdGT = postsGroundTruth.getFirst().getPostId();
-                    if (postId == postIdGT) {
-                        postIsInGT = true;
-                        break;
-                    }
-                }
-                assertTrue(postIsInGT);
-            }
-
-            // check whether blocks correspond in type and local id
-            for (PostVersionList postVersionList : postVersionLists) {
-                int postId = postVersionList.getFirst().getPostId();
-
-                for (PostGroundTruth postsGroundTruth : postsGroundTruths) {
-                    int postIdGT = postsGroundTruth.getFirst().getPostId();
-                    if (postId == postIdGT) {
-
-                        List<PostBlockConnection> postBlockConnectionSet_postVersionList = new LinkedList<>(postVersionList.getConnections(PostBlockVersion.getAllPostBlockTypeIdFilters()));
-                        List<PostBlockConnection> postBlockConnectionSet_postGroundTruth = new LinkedList<>(postsGroundTruth.getConnections(PostBlockVersion.getAllPostBlockTypeIdFilters()));
-
-                        for(int i=0; i<postBlockConnectionSet_postVersionList.size(); i++){
-                            assertEquals(
-                                    postBlockConnectionSet_postVersionList.get(i).getRight().getLocalId(),
-                                    postBlockConnectionSet_postGroundTruth.get(i).getRight().getLocalId());
-
-                            assertEquals(
-                                    postBlockConnectionSet_postVersionList.get(i).getRight().getPostBlockTypeId(),
-                                    postBlockConnectionSet_postGroundTruth.get(i).getRight().getPostBlockTypeId());
-                        }
-
-                        break;
-                    }
-                }
-            }
+            assertTrue(manager.validate());
         }
 
     }
