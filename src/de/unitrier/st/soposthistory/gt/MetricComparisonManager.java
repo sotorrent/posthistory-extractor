@@ -1,6 +1,5 @@
 package de.unitrier.st.soposthistory.gt;
 
-import de.unitrier.st.soposthistory.blocks.PostBlockVersion;
 import de.unitrier.st.soposthistory.version.PostVersionList;
 import org.apache.commons.csv.*;
 
@@ -28,8 +27,8 @@ public class MetricComparisonManager {
     private boolean randomizeOrder;
     private Set<Integer> postIds;
     private Map<Integer, List<Integer>> postHistoryIds;
-    private Map<Integer, PostGroundTruth> postGroundTruth;
-    private Map<Integer, PostVersionList> postVersionLists;
+    private Map<Integer, PostGroundTruth> postGroundTruth; // postId -> PostGroundTruth
+    private Map<Integer, PostVersionList> postVersionLists; // postId -> PostVersionList
     private List<BiFunction<String, String, Double>> similarityMetrics;
     private List<String> similarityMetricsNames;
     private List<Double> similarityThresholds;
@@ -88,6 +87,7 @@ public class MetricComparisonManager {
         return create(name, postIdPath, postHistoryPath, groundTruthPath,
                 true,
                 5,
+                true,
                 true);
     }
 
@@ -99,6 +99,7 @@ public class MetricComparisonManager {
         return create(name, postIdPath, postHistoryPath, groundTruthPath,
                 addDefaultMetricsAndThresholds,
                 5,
+                true,
                 true);
     }
 
@@ -107,8 +108,22 @@ public class MetricComparisonManager {
                                                  Path postHistoryPath,
                                                  Path groundTruthPath,
                                                  boolean addDefaultMetricsAndThresholds,
+                                                 boolean validate) {
+        return create(name, postIdPath, postHistoryPath, groundTruthPath,
+                addDefaultMetricsAndThresholds,
+                5,
+                true,
+                validate);
+    }
+
+    public static MetricComparisonManager create(String name,
+                                                 Path postIdPath,
+                                                 Path postHistoryPath,
+                                                 Path groundTruthPath,
+                                                 boolean addDefaultMetricsAndThresholds,
                                                  int repetitionCount,
-                                                 boolean randomizeOrder) {
+                                                 boolean randomizeOrder,
+                                                 boolean validate) {
         // ensure that input file exists (directories are tested in read methods)
         if (!Files.exists(postIdPath) || Files.isDirectory(postIdPath)) {
             throw new IllegalArgumentException("File not found: " + postIdPath);
@@ -158,52 +173,31 @@ public class MetricComparisonManager {
             e.printStackTrace();
         }
 
+        if (validate && !manager.validate()) {
+            throw new IllegalArgumentException("Post ground truth files and post version history files do not match.");
+        }
+
         return manager;
     }
 
     public boolean validate() {
-        // TODO: validation of post version list and GT similar to test case
-        List<PostGroundTruth> postsGroundTruths = new ArrayList<>(this.getPostGroundTruth().values());
-        List<PostVersionList> postVersionLists = new ArrayList<>(this.getPostVersionLists().values());
-
-
-        // check whether postIds correspond
-        if (postsGroundTruths.size() != postVersionLists.size())
+        if (postGroundTruth.size() != postVersionLists.size())
             return false;
 
-        for (PostVersionList postVersionList : postVersionLists) {
-            int postId = postVersionList.getFirst().getPostId();
-            boolean postIsInGT = false;
-            for (PostGroundTruth postsGroundTruth : postsGroundTruths) {
-                int postIdGT = postsGroundTruth.getFirst().getPostId();
-                if (postId == postIdGT) {
-                    postIsInGT = true;
-                    break;
-                }
-            }
+        // check if GT and post version list contain the same posts with the same post blocks types in the same positions
+        for (int postId : postVersionLists.keySet()) {
+            PostGroundTruth gt = postGroundTruth.get(postId);
 
-            if(!postIsInGT)
+            if (gt == null) {
                 return false;
-        }
+            } else {
+                PostVersionList list = postVersionLists.get(postId);
 
-        // check whether blocks correspond in type and local id
-        for (PostVersionList postVersionList : postVersionLists) {
-            int postId = postVersionList.getFirst().getPostId();
+                Set<PostBlockConnection> connectionsList = list.getConnections();
+                Set<PostBlockConnection> connectionsGT = gt.getConnections();
 
-            for (PostGroundTruth postsGroundTruth : postsGroundTruths) {
-                int postIdGT = postsGroundTruth.getFirst().getPostId();
-                if (postId == postIdGT) {
-
-                    List<PostBlockConnection> postBlockConnectionSet_postVersionList = new LinkedList<>(postVersionList.getConnections(PostBlockVersion.getAllPostBlockTypeIdFilters()));
-                    List<PostBlockConnection> postBlockConnectionSet_postGroundTruth = new LinkedList<>(postsGroundTruth.getConnections(PostBlockVersion.getAllPostBlockTypeIdFilters()));
-
-                    for (int i=0; i<postBlockConnectionSet_postVersionList.size(); i++) {
-                        if ((postBlockConnectionSet_postVersionList.get(i).getRight().getLocalId() !=  postBlockConnectionSet_postGroundTruth.get(i).getRight().getLocalId())
-                            || (postBlockConnectionSet_postVersionList.get(i).getRight().getPostBlockTypeId() != postBlockConnectionSet_postGroundTruth.get(i).getRight().getPostBlockTypeId()))
-                            return false;
-                    }
-
-                    break;
+                if (!PostBlockConnection.matches(connectionsList, connectionsGT)) {
+                    return false;
                 }
             }
         }
@@ -214,7 +208,7 @@ public class MetricComparisonManager {
     public void compareMetrics() {
         prepareComparison();
 
-        for (int i=1; i<=repetitionCount; i++) {
+        for (int i = 1; i <= repetitionCount; i++) {
             if (randomizeOrder) {
                 logger.info("Randomizing order...");
                 randomizeOrder();

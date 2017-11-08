@@ -23,7 +23,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.junit.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-class BlockLifeSpanAndGroundTruthTest {
+class GroundTruthTest {
     static Path pathToPostIdList = Paths.get("testdata", "postIds.csv");
     static Path pathToPostHistory = Paths.get("testdata");
     static Path pathToGroundTruth = Paths.get("testdata", "gt");

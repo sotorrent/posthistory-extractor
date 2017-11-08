@@ -351,6 +351,10 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
         return postHistoryIds;
     }
 
+    public int getPostId() {
+        return postId;
+    }
+
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder("PostGroundTruth for PostId " + postId + ":\n");

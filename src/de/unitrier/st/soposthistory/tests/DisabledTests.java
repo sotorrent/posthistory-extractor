@@ -41,8 +41,8 @@ class DisabledTests {
     @Test
     void testCompareMetricComparisonManagerWithComparisonFromOldProject() {
         MetricComparisonManager manager = MetricComparisonManager.create(
-                "TestManager", BlockLifeSpanAndGroundTruthTest.pathToPostIdList,
-                BlockLifeSpanAndGroundTruthTest.pathToPostHistory, BlockLifeSpanAndGroundTruthTest.pathToGroundTruth,
+                "TestManager", GroundTruthTest.pathToPostIdList,
+                GroundTruthTest.pathToPostHistory, GroundTruthTest.pathToGroundTruth,
                 true
         );
 
@@ -50,7 +50,7 @@ class DisabledTests {
         List<Integer> postHistoryIds_22037280 = manager.getPostVersionLists().get(22037280).getPostHistoryIds();
 
         manager.compareMetrics();
-        manager.writeToCSV(BlockLifeSpanAndGroundTruthTest.outputDir);
+        manager.writeToCSV(GroundTruthTest.outputDir);
 
         CSVParser csvParser;
 
@@ -190,8 +190,8 @@ class DisabledTests {
                     oldFile,
                     StandardCharsets.UTF_8,
                     Statistics.csvFormatMultipleConnections.withFirstRecordAsHeader()
-                        .withHeader("postId", "postHistoryId", "localId", "blockTypeId",
-                                "possiblePredOrSuccLocalIds", "numberOfPossibleSuccessorsOrPredecessors")
+                            .withHeader("postId", "postHistoryId", "localId", "blockTypeId",
+                                    "possiblePredOrSuccLocalIds", "numberOfPossibleSuccessorsOrPredecessors")
             );
             List<CSVRecord> oldRecords = csvParserOld.getRecords();
             List<MultipleConnectionsResultOld> oldResults = new ArrayList<>(oldRecords.size());
@@ -343,8 +343,9 @@ class DisabledTests {
             MetricComparisonManager manager = MetricComparisonManager.create(
                     "TestManager",
                     Paths.get("testdata", "Samples_100", "PostId_VersionCount_SO_" + pathSuffix, "PostId_VersionCount_SO_" + pathSuffix + ".csv"),
-                    Paths.get("testdata", "Samples_100","PostId_VersionCount_SO_" + pathSuffix, "files"),
+                    Paths.get("testdata", "Samples_100", "PostId_VersionCount_SO_" + pathSuffix, "files"),
                     Paths.get("testdata", "Samples_100", "PostId_VersionCount_SO_" + pathSuffix, "completed"),
+                    false,
                     false
             );
 
