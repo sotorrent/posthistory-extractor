@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class DisabledTests {
     private static Logger logger;
 
-    private static Path pathToOldMetricComparisons = Paths.get(
+    private static Path pathToOldMetricComparisonResults = Paths.get(
             "testdata", "metrics_comparison", "results_metric_comparison_old.csv"
     );
 
@@ -56,7 +56,7 @@ class DisabledTests {
 
         try {
             csvParser = CSVParser.parse(
-                    pathToOldMetricComparisons.toFile(),
+                    pathToOldMetricComparisonResults.toFile(),
                     StandardCharsets.UTF_8,
                     MetricComparisonManager.csvFormatMetricComparison.withFirstRecordAsHeader()
             );
@@ -145,18 +145,20 @@ class DisabledTests {
     }
 
     @Test
-    void testSmallSamplesParsable() {
-        testSamples(Statistics.pathsToSmallSamplesFiles);
+    void testGTSamplesParsable() {
+        testSamples(Statistics.pathsToGTSamples);
     }
 
     @Test
-    void testLargeSamplesParsable() {
-        testSamples(Statistics.pathsToLargeSamplesFiles);
+    void testTestSamplesParsable() {
+        testSamples(Statistics.pathsToTestSamples);
     }
 
-    private void testSamples(List<Path> paths) {
-        for (Path currentPath : paths) {
-            File[] postHistoryFiles = currentPath.toFile().listFiles(
+    private void testSamples(List<Path> samplePaths) {
+        for (Path currentSamplePath : samplePaths) {
+            Path currentSampleFiles = Paths.get(currentSamplePath.toString(), "files");
+
+            File[] postHistoryFiles = currentSampleFiles.toFile().listFiles(
                     (dir, name) -> name.matches(PostVersionList.fileNamePattern.pattern())
             );
 
@@ -167,7 +169,7 @@ class DisabledTests {
                 if (fileNameMatcher.find()) {
                     int postId = Integer.parseInt(fileNameMatcher.group(1));
                     // no exception should be thrown for the following two lines
-                    PostVersionList postVersionList = PostVersionList.readFromCSV(currentPath, postId, -1);
+                    PostVersionList postVersionList = PostVersionList.readFromCSV(currentSampleFiles, postId, -1);
                     postVersionList.normalizeLinks();
                     assertTrue(postVersionList.size() > 0);
                 }
@@ -176,7 +178,7 @@ class DisabledTests {
     }
 
     @Test
-    void comparePossibleMultipleConnectionsWithOldComparisonProject() {
+    void testComparePossibleMultipleConnectionsWithOldComparisonProject() {
         // This test case "fails" because the extraction of post blocks has been changed since the creation of the old file.
 
         File oldFile = Paths.get(Statistics.pathToMultipleConnectionsDir.toString(),
@@ -326,31 +328,23 @@ class DisabledTests {
 
 
     @Test
-    void checkSamples() {
-        List<String> sampleUniqueSuffixes = new ArrayList<>();
-
-        sampleUniqueSuffixes.add("17-06_sample_100_1");
-        sampleUniqueSuffixes.add("17-06_sample_100_1+");
-        sampleUniqueSuffixes.add("17-06_sample_100_2");
-        sampleUniqueSuffixes.add("17-06_sample_100_2+");
-        sampleUniqueSuffixes.add("Java_17-06_sample_100_1");
-        sampleUniqueSuffixes.add("Java_17-06_sample_100_2");
-        sampleUniqueSuffixes.add("17_06_sample_unclearMatching");
-        sampleUniqueSuffixes.add("17-06_sample_100_multiple_possible_links");
-
-        for (String pathSuffix : sampleUniqueSuffixes) {
+    void sampleValidationTest() {
+        for (Path samplePath : Statistics.pathsToGTSamples) {
+            String sampleName = samplePath.toFile().getName();
+            Path pathToPostIdList = Paths.get(samplePath.toString(), sampleName + ".csv");
+            Path pathToFiles = Paths.get(samplePath.toString(), "files");
+            Path pathToGTs = Paths.get(samplePath.toString(), "completed");
 
             MetricComparisonManager manager = MetricComparisonManager.create(
                     "TestManager",
-                    Paths.get("testdata", "Samples_100", "PostId_VersionCount_SO_" + pathSuffix, "PostId_VersionCount_SO_" + pathSuffix + ".csv"),
-                    Paths.get("testdata", "Samples_100", "PostId_VersionCount_SO_" + pathSuffix, "files"),
-                    Paths.get("testdata", "Samples_100", "PostId_VersionCount_SO_" + pathSuffix, "completed"),
+                    pathToPostIdList,
+                    pathToFiles,
+                    pathToGTs,
                     false,
                     false
             );
 
             assertTrue(manager.validate());
         }
-
     }
 }

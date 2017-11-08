@@ -24,9 +24,9 @@ import static org.hamcrest.junit.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class GroundTruthTest {
-    static Path pathToPostIdList = Paths.get("testdata", "postIds.csv");
-    static Path pathToPostHistory = Paths.get("testdata");
-    static Path pathToGroundTruth = Paths.get("testdata", "gt");
+    static Path pathToPostIdList = Paths.get("testdata", "gt_test", "post_ids.csv");
+    static Path pathToPostHistory = Paths.get("testdata", "gt_test", "files");
+    static Path pathToGroundTruth = Paths.get("testdata", "gt_test", "gt");
     static Path outputDir = Paths.get("testdata", "metrics_comparison");
 
     @Test

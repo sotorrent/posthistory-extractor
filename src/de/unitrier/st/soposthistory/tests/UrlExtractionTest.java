@@ -10,14 +10,13 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 
+import static de.unitrier.st.soposthistory.tests.PostVersionHistoryTest.pathToPostVersionLists;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.junit.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 class UrlExtractionTest {
-    private static Path pathToTestData = Paths.get("testdata");
-    
     @Test
     void testMarkdownLinkInline(){
         /*
@@ -30,7 +29,7 @@ class UrlExtractionTest {
         [Reference.](http://msdn.microsoft.com/en-us/library/system.math.round.aspx)
          */
 
-        PostVersionList a_33 = PostVersionList.readFromCSV(pathToTestData, 33, 2);
+        PostVersionList a_33 = PostVersionList.readFromCSV(pathToPostVersionLists, 33, 2);
 
         PostVersion version_1 = a_33.getFirst();
         List<Link> extractedUrls = Link.extractAll(version_1.getContent());
@@ -60,7 +59,7 @@ class UrlExtractionTest {
 
         [1]: http://msdn.microsoft.com/en-us/library/system.threading.manualresetevent.aspx "MSDN Reference"
          */
-        PostVersionList a_44 = PostVersionList.readFromCSV(pathToTestData, 44, 2);
+        PostVersionList a_44 = PostVersionList.readFromCSV(pathToPostVersionLists, 44, 2);
 
         PostVersion version_1 = a_44.getFirst();
         List<Link> extractedUrls = Link.extractAll(version_1.getContent());
@@ -89,7 +88,7 @@ class UrlExtractionTest {
         Disappointing answer - I bet you were hoping for some slick XAML code :-)
          */
 
-        PostVersionList a_1629423 = PostVersionList.readFromCSV(pathToTestData, 1629423, 2);
+        PostVersionList a_1629423 = PostVersionList.readFromCSV(pathToPostVersionLists, 1629423, 2);
 
         PostVersion version_1 = a_1629423.getFirst();
         List<Link> extractedUrls = Link.extractAll(version_1.getContent());
@@ -142,7 +141,7 @@ class UrlExtractionTest {
             }
          */
 
-        PostVersionList a_52 = PostVersionList.readFromCSV(pathToTestData, 52, 2);
+        PostVersionList a_52 = PostVersionList.readFromCSV(pathToPostVersionLists, 52, 2);
 
         PostVersion version_1 = a_52.getFirst();
         List<Link> extractedUrls = Link.extractAll(version_1.getContent());
@@ -174,7 +173,7 @@ class UrlExtractionTest {
         Essentially you just try to update a column that doesn't exist.
          */
 
-        PostVersionList a_49 = PostVersionList.readFromCSV(pathToTestData, 49, 2);
+        PostVersionList a_49 = PostVersionList.readFromCSV(pathToPostVersionLists, 49, 2);
 
         PostVersion version_1 = a_49.getFirst();
         List<Link> extractedUrls = Link.extractAll(version_1.getContent());
@@ -192,15 +191,15 @@ class UrlExtractionTest {
     @Test
     void testNormalizationOfPostVersionLists(){
 
-        PostVersionList a_33 = PostVersionList.readFromCSV(pathToTestData, 33, 2);
+        PostVersionList a_33 = PostVersionList.readFromCSV(pathToPostVersionLists, 33, 2);
 
-        PostVersionList a_44 = PostVersionList.readFromCSV(pathToTestData, 44, 2);
+        PostVersionList a_44 = PostVersionList.readFromCSV(pathToPostVersionLists, 44, 2);
 
-        PostVersionList a_49 = PostVersionList.readFromCSV(pathToTestData, 49, 2);
+        PostVersionList a_49 = PostVersionList.readFromCSV(pathToPostVersionLists, 49, 2);
 
-        PostVersionList a_52 = PostVersionList.readFromCSV(pathToTestData, 52, 2);
+        PostVersionList a_52 = PostVersionList.readFromCSV(pathToPostVersionLists, 52, 2);
 
-        PostVersionList a_1629423 = PostVersionList.readFromCSV(pathToTestData, 1629423, 2);
+        PostVersionList a_1629423 = PostVersionList.readFromCSV(pathToPostVersionLists, 1629423, 2);
 
 
         LinkedList<Link> extractedLinks = new LinkedList<>();

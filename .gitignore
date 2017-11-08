@@ -44,6 +44,6 @@ target/
 /data
 *.log
 *.lck
-/testdata/samples_10000
-/testdata/samples_100
+/testdata/samples_gt
+/testdata/samples_test
 /testdata/metrics_comparison/TestManager.csv
