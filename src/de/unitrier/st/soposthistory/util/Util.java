@@ -1,9 +1,12 @@
 package de.unitrier.st.soposthistory.util;
 
+import org.apache.commons.io.FileUtils;
 import org.hibernate.StatelessSession;
 
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -93,7 +96,13 @@ public class Util {
 
     public static void ensureEmptyDirectoryExists(Path dir) throws IOException {
         // ensure that output dir exists, but is empty
-        Files.deleteIfExists(dir);
+        if (Files.exists(dir)) {
+            if (Files.isDirectory(dir)) {
+                FileUtils.deleteDirectory(dir.toFile());
+            } else {
+                throw new IllegalArgumentException("Not a directory.");
+            }
+        }
         Files.createDirectories(dir);
     }
 }
