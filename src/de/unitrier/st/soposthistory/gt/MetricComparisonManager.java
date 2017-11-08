@@ -19,7 +19,7 @@ import static de.unitrier.st.soposthistory.util.Util.getClassLogger;
 // TODO: move to metrics comparison project
 public class MetricComparisonManager {
     private static Logger logger = null;
-    private static final CSVFormat csvFormatPostIds;
+    public static final CSVFormat csvFormatPostIds;
     public static final CSVFormat csvFormatMetricComparison;
 
     private String name;
