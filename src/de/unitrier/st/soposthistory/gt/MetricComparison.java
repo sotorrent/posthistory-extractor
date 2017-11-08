@@ -126,10 +126,20 @@ public class MetricComparison {
             for (int postHistoryId : postHistoryIds) {
                 MetricResult resultInMap = results.get(postHistoryId);
                 MetricResult newResult = getResults(postHistoryId, postBlockTypeFilter);
-                if (!resultInMap.truePositives.equals(newResult.truePositives) ||
+                if ((resultInMap.truePositives != null &&
+                     resultInMap.falsePositives != null &&
+                     resultInMap.trueNegatives != null &&
+                     resultInMap.falseNegatives != null)
+                    &&
+                    (newResult.truePositives != null &&
+                     newResult.falsePositives != null &&
+                     newResult.trueNegatives != null &&
+                     newResult.falseNegatives != null)
+                    &&
+                   (!resultInMap.truePositives.equals(newResult.truePositives) ||
                     !resultInMap.falsePositives.equals(newResult.falsePositives) ||
                     !resultInMap.trueNegatives.equals(newResult.trueNegatives) ||
-                    !resultInMap.falseNegatives.equals(newResult.falseNegatives)) {
+                    !resultInMap.falseNegatives.equals(newResult.falseNegatives))) {
 
                     throw new IllegalStateException("Metric results changed from repetition "
                             + (currentRepetition-1) + " to " + currentRepetition);
