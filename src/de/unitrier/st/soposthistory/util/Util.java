@@ -83,4 +83,17 @@ public class Util {
     public static String replaceStringAt(String str, int beginIndex, int endIndex, String replacement) {
         return str.substring(0, beginIndex) + replacement + str.substring(endIndex, str.length());
     }
+
+    public static void ensureFileExists(Path file) {
+        // ensure that file exists
+        if (!Files.exists(file) || Files.isDirectory(file)) {
+            throw new IllegalArgumentException("File not found: " + file);
+        }
+    }
+
+    public static void ensureEmptyDirectoryExists(Path dir) throws IOException {
+        // ensure that output dir exists, but is empty
+        Files.deleteIfExists(dir);
+        Files.createDirectories(dir);
+    }
 }
