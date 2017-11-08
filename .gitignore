@@ -43,6 +43,7 @@ target/
 ########
 /data
 *.log
+*.log.*
 *.lck
 /testdata/samples_gt
 /testdata/samples_test
