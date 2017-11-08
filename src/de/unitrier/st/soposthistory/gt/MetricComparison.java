@@ -128,28 +128,31 @@ public class MetricComparison {
                 MetricResult newResult = getResults(postHistoryId, postBlockTypeFilter);
                 boolean truePositivesEqual = (resultInMap.truePositives == null && newResult.truePositives == null)
                         || (resultInMap.truePositives != null && newResult.truePositives != null
-                            && resultInMap.truePositives.equals(newResult.truePositives));
+                        && resultInMap.truePositives.equals(newResult.truePositives));
                 boolean falsePositivesEqual = (resultInMap.falsePositives == null && newResult.falsePositives == null)
                         || (resultInMap.falsePositives != null && newResult.falsePositives != null
-                            && resultInMap.falsePositives.equals(newResult.falsePositives));
-                boolean trueNegativesEqual = (resultInMap.trueNegatives == null &&  newResult.trueNegatives == null)
-                        || (resultInMap.trueNegatives != null &&  newResult.trueNegatives != null
-                            && resultInMap.trueNegatives.equals(newResult.trueNegatives));
+                        && resultInMap.falsePositives.equals(newResult.falsePositives));
+                boolean trueNegativesEqual = (resultInMap.trueNegatives == null && newResult.trueNegatives == null)
+                        || (resultInMap.trueNegatives != null && newResult.trueNegatives != null
+                        && resultInMap.trueNegatives.equals(newResult.trueNegatives));
                 boolean falseNegativesEqual = (resultInMap.falseNegatives == null && newResult.falseNegatives == null)
-                        ||(resultInMap.falseNegatives != null && newResult.falseNegatives != null
-                            && resultInMap.falseNegatives.equals(newResult.falseNegatives));
+                        || (resultInMap.falseNegatives != null && newResult.falseNegatives != null
+                        && resultInMap.falseNegatives.equals(newResult.falseNegatives));
+                boolean postBlockCountEqual = (resultInMap.postBlockCount == null && newResult.postBlockCount == null)
+                        || (resultInMap.postBlockCount != null && newResult.postBlockCount != null
+                        && resultInMap.postBlockCount.equals(newResult.postBlockCount));
 
-                if (!truePositivesEqual || !falsePositivesEqual || !trueNegativesEqual || !falseNegativesEqual) {
+                if (!truePositivesEqual || !falsePositivesEqual || !trueNegativesEqual || !falseNegativesEqual
+                        || !postBlockCountEqual) {
                     throw new IllegalStateException("Metric results changed from repetition "
-                            + (currentRepetition-1) + " to " + currentRepetition);
+                            + (currentRepetition - 1) + " to " + currentRepetition);
                 }
             }
 
             if (currentRepetition < repetitionCount) {
                 // return sum of runtimes
                 return runtime + stopWatch.getTime();
-            }
-            else {
+            } else {
                 // calculate and return mean runtime after last run
                 return (runtime + stopWatch.getTime()) / (double) repetitionCount;
             }
@@ -181,11 +184,11 @@ public class MetricComparison {
             result.trueNegatives = trueNegativesCount;
             result.falseNegatives = falseNegativesCount;
 
-            result.numberOfBlocks = 0;
-            if(postBlockTypeFilter.contains(TextBlockVersion.postBlockTypeId))
-                result.numberOfBlocks += postVersionList.getPostVersion(postHistoryId).getTextBlocks().size();
-            if(postBlockTypeFilter.contains(CodeBlockVersion.postBlockTypeId))
-                result.numberOfBlocks += postVersionList.getPostVersion(postHistoryId).getCodeBlocks().size();
+            result.postBlockCount = 0;
+            if (postBlockTypeFilter.contains(TextBlockVersion.postBlockTypeId))
+                result.postBlockCount += postVersionList.getPostVersion(postHistoryId).getTextBlocks().size();
+            if (postBlockTypeFilter.contains(CodeBlockVersion.postBlockTypeId))
+                result.postBlockCount += postVersionList.getPostVersion(postHistoryId).getCodeBlocks().size();
         }
 
         return result;
@@ -224,12 +227,11 @@ public class MetricComparison {
     }
 
     public class MetricResult {
-        // after last repetition, variables hold mean values
         Integer truePositives = null;
         Integer falsePositives = null;
         Integer trueNegatives = null;
         Integer falseNegatives = null;
-        Integer numberOfBlocks = null;
+        Integer postBlockCount = null; // needed to compute true negatives in test cases
 
         public Integer getTruePositives() {
             return truePositives;
@@ -247,8 +249,8 @@ public class MetricComparison {
             return falseNegatives;
         }
 
-        public Integer getNumberOfBlocks() {
-            return numberOfBlocks;
+        public Integer getPostBlockCount() {
+            return postBlockCount;
         }
     }
 }
