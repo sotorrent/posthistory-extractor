@@ -127,14 +127,17 @@ class DisabledTests {
 
                     }
                 } else {
-                    // TODO: Check true negatives for text and code
                     MetricComparison.MetricResult resultsText = tmpMetricComparison.getResultsText(postHistoryId);
                     assertEquals(truePositivesText, resultsText.getTruePositives());
+                    assertEquals(trueNegativesText.intValue(), resultsText.getNumberOfBlocks() - resultsText.getTruePositives() - resultsText.getFalsePositives() - resultsText.getFalseNegatives());
+                    assertEquals(trueNegativesText.intValue(), resultsText.getNumberOfBlocks() - resultsText.getTruePositives() - resultsText.getFalseNegatives());
                     assertEquals(falsePositivesText, resultsText.getFalsePositives());
                     assertEquals(falseNegativesText, resultsText.getFalseNegatives());
 
                     MetricComparison.MetricResult resultsCode = tmpMetricComparison.getResultsCode(postHistoryId);
                     assertEquals(truePositivesCode, resultsCode.getTruePositives());
+                    assertEquals(trueNegativesCode.intValue(), resultsCode.getNumberOfBlocks() - resultsCode.getTruePositives() - resultsCode.getFalsePositives() - resultsCode.getFalseNegatives());
+                    assertEquals(trueNegativesCode.intValue(), resultsCode.getNumberOfBlocks() - resultsCode.getTruePositives() - resultsCode.getFalseNegatives());
                     assertEquals(falsePositivesCode, resultsCode.getFalsePositives());
                     assertEquals(falseNegativesCode, resultsCode.getFalseNegatives());
                 }
