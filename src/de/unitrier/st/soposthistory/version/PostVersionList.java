@@ -216,7 +216,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
                 // currentVersion is first element
                 if (currentVersion.getPred() != null || currentVersion.getPredPostHistoryId() != null) {
                     throw new IllegalStateException("First element has predecessor.");
-                };
+                }
 
                 // the post blocks in the first version have themselves as root post blocks
                 for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks()) {
@@ -233,7 +233,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
                 if (!currentVersion.getPred().equals(this.get(predIndex))
                         || !currentVersion.getPredPostHistoryId().equals(this.get(predIndex).getPostHistoryId())) {
                     throw new IllegalStateException("Wrong predecessor set.");
-                };
+                }
 
                 Map<PostBlockVersion, Integer> matchedPredecessors = new HashMap<>();
 

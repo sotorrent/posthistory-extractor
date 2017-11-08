@@ -274,49 +274,49 @@ class GroundTruthTest {
         int postHistoryId = postHistoryIds_3758880.get(0);
 
         MetricComparison.MetricResult resultsText = comparison_a_3758880.getResultsText(postHistoryId);
-        assertEquals(new Double(0), resultsText.getTruePositives());
-        assertEquals(new Double(0), resultsText.getFalsePositives());
-        assertEquals(new Double(0), resultsText.getTrueNegatives());
-        assertEquals(new Double(0), resultsText.getFalseNegatives());
+        assertEquals(new Integer(0), resultsText.getTruePositives());
+        assertEquals(new Integer(0), resultsText.getFalsePositives());
+        assertEquals(new Integer(0), resultsText.getTrueNegatives());
+        assertEquals(new Integer(0), resultsText.getFalseNegatives());
 
         MetricComparison.MetricResult resultsCode = comparison_a_3758880.getResultsCode(postHistoryId);
-        assertEquals(new Double(0), resultsCode.getTruePositives());
-        assertEquals(new Double(0), resultsCode.getFalsePositives());
-        assertEquals(new Double(0), resultsCode.getTrueNegatives());
-        assertEquals(new Double(0), resultsCode.getFalseNegatives());
+        assertEquals(new Integer(0), resultsCode.getTruePositives());
+        assertEquals(new Integer(0), resultsCode.getFalsePositives());
+        assertEquals(new Integer(0), resultsCode.getTrueNegatives());
+        assertEquals(new Integer(0), resultsCode.getFalseNegatives());
 
         // second version
         postHistoryId = postHistoryIds_3758880.get(1);
 
         resultsText = comparison_a_3758880.getResultsText(postHistoryId);
-        assertEquals(new Double(1), resultsText.getTruePositives());
-        assertEquals(new Double(0), resultsText.getFalsePositives());
-        assertEquals(new Double(5), resultsText.getTrueNegatives());
-        assertEquals(new Double(0), resultsText.getFalseNegatives());
+        assertEquals(new Integer(1), resultsText.getTruePositives());
+        assertEquals(new Integer(0), resultsText.getFalsePositives());
+        assertEquals(new Integer(5), resultsText.getTrueNegatives());
+        assertEquals(new Integer(0), resultsText.getFalseNegatives());
 
         resultsCode = comparison_a_3758880.getResultsCode(postHistoryId);
-        assertEquals(new Double(2), resultsCode.getTruePositives());
-        assertEquals(new Double(0), resultsCode.getFalsePositives());
-        assertEquals(new Double(4), resultsCode.getTrueNegatives());
-        assertEquals(new Double(0), resultsCode.getFalseNegatives());
+        assertEquals(new Integer(2), resultsCode.getTruePositives());
+        assertEquals(new Integer(0), resultsCode.getFalsePositives());
+        assertEquals(new Integer(4), resultsCode.getTrueNegatives());
+        assertEquals(new Integer(0), resultsCode.getFalseNegatives());
 
         // version 3 to 10 only for text blocks (they don't differ)
         for (int i = 2; i < 10; i++) {
             postHistoryId = postHistoryIds_3758880.get(i);
 
             resultsText = comparison_a_3758880.getResultsText(postHistoryId);
-            assertEquals(new Double(2), resultsText.getTruePositives());
-            assertEquals(new Double(0), resultsText.getFalsePositives());
-            assertEquals(new Double(2), resultsText.getTrueNegatives());
-            assertEquals(new Double(0), resultsText.getFalseNegatives());
+            assertEquals(new Integer(2), resultsText.getTruePositives());
+            assertEquals(new Integer(0), resultsText.getFalsePositives());
+            assertEquals(new Integer(2), resultsText.getTrueNegatives());
+            assertEquals(new Integer(0), resultsText.getFalseNegatives());
         }
 
         postHistoryId = postHistoryIds_3758880.get(10);
         resultsText = comparison_a_3758880.getResultsText(postHistoryId);
-        assertEquals(new Double(2), resultsText.getTruePositives());
-        assertEquals(new Double(0), resultsText.getFalsePositives());
-        assertEquals(new Double(4), resultsText.getTrueNegatives());
-        assertEquals(new Double(0), resultsText.getFalseNegatives());
+        assertEquals(new Integer(2), resultsText.getTruePositives());
+        assertEquals(new Integer(0), resultsText.getFalsePositives());
+        assertEquals(new Integer(4), resultsText.getTrueNegatives());
+        assertEquals(new Integer(0), resultsText.getFalseNegatives());
 
         // version 3 and 6 for code
         List<Integer> versions = Arrays.asList(2, 5);
@@ -324,10 +324,10 @@ class GroundTruthTest {
             postHistoryId = postHistoryIds_3758880.get(version_number);
 
             resultsCode = comparison_a_3758880.getResultsCode(postHistoryId);
-            assertEquals(new Double(1), resultsCode.getTruePositives());
-            assertEquals(new Double(0), resultsCode.getFalsePositives());
-            assertEquals(new Double(2), resultsCode.getTrueNegatives());
-            assertEquals(new Double(1), resultsCode.getFalseNegatives());
+            assertEquals(new Integer(1), resultsCode.getTruePositives());
+            assertEquals(new Integer(0), resultsCode.getFalsePositives());
+            assertEquals(new Integer(2), resultsCode.getTrueNegatives());
+            assertEquals(new Integer(1), resultsCode.getFalseNegatives());
         }
 
         // version 4,5,7,8,9,10,11 for code
@@ -336,10 +336,10 @@ class GroundTruthTest {
             postHistoryId = postHistoryIds_3758880.get(version_number);
 
             resultsCode = comparison_a_3758880.getResultsCode(postHistoryId);
-            assertEquals(new Double(2), resultsCode.getTruePositives());
-            assertEquals(new Double(0), resultsCode.getFalsePositives());
-            assertEquals(new Double(2), resultsCode.getTrueNegatives());
-            assertEquals(new Double(0), resultsCode.getFalseNegatives());
+            assertEquals(new Integer(2), resultsCode.getTruePositives());
+            assertEquals(new Integer(0), resultsCode.getFalsePositives());
+            assertEquals(new Integer(2), resultsCode.getTrueNegatives());
+            assertEquals(new Integer(0), resultsCode.getFalseNegatives());
         }
 
         /* compare a 22037280 */
@@ -349,31 +349,31 @@ class GroundTruthTest {
         postHistoryId = postHistoryIds_22037280.get(0);
 
         resultsText = comparison_a_22037280.getResultsText(postHistoryId);
-        assertEquals(new Double(0), resultsText.getTruePositives());
-        assertEquals(new Double(0), resultsText.getFalsePositives());
-        assertEquals(new Double(0), resultsText.getTrueNegatives());
-        assertEquals(new Double(0), resultsText.getFalseNegatives());
+        assertEquals(new Integer(0), resultsText.getTruePositives());
+        assertEquals(new Integer(0), resultsText.getFalsePositives());
+        assertEquals(new Integer(0), resultsText.getTrueNegatives());
+        assertEquals(new Integer(0), resultsText.getFalseNegatives());
 
         resultsCode = comparison_a_22037280.getResultsCode(postHistoryId);
-        assertEquals(new Double(0), resultsCode.getTruePositives());
-        assertEquals(new Double(0), resultsCode.getFalsePositives());
-        assertEquals(new Double(0), resultsCode.getTrueNegatives());
-        assertEquals(new Double(0), resultsCode.getFalseNegatives());
+        assertEquals(new Integer(0), resultsCode.getTruePositives());
+        assertEquals(new Integer(0), resultsCode.getFalsePositives());
+        assertEquals(new Integer(0), resultsCode.getTrueNegatives());
+        assertEquals(new Integer(0), resultsCode.getFalseNegatives());
 
         for (int i = 1; i < postHistoryIds_22037280.size(); i++) {
             postHistoryId = postHistoryIds_22037280.get(i);
 
             resultsText = comparison_a_22037280.getResultsText(postHistoryId);
-            assertEquals(new Double(3), resultsText.getTruePositives());
-            assertEquals(new Double(0), resultsText.getFalsePositives());
-            assertEquals(new Double(6), resultsText.getTrueNegatives());
-            assertEquals(new Double(0), resultsText.getFalseNegatives());
+            assertEquals(new Integer(3), resultsText.getTruePositives());
+            assertEquals(new Integer(0), resultsText.getFalsePositives());
+            assertEquals(new Integer(6), resultsText.getTrueNegatives());
+            assertEquals(new Integer(0), resultsText.getFalseNegatives());
 
             resultsCode = comparison_a_22037280.getResultsCode(postHistoryId);
-            assertEquals(new Double(2), resultsCode.getTruePositives());
-            assertEquals(new Double(0), resultsCode.getFalsePositives());
-            assertEquals(new Double(2), resultsCode.getTrueNegatives());
-            assertEquals(new Double(0), resultsCode.getFalseNegatives());
+            assertEquals(new Integer(2), resultsCode.getTruePositives());
+            assertEquals(new Integer(0), resultsCode.getFalsePositives());
+            assertEquals(new Integer(2), resultsCode.getTrueNegatives());
+            assertEquals(new Integer(0), resultsCode.getFalseNegatives());
         }
 
         manager.writeToCSV(outputDir);

@@ -22,6 +22,7 @@ import static de.unitrier.st.soposthistory.util.Util.getClassLogger;
 public class Statistics {
     private static Logger logger = null;
 
+    // TODO: refactor paths (see also paths in test suite "DisabledTests"
     private static final Path rootPathToSmallSamples = Paths.get("testdata", "samples_100");
     public static final List<Path> pathsToSmallSamplesFiles = getSmallSampleFilesPaths(rootPathToSmallSamples);
     private static final Path rootPathToLargeSamples = Paths.get("testdata", "samples_10000");

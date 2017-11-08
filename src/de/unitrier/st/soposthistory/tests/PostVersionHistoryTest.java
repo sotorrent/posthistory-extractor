@@ -7,7 +7,7 @@ import de.unitrier.st.soposthistory.util.Config;
 import de.unitrier.st.soposthistory.version.PostVersion;
 import de.unitrier.st.soposthistory.version.PostVersionList;
 import de.unitrier.st.stringsimilarity.util.InputTooShortException;
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -151,7 +151,7 @@ class PostVersionHistoryTest {
     }
 
     @Test
-    @Ignore
+    @Disabled
     void testPostBlockVersionExtraction() {
         // TODO: Add test cases for testing the version history extraction (similarity and diffs between code blocks and text blocks, linking of block versions); we can add some posts from the grounth truth here after we decided on the similarity metrics and thresholds.
     }
@@ -299,7 +299,7 @@ class PostVersionHistoryTest {
     }
 
     @Test
-    @Ignore
+    @Disabled
     void testRootPostBlocksQuestion3758880() {
         PostVersionList q_3758880 = PostVersionList.readFromCSV(pathToTestData, 3758880, 1);
 
@@ -736,6 +736,7 @@ class PostVersionHistoryTest {
 
     @Test
     void testInvalidCharBetweenEncapsulatedTokenAndDelimiter() {
-        PostVersionList a_10049438 = PostVersionList.readFromCSV(pathToTestData, 10049438, 2, false);
+        // this post produced an IOException due to wrong escaping of backslashes in combination with double quotes
+        PostVersionList.readFromCSV(pathToTestData, 10049438, 2, false);
     }
 }
