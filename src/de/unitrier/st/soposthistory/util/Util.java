@@ -18,6 +18,8 @@ import java.util.logging.SimpleFormatter;
 import java.util.stream.Collectors;
 
 public class Util {
+    private static Path defaultLogDir = Paths.get(System.getProperty("user.dir"), "logs");
+
     public static void insertList(StatelessSession session, List list) {
         for (int i=0; i<list.size(); i++) {
             session.insert(list.get(i));
@@ -31,7 +33,7 @@ public class Util {
     }
 
     public static Logger getClassLogger(Class c) throws IOException {
-        return getClassLogger(c, true, Paths.get(System.getProperty("user.dir")));
+        return getClassLogger(c, true, defaultLogDir);
     }
 
     public static Logger getClassLogger(Class c, Path logFileDir) throws IOException {
@@ -39,7 +41,7 @@ public class Util {
     }
 
     public static Logger getClassLogger(Class c, boolean consoleOutput) throws IOException {
-        return getClassLogger(c, consoleOutput, Paths.get(System.getProperty("user.dir")));
+        return getClassLogger(c, consoleOutput, defaultLogDir);
     }
 
     public static Logger getClassLogger(Class c, boolean consoleOutput, Path logFileDir) throws IOException {
