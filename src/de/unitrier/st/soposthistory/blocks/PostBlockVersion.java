@@ -525,11 +525,12 @@ public abstract class PostBlockVersion {
 
         // retrieve predecessors with maximal similarity
         final double finalMaxSimilarity = maxSimilarity; // final value needed for lambda expression
-        if (finalMaxSimilarity >= getSimilarityThreshold()) {
+        if (Util.greaterThan(finalMaxSimilarity, getSimilarityThreshold()) ||
+                Util.equals(finalMaxSimilarity, getSimilarityThreshold())) {
             // get predecessors with max. similarity
             matchingPredecessors = predecessorSimilarities.entrySet()
                     .stream()
-                    .filter(e -> e.getValue() == finalMaxSimilarity)
+                    .filter(e -> Util.equals(e.getValue(), finalMaxSimilarity))
                     .sorted(Comparator.comparing(e -> e.getKey().getLocalId())) // ascending order
                     .map(Map.Entry::getKey)
                     .collect(Collectors.toList());
