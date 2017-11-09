@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import de.unitrier.st.soposthistory.diffs.LineDiff;
 import de.unitrier.st.soposthistory.diffs.diff_match_patch;
 import de.unitrier.st.soposthistory.util.Config;
+import de.unitrier.st.soposthistory.util.Util;
 import de.unitrier.st.soposthistory.version.PostVersion;
 import de.unitrier.st.stringsimilarity.util.IllegalSimilarityValueException;
 import de.unitrier.st.stringsimilarity.util.InputTooShortException;
@@ -468,7 +469,7 @@ public abstract class PostBlockVersion {
             }
         }
 
-        if (similarity < 0.0 || similarity > 1.0) {
+        if (Util.lessThan(similarity, 0.0) || Util.greaterThan(similarity, 1.0)) {
             throw new IllegalSimilarityValueException("Similarity value must be in range [0.0, 1.0], but was " + similarity);
         }
 
