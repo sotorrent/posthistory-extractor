@@ -75,7 +75,6 @@ public class PostBlockConnection {
     }
 
     public static Set<PostBlockConnection> union(Set<PostBlockConnection> set1, Set<PostBlockConnection> set2) {
-        // TODO: add test case for this method
         Set<PostBlockConnection> union = new HashSet<>(set1);
         for (PostBlockConnection current : set2) {
             if (!contains(union, current)) {
