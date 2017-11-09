@@ -305,7 +305,7 @@ class PostVersionHistoryTest {
 
         assertEquals(11, q_3758880.size());
 
-        // TODO: Implement way to test root post block assignment without connection to database
+        // TODO: Implement way to test root post block assignment without connection to database -> Use PostBlockLifeSpan?
     }
 
     @Test
