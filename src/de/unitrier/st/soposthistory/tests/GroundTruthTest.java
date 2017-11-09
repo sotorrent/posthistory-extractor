@@ -174,6 +174,13 @@ class GroundTruthTest {
                 Sets.newHashSet(connection1, connection2, connection3, connection4),
                 Sets.newHashSet(connection1, connection2, connection3, connection4))
         );
+
+        // test PostBlockConnection.union
+        assertTrue(PostBlockConnection.equals(
+                PostBlockConnection.union(Sets.newHashSet(connection1, connection2),
+                        Sets.newHashSet(connection3, connection4)),
+                Sets.newHashSet(connection1, connection2, connection3, connection4))
+        );
     }
 
     @Test
