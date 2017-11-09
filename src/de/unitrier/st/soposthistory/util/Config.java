@@ -125,7 +125,8 @@ public class Config {
     }
 
     public Config withTextSimilarityThreshold(double textSimilarityThreshold){
-        if (textSimilarityThreshold < 0.0 || textSimilarityThreshold > 1.0) {
+        if (Util.lessThan(textSimilarityThreshold, 0.0)
+                || Util.greaterThan(textSimilarityThreshold, 1.0)) {
             throw new IllegalArgumentException("Similarity threshold must be in range [0.0, 1.0]");
         }
         return new Config(extractUrls, computeDiffs,
@@ -146,7 +147,8 @@ public class Config {
     }
 
     public Config withCodeSimilarityThreshold(double codeSimilarityThreshold){
-        if (textSimilarityThreshold < 0.0 || textSimilarityThreshold > 1.0) {
+        if (Util.lessThan(codeSimilarityThreshold, 0.0)
+                || Util.greaterThan(codeSimilarityThreshold, 1.0)) {
             throw new IllegalArgumentException("Similarity threshold must be in range [0.0, 1.0]");
         }
         return new Config(extractUrls, computeDiffs,
