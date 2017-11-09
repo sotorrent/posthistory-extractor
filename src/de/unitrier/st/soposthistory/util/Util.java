@@ -107,4 +107,13 @@ public class Util {
         }
         Files.createDirectories(dir);
     }
+
+    // see http://www.cygnus-software.com/papers/comparingfloats/Comparing%20floating%20point%20numbers.htm
+    public boolean equals(double value1, double value2) {
+        return equals(value1, value2, 0.00001);
+    }
+
+    public boolean equals(double value1, double value2, double epsilon) {
+        return Math.abs(value1  - value2) < epsilon;
+    }
 }
