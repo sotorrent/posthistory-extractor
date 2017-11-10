@@ -4,6 +4,8 @@ import org.apache.commons.io.FileUtils;
 import org.hibernate.StatelessSession;
 
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -132,5 +134,28 @@ public class Util {
 
     private static boolean greaterThan(double value1, double value2, double epsilon) {
         return (value2 - value1) + epsilon < 0;
+    }
+
+    // see http://nadeausoftware.com/articles/2008/03/java_tip_how_get_cpu_and_user_time_benchmarking
+
+    /** Get CPU time in nanoseconds. */
+    public long getCpuTime( ) {
+        ThreadMXBean bean = ManagementFactory.getThreadMXBean( );
+        return bean.isCurrentThreadCpuTimeSupported( ) ?
+                bean.getCurrentThreadCpuTime( ) : 0L;
+    }
+
+    /** Get user time in nanoseconds. */
+    public long getUserTime( ) {
+        ThreadMXBean bean = ManagementFactory.getThreadMXBean( );
+        return bean.isCurrentThreadCpuTimeSupported( ) ?
+                bean.getCurrentThreadUserTime( ) : 0L;
+    }
+
+    /** Get system time in nanoseconds. */
+    public long getSystemTime( ) {
+        ThreadMXBean bean = ManagementFactory.getThreadMXBean( );
+        return bean.isCurrentThreadCpuTimeSupported( ) ?
+                (bean.getCurrentThreadCpuTime( ) - bean.getCurrentThreadUserTime( )) : 0L;
     }
 }
