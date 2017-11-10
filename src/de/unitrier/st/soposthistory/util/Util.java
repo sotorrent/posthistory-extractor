@@ -135,30 +135,4 @@ public class Util {
     private static boolean greaterThan(double value1, double value2, double epsilon) {
         return (value2 - value1) + epsilon < 0;
     }
-
-    /**
-     * Get CPU time in nanoseconds.
-     * See: http://nadeausoftware.com/articles/2008/03/java_tip_how_get_cpu_and_user_time_benchmarking
-     */
-    public static long getCpuTimeNano() throws UnsupportedOperationException {
-        return ManagementFactory.getThreadMXBean().getCurrentThreadCpuTime();
-    }
-
-    /**
-     * Get user time in nanoseconds.
-     * See: http://nadeausoftware.com/articles/2008/03/java_tip_how_get_cpu_and_user_time_benchmarking
-     */
-    public static long getUserTimeNano() throws UnsupportedOperationException {
-        return ManagementFactory.getThreadMXBean().getCurrentThreadUserTime();
-    }
-
-    /**
-     * Get system time in nanoseconds.
-     * See: http://nadeausoftware.com/articles/2008/03/java_tip_how_get_cpu_and_user_time_benchmarking
-     */
-    public static long getSystemTimeNano() throws UnsupportedOperationException {
-        ThreadMXBean bean = ManagementFactory.getThreadMXBean();
-        return bean.getCurrentThreadCpuTime() - bean.getCurrentThreadUserTime();
-    }
-
 }
