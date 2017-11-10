@@ -24,13 +24,13 @@ public class Util {
     private static final double EPSILON = 0.00001;
 
     public static void insertList(StatelessSession session, List list) {
-        for (int i=0; i<list.size(); i++) {
+        for (int i = 0; i < list.size(); i++) {
             session.insert(list.get(i));
         }
     }
 
     public static void updateList(StatelessSession session, List list) {
-        for (int i=0; i<list.size(); i++) {
+        for (int i = 0; i < list.size(); i++) {
             session.update(list.get(i));
         }
     }
@@ -70,7 +70,7 @@ public class Util {
         return logger;
     }
 
-    public static<T> List<T> processFiles(Path dir, Predicate<Path> filter, Function<Path, T> map) {
+    public static <T> List<T> processFiles(Path dir, Predicate<Path> filter, Function<Path, T> map) {
         // ensure that input directory exists
         if (!Files.exists(dir) || !Files.isDirectory(dir)) {
             throw new IllegalArgumentException("Directory not found: " + dir);
@@ -78,9 +78,9 @@ public class Util {
 
         try {
             return Files.list(dir)
-                        .filter(filter)
-                        .map(map)
-                        .collect(Collectors.toList());
+                    .filter(filter)
+                    .map(map)
+                    .collect(Collectors.toList());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -117,7 +117,7 @@ public class Util {
     }
 
     private static boolean equals(double value1, double value2, double epsilon) {
-        return Math.abs(value1  - value2) < epsilon;
+        return Math.abs(value1 - value2) < epsilon;
     }
 
     public static boolean lessThan(double value1, double value2) {
@@ -136,26 +136,29 @@ public class Util {
         return (value2 - value1) + epsilon < 0;
     }
 
-    // see http://nadeausoftware.com/articles/2008/03/java_tip_how_get_cpu_and_user_time_benchmarking
-
-    /** Get CPU time in nanoseconds. */
-    public long getCpuTime( ) {
-        ThreadMXBean bean = ManagementFactory.getThreadMXBean( );
-        return bean.isCurrentThreadCpuTimeSupported( ) ?
-                bean.getCurrentThreadCpuTime( ) : 0L;
+    /**
+     * Get CPU time in nanoseconds.
+     * See: http://nadeausoftware.com/articles/2008/03/java_tip_how_get_cpu_and_user_time_benchmarking
+     */
+    public static long getCpuTimeNano() throws UnsupportedOperationException {
+        return ManagementFactory.getThreadMXBean().getCurrentThreadCpuTime();
     }
 
-    /** Get user time in nanoseconds. */
-    public long getUserTime( ) {
-        ThreadMXBean bean = ManagementFactory.getThreadMXBean( );
-        return bean.isCurrentThreadCpuTimeSupported( ) ?
-                bean.getCurrentThreadUserTime( ) : 0L;
+    /**
+     * Get user time in nanoseconds.
+     * See: http://nadeausoftware.com/articles/2008/03/java_tip_how_get_cpu_and_user_time_benchmarking
+     */
+    public static long getUserTimeNano() throws UnsupportedOperationException {
+        return ManagementFactory.getThreadMXBean().getCurrentThreadUserTime();
     }
 
-    /** Get system time in nanoseconds. */
-    public long getSystemTime( ) {
-        ThreadMXBean bean = ManagementFactory.getThreadMXBean( );
-        return bean.isCurrentThreadCpuTimeSupported( ) ?
-                (bean.getCurrentThreadCpuTime( ) - bean.getCurrentThreadUserTime( )) : 0L;
+    /**
+     * Get system time in nanoseconds.
+     * See: http://nadeausoftware.com/articles/2008/03/java_tip_how_get_cpu_and_user_time_benchmarking
+     */
+    public static long getSystemTimeNano() throws UnsupportedOperationException {
+        ThreadMXBean bean = ManagementFactory.getThreadMXBean();
+        return bean.getCurrentThreadCpuTime() - bean.getCurrentThreadUserTime();
     }
+
 }
