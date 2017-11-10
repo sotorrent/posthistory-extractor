@@ -41,6 +41,7 @@ target/
 ########
 # Misc #
 ########
+/data
 *.log
 *.log.*
 *.lck
