@@ -6,6 +6,7 @@ public class Config {
     // configure post history processing
     private final boolean extractUrls;
     private final boolean computeDiffs;
+    private final boolean catchInputTooShortExceptions;
 
     // metrics and threshold for text blocks
     private final BiFunction<String, String, Double> textSimilarityMetric;
@@ -17,7 +18,7 @@ public class Config {
     private final BiFunction<String, String, Double> codeBackupSimilarityMetric;
     private final double codeSimilarityThreshold;
 
-    private Config(boolean extractUrls, boolean computeDiffs,
+    private Config(boolean extractUrls, boolean computeDiffs, boolean catchInputTooShortExceptions,
                    BiFunction<String, String, Double> textSimilarityMetric,
                    BiFunction<String, String, Double> textBackupSimilarityMetric,
                    double textSimilarityThreshold,
@@ -26,6 +27,7 @@ public class Config {
                    double codeSimilarityThreshold) {
         this.extractUrls = extractUrls;
         this.computeDiffs = computeDiffs;
+        this.catchInputTooShortExceptions = catchInputTooShortExceptions;
         this.textSimilarityMetric = textSimilarityMetric;
         this.textBackupSimilarityMetric = textBackupSimilarityMetric;
         this.textSimilarityThreshold = textSimilarityThreshold;
@@ -35,6 +37,7 @@ public class Config {
     }
 
     public static final Config EMPTY = new Config(
+            false,
             false,
             false,
             (str1, str2) -> 0.0,
@@ -48,6 +51,7 @@ public class Config {
     public static final Config METRICS_COMPARISON = new Config(
             false,
             false,
+            true,
             (str1, str2) -> 0.0,
             null,
             0.6,
@@ -60,6 +64,7 @@ public class Config {
     public static final Config DEFAULT = new Config(
             true,
             true,
+            false,
             de.unitrier.st.stringsimilarity.set.Variants::fourGramOverlap,
             de.unitrier.st.stringsimilarity.edit.Variants::levenshtein,
             0.6,
@@ -96,30 +101,40 @@ public class Config {
         return computeDiffs;
     }
 
+    public boolean getCatchInputTooShortExceptions() {
+        return catchInputTooShortExceptions;
+    }
+
     public double getCodeSimilarityThreshold() {
         return codeSimilarityThreshold;
     }
 
     public Config withExtractUrls(boolean extractUrls) {
-        return new Config(extractUrls, computeDiffs,
+        return new Config(extractUrls, computeDiffs, catchInputTooShortExceptions,
                 textSimilarityMetric, textBackupSimilarityMetric, textSimilarityThreshold,
                 codeSimilarityMetric, codeBackupSimilarityMetric, codeSimilarityThreshold);
     }
 
     public Config withComputeDiffs(boolean computeDiffs) {
-        return new Config(extractUrls, computeDiffs,
+        return new Config(extractUrls, computeDiffs, catchInputTooShortExceptions,
+                textSimilarityMetric, textBackupSimilarityMetric, textSimilarityThreshold,
+                codeSimilarityMetric, codeBackupSimilarityMetric, codeSimilarityThreshold);
+    }
+
+    public Config withCatchInputTooShortExceptions(boolean catchInputTooShortExceptions) {
+        return new Config(extractUrls, computeDiffs, catchInputTooShortExceptions,
                 textSimilarityMetric, textBackupSimilarityMetric, textSimilarityThreshold,
                 codeSimilarityMetric, codeBackupSimilarityMetric, codeSimilarityThreshold);
     }
 
     public Config withTextSimilarityMetric(BiFunction<String, String, Double> textSimilarityMetric){
-        return new Config(extractUrls, computeDiffs,
+        return new Config(extractUrls, computeDiffs, catchInputTooShortExceptions,
                 textSimilarityMetric, textBackupSimilarityMetric, textSimilarityThreshold,
                 codeSimilarityMetric, codeBackupSimilarityMetric, codeSimilarityThreshold);
     }
 
     public Config withTextBackupSimilarityMetric(BiFunction<String, String, Double> textBackupSimilarityMetric){
-        return new Config(extractUrls, computeDiffs,
+        return new Config(extractUrls, computeDiffs, catchInputTooShortExceptions,
                 textSimilarityMetric, textBackupSimilarityMetric, textSimilarityThreshold,
                 codeSimilarityMetric, codeBackupSimilarityMetric, codeSimilarityThreshold);
     }
@@ -129,19 +144,19 @@ public class Config {
                 || Util.greaterThan(textSimilarityThreshold, 1.0)) {
             throw new IllegalArgumentException("Similarity threshold must be in range [0.0, 1.0]");
         }
-        return new Config(extractUrls, computeDiffs,
+        return new Config(extractUrls, computeDiffs, catchInputTooShortExceptions,
                 textSimilarityMetric, textBackupSimilarityMetric, textSimilarityThreshold,
                 codeSimilarityMetric, codeBackupSimilarityMetric, codeSimilarityThreshold);
     }
 
     public Config withCodeSimilarityMetric(BiFunction<String, String, Double> codeSimilarityMetric){
-        return new Config(extractUrls, computeDiffs,
+        return new Config(extractUrls, computeDiffs, catchInputTooShortExceptions,
                 textSimilarityMetric, textBackupSimilarityMetric, textSimilarityThreshold,
                 codeSimilarityMetric, codeBackupSimilarityMetric, codeSimilarityThreshold);
     }
 
     public Config withCodeBackupSimilarityMetric(BiFunction<String, String, Double> codeBackupSimilarityMetric){
-        return new Config(extractUrls, computeDiffs,
+        return new Config(extractUrls, computeDiffs, catchInputTooShortExceptions,
                 textSimilarityMetric, textBackupSimilarityMetric, textSimilarityThreshold,
                 codeSimilarityMetric, codeBackupSimilarityMetric, codeSimilarityThreshold);
     }
@@ -151,7 +166,7 @@ public class Config {
                 || Util.greaterThan(codeSimilarityThreshold, 1.0)) {
             throw new IllegalArgumentException("Similarity threshold must be in range [0.0, 1.0]");
         }
-        return new Config(extractUrls, computeDiffs,
+        return new Config(extractUrls, computeDiffs, catchInputTooShortExceptions,
                 textSimilarityMetric, textBackupSimilarityMetric, textSimilarityThreshold,
                 codeSimilarityMetric, codeBackupSimilarityMetric, codeSimilarityThreshold);
     }

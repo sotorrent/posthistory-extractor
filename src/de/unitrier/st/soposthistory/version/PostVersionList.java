@@ -491,6 +491,14 @@ public class PostVersionList extends LinkedList<PostVersion> {
         return postTypeId;
     }
 
+    public int getFailedPredecessorComparisons() {
+        int sum = 0;
+        for (PostVersion version : this) {
+            sum += version.getFailedPredecessorComparisons();
+        }
+        return sum;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

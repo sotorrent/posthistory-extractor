@@ -74,6 +74,7 @@ public abstract class PostBlockVersion {
     private double maxSimilarity;
     private double similarityThreshold;
     private boolean lifeSpanExtracted; // for extraction of PostBlockLifeSpan
+    private Set<PostBlockVersion> failedPredecessorsComparisons; // needed for metrics comparison
 
     public PostBlockVersion() {
         // database
@@ -120,6 +121,7 @@ public abstract class PostBlockVersion {
         this.maxSimilarity = -1.0;
         this.similarityThreshold = -1.0;
         this.lifeSpanExtracted = false;
+        this.failedPredecessorsComparisons = new HashSet<>();
     }
 
     @Id
@@ -508,8 +510,21 @@ public abstract class PostBlockVersion {
                                                                                         Config config) {
 
         for (PostBlockVersion previousVersionPostBlock : previousVersionPostBlocks) {
+            // test equality
             boolean equal = getContent().equals(previousVersionPostBlock.getContent());
-            double similarity = compareTo(previousVersionPostBlock, config);
+
+            // compare post block version and, if configured, catch InputTooShortExceptions
+            double similarity = 0.0;
+            try {
+                similarity = compareTo(previousVersionPostBlock, config);
+            } catch (InputTooShortException e) {
+                if (config.getCatchInputTooShortExceptions()) {
+                    failedPredecessorsComparisons.add(previousVersionPostBlock);
+                    similarity = 0.0;
+                } else {
+                    throw e;
+                }
+            }
 
             if (equal) {
                 // equal predecessors have similarity 10.0 (see final static constant EQUALITY_SIMILARITY)
@@ -561,6 +576,10 @@ public abstract class PostBlockVersion {
 
     public static Set<Integer> getAllPostBlockTypeIdFilters() {
         return Sets.newHashSet(TextBlockVersion.postBlockTypeId, CodeBlockVersion.postBlockTypeId);
+    }
+
+    public Set<PostBlockVersion> getFailedPredecessorsComparisons() {
+        return failedPredecessorsComparisons;
     }
 
     @Override

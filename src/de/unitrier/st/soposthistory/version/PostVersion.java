@@ -300,6 +300,14 @@ public class PostVersion {
         return possibleConnections;
     }
 
+    public int getFailedPredecessorComparisons() {
+        int sum = 0;
+        for (PostBlockVersion postBlockVersion : postBlocks) {
+            sum += postBlockVersion.getFailedPredecessorsComparisons().size();
+        }
+        return sum;
+    }
+
     @Override
     public String toString() {
         return "PostVersion: PostId=" + postId + ", PostHistoryId=" + postHistoryId;
