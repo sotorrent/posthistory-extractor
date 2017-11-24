@@ -739,4 +739,15 @@ class PostVersionHistoryTest {
         // this post produced an IOException due to wrong escaping of backslashes in combination with double quotes
         PostVersionList.readFromCSV(pathToPostVersionLists, 10049438, 2, false);
     }
+
+    @Test
+    void test(){
+        PostVersionList a_33058542 = PostVersionList.readFromCSV(pathToPostVersionLists, 33058542, 2, true);
+
+        PostVersion version_2 = a_33058542.get(1);
+
+        assertEquals(1, version_2.getPostBlocks().get(0).getLocalId().intValue());
+        assertEquals(2, version_2.getPostBlocks().get(1).getLocalId().intValue());
+        assertEquals(3, version_2.getPostBlocks().get(2).getLocalId().intValue());
+    }
 }
