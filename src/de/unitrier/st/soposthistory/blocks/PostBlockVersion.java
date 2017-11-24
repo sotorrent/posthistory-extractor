@@ -514,7 +514,7 @@ public abstract class PostBlockVersion {
             boolean equal = getContent().equals(previousVersionPostBlock.getContent());
 
             // compare post block version and, if configured, catch InputTooShortExceptions
-            double similarity = 0.0;
+            double similarity;
             try {
                 similarity = compareTo(previousVersionPostBlock, config);
             } catch (InputTooShortException e) {
