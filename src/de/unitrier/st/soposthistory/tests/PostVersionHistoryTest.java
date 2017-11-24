@@ -741,7 +741,9 @@ class PostVersionHistoryTest {
     }
 
     @Test
-    void test(){
+    void testLocalIdAssignment(){
+        // local ids were previously not updated in PostHistory.reviseAndFinalizePostBlocks after merging of post blocks
+
         PostVersionList a_33058542 = PostVersionList.readFromCSV(pathToPostVersionLists, 33058542, 2, true);
 
         PostVersion version_2 = a_33058542.get(1);
