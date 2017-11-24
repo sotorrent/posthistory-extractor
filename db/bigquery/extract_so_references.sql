@@ -168,6 +168,18 @@ ON answers.ParentId = q.id;
 
 => so_references_2017_11_20.PostReferenceGH_Answers
 
+SELECT
+  FileId,
+  FileExt,
+  PostId,
+  PostTypeId,
+  CommentCount,
+  Score,
+  ParentViewCount
+FROM `soposthistory.so_references_2017_11_20.PostReferenceGH_Answers`;
+
+=> so_references_2017_11_20.PostReferenceGH_Answers_R
+
 
 --- Retrieve info about referenced SO questions
 SELECT
@@ -190,3 +202,16 @@ ON ref.PostId = q.id
 WHERE PostTypeId=1;
 
 => so_references_2017_11_20.PostReferenceGH_Questions
+
+SELECT
+  FileId,
+  FileExt,
+  PostId,
+  PostTypeId,
+  CommentCount,
+  Score,
+  ViewCount
+FROM `soposthistory.so_references_2017_11_20.PostReferenceGH_Questions`;
+
+
+=> so_references_2017_11_20.PostReferenceGH_Questions_R
