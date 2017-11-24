@@ -4,8 +4,6 @@ import org.apache.commons.io.FileUtils;
 import org.hibernate.StatelessSession;
 
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
-import java.lang.management.ThreadMXBean;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
