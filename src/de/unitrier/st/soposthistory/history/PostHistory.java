@@ -446,7 +446,13 @@ public class PostHistory {
             }
         }
 
+        // remove post blocks marked for deletion
         postBlocks.removeAll(markedForDeletion);
+
+        // update local ids after merging of post blocks
+        for (int i=0; i<postBlocks.size(); i++) {
+            postBlocks.get(i).setLocalId(i+1);
+        }
     }
 
     private void addPostBlock(PostBlockVersion postBlock) {
