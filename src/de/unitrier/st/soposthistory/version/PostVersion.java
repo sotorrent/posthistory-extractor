@@ -134,7 +134,7 @@ public class PostVersion {
 
     @Transient
     public List<PostBlockVersion> getPostBlocks() {
-        return getPostBlocks(PostBlockVersion.getAllPostBlockTypeIdFilters());
+        return postBlocks;
     }
 
     @Transient
