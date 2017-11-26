@@ -492,9 +492,13 @@ public class PostVersionList extends LinkedList<PostVersion> {
     }
 
     public int getFailedPredecessorComparisons() {
+        return getFailedPredecessorComparisons(PostBlockVersion.getAllPostBlockTypeIdFilters());
+    }
+
+    public int getFailedPredecessorComparisons(Set<Integer> postBlockTypeFilter) {
         int sum = 0;
         for (PostVersion version : this) {
-            sum += version.getFailedPredecessorComparisons();
+            sum += version.getFailedPredecessorComparisons(postBlockTypeFilter);
         }
         return sum;
     }
