@@ -301,9 +301,13 @@ public class PostVersion {
     }
 
     public int getFailedPredecessorComparisons() {
+        return getFailedPredecessorComparisons(PostBlockVersion.getAllPostBlockTypeIdFilters());
+    }
+
+    public int getFailedPredecessorComparisons(Set<Integer> postBlockTypeFilter) {
         int sum = 0;
         for (PostBlockVersion postBlockVersion : postBlocks) {
-            sum += postBlockVersion.getFailedPredecessorsComparisons().size();
+            sum += postBlockVersion.getFailedPredecessorsComparisons(postBlockTypeFilter).size();
         }
         return sum;
     }

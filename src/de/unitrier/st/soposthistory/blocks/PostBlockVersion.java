@@ -579,7 +579,13 @@ public abstract class PostBlockVersion {
     }
 
     public Set<PostBlockVersion> getFailedPredecessorsComparisons() {
-        return failedPredecessorsComparisons;
+        return getFailedPredecessorsComparisons(getAllPostBlockTypeIdFilters());
+    }
+
+    public Set<PostBlockVersion> getFailedPredecessorsComparisons(Set<Integer> postBlockTypeFilter) {
+        return failedPredecessorsComparisons.stream()
+                .filter(b -> b.isSelected(postBlockTypeFilter))
+                .collect(Collectors.toSet());
     }
 
     @Override
