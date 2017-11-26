@@ -115,11 +115,6 @@ public class PostVersion {
         this.succPostHistoryId = succPostHistoryId;
     }
 
-    @Transient
-    public List<PostBlockVersion> getPostBlocks() {
-        return postBlocks;
-    }
-
     public void addPostBlock(PostBlockVersion block) {
         postBlocks.add(block);
     }
@@ -138,19 +133,30 @@ public class PostVersion {
     }
 
     @Transient
-    public List<CodeBlockVersion> getCodeBlocks() {
+    public List<PostBlockVersion> getPostBlocks() {
+        return getPostBlocks(PostBlockVersion.getAllPostBlockTypeIdFilters());
+    }
+
+    @Transient
+    public List<PostBlockVersion> getPostBlocks(Set<Integer> postBlockTypeFilter) {
         return postBlocks
                 .stream()
-                .filter(b -> b instanceof CodeBlockVersion)
+                .filter(b -> b.isSelected(postBlockTypeFilter))
+                .collect(Collectors.toList());
+    }
+
+    @Transient
+    public List<CodeBlockVersion> getCodeBlocks() {
+        return getPostBlocks(CodeBlockVersion.getPostBlockTypeIdFilter())
+                .stream()
                 .map(b -> (CodeBlockVersion) b)
                 .collect(Collectors.toList());
     }
 
     @Transient
     public List<TextBlockVersion> getTextBlocks() {
-        return postBlocks
+        return getPostBlocks(TextBlockVersion.getPostBlockTypeIdFilter())
                 .stream()
-                .filter(b -> b instanceof TextBlockVersion)
                 .map(b -> (TextBlockVersion) b)
                 .collect(Collectors.toList());
     }

@@ -460,10 +460,9 @@ public class PostVersionList extends LinkedList<PostVersion> {
 
     public int getPostBlockVersionCount(Set<Integer> postBlockTypeFilter) {
         return Math.toIntExact(this.stream()
-                .map(PostVersion::getPostBlocks)
-                .flatMap(List::stream)
-                .filter(b -> b.isSelected(postBlockTypeFilter))
-                .count());
+                .map(v -> v.getPostBlocks(postBlockTypeFilter))
+                .mapToLong(List::size)
+                .sum());
     }
 
     public List<Integer> getPostHistoryIds() {
