@@ -254,10 +254,9 @@ class UrlExtractionTest {
     }
 
     @Test
-    void testDeletionOfSuperflousTextblocksAfterNormalization () {
+    void testDeletionOfEmptyTextblocksAfterNormalization () {
         // version 2 should have 4 text blocks and 2 code blocks
-        // after normalization the last block that containes only a reference and a URL should be deleted because it's empty
-
+        // after normalization, the last block, which contains only a reference and a URL, should be deleted because it's empty
         PostVersionList a_19049539 = PostVersionList.readFromCSV(pathToPostVersionLists, 19049539, 2);
         a_19049539.normalizeLinks();
         PostVersion version_2_a_19049539 = a_19049539.get(1);
