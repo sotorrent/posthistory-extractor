@@ -134,8 +134,9 @@ public class Util {
         return (value2 - value1) + epsilon < 0;
     }
 
-    public static void redirectErrorMessagesToFile(File outputFile) throws FileNotFoundException {
+    public static void redirectConsoleMessagesToFile(File outputFile) throws FileNotFoundException {
         PrintStream out = new PrintStream(new FileOutputStream(outputFile));
+        System.setOut(out);
         System.setErr(out);
     }
 }
