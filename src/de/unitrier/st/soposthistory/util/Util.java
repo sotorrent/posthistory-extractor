@@ -3,7 +3,7 @@ package de.unitrier.st.soposthistory.util;
 import org.apache.commons.io.FileUtils;
 import org.hibernate.StatelessSession;
 
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -132,5 +132,10 @@ public class Util {
 
     private static boolean greaterThan(double value1, double value2, double epsilon) {
         return (value2 - value1) + epsilon < 0;
+    }
+
+    public static void redirectErrorMessagesToFile(File outputFile) throws FileNotFoundException {
+        PrintStream out = new PrintStream(new FileOutputStream(outputFile));
+        System.setErr(out);
     }
 }
