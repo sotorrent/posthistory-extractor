@@ -18,6 +18,8 @@ import java.util.logging.SimpleFormatter;
 import java.util.stream.Collectors;
 
 public class Util {
+    // TODO: move to separate GitHub project
+
     private static Path defaultLogDir = Paths.get(System.getProperty("user.dir"), "logs");
     private static final double EPSILON = 0.00001;
 
@@ -138,5 +140,13 @@ public class Util {
         PrintStream out = new PrintStream(new FileOutputStream(outputFile));
         System.setOut(out);
         System.setErr(out);
+    }
+
+    public static void deleteFileIfExists(File file) {
+        if (file.exists()) {
+            if (!file.delete()) {
+                throw new IllegalArgumentException("Error while deleting file: " + file);
+            }
+        }
     }
 }
