@@ -752,4 +752,35 @@ class PostVersionHistoryTest {
         assertEquals(2, version_2.getPostBlocks().get(1).getLocalId().intValue());
         assertEquals(3, version_2.getPostBlocks().get(2).getLocalId().intValue());
     }
+
+    @Test
+    void testEqualMetric() {
+        // test if connections are set correctly when an equality-based metric is used
+
+        PostVersionList q_19612096 = PostVersionList.readFromCSV(pathToPostVersionLists, 19612096, 1, false);
+        q_19612096.processVersionHistory(
+                Config.DEFAULT
+                        .withTextSimilarityMetric(de.unitrier.st.stringsimilarity.equal.Variants::equal)
+                        .withTextBackupSimilarityMetric(null)
+                        .withCodeSimilarityMetric(de.unitrier.st.stringsimilarity.equal.Variants::equal)
+                        .withCodeBackupSimilarityMetric(null)
+        );
+
+        PostVersion version_10 = q_19612096.getPostVersion(50536699);
+
+        PostBlockVersion postBlock1 = version_10.getPostBlocks().get(0);
+        PostBlockVersion postBlock5 = version_10.getPostBlocks().get(4);
+        PostBlockVersion postBlock9 = version_10.getPostBlocks().get(8);
+        PostBlockVersion postBlock13 = version_10.getPostBlocks().get(12);
+
+        assertNull(postBlock1.getPred());
+
+        assertNotNull(postBlock5.getPred());
+        assertEquals(9, postBlock5.getPred().getLocalId().intValue());
+
+        assertNull(postBlock9.getPred());
+
+        assertNotNull(postBlock13.getPred());
+        assertEquals(13, postBlock13.getPred().getLocalId().intValue());
+    }
 }
