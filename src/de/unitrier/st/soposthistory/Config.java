@@ -1,4 +1,6 @@
-package de.unitrier.st.soposthistory.util;
+package de.unitrier.st.soposthistory;
+
+import de.unitrier.st.util.Util;
 
 import java.util.function.BiFunction;
 

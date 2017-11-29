@@ -3,6 +3,7 @@ package de.unitrier.st.soposthistory.gt;
 import de.unitrier.st.soposthistory.blocks.CodeBlockVersion;
 import de.unitrier.st.soposthistory.blocks.PostBlockVersion;
 import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
+import de.unitrier.st.util.Util;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -19,9 +20,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static de.unitrier.st.soposthistory.util.Util.getClassLogger;
-import static de.unitrier.st.soposthistory.util.Util.processFiles;
-
 public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
 
     public static final Pattern fileNamePattern = Pattern.compile("completed_(\\d+)\\.csv");
@@ -35,7 +33,7 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
     static {
         // configure logger
         try {
-            logger = getClassLogger(PostGroundTruth.class, false);
+            logger = Util.getClassLogger(PostGroundTruth.class, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -51,7 +49,7 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
                 .withFirstRecordAsHeader();
     }
 
-    public PostGroundTruth(int postId) {
+    PostGroundTruth(int postId) {
         this.postId = postId;
         this.versions = null;
     }
@@ -94,7 +92,7 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
     }
 
     public static List<PostGroundTruth> readFromDirectory(Path dir) {
-        return processFiles(dir,
+        return Util.processFiles(dir,
                 file -> fileNamePattern.matcher(file.toFile().getName()).matches(),
                 file -> {
                     Matcher m = fileNamePattern.matcher(file.toFile().getName());
@@ -302,7 +300,7 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
         return getPossibleConnections(PostBlockVersion.getAllPostBlockTypeIdFilters());
     }
 
-    public int getPossibleConnections(Set<Integer> postBlockTypeFilter) {
+    private int getPossibleConnections(Set<Integer> postBlockTypeFilter) {
         int possibleConnections = 0;
         for (int postHistoryId : postHistoryIds) {
             possibleConnections += getPossibleConnections(postHistoryId, postBlockTypeFilter);

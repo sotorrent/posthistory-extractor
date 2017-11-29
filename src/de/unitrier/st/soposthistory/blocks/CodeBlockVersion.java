@@ -1,7 +1,7 @@
 package de.unitrier.st.soposthistory.blocks;
 
 import com.google.common.collect.Sets;
-import de.unitrier.st.soposthistory.util.Config;
+import de.unitrier.st.soposthistory.Config;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;

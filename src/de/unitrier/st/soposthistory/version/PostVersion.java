@@ -1,5 +1,6 @@
 package de.unitrier.st.soposthistory.version;
 
+import de.unitrier.st.soposthistory.Config;
 import de.unitrier.st.soposthistory.blocks.CodeBlockVersion;
 import de.unitrier.st.soposthistory.blocks.PostBlockVersion;
 import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
@@ -7,15 +8,12 @@ import de.unitrier.st.soposthistory.gt.PostBlockConnection;
 import de.unitrier.st.soposthistory.gt.PostBlockLifeSpanVersion;
 import de.unitrier.st.soposthistory.urls.Link;
 import de.unitrier.st.soposthistory.urls.PostVersionUrl;
-import de.unitrier.st.soposthistory.util.Config;
+import de.unitrier.st.util.Util;
 import org.hibernate.StatelessSession;
 
 import javax.persistence.*;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static de.unitrier.st.soposthistory.util.Util.insertList;
-import static de.unitrier.st.soposthistory.util.Util.updateList;
 
 @Entity
 @Table(name = "PostVersion", schema = "stackoverflow16_12")
@@ -197,11 +195,11 @@ public class PostVersion {
     }
 
     public void insertPostBlocks(StatelessSession session) {
-        insertList(session, postBlocks);
+        Util.insertList(session, postBlocks);
     }
 
     public void updateBlocks(StatelessSession session) {
-        updateList(session, postBlocks);
+        Util.updateList(session, postBlocks);
     }
 
     public void extractUrlsFromTextBlocks() {
@@ -214,7 +212,7 @@ public class PostVersion {
     }
 
     public void insertUrls(StatelessSession session) {
-        insertList(session, urls);
+        Util.insertList(session, urls);
     }
 
     /**

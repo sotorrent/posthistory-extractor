@@ -1,9 +1,9 @@
 package de.unitrier.st.soposthistory.tests;
 
+import de.unitrier.st.soposthistory.Config;
 import de.unitrier.st.soposthistory.blocks.CodeBlockVersion;
 import de.unitrier.st.soposthistory.blocks.PostBlockVersion;
 import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
-import de.unitrier.st.soposthistory.util.Config;
 import de.unitrier.st.soposthistory.version.PostVersion;
 import de.unitrier.st.soposthistory.version.PostVersionList;
 import de.unitrier.st.stringsimilarity.util.InputTooShortException;
