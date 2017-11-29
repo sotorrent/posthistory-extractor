@@ -151,12 +151,6 @@ class PostVersionHistoryTest {
     }
 
     @Test
-    @Disabled
-    void testPostBlockVersionExtraction() {
-        // TODO: Add test cases for testing the version history extraction (similarity and diffs between code blocks and text blocks, linking of block versions); we can add some posts from the grounth truth here after we decided on the similarity metrics and thresholds.
-    }
-
-    @Test
     void testReadPostHistoryAnswer20991163() {
         PostVersionList a_20991163 = PostVersionList.readFromCSV(pathToPostVersionLists, 20991163, 2);
 
@@ -296,16 +290,6 @@ class PostVersionHistoryTest {
         assertTrue(postBlocks.get(2) instanceof TextBlockVersion);
         assertTrue(postBlocks.get(3) instanceof CodeBlockVersion);
         assertTrue(postBlocks.get(4) instanceof TextBlockVersion);
-    }
-
-    @Test
-    @Disabled
-    void testRootPostBlocksQuestion3758880() {
-        PostVersionList q_3758880 = PostVersionList.readFromCSV(pathToPostVersionLists, 3758880, 1);
-
-        assertEquals(11, q_3758880.size());
-
-        // TODO: Implement way to test root post block assignment without connection to database -> Use PostBlockLifeSpan?
     }
 
     @Test
@@ -754,7 +738,7 @@ class PostVersionHistoryTest {
     }
 
     @Test
-    void testEqualMetric() {
+    void testEqualityBasedMetric() {
         // test if connections are set correctly when an equality-based metric is used
 
         PostVersionList q_19612096 = PostVersionList.readFromCSV(pathToPostVersionLists, 19612096, 1, false);
