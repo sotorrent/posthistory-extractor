@@ -330,43 +330,46 @@ public abstract class PostBlockVersion {
     }
 
     public void setPredContext(PostBlockVersion matchingPredecessor, PostVersion currentVersion, PostVersion previousVersion) {
-        int indexThis = currentVersion.getPostBlocks().indexOf(this);
-        int indexPred = previousVersion.getPostBlocks().indexOf(matchingPredecessor);
+        if (!matchingPredecessor.isAvailable()) {
+            return;
+        }
 
         // consider context to select matching predecessor
-        if ((indexThis > 0 && indexThis < currentVersion.getPostBlocks().size() - 1)
-                && (indexPred > 0 && indexPred < previousVersion.getPostBlocks().size() - 1)) {
+        int indexThis = currentVersion.getPostBlocks().indexOf(this);
+        int indexPred = previousVersion.getPostBlocks().indexOf(matchingPredecessor);
+        boolean neighborsAvailableThis = indexThis > 0 && indexThis < currentVersion.getPostBlocks().size() - 1;
+        boolean neighborsAvailablePred = indexPred > 0 && indexPred < previousVersion.getPostBlocks().size() - 1;
 
-            // neighbors of post block and matching predecessor are available
+        if (!neighborsAvailableThis || !neighborsAvailablePred) {
+            // neighbors of post block and matching predecessor are not available
+            return;
+        }
 
-            // get post blocks before and after this post block
-            PostBlockVersion beforePostBlock = currentVersion.getPostBlocks().get(indexThis - 1);
-            PostBlockVersion afterPostBlock = currentVersion.getPostBlocks().get(indexThis + 1);
+        // get post blocks before and after this post block
+        PostBlockVersion beforeThis = currentVersion.getPostBlocks().get(indexThis - 1);
+        PostBlockVersion afterThis = currentVersion.getPostBlocks().get(indexThis + 1);
 
-            // get post blocks before and after matching predecessor
-            PostBlockVersion beforeMatchingPredecessor = previousVersion.getPostBlocks().get(indexPred - 1);
-            PostBlockVersion afterMatchingPredecessor = previousVersion.getPostBlocks().get(indexPred + 1);
+        // get post blocks before and after matching predecessor
+        PostBlockVersion beforePred = previousVersion.getPostBlocks().get(indexPred - 1);
+        PostBlockVersion afterPred = previousVersion.getPostBlocks().get(indexPred + 1);
 
-            // use different strategies for code and text blocks
-            if (this instanceof CodeBlockVersion) {
-                // check if matching predecessor has same neighbors
-                if (beforePostBlock.getPred() != null && beforePostBlock.getPred() == beforeMatchingPredecessor
-                        && afterPostBlock.getPred() != null && afterPostBlock.getPred() == afterMatchingPredecessor) {
-                    if (matchingPredecessor.isAvailable()) {
-                        setPred(matchingPredecessor);
-                        matchingPredecessor.setSucc(this);
-                    }
-                }
-            } else if (this instanceof TextBlockVersion) {
-                // consider text as caption for next code block -> focus on afterPostBlock (beforePostBlock may be null)
-                if ((beforePostBlock.getPred() == null ||
-                        (beforePostBlock.getPred() != null && beforePostBlock.getPred() == beforeMatchingPredecessor))
-                        && afterPostBlock.getPred() != null && afterPostBlock.getPred() == afterMatchingPredecessor) {
-                    if (matchingPredecessor.isAvailable()) {
-                        setPred(matchingPredecessor);
-                        matchingPredecessor.setSucc(this);
-                    }
-                }
+        // check if matching predecessor has same neighbors
+        boolean beforeMatch = beforeThis.getPred() != null
+                && beforeThis.getPred().getContent().equals(beforePred.getContent());
+        boolean afterMatch = afterThis.getPred() != null
+                && afterThis.getPred().getContent().equals(afterPred.getContent());
+
+        // use different strategies for code and text blocks
+        if (this instanceof CodeBlockVersion) {
+            if (beforeMatch && afterMatch) {
+                setPred(matchingPredecessor);
+                matchingPredecessor.setSucc(this);
+            }
+        } else if (this instanceof TextBlockVersion) {
+            // consider text as caption for next code block -> focus on PostBlock beforeThis (afterThis may be null)
+            if ((beforeThis.getPred() == null || beforeMatch) && afterMatch) {
+                setPred(matchingPredecessor);
+                matchingPredecessor.setSucc(this);
             }
         }
     }
