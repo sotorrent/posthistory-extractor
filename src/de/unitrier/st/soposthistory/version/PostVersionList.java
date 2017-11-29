@@ -1,5 +1,6 @@
 package de.unitrier.st.soposthistory.version;
 
+import de.unitrier.st.soposthistory.Config;
 import de.unitrier.st.soposthistory.blocks.CodeBlockVersion;
 import de.unitrier.st.soposthistory.blocks.PostBlockVersion;
 import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
@@ -8,7 +9,7 @@ import de.unitrier.st.soposthistory.gt.PostBlockConnection;
 import de.unitrier.st.soposthistory.gt.PostBlockLifeSpan;
 import de.unitrier.st.soposthistory.history.PostHistory;
 import de.unitrier.st.soposthistory.urls.Link;
-import de.unitrier.st.soposthistory.util.Config;
+import de.unitrier.st.util.Util;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -17,14 +18,14 @@ import org.hibernate.StatelessSession;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
-import static de.unitrier.st.soposthistory.util.Util.getClassLogger;
-import static de.unitrier.st.soposthistory.util.Util.processFiles;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PostVersionList extends LinkedList<PostVersion> {
@@ -42,7 +43,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
     static {
         // configure logger
         try {
-            logger = getClassLogger(PostVersionList.class, false);
+            logger = Util.getClassLogger(PostVersionList.class, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -151,7 +152,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
     }
 
     public static List<PostVersionList> readFromDirectory(Path dir) {
-        return processFiles(dir,
+        return Util.processFiles(dir,
                 file -> fileNamePattern.matcher(file.toFile().getName()).matches(),
                 file -> PostVersionList.readFromCSV(
                         dir,

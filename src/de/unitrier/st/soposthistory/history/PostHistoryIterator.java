@@ -7,6 +7,7 @@ import de.unitrier.st.soposthistory.diffs.PostBlockDiff;
 import de.unitrier.st.soposthistory.urls.PostVersionUrl;
 import de.unitrier.st.soposthistory.version.PostVersion;
 import de.unitrier.st.soposthistory.version.PostVersionList;
+import de.unitrier.st.util.Util;
 import org.apache.commons.csv.*;
 import org.hibernate.*;
 import org.hibernate.cfg.Configuration;
@@ -25,15 +26,13 @@ import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import static de.unitrier.st.soposthistory.util.Util.getClassLogger;
-
 public class PostHistoryIterator {
 
     private static final Path logFileDir  = Paths.get(System.getProperty("user.dir"));
     private static final CSVFormat csvFormat;
     private static final int LOG_PACE = 1000;
 
-    public static Logger logger = null;
+    private static Logger logger = null;
     public static SessionFactory sessionFactory = null;
 
     private File dataDir;
@@ -44,7 +43,7 @@ public class PostHistoryIterator {
     static {
         // configure logger
         try {
-            logger = getClassLogger(PostHistoryIterator.class);
+            logger = Util.getClassLogger(PostHistoryIterator.class);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -271,7 +270,7 @@ public class PostHistoryIterator {
         private final String filename;
         private final int partition;
 
-        public ExtractionThread(String baseFilename, int partition) {
+        ExtractionThread(String baseFilename, int partition) {
             this.filename = baseFilename + "_" + partition + ".csv";
             this.partition = partition;
         }

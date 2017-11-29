@@ -1,6 +1,7 @@
 package de.unitrier.st.soposthistory.tests;
 
 import com.google.common.collect.Sets;
+import de.unitrier.st.soposthistory.Config;
 import de.unitrier.st.soposthistory.blocks.CodeBlockVersion;
 import de.unitrier.st.soposthistory.blocks.PostBlockVersion;
 import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
@@ -8,7 +9,6 @@ import de.unitrier.st.soposthistory.gt.PostBlockConnection;
 import de.unitrier.st.soposthistory.gt.PostBlockLifeSpan;
 import de.unitrier.st.soposthistory.gt.PostBlockLifeSpanVersion;
 import de.unitrier.st.soposthistory.gt.PostGroundTruth;
-import de.unitrier.st.soposthistory.util.Config;
 import de.unitrier.st.soposthistory.version.PostVersion;
 import de.unitrier.st.soposthistory.version.PostVersionList;
 import org.junit.jupiter.api.Test;
@@ -24,8 +24,8 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 class GroundTruthTest {
-    static Path pathToPostHistory = Paths.get("testdata", "gt_test", "files");
-    static Path pathToGroundTruth = Paths.get("testdata", "gt_test", "gt");
+    private static Path pathToPostHistory = Paths.get("testdata", "gt_test", "files");
+    private static Path pathToGroundTruth = Paths.get("testdata", "gt_test", "gt");
 
     @Test
     void testReadFromDirectory() {

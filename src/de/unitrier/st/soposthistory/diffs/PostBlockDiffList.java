@@ -1,14 +1,13 @@
 package de.unitrier.st.soposthistory.diffs;
 
 import de.unitrier.st.soposthistory.blocks.PostBlockVersion;
-import de.unitrier.st.soposthistory.version.PostVersionList;
 import de.unitrier.st.soposthistory.version.PostVersion;
+import de.unitrier.st.soposthistory.version.PostVersionList;
+import de.unitrier.st.util.Util;
 import org.hibernate.StatelessSession;
 
 import java.util.LinkedList;
 import java.util.List;
-
-import static de.unitrier.st.soposthistory.util.Util.insertList;
 
 public class PostBlockDiffList extends LinkedList<PostBlockDiff> {
 
@@ -34,6 +33,6 @@ public class PostBlockDiffList extends LinkedList<PostBlockDiff> {
     }
 
     public void insert(StatelessSession session) {
-        insertList(session, this);
+        Util.insertList(session, this);
     }
 }

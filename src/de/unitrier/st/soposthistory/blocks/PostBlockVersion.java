@@ -1,13 +1,13 @@
 package de.unitrier.st.soposthistory.blocks;
 
 import com.google.common.collect.Sets;
+import de.unitrier.st.soposthistory.Config;
 import de.unitrier.st.soposthistory.diffs.LineDiff;
 import de.unitrier.st.soposthistory.diffs.diff_match_patch;
-import de.unitrier.st.soposthistory.util.Config;
-import de.unitrier.st.soposthistory.util.Util;
 import de.unitrier.st.soposthistory.version.PostVersion;
 import de.unitrier.st.stringsimilarity.util.IllegalSimilarityValueException;
 import de.unitrier.st.stringsimilarity.util.InputTooShortException;
+import de.unitrier.st.util.Util;
 
 import javax.persistence.*;
 import java.io.IOException;
@@ -16,8 +16,6 @@ import java.util.function.BiFunction;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-
-import static de.unitrier.st.soposthistory.util.Util.getClassLogger;
 
 @Entity
 @Table(name = "PostBlockVersion", schema = "stackoverflow16_12")
@@ -30,7 +28,7 @@ public abstract class PostBlockVersion {
     static {
         // configure logger
         try {
-            logger = getClassLogger(PostBlockVersion.class, false);
+            logger = Util.getClassLogger(PostBlockVersion.class, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -304,7 +302,7 @@ public abstract class PostBlockVersion {
         pred.setNotAvailable();
     }
 
-    public boolean setPredMinPos() {
+    public void setPredMinPos() {
         // set matching predecessor that has minimal position and is still available
         int pos = 0;
         while (pos < matchingPredecessors.size()
@@ -321,23 +319,17 @@ public abstract class PostBlockVersion {
                         + postHistoryId + "; LocalId: " + localId +"; PredSimilarity: "
                         + predecessorSimilarities.get(matchingPredecessor)
                         + "; PredCount: " + predCount + "; PredSuccCount: " + matchingPredecessor.getSuccCount());
-                return true;
             }
         }
-
-        return false;
     }
 
-    public boolean setPredContext(PostVersion currentVersion, PostVersion previousVersion) {
+    public void setPredContext(PostVersion currentVersion, PostVersion previousVersion) {
         for (PostBlockVersion matchingPredecessor : matchingPredecessors) {
-            if (setPredContext(matchingPredecessor, currentVersion, previousVersion)) {
-                return true;
-            }
+            setPredContext(matchingPredecessor, currentVersion, previousVersion);
         }
-        return false;
     }
 
-    public boolean setPredContext(PostBlockVersion matchingPredecessor, PostVersion currentVersion, PostVersion previousVersion) {
+    public void setPredContext(PostBlockVersion matchingPredecessor, PostVersion currentVersion, PostVersion previousVersion) {
         int indexThis = currentVersion.getPostBlocks().indexOf(this);
         int indexPred = previousVersion.getPostBlocks().indexOf(matchingPredecessor);
 
@@ -363,7 +355,6 @@ public abstract class PostBlockVersion {
                     if (matchingPredecessor.isAvailable()) {
                         setPred(matchingPredecessor);
                         matchingPredecessor.setSucc(this);
-                        return true;
                     }
                 }
             } else if (this instanceof TextBlockVersion) {
@@ -374,13 +365,10 @@ public abstract class PostBlockVersion {
                     if (matchingPredecessor.isAvailable()) {
                         setPred(matchingPredecessor);
                         matchingPredecessor.setSucc(this);
-                        return true;
                     }
                 }
             }
         }
-
-        return false;
     }
 
     @Transient
@@ -456,9 +444,9 @@ public abstract class PostBlockVersion {
 
     abstract public double compareTo(PostBlockVersion otherBlock, Config config);
 
-    protected double compareTo(PostBlockVersion otherBlock,
-                               BiFunction<String, String, Double> similarityMetric,
-                               BiFunction<String, String, Double> backupSimilarityMetric) {
+    double compareTo(PostBlockVersion otherBlock,
+                     BiFunction<String, String, Double> similarityMetric,
+                     BiFunction<String, String, Double> backupSimilarityMetric) {
 
         Double similarity;
         try {
@@ -497,7 +485,7 @@ public abstract class PostBlockVersion {
         return similarityThreshold;
     }
 
-    protected void setSimilarityThreshold(double similarityThreshold) {
+    void setSimilarityThreshold(double similarityThreshold) {
         this.similarityThreshold = similarityThreshold;
     }
 

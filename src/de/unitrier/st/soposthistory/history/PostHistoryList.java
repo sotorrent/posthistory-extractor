@@ -1,6 +1,6 @@
 package de.unitrier.st.soposthistory.history;
 
-import de.unitrier.st.soposthistory.util.Util;
+import de.unitrier.st.util.Util;
 import org.apache.commons.csv.*;
 import org.hibernate.*;
 import org.hibernate.cfg.Configuration;
@@ -14,8 +14,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.logging.Logger;
-
-import static de.unitrier.st.soposthistory.util.Util.getClassLogger;
 
 public class PostHistoryList extends LinkedList<PostHistory> {
     // TODO: Merge with PostHistoryIterator?
@@ -42,7 +40,7 @@ public class PostHistoryList extends LinkedList<PostHistory> {
 
         // configure logger
         try {
-            logger = getClassLogger(PostHistoryList.class);
+            logger = Util.getClassLogger(PostHistoryList.class);
         } catch (IOException e) {
             e.printStackTrace();
         }
