@@ -11,7 +11,6 @@ import org.apache.commons.csv.QuoteMode;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -56,9 +55,7 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
 
     public static PostGroundTruth readFromCSV(Path dir, int postId) {
         // ensure that input directory exists
-        if (!Files.exists(dir) || !Files.isDirectory(dir)) {
-            throw new IllegalArgumentException("Directory does not exist: " + dir);
-        }
+        Util.ensureDirectoryExists(dir);
 
         Path pathToCSVFile = Paths.get(dir.toString(), "completed_" + postId + ".csv");
         PostGroundTruth gt = new PostGroundTruth(postId);
@@ -69,7 +66,9 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
             for (CSVRecord currentRecord : csvParser) {
                 int postIdFile = Integer.parseInt(currentRecord.get("PostId"));
                 if (postIdFile != postId) {
-                    throw new IllegalArgumentException("Wrong post id in GT: " + postIdFile + " instead of " + postId);
+                    String msg = "Wrong post id in GT: " + postIdFile + " instead of " + postId;
+                    logger.warning(msg);
+                    throw new IllegalArgumentException(msg);
                 }
                 int postHistoryId = Integer.parseInt(currentRecord.get("PostHistoryId"));
                 int postBlockTypeId = Integer.parseInt(currentRecord.get("PostBlockTypeId"));
@@ -96,14 +95,15 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
                 file -> fileNamePattern.matcher(file.toFile().getName()).matches(),
                 file -> {
                     Matcher m = fileNamePattern.matcher(file.toFile().getName());
-                    if (m.find()) {
-                        return PostGroundTruth.readFromCSV(
-                                dir,
-                                Integer.parseInt(m.group(1))
-                        );
-                    } else {
-                        throw new IllegalArgumentException("Invalid file name for a ground truth CSV.");
+                    if (!m.find()) {
+                        String msg = "Invalid file name for a ground truth CSV: " + dir;
+                        logger.warning(msg);
+                        throw new IllegalArgumentException(msg);
                     }
+                    return PostGroundTruth.readFromCSV(
+                            dir,
+                            Integer.parseInt(m.group(1))
+                    );
                 }
         );
     }
@@ -134,12 +134,10 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
         }
     }
 
-    // TODO: do we need this for the GT app or metrics comparison?
     public List<PostBlockLifeSpan> getPostBlockLifeSpans() {
         return getPostBlockLifeSpans(PostBlockVersion.getAllPostBlockTypeIdFilters());
     }
 
-    // TODO: do we need this for the GT app or metrics comparison?
     public List<PostBlockLifeSpan> getPostBlockLifeSpans(Set<Integer> postBlockTypeFilter) {
         List<PostBlockLifeSpan> postBlockLifeSpans = new LinkedList<>();
 
@@ -168,34 +166,15 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
                     currentLifeSpanVersion.setProcessed(true);
                     lifeSpan.add(currentLifeSpanVersion);
 
-                    // this version does not have a predecessor
+                    // this version does not have a successor
                     if (currentLifeSpanVersion.getSuccLocalId() == null) {
                         break;
                     }
 
+                    // retrieve successor from candidates
                     List<PostBlockLifeSpanVersion> nextVersion = versions.get(postHistoryIds.get(i+versionCount+1));
+                    currentLifeSpanVersion = retrieveSuccessor(currentLifeSpanVersion, nextVersion);
 
-                    final int succLocalId = currentLifeSpanVersion.getSuccLocalId();
-                    List<PostBlockLifeSpanVersion> nextLifeSpanVersionCandidates = nextVersion.stream()
-                            .filter(v -> v.getLocalId() == succLocalId)
-                            .collect(Collectors.toList());
-
-                    if (nextLifeSpanVersionCandidates.size() == 0) {
-                        throw new IllegalStateException("No successor found.");
-                    }
-
-                    if (nextLifeSpanVersionCandidates.size() > 1) {
-                        throw new IllegalStateException("More than one successor found.");
-                    }
-
-                    PostBlockLifeSpanVersion nextLifeSpanVersion = nextLifeSpanVersionCandidates.get(0);
-
-                    if (!currentLifeSpanVersion.getSuccLocalId().equals(nextLifeSpanVersion.getLocalId()) ||
-                            !nextLifeSpanVersion.getPredLocalId().equals(currentLifeSpanVersion.getLocalId())) {
-                        throw new IllegalStateException("Predecessor and Successor LocalIds do not match.");
-                    }
-
-                    currentLifeSpanVersion = nextLifeSpanVersion;
                     versionCount++;
                 }
 
@@ -210,13 +189,110 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
                 .mapToInt(Integer::intValue)
                 .sum();
 
-        if ((postBlockTypeFilter.equals(PostBlockVersion.getAllPostBlockTypeIdFilters()) && lifeSpanVersionCount != this.size())
-                || (postBlockTypeFilter.equals(TextBlockVersion.getPostBlockTypeIdFilter()) && lifeSpanVersionCount != this.getTextBlocks().size())
-                || (postBlockTypeFilter.equals(CodeBlockVersion.getPostBlockTypeIdFilter()) && lifeSpanVersionCount != this.getCodeBlocks().size())) {
-            throw new IllegalStateException("The number of lifespan versions differs from the number of versions in the ground truth.");
+        // validate number of lifespan versions
+        String msg = "The number of lifespan versions differs from the number of versions in the ground truth "
+                + "(expected: " + lifeSpanVersionCount + "; actual: ";
+        if (postBlockTypeFilter.equals(PostBlockVersion.getAllPostBlockTypeIdFilters()) && lifeSpanVersionCount != this.size()) {
+            msg += this.size() + ")";
+            logger.warning(msg);
+            throw new IllegalStateException(msg);
+        } else if (postBlockTypeFilter.equals(TextBlockVersion.getPostBlockTypeIdFilter()) && lifeSpanVersionCount != this.getTextBlocks().size()) {
+            msg +=  + this.getTextBlocks().size() + ")";
+            logger.warning(msg);
+            throw new IllegalStateException(msg);
+        } else if (postBlockTypeFilter.equals(CodeBlockVersion.getPostBlockTypeIdFilter()) && lifeSpanVersionCount != this.getCodeBlocks().size()) {
+            msg +=  + this.getCodeBlocks().size() + ")";
+            logger.warning(msg);
+            throw new IllegalStateException(msg);
         }
 
         return postBlockLifeSpans;
+    }
+
+    private PostBlockLifeSpanVersion retrieveSuccessor(
+            PostBlockLifeSpanVersion currentLifeSpanVersion,
+            List<PostBlockLifeSpanVersion> successorCandidates) {
+
+        final int succLocalId = currentLifeSpanVersion.getSuccLocalId();
+        List<PostBlockLifeSpanVersion> selectedSuccessorCandidates = successorCandidates.stream()
+                .filter(v -> v.getLocalId() == succLocalId)
+                .collect(Collectors.toList());
+
+        if (selectedSuccessorCandidates.size() == 0) {
+            String msg = "No successor found for " + currentLifeSpanVersion;
+            logger.warning(msg);
+            throw new IllegalStateException(msg);
+        }
+
+        if (selectedSuccessorCandidates.size() > 1) {
+            String msg = "More than one successor found for " + currentLifeSpanVersion;
+            logger.warning(msg);
+            throw new IllegalStateException(msg);
+        }
+
+        PostBlockLifeSpanVersion successor = selectedSuccessorCandidates.get(0);
+
+        if (!successor.getPredLocalId().equals(currentLifeSpanVersion.getLocalId())) {
+            String msg = "Predecessor LocalIds do not match"
+                    + "(expected: " + currentLifeSpanVersion.getLocalId() + "; actual: "
+                    + successor.getPredLocalId() + ")";
+            logger.warning(msg);
+            throw new IllegalStateException(msg);
+        }
+
+        if (!currentLifeSpanVersion.getSuccLocalId().equals(successor.getLocalId())) {
+            String msg = "Successor LocalIds do not match"
+                    + "(expected: " + currentLifeSpanVersion.getSuccLocalId() + "; actual: "
+                    + successor.getLocalId() + ")";
+            logger.warning(msg);
+            throw new IllegalStateException(msg);
+        }
+
+        return successor;
+    }
+
+    private PostBlockLifeSpanVersion retrievePredecessor(
+            PostBlockLifeSpanVersion currentLifeSpanVersion,
+            List<PostBlockLifeSpanVersion> predecessorCandidates) {
+
+        final int predLocalId = currentLifeSpanVersion.getPredLocalId();
+        final int postBlockTypeId = currentLifeSpanVersion.getPostBlockTypeId();
+        List<PostBlockLifeSpanVersion> selectedPredecessorCandidates = predecessorCandidates.stream()
+                .filter(v -> v.getLocalId() == predLocalId && v.getPostBlockTypeId() == postBlockTypeId)
+                .collect(Collectors.toList());
+
+
+        if (selectedPredecessorCandidates.size() == 0) {
+            String msg = "No predecessor found for " + currentLifeSpanVersion;
+            logger.warning(msg);
+            throw new IllegalStateException(msg);
+        }
+
+        if (selectedPredecessorCandidates.size() > 1) {
+            String msg = "More than one predecessor found for " + currentLifeSpanVersion;
+            logger.warning(msg);
+            throw new IllegalStateException(msg);
+        }
+
+        PostBlockLifeSpanVersion predecessor = selectedPredecessorCandidates.get(0);
+
+        if (!currentLifeSpanVersion.getPredLocalId().equals(predecessor.getLocalId())) {
+            String msg = "Predecessor LocalIds do not match"
+                    + "(expected: " + currentLifeSpanVersion.getPredLocalId() + "; actual: "
+                    + predecessor.getLocalId() + ")";
+            logger.warning(msg);
+            throw new IllegalStateException(msg);
+        }
+
+        if (!predecessor.getSuccLocalId().equals(currentLifeSpanVersion.getLocalId())) {
+            String msg = "Successor LocalIds do not match"
+                    + "(expected: " + currentLifeSpanVersion.getLocalId() + "; actual: "
+                    + predecessor.getSuccLocalId() + ")";
+            logger.warning(msg);
+            throw new IllegalStateException(msg);
+        }
+
+        return predecessor;
     }
 
     public List<PostBlockLifeSpanVersion> getTextBlocks() {
@@ -262,34 +338,20 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
 
             for (PostBlockLifeSpanVersion currentLifeSpanVersion : currentVersion) {
                 // apply filter
-                if (currentLifeSpanVersion.isSelected(postBlockTypeFilter)) {
-                    // first element in a PostBlockLifeSpan -> no connections
-                    if (currentLifeSpanVersion.getPredLocalId() != null) {
-                        // search for matching lifespan version(s) in previous post version
-                        final int predLocalId = currentLifeSpanVersion.getPredLocalId();
-                        final int postBlockTypeId = currentLifeSpanVersion.getPostBlockTypeId();
-                        List<PostBlockLifeSpanVersion> predLifeSpanVersionCandidates = previousVersion.stream()
-                                .filter(v -> v.getLocalId() == predLocalId && v.getPostBlockTypeId() == postBlockTypeId)
-                                .collect(Collectors.toList());
-
-                        if (predLifeSpanVersionCandidates.size() == 0) {
-                            throw new IllegalStateException("No predecessor found.");
-                        }
-
-                        if (predLifeSpanVersionCandidates.size() > 1) {
-                            throw new IllegalStateException("More than one successor found.");
-                        }
-
-                        PostBlockLifeSpanVersion predLifeSpanVersion = predLifeSpanVersionCandidates.get(0);
-
-                        if (!currentLifeSpanVersion.getPredLocalId().equals(predLifeSpanVersion.getLocalId()) ||
-                                !predLifeSpanVersion.getSuccLocalId().equals(currentLifeSpanVersion.getLocalId())) {
-                            throw new IllegalStateException("Predecessor and Successor LocalIds do not match.");
-                        }
-
-                        connections.add(new PostBlockConnection(predLifeSpanVersion, currentLifeSpanVersion));
-                    }
+                if (!currentLifeSpanVersion.isSelected(postBlockTypeFilter)) {
+                    continue;
                 }
+
+                // first element in a PostBlockLifeSpan -> no connections
+                if (currentLifeSpanVersion.getPredLocalId() == null) {
+                    continue;
+                }
+
+                // search for matching lifespan version(s) in previous post version
+                PostBlockLifeSpanVersion predecessor = retrievePredecessor(currentLifeSpanVersion, previousVersion);
+
+                // add connections
+                connections.add(new PostBlockConnection(predecessor, currentLifeSpanVersion));
             }
         }
 
@@ -313,33 +375,38 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
     }
 
     public int getPossibleConnections(int postHistoryId, Set<Integer> postBlockTypeFilter) {
-        int possibleConnections = 0;
         int index = postHistoryIds.indexOf(postHistoryId);
 
-        if (index >= 1) {
-            // first version cannot have connections
-            List<PostBlockLifeSpanVersion> currentVersion = versions.get(postHistoryIds.get(index));
-            List<PostBlockLifeSpanVersion> previousVersion = versions.get(postHistoryIds.get(index-1));
+        // first version cannot have connections
+        if (index < 1) {
+            return 0;
+        }
 
-            if (postBlockTypeFilter.contains(TextBlockVersion.postBlockTypeId)) {
-                int currentVersionTextBlocks = Math.toIntExact(currentVersion.stream()
-                        .filter(b -> b.getPostBlockTypeId() == TextBlockVersion.postBlockTypeId)
-                        .count());
-                int previousVersionTextBlocks = Math.toIntExact(previousVersion.stream()
-                        .filter(b -> b.getPostBlockTypeId() == TextBlockVersion.postBlockTypeId)
-                        .count());
-                possibleConnections += currentVersionTextBlocks * previousVersionTextBlocks;
-            }
+        // determine possible connections
+        int possibleConnections = 0;
+        List<PostBlockLifeSpanVersion> currentVersion = versions.get(postHistoryIds.get(index));
+        List<PostBlockLifeSpanVersion> previousVersion = versions.get(postHistoryIds.get(index-1));
 
-            if (postBlockTypeFilter.contains(CodeBlockVersion.postBlockTypeId)) {
-                int currentVersionCodeBlocks = Math.toIntExact(currentVersion.stream()
-                        .filter(b -> b.getPostBlockTypeId() == CodeBlockVersion.postBlockTypeId)
-                        .count());
-                int previousVersionCodeBlocks = Math.toIntExact(previousVersion.stream()
-                        .filter(b -> b.getPostBlockTypeId() == CodeBlockVersion.postBlockTypeId)
-                        .count());
-                possibleConnections += currentVersionCodeBlocks * previousVersionCodeBlocks;
-            }
+        // text blocks
+        if (postBlockTypeFilter.contains(TextBlockVersion.postBlockTypeId)) {
+            int currentVersionTextBlocks = Math.toIntExact(currentVersion.stream()
+                    .filter(b -> b.getPostBlockTypeId() == TextBlockVersion.postBlockTypeId)
+                    .count());
+            int previousVersionTextBlocks = Math.toIntExact(previousVersion.stream()
+                    .filter(b -> b.getPostBlockTypeId() == TextBlockVersion.postBlockTypeId)
+                    .count());
+            possibleConnections += currentVersionTextBlocks * previousVersionTextBlocks;
+        }
+
+        // code blocks
+        if (postBlockTypeFilter.contains(CodeBlockVersion.postBlockTypeId)) {
+            int currentVersionCodeBlocks = Math.toIntExact(currentVersion.stream()
+                    .filter(b -> b.getPostBlockTypeId() == CodeBlockVersion.postBlockTypeId)
+                    .count());
+            int previousVersionCodeBlocks = Math.toIntExact(previousVersion.stream()
+                    .filter(b -> b.getPostBlockTypeId() == CodeBlockVersion.postBlockTypeId)
+                    .count());
+            possibleConnections += currentVersionCodeBlocks * previousVersionCodeBlocks;
         }
 
         return possibleConnections;
