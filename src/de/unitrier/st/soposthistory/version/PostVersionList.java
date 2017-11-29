@@ -84,9 +84,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
 
     public static PostVersionList readFromCSV(Path dir, int postId, int postTypeId, boolean processVersionHistory) {
         // ensure that input directory exists
-        if (!Files.exists(dir) || !Files.isDirectory(dir)) {
-            throw new IllegalArgumentException("Directory does not exist: " + dir);
-        }
+        Util.ensureDirectoryExists(dir);
 
         PostVersionList postVersionList = new PostVersionList(postId, postTypeId);
         Path pathToCSVFile = Paths.get(dir.toString(), postId + ".csv");
@@ -218,7 +216,9 @@ public class PostVersionList extends LinkedList<PostVersion> {
             if (predIndex == -1) {
                 // currentVersion is first element
                 if (currentVersion.getPred() != null || currentVersion.getPredPostHistoryId() != null) {
-                    throw new IllegalStateException("First element has predecessor.");
+                    String msg = "First element has predecessor : " + currentVersion;
+                    logger.warning(msg);
+                    throw new IllegalStateException(msg);
                 }
 
                 // the post blocks in the first version have themselves as root post blocks
@@ -235,7 +235,9 @@ public class PostVersionList extends LinkedList<PostVersion> {
                 PostVersion previousVersion = this.get(predIndex);
                 if (!currentVersion.getPred().equals(this.get(predIndex))
                         || !currentVersion.getPredPostHistoryId().equals(this.get(predIndex).getPostHistoryId())) {
-                    throw new IllegalStateException("Wrong predecessor set.");
+                    String msg = "Wrong predecessor set for " + currentVersion;
+                    logger.warning(msg);
+                    throw new IllegalStateException(msg);
                 }
 
                 Map<PostBlockVersion, Integer> matchedPredecessors = new HashMap<>();
@@ -269,12 +271,10 @@ public class PostVersionList extends LinkedList<PostVersion> {
                     if (currentPostBlock.getMatchingPredecessors().size() == 1) {
                         // only one matching predecessor found
                         PostBlockVersion matchingPredecessor = currentPostBlock.getMatchingPredecessors().get(0);
-                        if (matchedPredecessors.get(matchingPredecessor) == 1) {
-                            // the matched predecessor is only matched for currentPostBlock
-                            if (matchingPredecessor.isAvailable()) {
-                                currentPostBlock.setPred(matchingPredecessor);
-                                matchingPredecessor.setSucc(currentPostBlock);
-                            }
+                        if (matchedPredecessors.get(matchingPredecessor) == 1 && matchingPredecessor.isAvailable()) {
+                            // the matched predecessor is only matched for currentPostBlock and is available
+                            currentPostBlock.setPred(matchingPredecessor);
+                            matchingPredecessor.setSucc(currentPostBlock);
                         }
                     }
                 }
@@ -323,14 +323,18 @@ public class PostVersionList extends LinkedList<PostVersion> {
 
             if (succIndex==this.size()) {
                 // current is last element
-                if (currentVersion.getSucc() != null ||currentVersion.getSuccPostHistoryId() != null) {
-                    throw new IllegalStateException("Wrong successor set for last element.");
+                if (currentVersion.getSucc() != null || currentVersion.getSuccPostHistoryId() != null) {
+                    String msg = "Wrong successor set for " + currentVersion + " (last element)";
+                    logger.warning(msg);
+                    throw new IllegalStateException(msg);
                 }
             } else {
                 // current is not last element
                 if (!currentVersion.getSucc().equals(this.get(succIndex))
                         || !currentVersion.getSuccPostHistoryId().equals(this.get(succIndex).getPostHistoryId())) {
-                    throw new IllegalStateException("Wrong successor set.");
+                    String msg = "Wrong successor set for " + currentVersion;
+                    logger.warning(msg);
+                    throw new IllegalStateException(msg);
                 }
             }
         }
@@ -377,12 +381,10 @@ public class PostVersionList extends LinkedList<PostVersion> {
         }
     }
 
-    // TODO: do we need this for the GT app or metrics comparison?
     public List<PostBlockLifeSpan> getPostBlockLifeSpans() {
         return getPostBlockLifeSpans(PostBlockVersion.getAllPostBlockTypeIdFilters());
     }
 
-    // TODO: do we need this for the GT app or metrics comparison?
     public List<PostBlockLifeSpan> getPostBlockLifeSpans(Set<Integer> postBlockTypeFilter) {
         List<PostBlockLifeSpan> lifeSpans = new LinkedList<>();
 
@@ -435,7 +437,9 @@ public class PostVersionList extends LinkedList<PostVersion> {
     public int getPossibleConnections(Set<Integer> postBlockTypeFilter) {
         // we can only determine the possible connections if the list has been sorted and thus the predecessor references are set
         if (!this.isSorted()) {
-            throw new IllegalStateException("Possible connections can only be determined if PostVersionList has been sorted.");
+            String msg = "Possible connections can only be determined if PostVersionList has been sorted.";
+            logger.warning(msg);
+            throw new IllegalStateException(msg);
         }
         int possibleConnections = 0;
         for (int i=1; i<this.size(); i++) {
@@ -512,5 +516,4 @@ public class PostVersionList extends LinkedList<PostVersion> {
         }
         return "PostVersionList (PostId=" + postId + "):\n" + sb;
     }
-
 }
