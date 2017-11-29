@@ -14,7 +14,7 @@ public class LineDiff extends diff_match_patch {
         return diffs;
     }
 
-    public static int operationToInt(Operation op) {
+    static int operationToInt(Operation op) {
         switch (op) {
             case DELETE: return -1;
             case EQUAL: return 0;
