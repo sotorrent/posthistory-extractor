@@ -40,8 +40,8 @@ public abstract class PostBlockVersion {
      *      similar, which we ignore).
      *  (2) Merging of blocks is not possible to model in our database layout. In most cases, the larger block will be
      *      more similar than the smaller one and thus be set as a predecessor of the new block. The smaller block will
-     *      appear to be deleted.
-     *  (3) For the analysis, focus on versions where the code blocks changed. Ignore changes to text blocks.
+     *      appear as if it has been deleted.
+     *  (3) For the analysis, we focus on versions where the code blocks changed.
      */
 
     // database
@@ -283,7 +283,8 @@ public abstract class PostBlockVersion {
             this.predPostBlockId = pred.getId();
             predDiff = diff(pred);
         } catch (Exception e) {
-            logger.log(Level.WARNING, "Couldn't set predecessor.");
+            logger.warning("Unable to set predecessor " + pred);
+            e.printStackTrace();
         }
     }
 
@@ -304,22 +305,18 @@ public abstract class PostBlockVersion {
 
     public void setPredMinPos() {
         // set matching predecessor that has minimal position and is still available
+
+        // find available matching predecessor
         int pos = 0;
-        while (pos < matchingPredecessors.size()
-                && !matchingPredecessors.get(pos).isAvailable()) {
+        while (pos < matchingPredecessors.size() && !matchingPredecessors.get(pos).isAvailable()) {
             pos++;
         }
 
         if (pos < matchingPredecessors.size()) {
+            // available matching predecessor found --> set as predecessor of this PostBlockVersion
             PostBlockVersion matchingPredecessor = matchingPredecessors.get(pos);
-            if (matchingPredecessor.isAvailable()) {
-                setPred(matchingPredecessor);
-                matchingPredecessor.setSucc(this);
-                logger.info("LocalID used for predecessor selection (PostId: " + postId + "; PostHistoryId: "
-                        + postHistoryId + "; LocalId: " + localId +"; PredSimilarity: "
-                        + predecessorSimilarities.get(matchingPredecessor)
-                        + "; PredCount: " + predCount + "; PredSuccCount: " + matchingPredecessor.getSuccCount());
-            }
+            setPred(matchingPredecessor);
+            matchingPredecessor.setSucc(this);
         }
     }
 
@@ -330,18 +327,21 @@ public abstract class PostBlockVersion {
     }
 
     public void setPredContext(PostBlockVersion matchingPredecessor, PostVersion currentVersion, PostVersion previousVersion) {
+        // consider context to select matching predecessor
+
+        // if the matching predecessor is not available, it cannot be set
         if (!matchingPredecessor.isAvailable()) {
             return;
         }
 
-        // consider context to select matching predecessor
+        // retrieve context of this post block and the matching predecessor
         int indexThis = currentVersion.getPostBlocks().indexOf(this);
         int indexPred = previousVersion.getPostBlocks().indexOf(matchingPredecessor);
         boolean neighborsAvailableThis = indexThis > 0 && indexThis < currentVersion.getPostBlocks().size() - 1;
         boolean neighborsAvailablePred = indexPred > 0 && indexPred < previousVersion.getPostBlocks().size() - 1;
 
         if (!neighborsAvailableThis || !neighborsAvailablePred) {
-            // neighbors of post block and matching predecessor are not available
+            // neighbors of this post block and the matching predecessor are not available
             return;
         }
 
@@ -361,12 +361,14 @@ public abstract class PostBlockVersion {
 
         // use different strategies for code and text blocks
         if (this instanceof CodeBlockVersion) {
+            // consider both the post blocks before and after the current post block and the matching predecessor
             if (beforeMatch && afterMatch) {
                 setPred(matchingPredecessor);
                 matchingPredecessor.setSucc(this);
             }
         } else if (this instanceof TextBlockVersion) {
-            // consider text as caption for next code block -> focus on PostBlock beforeThis (afterThis may be null)
+            // consider text as caption for next code block --> focus on post blocks after this post block and the
+            // matching predecessor  (post blocks before may be null)
             if ((beforeThis.getPred() == null || beforeMatch) && afterMatch) {
                 setPred(matchingPredecessor);
                 matchingPredecessor.setSucc(this);
@@ -439,7 +441,9 @@ public abstract class PostBlockVersion {
 
     public void setNotAvailable() {
         if (!isAvailable) {
-            throw new IllegalStateException("A post block can only be prececessor of one post block in the next verion.");
+            String msg = "A post block can only be predecessor of one post block in the next version (" + this + ")";
+            logger.warning(msg);
+            throw new IllegalStateException(msg);
         } else {
             isAvailable = false;
         }
@@ -463,7 +467,9 @@ public abstract class PostBlockVersion {
         }
 
         if (Util.lessThan(similarity, 0.0) || Util.greaterThan(similarity, 1.0)) {
-            throw new IllegalSimilarityValueException("Similarity value must be in range [0.0, 1.0], but was " + similarity);
+            String msg = "Similarity value must be in range [0.0, 1.0], but was " + similarity;
+            logger.warning(msg);
+            throw new IllegalSimilarityValueException(msg);
         }
 
         return similarity;
@@ -499,6 +505,14 @@ public abstract class PostBlockVersion {
 
     public <T extends PostBlockVersion> List<PostBlockVersion> findMatchingPredecessors(List<T> previousVersionPostBlocks,
                                                                                         Config config) {
+        retrievePredecessorSimilarities(previousVersionPostBlocks, config);
+        retrieveMatchingPredecessors();
+        return matchingPredecessors;
+    }
+
+    private <T extends PostBlockVersion> void retrievePredecessorSimilarities(
+            List<T> previousVersionPostBlocks,
+            Config config) {
 
         for (PostBlockVersion previousVersionPostBlock : previousVersionPostBlocks) {
             // test equality
@@ -528,37 +542,40 @@ public abstract class PostBlockVersion {
                 }
             }
         }
+    }
 
+    private void retrieveMatchingPredecessors() {
         // retrieve predecessors with maximal similarity
-        final double finalMaxSimilarity = maxSimilarity; // final value needed for lambda expression
-        if (Util.greaterThan(finalMaxSimilarity, getSimilarityThreshold()) ||
-                Util.equals(finalMaxSimilarity, getSimilarityThreshold())) {
 
-            // get predecessors with max. similarity, sorted by similarity (may vary within Util.EPSILON)
-            matchingPredecessors = predecessorSimilarities.entrySet()
-                    .stream()
-                    .filter(e -> Util.equals(e.getValue(), finalMaxSimilarity))
-                    .sorted((v1, v2) -> {
-                        // sort descending according to similarity
-                        int result = Double.compare(v2.getValue(), v1.getValue());
-                        if (result == 0) {
-                            // in case of same similarity, sort ascending according to local id
-                            return Integer.compare(v1.getKey().getLocalId(), v2.getKey().getLocalId());
-                        } else {
-                            return result;
-                        }
-                    }) // descending order
-                    .map(Map.Entry::getKey)
-                    .collect(Collectors.toList());
+        // return if maximum similarity is below the configured similarity threshold
+        if (Util.lessThan(maxSimilarity, getSimilarityThreshold())) {
+            return;
         }
+
+        final double finalMaxSimilarity = maxSimilarity; // final value needed for lambda expression
+
+        // get predecessors with max. similarity, sorted by similarity (may vary within Util.EPSILON)
+        matchingPredecessors = predecessorSimilarities.entrySet()
+                .stream()
+                .filter(e -> Util.equals(e.getValue(), finalMaxSimilarity))
+                .sorted((v1, v2) -> {
+                    // sort descending according to similarity
+                    int result = Double.compare(v2.getValue(), v1.getValue());
+                    if (result == 0) {
+                        // in case of same similarity, sort ascending according to local id
+                        return Integer.compare(v1.getKey().getLocalId(), v2.getKey().getLocalId());
+                    } else {
+                        return result;
+                    }
+                }) // descending order
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
 
         // increase successor count for all matching predecessors
         for (PostBlockVersion matchingPredecessor : matchingPredecessors) {
             incrementPredCount();
             matchingPredecessor.incrementSuccCount();
         }
-
-        return matchingPredecessors;
     }
 
     abstract public boolean isSelected(Set<Integer> postBlockTypeFilter);
