@@ -51,7 +51,7 @@
         <dependency>
             <groupId>de.unitrier.st</groupId>
             <artifactId>util</artifactId>
-            <version>1.0.2</version>
+            <version>1.0.3</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/commons-cli/commons-cli -->
         <dependency>
