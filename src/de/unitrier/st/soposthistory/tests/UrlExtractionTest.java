@@ -254,7 +254,7 @@ class UrlExtractionTest {
     }
 
     @Test
-    void testDeletionOfEmptyTextblocksAfterNormalization () {
+    void testDeletionOfEmptyTextBlocksAfterNormalization () {
         // version 2 should have 4 text blocks and 2 code blocks
         // after normalization, the last block, which contains only a reference and a URL, should be deleted because it's empty
         PostVersionList a_19049539 = PostVersionList.readFromCSV(pathToPostVersionLists, 19049539, 2);
