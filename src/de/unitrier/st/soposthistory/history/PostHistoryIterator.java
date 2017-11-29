@@ -27,6 +27,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class PostHistoryIterator {
+    // TODO: revise
 
     private static final Path logFileDir  = Paths.get(System.getProperty("user.dir"));
     private static final CSVFormat csvFormat;
