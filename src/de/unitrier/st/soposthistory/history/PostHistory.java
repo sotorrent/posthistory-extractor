@@ -415,34 +415,40 @@ public class PostHistory {
             boolean containsLettersOrDigits = containsLetterOrDigitPattern.matcher(
                     currentPostBlock.getContent()).find(); // only match beginning of line
 
-            if (!containsLettersOrDigits) {
-                if (i == 0) {
-                    // current post block is first one
-                    if (postBlocks.size() > 1) {
-                        PostBlockVersion nextPostBlock = postBlocks.get(i+1);
-                        nextPostBlock.append(currentPostBlock.getContent());
-                        nextPostBlock.finalizeContent();
-                        markedForDeletion.add(currentPostBlock);
-                    }
-                } else {
-                    // current post block is not first one (has predecessor)
-                    PostBlockVersion previousPostBlock = postBlocks.get(i-1);
-                    previousPostBlock.append(currentPostBlock.getContent());
-                    previousPostBlock.finalizeContent();
-                    markedForDeletion.add(currentPostBlock);
+            if (containsLettersOrDigits) {
+                continue;
+            }
 
-                    // merge predecessor and successor if they have same type
-                    if (i < postBlocks.size()-1) {
-                        // current post block has successor
-                        PostBlockVersion nextPostBlock = postBlocks.get(i+1);
-                        nextPostBlock.finalizeContent();
-                        if (previousPostBlock.getClass() == nextPostBlock.getClass()) {
-                            previousPostBlock.append(nextPostBlock.getContent());
-                            previousPostBlock.finalizeContent();
-                            markedForDeletion.add(nextPostBlock);
-                        }
-                    }
+            if (i == 0) {
+                // current post block is first one
+                if (postBlocks.size() > 1) {
+                    PostBlockVersion nextPostBlock = postBlocks.get(i+1);
+                    nextPostBlock.append(currentPostBlock.getContent());
+                    nextPostBlock.finalizeContent();
+                    markedForDeletion.add(currentPostBlock);
                 }
+            } else {
+                // current post block is not first one (has predecessor)
+                PostBlockVersion previousPostBlock = postBlocks.get(i-1);
+                previousPostBlock.append(currentPostBlock.getContent());
+                previousPostBlock.finalizeContent();
+                markedForDeletion.add(currentPostBlock);
+
+                // current post block must have successor
+                if (i >= postBlocks.size()-1) {
+                    continue;
+                }
+
+                PostBlockVersion nextPostBlock = postBlocks.get(i+1);
+                nextPostBlock.finalizeContent();
+
+                // merge predecessor and successor if they have same type
+                if (previousPostBlock.getClass() != nextPostBlock.getClass()) {
+                    continue;
+                }
+                previousPostBlock.append(nextPostBlock.getContent());
+                previousPostBlock.finalizeContent();
+                markedForDeletion.add(nextPostBlock);
             }
         }
 
