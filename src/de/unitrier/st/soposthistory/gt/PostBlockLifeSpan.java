@@ -1,10 +1,23 @@
 package de.unitrier.st.soposthistory.gt;
 
 import de.unitrier.st.soposthistory.blocks.PostBlockVersion;
+import de.unitrier.st.util.Util;
 
+import java.io.IOException;
 import java.util.*;
+import java.util.logging.Logger;
 
 public class PostBlockLifeSpan extends LinkedList<PostBlockLifeSpanVersion> {
+    private static Logger logger;
+
+    static {
+        try {
+            logger = Util.getClassLogger(PostBlockLifeSpan.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private int postId;
     private int postBlockTypeId;
     private Map<Integer, PostBlockLifeSpanVersion> postHistoryIdToLifeSpanVersion;
@@ -17,7 +30,9 @@ public class PostBlockLifeSpan extends LinkedList<PostBlockLifeSpanVersion> {
 
     public static PostBlockLifeSpan fromPostBlockVersion(PostBlockVersion firstVersion) {
         if (firstVersion.isLifeSpanExtracted()) {
-            throw new IllegalArgumentException("PostBlockVersion has already been processed: " + firstVersion);
+            String msg = "PostBlockVersion has already been processed: " + firstVersion;
+            logger.warning(msg);
+            throw new IllegalArgumentException(msg);
         }
 
         int postIdFirst = firstVersion.getPostId();
@@ -28,16 +43,24 @@ public class PostBlockLifeSpan extends LinkedList<PostBlockLifeSpanVersion> {
 
         while (currentVersion != null) {
             int postId = currentVersion.getPostId();
-            if (postId != postIdFirst) {
-                throw new IllegalStateException("PostIds in life span do not match.");
-            }
             int postBlockTypeId = currentVersion.getPostBlockTypeId();
-            if (postBlockTypeId != postBlockTypeIdFirst) {
-                throw new IllegalStateException("PostBlockTypeIds in life span do not match.");
-            }
             int postHistoryId = currentVersion.getPostHistoryId();
             int localId = currentVersion.getLocalId();
 
+            // validate post id and post block type id
+            if (postId != postIdFirst) {
+                String msg = "PostIds in life span do not match (expected: " + postIdFirst + "; actual: " + postId + ")";
+                logger.warning(msg);
+                throw new IllegalStateException(msg);
+            }
+            if (postBlockTypeId != postBlockTypeIdFirst) {
+                String msg = "PostBlockTypeIds in life span do not match"
+                        + " (expected: " + postBlockTypeIdFirst + "; actual: " + postBlockTypeId + ")";
+                logger.warning(msg);
+                throw new IllegalStateException(msg);
+            }
+
+            // create and add new PostBlockLifeSpanVersion
             PostBlockLifeSpanVersion newLifeSpanVersion = new PostBlockLifeSpanVersion(
                     postId, postHistoryId, postBlockTypeId, localId
             );
@@ -80,7 +103,6 @@ public class PostBlockLifeSpan extends LinkedList<PostBlockLifeSpanVersion> {
         return postHistoryIdToLifeSpanVersion.get(postHistoryId);
     }
 
-    // TODO: do we need this for the GT app or metrics comparison?
     public Set<PostBlockConnection> toPostBlockConnections() {
         Set<PostBlockConnection> postBlockConnections = new HashSet<>();
         // in a life span, all versions except the first one have predecessors
@@ -90,7 +112,6 @@ public class PostBlockLifeSpan extends LinkedList<PostBlockLifeSpanVersion> {
         return postBlockConnections;
     }
 
-    // TODO: do we need this for the GT app or metrics comparison?
     public static Set<PostBlockConnection> toPostBlockConnections(List<PostBlockLifeSpan> lifeSpans) {
         Set<PostBlockConnection> postBlockConnections = new HashSet<>();
         for (PostBlockLifeSpan lifeSpan : lifeSpans) {
