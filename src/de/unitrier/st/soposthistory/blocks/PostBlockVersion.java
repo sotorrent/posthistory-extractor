@@ -355,9 +355,9 @@ public abstract class PostBlockVersion {
 
         // check if matching predecessor has same neighbors
         boolean beforeMatch = beforeThis.getPred() != null
-                && beforeThis.getPred().getContent().equals(beforePred.getContent());
+                && beforeThis.getPred().getContent().trim().equals(beforePred.getContent().trim());
         boolean afterMatch = afterThis.getPred() != null
-                && afterThis.getPred().getContent().equals(afterPred.getContent());
+                && afterThis.getPred().getContent().trim().equals(afterPred.getContent().trim());
 
         // use different strategies for code and text blocks
         if (this instanceof CodeBlockVersion) {
