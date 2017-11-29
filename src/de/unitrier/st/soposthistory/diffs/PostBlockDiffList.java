@@ -15,18 +15,19 @@ public class PostBlockDiffList extends LinkedList<PostBlockDiff> {
         for (PostVersion version : versionList) {
             for (PostBlockVersion block : version.getPostBlocks()) {
                 List<diff_match_patch.Diff> predDiff = block.getPredDiff();
-                if (predDiff != null) {
-                    for (diff_match_patch.Diff diff : predDiff) {
-                        PostBlockDiff diffPrev = new PostBlockDiff(
-                                block.getPostId(),
-                                block.getPostHistoryId(),
-                                block.getPredPostBlockId(),
-                                block.getId(),
-                                LineDiff.operationToInt(diff.operation),
-                                diff.text
-                        );
-                        this.add(diffPrev);
-                    }
+                if (predDiff == null) {
+                    continue;
+                }
+                for (diff_match_patch.Diff diff : predDiff) {
+                    PostBlockDiff diffPrev = new PostBlockDiff(
+                            block.getPostId(),
+                            block.getPostHistoryId(),
+                            block.getPredPostBlockId(),
+                            block.getId(),
+                            LineDiff.operationToInt(diff.operation),
+                            diff.text
+                    );
+                    this.add(diffPrev);
                 }
             }
         }
