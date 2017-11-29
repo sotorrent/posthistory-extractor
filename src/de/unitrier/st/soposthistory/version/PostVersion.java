@@ -259,24 +259,27 @@ public class PostVersion {
         HashSet<PostBlockConnection> connections = new HashSet<>();
 
         for (PostBlockVersion currentBlock : postBlocks) {
-            if (currentBlock.isSelected(postBlockTypeFilter) && currentBlock.getPred() != null) {
-                PostBlockVersion predBlock = currentBlock.getPred();
-                Integer predBlockLocalId = predBlock.getLocalId();
-                Integer predBlockPredLocalId = predBlock.getPred() != null ? predBlock.getPred().getLocalId() : null;
-                Integer succBlockLocalId = currentBlock.getSucc() != null ? currentBlock.getSucc().getLocalId() : null;
-
-                PostBlockLifeSpanVersion currentLifeSpanVersion = new PostBlockLifeSpanVersion(
-                        postId, postHistoryId, currentBlock.getPostBlockTypeId(), currentBlock.getLocalId(),
-                        predBlockLocalId, succBlockLocalId
-                );
-
-                PostBlockLifeSpanVersion predLifeSpanVersion = new PostBlockLifeSpanVersion(
-                        postId, predBlock.getPostHistoryId(), predBlock.getPostBlockTypeId(), predBlock.getLocalId(),
-                        predBlockPredLocalId, currentBlock.getLocalId()
-                );
-
-                connections.add(new PostBlockConnection(predLifeSpanVersion, currentLifeSpanVersion));
+            // wrong post block type or first version --> no connections
+            if (!currentBlock.isSelected(postBlockTypeFilter) || currentBlock.getPred() == null) {
+                continue;
             }
+
+            PostBlockVersion predBlock = currentBlock.getPred();
+            Integer predBlockLocalId = predBlock.getLocalId();
+            Integer predBlockPredLocalId = predBlock.getPred() != null ? predBlock.getPred().getLocalId() : null;
+            Integer succBlockLocalId = currentBlock.getSucc() != null ? currentBlock.getSucc().getLocalId() : null;
+
+            PostBlockLifeSpanVersion currentLifeSpanVersion = new PostBlockLifeSpanVersion(
+                    postId, postHistoryId, currentBlock.getPostBlockTypeId(), currentBlock.getLocalId(),
+                    predBlockLocalId, succBlockLocalId
+            );
+
+            PostBlockLifeSpanVersion predLifeSpanVersion = new PostBlockLifeSpanVersion(
+                    postId, predBlock.getPostHistoryId(), predBlock.getPostBlockTypeId(), predBlock.getLocalId(),
+                    predBlockPredLocalId, currentBlock.getLocalId()
+            );
+
+            connections.add(new PostBlockConnection(predLifeSpanVersion, currentLifeSpanVersion));
         }
 
         return connections;
@@ -288,19 +291,28 @@ public class PostVersion {
 
     public int getPossibleConnections(Set<Integer> postBlockTypeFilter) {
         // this only works if the post version list has already been sorted (meaning pred is set for this PostVersion)
-        int possibleConnections = 0;
-        if (pred != null) {
-            if (postBlockTypeFilter.contains(TextBlockVersion.postBlockTypeId)) {
-                int textBlockCount = getTextBlocks().size();
-                int predTextBlockCount = pred.getTextBlocks().size();
-                possibleConnections += textBlockCount * predTextBlockCount;
-            }
-            if (postBlockTypeFilter.contains(CodeBlockVersion.postBlockTypeId)) {
-                int codeBlockCount = getCodeBlocks().size();
-                int predCodeBlockCount = pred.getCodeBlocks().size();
-                possibleConnections += codeBlockCount * predCodeBlockCount;
-            }
+
+        // first version cannot have connections
+        if (pred == null) {
+            return 0;
         }
+
+        int possibleConnections = 0;
+
+        // text blocks
+        if (postBlockTypeFilter.contains(TextBlockVersion.postBlockTypeId)) {
+            int textBlockCount = getTextBlocks().size();
+            int predTextBlockCount = pred.getTextBlocks().size();
+            possibleConnections += textBlockCount * predTextBlockCount;
+        }
+
+        // code blocks
+        if (postBlockTypeFilter.contains(CodeBlockVersion.postBlockTypeId)) {
+            int codeBlockCount = getCodeBlocks().size();
+            int predCodeBlockCount = pred.getCodeBlocks().size();
+            possibleConnections += codeBlockCount * predCodeBlockCount;
+        }
+
         return possibleConnections;
     }
 
