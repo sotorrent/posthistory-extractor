@@ -227,13 +227,15 @@ public class PostVersion {
     public <T extends PostBlockVersion> Map<PostBlockVersion, Integer> findMatchingPredecessors(
                                                 List<T> currentVersionPostBlocks,
                                                 List<T> previousVersionPostBlocks,
-                                                Config config) {
+                                                Config config,
+                                                Set<Integer> postBlockTypeFilter) {
 
         Map<PostBlockVersion, Integer> matchedPredecessors = new HashMap<>();
 
         for (T currentVersionPostBlock : currentVersionPostBlocks) {
-            List<PostBlockVersion> currentMatchedPredecessors
-                    = currentVersionPostBlock.findMatchingPredecessors(previousVersionPostBlocks, config);
+            List<PostBlockVersion> currentMatchedPredecessors = currentVersionPostBlock.findMatchingPredecessors(
+                    previousVersionPostBlocks, config, postBlockTypeFilter
+            );
 
             for (PostBlockVersion matchedPredecessor : currentMatchedPredecessors) {
                 matchedPredecessors.put(matchedPredecessor,
