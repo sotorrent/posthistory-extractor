@@ -150,12 +150,17 @@ public class PostVersionList extends LinkedList<PostVersion> {
     }
 
     public static List<PostVersionList> readFromDirectory(Path dir) {
+        return readFromDirectory(dir, true);
+    }
+
+    public static List<PostVersionList> readFromDirectory(Path dir, boolean processVersionHistory) {
         return Util.processFiles(dir,
                 file -> fileNamePattern.matcher(file.toFile().getName()).matches(),
                 file -> PostVersionList.readFromCSV(
                         dir,
                         Integer.parseInt(file.toFile().getName().replace(".csv", "")),
-                        0 // cannot determine this from file name or file content
+                        0, // cannot determine this from file name or file content
+                        processVersionHistory
                 )
         );
     }
