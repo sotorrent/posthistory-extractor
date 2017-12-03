@@ -240,29 +240,13 @@ public class PostVersionList extends LinkedList<PostVersion> {
                     throw new IllegalStateException(msg);
                 }
 
-                Map<PostBlockVersion, Integer> matchedPredecessors = new HashMap<>();
-
-                // find matching predecessors by (1) equality of content and (2) similarity metric
-
-                // find matching predecessors for text blocks
-                if (postBlockTypeFilter.contains(TextBlockVersion.postBlockTypeId)) {
-                    matchedPredecessors.putAll(currentVersion.findMatchingPredecessors(
-                            currentVersion.getTextBlocks(),
-                            previousVersion.getTextBlocks(),
-                            config,
-                            postBlockTypeFilter
-                    ));
-                }
-
-                // find matching predecessors for text blocks
-                if (postBlockTypeFilter.contains(CodeBlockVersion.postBlockTypeId)) {
-                    matchedPredecessors.putAll(currentVersion.findMatchingPredecessors(
-                            currentVersion.getCodeBlocks(),
-                            previousVersion.getCodeBlocks(),
-                            config,
-                            postBlockTypeFilter
-                    ));
-                }
+                // find matching predecessors for text and code blocks by (1) equality of content and (2) similarity metric
+                Map<PostBlockVersion, Integer> matchedPredecessors = new HashMap<>(currentVersion.findMatchingPredecessors(
+                        currentVersion.getPostBlocks(),
+                        previousVersion.getPostBlocks(),
+                        config,
+                        postBlockTypeFilter
+                ));
 
                 // set predecessors of text and code blocks if only one predecessor matches and if this predecessor is only matched by one block in the current version
                 for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks()) {

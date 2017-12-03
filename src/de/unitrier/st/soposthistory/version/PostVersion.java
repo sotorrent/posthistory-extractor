@@ -233,6 +233,11 @@ public class PostVersion {
         Map<PostBlockVersion, Integer> matchedPredecessors = new HashMap<>();
 
         for (T currentVersionPostBlock : currentVersionPostBlocks) {
+            // apply post block type filter
+            if (!currentVersionPostBlock.isSelected(postBlockTypeFilter)) {
+                continue;
+            }
+
             List<PostBlockVersion> currentMatchedPredecessors = currentVersionPostBlock.findMatchingPredecessors(
                     previousVersionPostBlocks, config, postBlockTypeFilter
             );
