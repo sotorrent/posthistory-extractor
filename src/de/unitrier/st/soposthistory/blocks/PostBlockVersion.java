@@ -504,17 +504,24 @@ public abstract class PostBlockVersion {
     }
 
     public <T extends PostBlockVersion> List<PostBlockVersion> findMatchingPredecessors(List<T> previousVersionPostBlocks,
-                                                                                        Config config) {
-        retrievePredecessorSimilarities(previousVersionPostBlocks, config);
+                                                                                        Config config,
+                                                                                        Set<Integer> postBlockTypeFilter) {
+        retrievePredecessorSimilarities(previousVersionPostBlocks, config, postBlockTypeFilter);
         retrieveMatchingPredecessors();
         return matchingPredecessors;
     }
 
     private <T extends PostBlockVersion> void retrievePredecessorSimilarities(
             List<T> previousVersionPostBlocks,
-            Config config) {
+            Config config,
+            Set<Integer> postBlockTypeFilter) {
 
         for (PostBlockVersion previousVersionPostBlock : previousVersionPostBlocks) {
+            // apply post type filter
+            if (!previousVersionPostBlock.isSelected(postBlockTypeFilter)) {
+                continue;
+            }
+
             // test equality
             boolean equal = getContent().equals(previousVersionPostBlock.getContent());
 

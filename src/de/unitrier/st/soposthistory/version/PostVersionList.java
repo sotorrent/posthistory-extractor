@@ -249,7 +249,8 @@ public class PostVersionList extends LinkedList<PostVersion> {
                     matchedPredecessors.putAll(currentVersion.findMatchingPredecessors(
                             currentVersion.getTextBlocks(),
                             previousVersion.getTextBlocks(),
-                            config
+                            config,
+                            postBlockTypeFilter
                     ));
                 }
 
@@ -258,7 +259,8 @@ public class PostVersionList extends LinkedList<PostVersion> {
                     matchedPredecessors.putAll(currentVersion.findMatchingPredecessors(
                             currentVersion.getCodeBlocks(),
                             previousVersion.getCodeBlocks(),
-                            config
+                            config,
+                            postBlockTypeFilter
                     ));
                 }
 
