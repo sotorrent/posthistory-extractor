@@ -13,7 +13,6 @@ import javax.persistence.*;
 import java.io.IOException;
 import java.util.*;
 import java.util.function.BiFunction;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -301,6 +300,53 @@ public abstract class PostBlockVersion {
 
         // mark predecessor as not available
         pred.setNotAvailable();
+    }
+
+    public void setPredLocalId(Map<PostBlockVersion, List<PostBlockVersion>> matchedPredecessorsPreviousVersion) {
+        // matchedPredecessors : matched predecessor -> list of successors
+        // set matching predecessor that has a local id most similar to this block (and is still available)
+
+        // only consider matched predecessors which are available and which are matching predecessors of this post block
+        List<PostBlockVersion> matchedPostBlocksPreviousVersion = matchedPredecessorsPreviousVersion.keySet().stream()
+                .filter(b -> b.isAvailable() && matchingPredecessors.contains(b))
+                .sorted(Comparator.comparingInt(PostBlockVersion::getLocalId))
+                .collect(Collectors.toList());
+
+        // get all post blocks from this version that may be successors of the post blocks retrieved above
+        List<PostBlockVersion> matchedPostBlocksCurrentVersion = matchedPredecessorsPreviousVersion.values().stream()
+                .flatMap(List::stream)
+                .filter(b -> b.getPred() == null)
+                .collect(Collectors.toSet()) // only consider unique post blocks
+                .stream()
+                .sorted(Comparator.comparingInt(PostBlockVersion::getLocalId))
+                .collect(Collectors.toList());
+
+        // check whether this post block is the successor of one of the matched predecessor according to the localId difference
+        for (PostBlockVersion matchedPostBlockPreviousVersion : matchedPostBlocksPreviousVersion) {
+            PostBlockVersion successor = matchedPostBlocksCurrentVersion.stream()
+                    .min(getPostBlockLocalIdComparator(matchedPostBlockPreviousVersion.getLocalId()))
+                    .orElse(null);
+            if (successor == this) {
+                setPred(matchedPostBlockPreviousVersion);
+                return;
+            }
+        }
+    }
+
+    private Comparator<PostBlockVersion> getPostBlockLocalIdComparator(int localId) {
+        return (b1, b2) -> {
+            int diffB1 = b1.getLocalId() - localId;
+            int diffB2 = b2.getLocalId() - localId;
+            int diffB1Abs = Math.abs(diffB1);
+            int diffB2Abs = Math.abs(diffB2);
+            if (diffB1Abs == diffB2Abs) {
+                // if both blocks have the same distance to this block, chose the block with the smaller localId
+                return Integer.compare(b1.getLocalId(), b2.getLocalId());
+            } else {
+                // otherwise, chose the block with the smaller difference to this block's localId
+                return Integer.compare(diffB1Abs, diffB2Abs);
+            }
+        };
     }
 
     public void setPredMinPos() {

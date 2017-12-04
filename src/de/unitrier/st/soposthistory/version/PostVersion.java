@@ -221,18 +221,17 @@ public class PostVersion {
      * @param currentVersionPostBlocks Text or code blocks from current post version
      * @param previousVersionPostBlocks Text or code blocks from previous post version
      * @param config Configuration with similarity metrics and thresholds
-     * @param <T> Either TextBlockVersion or CodeBlockVersion
-     * @return Map with matched predecessor post blocks and number of times they were matched
+     * @return Map with matched predecessor post blocks and their successors
      */
-    public <T extends PostBlockVersion> Map<PostBlockVersion, Integer> findMatchingPredecessors(
-                                                List<T> currentVersionPostBlocks,
-                                                List<T> previousVersionPostBlocks,
+    public Map<PostBlockVersion, List<PostBlockVersion>> findMatchingPredecessors(
+                                                List<PostBlockVersion> currentVersionPostBlocks,
+                                                List<PostBlockVersion> previousVersionPostBlocks,
                                                 Config config,
                                                 Set<Integer> postBlockTypeFilter) {
 
-        Map<PostBlockVersion, Integer> matchedPredecessors = new HashMap<>();
+        Map<PostBlockVersion, List<PostBlockVersion>> matchedPredecessors = new HashMap<>();
 
-        for (T currentVersionPostBlock : currentVersionPostBlocks) {
+        for (PostBlockVersion currentVersionPostBlock : currentVersionPostBlocks) {
             // apply post block type filter
             if (!currentVersionPostBlock.isSelected(postBlockTypeFilter)) {
                 continue;
@@ -242,9 +241,12 @@ public class PostVersion {
                     previousVersionPostBlocks, config, postBlockTypeFilter
             );
 
+            // add all matched predecessors to the map, along with the matched successors for those predecessors
             for (PostBlockVersion matchedPredecessor : currentMatchedPredecessors) {
-                matchedPredecessors.put(matchedPredecessor,
-                        matchedPredecessors.getOrDefault(matchedPredecessor, 0) + 1);
+                if (!matchedPredecessors.containsKey(matchedPredecessor)) {
+                    matchedPredecessors.put(matchedPredecessor, new LinkedList<>());
+                }
+                matchedPredecessors.get(matchedPredecessor).add(currentVersionPostBlock);
             }
         }
 
