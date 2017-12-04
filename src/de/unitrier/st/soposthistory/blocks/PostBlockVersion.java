@@ -522,6 +522,11 @@ public abstract class PostBlockVersion {
                 continue;
             }
 
+            // only compare post blocks of same type
+            if (getPostBlockTypeId() != previousVersionPostBlock.getPostBlockTypeId()) {
+                continue;
+            }
+
             // test equality
             boolean equal = getContent().equals(previousVersionPostBlock.getContent());
 

@@ -246,12 +246,14 @@ public class PostVersionList extends LinkedList<PostVersion> {
                 }
 
                 // find matching predecessors for text and code blocks by (1) equality of content and (2) similarity metric
-                Map<PostBlockVersion, Integer> matchedPredecessors = new HashMap<>(currentVersion.findMatchingPredecessors(
-                        currentVersion.getPostBlocks(),
-                        previousVersion.getPostBlocks(),
-                        config,
-                        postBlockTypeFilter
-                ));
+                Map<PostBlockVersion, Integer> matchedPredecessors = new HashMap<>(
+                        currentVersion.findMatchingPredecessors(
+                            currentVersion.getPostBlocks(),
+                            previousVersion.getPostBlocks(),
+                            config,
+                            postBlockTypeFilter
+                        )
+                );
 
                 // set predecessors of text and code blocks if only one predecessor matches and if this predecessor is only matched by one block in the current version
                 for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks()) {
