@@ -221,6 +221,7 @@ public class PostVersion {
      * @param currentVersionPostBlocks Text or code blocks from current post version
      * @param previousVersionPostBlocks Text or code blocks from previous post version
      * @param config Configuration with similarity metrics and thresholds
+     * @param postBlockTypeFilter IDs of selected post block types
      * @return Map with matched predecessor post blocks and their successors
      */
     public Map<PostBlockVersion, List<PostBlockVersion>> findMatchingPredecessors(
