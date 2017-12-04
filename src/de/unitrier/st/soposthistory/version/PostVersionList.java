@@ -199,8 +199,8 @@ public class PostVersionList extends LinkedList<PostVersion> {
      * Match post blocks between two versions, set root post blocks, and compute the diffs between two matched versions
      * of a post block.
      *
-     * @param postBlockTypeFilter Set of postBlockTypeIds (1 for text blocks, 2 for code blocks), mainly needed for evaluation of similarity metrics
      * @param config Configuration with similarity metrics and thresholds
+     * @param postBlockTypeFilter Set of postBlockTypeIds (1 for text blocks, 2 for code blocks), mainly needed for evaluation of similarity metrics
      */
     public void processVersionHistory(Config config, Set<Integer> postBlockTypeFilter) {
         // list must be sorted (in particular the pred and succ references must be set)
