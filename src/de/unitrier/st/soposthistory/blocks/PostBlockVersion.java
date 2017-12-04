@@ -349,23 +349,6 @@ public abstract class PostBlockVersion {
         };
     }
 
-    public void setPredMinPos() {
-        // set matching predecessor that has minimal position and is still available
-
-        // find available matching predecessor
-        int pos = 0;
-        while (pos < matchingPredecessors.size() && !matchingPredecessors.get(pos).isAvailable()) {
-            pos++;
-        }
-
-        if (pos < matchingPredecessors.size()) {
-            // available matching predecessor found --> set as predecessor of this PostBlockVersion
-            PostBlockVersion matchingPredecessor = matchingPredecessors.get(pos);
-            setPred(matchingPredecessor);
-            matchingPredecessor.setSucc(this);
-        }
-    }
-
     public void setPredContext(PostVersion currentVersion, PostVersion previousVersion) {
         for (PostBlockVersion matchingPredecessor : matchingPredecessors) {
             setPredContext(matchingPredecessor, currentVersion, previousVersion);
