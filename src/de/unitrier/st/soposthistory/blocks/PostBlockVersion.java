@@ -5,8 +5,8 @@ import de.unitrier.st.soposthistory.Config;
 import de.unitrier.st.soposthistory.diffs.LineDiff;
 import de.unitrier.st.soposthistory.diffs.diff_match_patch;
 import de.unitrier.st.soposthistory.version.PostVersion;
-import de.unitrier.st.stringsimilarity.util.IllegalSimilarityValueException;
-import de.unitrier.st.stringsimilarity.util.InputTooShortException;
+import de.unitrier.st.util.IllegalSimilarityValueException;
+import de.unitrier.st.util.InputTooShortException;
 import de.unitrier.st.util.Util;
 
 import javax.persistence.*;
