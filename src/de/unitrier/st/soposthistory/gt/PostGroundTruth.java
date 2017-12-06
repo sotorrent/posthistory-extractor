@@ -420,6 +420,10 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
         return postId;
     }
 
+    public Map<Integer, List<PostBlockLifeSpanVersion>> getVersions() {
+        return versions;
+    }
+
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder("PostGroundTruth for PostId " + postId + ":\n");
