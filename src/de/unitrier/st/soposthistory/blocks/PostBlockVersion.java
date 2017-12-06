@@ -375,18 +375,16 @@ public abstract class PostBlockVersion {
         }
 
         // get post blocks before and after this post block
-        PostBlockVersion beforeThis = currentVersion.getPostBlocks().get(indexThis - 1);
-        PostBlockVersion afterThis = currentVersion.getPostBlocks().get(indexThis + 1);
+        PostBlockVersion aboveThis = currentVersion.getPostBlocks().get(indexThis - 1);
+        PostBlockVersion belowThis = currentVersion.getPostBlocks().get(indexThis + 1);
 
         // get post blocks before and after matching predecessor
-        PostBlockVersion beforePred = previousVersion.getPostBlocks().get(indexPred - 1);
-        PostBlockVersion afterPred = previousVersion.getPostBlocks().get(indexPred + 1);
+        PostBlockVersion abovePred = previousVersion.getPostBlocks().get(indexPred - 1);
+        PostBlockVersion belowPred = previousVersion.getPostBlocks().get(indexPred + 1);
 
-        // check if matching predecessor has same neighbors
-        boolean beforeMatch = beforeThis.getPred() != null
-                && beforeThis.getPred().getContent().trim().equals(beforePred.getContent().trim());
-        boolean afterMatch = afterThis.getPred() != null
-                && afterThis.getPred().getContent().trim().equals(afterPred.getContent().trim());
+        // check if matching predecessor has same neighbors (pred references set in previous step)
+        boolean beforeMatch = aboveThis.getPred() != null && aboveThis.getPred() == abovePred;
+        boolean afterMatch = belowThis.getPred() != null && belowThis.getPred() == belowPred;
 
         // use different strategies for code and text blocks
         if (this instanceof CodeBlockVersion) {
@@ -398,7 +396,7 @@ public abstract class PostBlockVersion {
         } else if (this instanceof TextBlockVersion) {
             // consider text as caption for next code block --> focus on post blocks after this post block and the
             // matching predecessor  (post blocks before may be null)
-            if ((beforeThis.getPred() == null || beforeMatch) && afterMatch) {
+            if ((aboveThis.getPred() == null || beforeMatch) && afterMatch) {
                 setPred(matchingPredecessor);
                 matchingPredecessor.setSucc(this);
             }
