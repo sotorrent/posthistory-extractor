@@ -165,7 +165,7 @@ class GroundTruthTest {
         PostBlockConnection connection2 = new PostBlockConnection(v1_2, v2);
         assertTrue(connection1.equals(connection2));
 
-        // test equaliy of a set of PostBlockConnections
+        // test equality of a set of PostBlockConnections
         PostBlockConnection connection3 = new PostBlockConnection(v1_2, v2);
         PostBlockConnection connection4 = new PostBlockConnection(v3, v4);
         assertTrue(PostBlockConnection.equals(
@@ -177,7 +177,7 @@ class GroundTruthTest {
         assertTrue(PostBlockConnection.equals(
                 PostBlockConnection.union(Sets.newHashSet(connection1, connection2),
                         Sets.newHashSet(connection3, connection4)),
-                Sets.newHashSet(connection1, connection2, connection3, connection4))
+                Sets.newHashSet(connection1, connection3, connection4))
         );
     }
 
