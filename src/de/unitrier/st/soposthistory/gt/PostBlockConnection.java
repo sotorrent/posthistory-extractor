@@ -13,6 +13,9 @@ public class PostBlockConnection {
     }
 
     public static boolean equals(Set<PostBlockConnection> set1, Set<PostBlockConnection> set2) {
+        if (set1.size() != set2.size()) {
+            return false;
+        }
         for (PostBlockConnection current : set1) {
             boolean equal = false;
             for (PostBlockConnection other : set2) {
@@ -29,6 +32,9 @@ public class PostBlockConnection {
     }
 
     public static boolean matches(Set<PostBlockConnection> set1, Set<PostBlockConnection> set2) {
+        if (set1.size() != set2.size()) {
+            return false;
+        }
         for (PostBlockConnection current : set1) {
             boolean match = false;
             for (PostBlockConnection other : set2) {
