@@ -6,7 +6,7 @@ import de.unitrier.st.soposthistory.blocks.PostBlockVersion;
 import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
 import de.unitrier.st.soposthistory.version.PostVersion;
 import de.unitrier.st.soposthistory.version.PostVersionList;
-import de.unitrier.st.stringsimilarity.util.InputTooShortException;
+import de.unitrier.st.util.InputTooShortException;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
