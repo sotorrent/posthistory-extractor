@@ -362,7 +362,7 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
         return getPossibleConnections(PostBlockVersion.getAllPostBlockTypeIdFilters());
     }
 
-    private int getPossibleConnections(Set<Integer> postBlockTypeFilter) {
+    public int getPossibleConnections(Set<Integer> postBlockTypeFilter) {
         int possibleConnections = 0;
         for (int postHistoryId : postHistoryIds) {
             possibleConnections += getPossibleConnections(postHistoryId, postBlockTypeFilter);
