@@ -110,6 +110,27 @@ public class PostBlockConnection {
         return false;
     }
 
+    public static Set<PostBlockConnection> getTruePositives(Set<PostBlockConnection> postBlockConnections,
+                                                            Set<PostBlockConnection> postBlockConnectionsGT) {
+        return PostBlockConnection.intersection(postBlockConnectionsGT, postBlockConnections);
+    }
+
+    public static Set<PostBlockConnection> getFalsePositives(Set<PostBlockConnection> postBlockConnections,
+                                                            Set<PostBlockConnection> postBlockConnectionsGT) {
+        return PostBlockConnection.difference(postBlockConnections, postBlockConnectionsGT);
+    }
+
+    public static int getTrueNegatives(Set<PostBlockConnection> postBlockConnections,
+                                       Set<PostBlockConnection> postBlockConnectionsGT,
+                                       int possibleConnectionsGT) {
+        return possibleConnectionsGT - (PostBlockConnection.union(postBlockConnectionsGT, postBlockConnections).size());
+    }
+
+    public static Set<PostBlockConnection> getFalseNegatives(Set<PostBlockConnection> postBlockConnections,
+                                                             Set<PostBlockConnection> postBlockConnectionsGT) {
+        return PostBlockConnection.difference(postBlockConnectionsGT, postBlockConnections);
+    }
+
     /**
      * Two PostBlockConnections are equal of their left and right PostBlockLifeSpanVersions are equal, i.e. they have
      * the same postId, postHistoryId, postBlockTypeId, and localId..
