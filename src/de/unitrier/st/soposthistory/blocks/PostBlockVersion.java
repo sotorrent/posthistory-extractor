@@ -323,10 +323,17 @@ public abstract class PostBlockVersion {
 
         // check whether this post block is the successor of one of the matched predecessor according to the localId difference
         for (PostBlockVersion matchedPostBlockPreviousVersion : matchedPostBlocksPreviousVersion) {
-            PostBlockVersion successor = matchedPostBlocksCurrentVersion.stream()
+            PostBlockVersion successorCandidate = matchedPostBlocksCurrentVersion.stream()
                     .min(getPostBlockLocalIdComparator(matchedPostBlockPreviousVersion.getLocalId()))
                     .orElse(null);
-            if (successor == this) {
+            if (successorCandidate != this) {
+                continue;
+            }
+            PostBlockVersion predecessorCandidate = matchedPostBlocksPreviousVersion.stream()
+                    .min(getPostBlockLocalIdComparator(successorCandidate.getLocalId()))
+                    .orElse(null);
+
+            if (predecessorCandidate == matchedPostBlockPreviousVersion) {
                 setPred(matchedPostBlockPreviousVersion);
                 return;
             }
