@@ -22,8 +22,10 @@ import java.util.stream.Collectors;
 @DiscriminatorColumn(name="PostBlockTypeId",discriminatorType=DiscriminatorType.INTEGER)
 public abstract class PostBlockVersion {
     public static final double EQUALITY_SIMILARITY = 10.0;
-    private static Logger logger = null;
 
+    public enum MatchingStrategy {BOTH, ABOVE, BELOW}; // needed for method setPredContext
+
+    private static Logger logger = null;
     static {
         // configure logger
         try {
@@ -356,13 +358,18 @@ public abstract class PostBlockVersion {
         };
     }
 
-    public void setPredContext(PostVersion currentVersion, PostVersion previousVersion) {
+    public void setPredContext(PostVersion currentVersion,
+                               PostVersion previousVersion,
+                               MatchingStrategy matchingStrategy) {
         for (PostBlockVersion matchingPredecessor : matchingPredecessors) {
-            setPredContext(matchingPredecessor, currentVersion, previousVersion);
+            setPredContext(matchingPredecessor, currentVersion, previousVersion, matchingStrategy);
         }
     }
 
-    public void setPredContext(PostBlockVersion matchingPredecessor, PostVersion currentVersion, PostVersion previousVersion) {
+    public void setPredContext(PostBlockVersion matchingPredecessor,
+                               PostVersion currentVersion,
+                               PostVersion previousVersion,
+                               MatchingStrategy matchingStrategy) {
         // consider context to select matching predecessor
 
         // if the matching predecessor is not available, it cannot be set
@@ -390,22 +397,31 @@ public abstract class PostBlockVersion {
         PostBlockVersion belowPred = previousVersion.getPostBlocks().get(indexPred + 1);
 
         // check if matching predecessor has same neighbors (pred references set in previous step)
-        boolean beforeMatch = aboveThis.getPred() != null && aboveThis.getPred() == abovePred;
-        boolean afterMatch = belowThis.getPred() != null && belowThis.getPred() == belowPred;
+        boolean aboveMatch = aboveThis.getPred() != null && aboveThis.getPred() == abovePred;
+        boolean belowMatch = belowThis.getPred() != null && belowThis.getPred() == belowPred;
 
-        // use different strategies for code and text blocks
-        if (this instanceof CodeBlockVersion) {
-            // consider both the post blocks before and after the current post block and the matching predecessor
-            if (beforeMatch && afterMatch) {
-                setPred(matchingPredecessor);
-                matchingPredecessor.setSucc(this);
+        // set the predecessor according the the provided matching strategy
+        switch (matchingStrategy) {
+            case BOTH: {
+                if (aboveMatch && belowMatch) {
+                    setPred(matchingPredecessor);
+                    matchingPredecessor.setSucc(this);
+                }
+                break;
             }
-        } else if (this instanceof TextBlockVersion) {
-            // consider text as caption for next code block --> focus on post blocks after this post block and the
-            // matching predecessor  (post blocks before may be null)
-            if ((aboveThis.getPred() == null || beforeMatch) && afterMatch) {
-                setPred(matchingPredecessor);
-                matchingPredecessor.setSucc(this);
+            case ABOVE: {
+                if (aboveMatch && belowThis.getPred() == null) {
+                    setPred(matchingPredecessor);
+                    matchingPredecessor.setSucc(this);
+                }
+                break;
+            }
+            case BELOW: {
+                if (belowMatch && aboveThis.getPred() == null) {
+                    setPred(matchingPredecessor);
+                    matchingPredecessor.setSucc(this);
+                }
+                break;
             }
         }
     }

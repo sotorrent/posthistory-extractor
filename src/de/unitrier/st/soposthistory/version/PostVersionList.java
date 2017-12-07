@@ -278,9 +278,37 @@ public class PostVersionList extends LinkedList<PostVersion> {
                         continue;
                     }
 
-                    // predecessor for this post block not set yet and at least one matching predecessor found
+                    // first, consider predecessors of blocks above and below as context...
                     if (currentPostBlock.getPred() == null && currentPostBlock.getMatchingPredecessors().size() > 0) {
-                        currentPostBlock.setPredContext(currentVersion, previousVersion);
+                        // predecessor for this post block not set yet and at least one matching predecessor found
+                        currentPostBlock.setPredContext(currentVersion, previousVersion, PostBlockVersion.MatchingStrategy.BOTH);
+                    }
+                }
+
+                // then, consider only block below OR above as context
+                for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks()) {
+                    if (!currentPostBlock.isSelected(postBlockTypeFilter)) {
+                        continue;
+                    }
+                    if (currentPostBlock.getPred() == null && currentPostBlock.getMatchingPredecessors().size() > 0) {
+                        if (currentPostBlock.getPostBlockTypeId() == TextBlockVersion.postBlockTypeId) {
+                            // text blocks are more likely to be captions of code blocks below
+                            currentPostBlock.setPredContext(currentVersion, previousVersion, PostBlockVersion.MatchingStrategy.BELOW);
+                        } else {
+                            currentPostBlock.setPredContext(currentVersion, previousVersion, PostBlockVersion.MatchingStrategy.ABOVE);
+                        }
+                    }
+                }
+                for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks()) {
+                    if (!currentPostBlock.isSelected(postBlockTypeFilter)) {
+                        continue;
+                    }
+                    if (currentPostBlock.getPred() == null && currentPostBlock.getMatchingPredecessors().size() > 0) {
+                        if (currentPostBlock.getPostBlockTypeId() == TextBlockVersion.postBlockTypeId) {
+                            currentPostBlock.setPredContext(currentVersion, previousVersion, PostBlockVersion.MatchingStrategy.ABOVE);
+                        } else {
+                            currentPostBlock.setPredContext(currentVersion, previousVersion, PostBlockVersion.MatchingStrategy.BELOW);
+                        }
                     }
                 }
 
