@@ -233,7 +233,9 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
         PostBlockLifeSpanVersion successor = selectedSuccessorCandidates.get(0);
 
         if (!successor.getPredLocalId().equals(currentLifeSpanVersion.getLocalId())) {
-            String msg = "Predecessor LocalIds do not match"
+            String msg = "Predecessor LocalIds do not match for postId " + postId
+                    + ", postHistoryId (" + currentLifeSpanVersion.getPostHistoryId()
+                    + ", " + successor.getPostHistoryId() + ") "
                     + "(expected: " + currentLifeSpanVersion.getLocalId() + "; actual: "
                     + successor.getPredLocalId() + ")";
             logger.warning(msg);
@@ -241,7 +243,9 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
         }
 
         if (!currentLifeSpanVersion.getSuccLocalId().equals(successor.getLocalId())) {
-            String msg = "Successor LocalIds do not match"
+            String msg = "Successor LocalIds do not match " + postId
+                    + ", postHistoryId (" + currentLifeSpanVersion.getPostHistoryId()
+                    + ", " + successor.getPostHistoryId() + ") "
                     + "(expected: " + currentLifeSpanVersion.getSuccLocalId() + "; actual: "
                     + successor.getLocalId() + ")";
             logger.warning(msg);
