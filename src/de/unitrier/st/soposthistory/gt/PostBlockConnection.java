@@ -12,6 +12,12 @@ public class PostBlockConnection {
         this.right = right;
     }
 
+    /**
+     * Checks if the elements in the two sets of PostBlockConnections are equal according to PostBlockConnection.equals.
+     * @param set1 First set of PostBlockConnections
+     * @param set2 Second set of PostBlockConnections
+     * @return True, if set1 and set2 are equal according to the above definition
+     */
     public static boolean equals(Set<PostBlockConnection> set1, Set<PostBlockConnection> set2) {
         if (set1.size() != set2.size()) {
             return false;
@@ -31,25 +37,12 @@ public class PostBlockConnection {
         return true;
     }
 
-    public static boolean matches(Set<PostBlockConnection> set1, Set<PostBlockConnection> set2) {
-        if (set1.size() != set2.size()) {
-            return false;
-        }
-        for (PostBlockConnection current : set1) {
-            boolean match = false;
-            for (PostBlockConnection other : set2) {
-                if (current.matches(other)) {
-                    match = true;
-                    break;
-                }
-            }
-            if (!match) {
-                return false;
-            }
-        }
-        return true;
-    }
-
+    /**
+     * Intersection of two sets of PostBlockConnections.
+     * @param set1 First set of PostBlockConnections
+     * @param set2 Second set of PostBlockConnections
+     * @return Intersection of set1 and set2
+     */
     public static Set<PostBlockConnection> intersection(Set<PostBlockConnection> set1, Set<PostBlockConnection> set2) {
         Set<PostBlockConnection> intersection = new HashSet<>();
         for (PostBlockConnection current : set1) {
@@ -63,6 +56,12 @@ public class PostBlockConnection {
         return intersection;
     }
 
+    /**
+     * Difference of two sets of PostBlockConnections, i.e. elements that are in the first set, but not in second.
+     * @param set1 First set of PostBlockConnections
+     * @param set2 Second set of PostBlockConnections
+     * @return Difference of set1 and set2
+     */
     public static Set<PostBlockConnection> difference(Set<PostBlockConnection> set1, Set<PostBlockConnection> set2) {
         Set<PostBlockConnection> difference = new HashSet<>(set1);
         Set<PostBlockConnection> markedForRemoval = new HashSet<>();
@@ -80,6 +79,12 @@ public class PostBlockConnection {
         return difference;
     }
 
+    /**
+     * Union of the sets of PostBlockConnections.
+     * @param set1 First set of PostBlockConnections
+     * @param set2 Second set of PostBlockConnections
+     * @return Union of set1 and set2
+     */
     public static Set<PostBlockConnection> union(Set<PostBlockConnection> set1, Set<PostBlockConnection> set2) {
         Set<PostBlockConnection> union = new HashSet<>(set1);
         for (PostBlockConnection current : set2) {
@@ -90,6 +95,12 @@ public class PostBlockConnection {
         return union;
     }
 
+    /**
+     * Check if a set contains a connection that is equal according to PostBlockConnection.equals
+     * @param set Set of PostBlockConnections
+     * @param connection The PostBlockConnection to check
+     * @return True, if the set contains the connection
+     */
     public static boolean contains(Set<PostBlockConnection> set, PostBlockConnection connection) {
         for (PostBlockConnection current : set) {
             if (current.equals(connection)) {
@@ -99,16 +110,14 @@ public class PostBlockConnection {
         return false;
     }
 
+    /**
+     * Two PostBlockConnections are equal of their left and right PostBlockLifeSpanVersions are equal, i.e. they have
+     * the same postId, postHistoryId, postBlockTypeId, and localId..
+     * @param other other PostBlockConnection to compare this one to
+     * @return True, if the PostBlockConnections are equal according to the above definition
+     */
     public boolean equals(PostBlockConnection other) {
         return (this.left.equals(other.left) && this.right.equals(other.right));
-    }
-
-    public boolean matches(PostBlockConnection other) {
-        boolean matchingLocalIds = this.left.getLocalId() == other.left.getLocalId()
-                && this.right.getLocalId() == other.right.getLocalId();
-        boolean matchingPostBlockTypes = this.left.getPostBlockTypeId() == other.left.getPostBlockTypeId()
-                && this.right.getPostBlockTypeId() == other.right.getPostBlockTypeId();
-        return matchingLocalIds && matchingPostBlockTypes;
     }
 
     public PostBlockLifeSpanVersion getLeft() {
