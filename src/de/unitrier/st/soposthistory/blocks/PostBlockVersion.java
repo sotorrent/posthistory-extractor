@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 public abstract class PostBlockVersion {
     public static final double EQUALITY_SIMILARITY = 10.0;
 
-    public enum MatchingStrategy {BOTH, ABOVE, BELOW}; // needed for method setPredContext
+    public enum MatchingStrategy {BOTH, ABOVE, BELOW} // needed for method setPredContext
 
     private static Logger logger = null;
     static {
@@ -358,15 +358,20 @@ public abstract class PostBlockVersion {
         };
     }
 
-    public void setPredContext(PostVersion currentVersion,
+    public boolean setPredContext(PostVersion currentVersion,
                                PostVersion previousVersion,
                                MatchingStrategy matchingStrategy) {
         for (PostBlockVersion matchingPredecessor : matchingPredecessors) {
-            setPredContext(matchingPredecessor, currentVersion, previousVersion, matchingStrategy);
+            boolean matched = setPredContext(matchingPredecessor, currentVersion, previousVersion, matchingStrategy);
+            if (matched) {
+                return true;
+            }
         }
+
+        return false;
     }
 
-    public void setPredContext(PostBlockVersion matchingPredecessor,
+    public boolean setPredContext(PostBlockVersion matchingPredecessor,
                                PostVersion currentVersion,
                                PostVersion previousVersion,
                                MatchingStrategy matchingStrategy) {
@@ -374,31 +379,42 @@ public abstract class PostBlockVersion {
 
         // if the matching predecessor is not available, it cannot be set
         if (!matchingPredecessor.isAvailable()) {
-            return;
+            return false;
         }
 
         // retrieve context of this post block and the matching predecessor
         int indexThis = currentVersion.getPostBlocks().indexOf(this);
         int indexPred = previousVersion.getPostBlocks().indexOf(matchingPredecessor);
-        boolean neighborsAvailableThis = indexThis > 0 && indexThis < currentVersion.getPostBlocks().size() - 1;
-        boolean neighborsAvailablePred = indexPred > 0 && indexPred < previousVersion.getPostBlocks().size() - 1;
 
-        if (!neighborsAvailableThis || !neighborsAvailablePred) {
-            // neighbors of this post block and the matching predecessor are not available
-            return;
+        // check if neighbors of this post block are available
+        boolean aboveAvailableThis = indexThis > 0;
+        boolean belowAvailableThis = indexThis < currentVersion.getPostBlocks().size() - 1;
+
+        // check if neighbors of the predecessor are available
+        boolean aboveAvailablePred = indexPred > 0;
+        boolean belowAvailablePred = indexPred < previousVersion.getPostBlocks().size() - 1;
+
+        // flags indicating if the matching predecessor has same neighbors (pred references set in previous step)
+        boolean aboveMatch = false;
+        boolean belowMatch = false;
+
+        if (matchingStrategy == MatchingStrategy.BOTH || matchingStrategy == MatchingStrategy.ABOVE) {
+            if (!aboveAvailableThis || !aboveAvailablePred) {
+                return false;
+            }
+            PostBlockVersion aboveThis = currentVersion.getPostBlocks().get(indexThis - 1);
+            PostBlockVersion abovePred = previousVersion.getPostBlocks().get(indexPred - 1);
+            aboveMatch = aboveThis.getPred() != null && aboveThis.getPred() == abovePred;
         }
 
-        // get post blocks before and after this post block
-        PostBlockVersion aboveThis = currentVersion.getPostBlocks().get(indexThis - 1);
-        PostBlockVersion belowThis = currentVersion.getPostBlocks().get(indexThis + 1);
-
-        // get post blocks before and after matching predecessor
-        PostBlockVersion abovePred = previousVersion.getPostBlocks().get(indexPred - 1);
-        PostBlockVersion belowPred = previousVersion.getPostBlocks().get(indexPred + 1);
-
-        // check if matching predecessor has same neighbors (pred references set in previous step)
-        boolean aboveMatch = aboveThis.getPred() != null && aboveThis.getPred() == abovePred;
-        boolean belowMatch = belowThis.getPred() != null && belowThis.getPred() == belowPred;
+        if (matchingStrategy == MatchingStrategy.BOTH || matchingStrategy == MatchingStrategy.BELOW) {
+            if (!belowAvailableThis || !belowAvailablePred) {
+                return false;
+            }
+            PostBlockVersion belowThis = currentVersion.getPostBlocks().get(indexThis + 1);
+            PostBlockVersion belowPred = previousVersion.getPostBlocks().get(indexPred + 1);
+            belowMatch = belowThis.getPred() != null && belowThis.getPred() == belowPred;
+        }
 
         // set the predecessor according the the provided matching strategy
         switch (matchingStrategy) {
@@ -406,24 +422,29 @@ public abstract class PostBlockVersion {
                 if (aboveMatch && belowMatch) {
                     setPred(matchingPredecessor);
                     matchingPredecessor.setSucc(this);
+                    return true;
                 }
                 break;
             }
             case ABOVE: {
-                if (aboveMatch && belowThis.getPred() == null) {
+                if (aboveMatch) {
                     setPred(matchingPredecessor);
                     matchingPredecessor.setSucc(this);
+                    return true;
                 }
                 break;
             }
             case BELOW: {
-                if (belowMatch && aboveThis.getPred() == null) {
+                if (belowMatch) {
                     setPred(matchingPredecessor);
                     matchingPredecessor.setSucc(this);
+                    return true;
                 }
                 break;
             }
         }
+
+        return false;
     }
 
     @Transient

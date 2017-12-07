@@ -227,11 +227,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
                 }
 
                 // the post blocks in the first version have themselves as root post blocks
-                for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks()) {
-                    if (!currentPostBlock.isSelected(postBlockTypeFilter)) {
-                        continue;
-                    }
-
+                for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks(postBlockTypeFilter)) {
                     currentPostBlock.setRootPostBlock(currentPostBlock);
                     currentPostBlock.setRootPostBlockId(currentPostBlock.getId());
                 }
@@ -256,12 +252,8 @@ public class PostVersionList extends LinkedList<PostVersion> {
 
                 // set predecessors of text and code blocks if only one predecessor matches and if this predecessor is
                 // only matched by one block in the current version
-                for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks()) {
-                    if (!currentPostBlock.isSelected(postBlockTypeFilter)) {
-                        continue;
-                    }
-
-                    if (currentPostBlock.getMatchingPredecessors().size() == 1) {
+                for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks(postBlockTypeFilter)) {
+                      if (currentPostBlock.getMatchingPredecessors().size() == 1) {
                         // only one matching predecessor found
                         PostBlockVersion matchingPredecessor = currentPostBlock.getMatchingPredecessors().get(0);
                         if (matchedPredecessors.get(matchingPredecessor).size() == 1 && matchingPredecessor.isAvailable()) {
@@ -273,51 +265,28 @@ public class PostVersionList extends LinkedList<PostVersion> {
                 }
 
                 // next, try to set remaining predecessors using context (neighboring blocks of post block and matching predecessor)
-                for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks()) {
-                    if (!currentPostBlock.isSelected(postBlockTypeFilter)) {
-                        continue;
-                    }
 
-                    // first, consider predecessors of blocks above and below as context...
-                    if (currentPostBlock.getPred() == null && currentPostBlock.getMatchingPredecessors().size() > 0) {
-                        // predecessor for this post block not set yet and at least one matching predecessor found
-                        currentPostBlock.setPredContext(currentVersion, previousVersion, PostBlockVersion.MatchingStrategy.BOTH);
-                    }
+                // first, consider predecessors of blocks above and below as context
+                boolean matched = true;
+                while (matched) {
+                    matched = setPostBlockPredContext(currentVersion, previousVersion, postBlockTypeFilter,
+                            PostBlockVersion.MatchingStrategy.BOTH);
                 }
-
                 // then, consider only block below OR above as context
-                for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks()) {
-                    if (!currentPostBlock.isSelected(postBlockTypeFilter)) {
-                        continue;
-                    }
-                    if (currentPostBlock.getPred() == null && currentPostBlock.getMatchingPredecessors().size() > 0) {
-                        if (currentPostBlock.getPostBlockTypeId() == TextBlockVersion.postBlockTypeId) {
-                            // text blocks are more likely to be captions of code blocks below
-                            currentPostBlock.setPredContext(currentVersion, previousVersion, PostBlockVersion.MatchingStrategy.BELOW);
-                        } else {
-                            currentPostBlock.setPredContext(currentVersion, previousVersion, PostBlockVersion.MatchingStrategy.ABOVE);
-                        }
-                    }
+                matched = true;
+                while (matched) {
+                    // text blocks are more likely to be captions of code blocks below -> choose BELOW first
+                    matched = setPostBlockPredContext(currentVersion, previousVersion, postBlockTypeFilter,
+                            PostBlockVersion.MatchingStrategy.BELOW);
                 }
-                for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks()) {
-                    if (!currentPostBlock.isSelected(postBlockTypeFilter)) {
-                        continue;
-                    }
-                    if (currentPostBlock.getPred() == null && currentPostBlock.getMatchingPredecessors().size() > 0) {
-                        if (currentPostBlock.getPostBlockTypeId() == TextBlockVersion.postBlockTypeId) {
-                            currentPostBlock.setPredContext(currentVersion, previousVersion, PostBlockVersion.MatchingStrategy.ABOVE);
-                        } else {
-                            currentPostBlock.setPredContext(currentVersion, previousVersion, PostBlockVersion.MatchingStrategy.BELOW);
-                        }
-                    }
+                matched = true;
+                while (matched) {
+                    matched = setPostBlockPredContext(currentVersion, previousVersion, postBlockTypeFilter,
+                            PostBlockVersion.MatchingStrategy.ABOVE);
                 }
 
                 // finally, set the remaining predecessors using the order in the post (localId)
-                for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks()) {
-                    if (!currentPostBlock.isSelected(postBlockTypeFilter)) {
-                        continue;
-                    }
-
+                for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks(postBlockTypeFilter)) {
                     // predecessor for this post block not set yet and at least one matching predecessor found
                     if (currentPostBlock.getPred() == null && currentPostBlock.getMatchingPredecessors().size() > 0) {
                         currentPostBlock.setPredLocalId(matchedPredecessors);
@@ -325,11 +294,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
                 }
 
                 // set root post block for all post blocks
-                for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks()) {
-                    if (!currentPostBlock.isSelected(postBlockTypeFilter)) {
-                        continue;
-                    }
-
+                for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks(postBlockTypeFilter)) {
                     if (currentPostBlock.getPred() == null) {
                         // block has no predecessor -> set itself as root post block
                         currentPostBlock.setRootPostBlock(currentPostBlock);
@@ -364,6 +329,20 @@ public class PostVersionList extends LinkedList<PostVersion> {
             // compute diffs
             diffs.fromPostVersionList(this);
         }
+    }
+
+    public boolean setPostBlockPredContext(PostVersion currentVersion,
+                                           PostVersion previousVersion,
+                                           Set<Integer> postBlockTypeFilter,
+                                           PostBlockVersion.MatchingStrategy matchingStrategy) {
+
+        for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks(postBlockTypeFilter)) {
+            boolean matched = currentPostBlock.setPredContext(currentVersion, previousVersion, matchingStrategy);
+            if (matched) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public PostBlockDiffList getDiffs() {

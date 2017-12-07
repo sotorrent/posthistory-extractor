@@ -26,6 +26,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class PostVersionHistoryTest {
     static Path pathToPostVersionLists = Paths.get("testdata", "post_version_lists");
 
+    private Config configEqual = Config.DEFAULT
+            .withTextSimilarityMetric(de.unitrier.st.stringsimilarity.equal.Variants::equal)
+            .withTextBackupSimilarityMetric(null)
+            .withTextSimilarityThreshold(1.0)
+            .withCodeSimilarityMetric(de.unitrier.st.stringsimilarity.equal.Variants::equal)
+            .withCodeBackupSimilarityMetric(null)
+            .withCodeSimilarityThreshold(1.0);
+
     private void testPredecessorSimilarities(PostVersion postVersion) {
         for (PostBlockVersion currentPostBlockVersion : postVersion.getPostBlocks()) {
             for (double similarity : currentPostBlockVersion.getPredecessorSimilarities().values()) {
@@ -738,13 +746,7 @@ class PostVersionHistoryTest {
         // test if connections are set correctly when an equality-based metric is used
 
         PostVersionList q_19612096 = PostVersionList.readFromCSV(pathToPostVersionLists, 19612096, 1, false);
-        q_19612096.processVersionHistory(
-                Config.DEFAULT
-                        .withTextSimilarityMetric(de.unitrier.st.stringsimilarity.equal.Variants::equal)
-                        .withTextBackupSimilarityMetric(null)
-                        .withCodeSimilarityMetric(de.unitrier.st.stringsimilarity.equal.Variants::equal)
-                        .withCodeBackupSimilarityMetric(null)
-        );
+        q_19612096.processVersionHistory(configEqual);
 
         PostVersion version_10 = q_19612096.getPostVersion(50536699);
 
@@ -765,14 +767,7 @@ class PostVersionHistoryTest {
     void equalsTest() {
         int postId = 10381975;
         PostVersionList q_10381975 = PostVersionList.readFromCSV(pathToPostVersionLists, postId, 1, false);
-        q_10381975.processVersionHistory(Config.DEFAULT
-                .withTextSimilarityMetric(de.unitrier.st.stringsimilarity.equal.Variants::equal)
-                .withTextBackupSimilarityMetric(null)
-                .withTextSimilarityThreshold(1.0)
-                .withCodeSimilarityMetric(de.unitrier.st.stringsimilarity.equal.Variants::equal)
-                .withCodeBackupSimilarityMetric(null)
-                .withCodeSimilarityThreshold(1.0)
-        );
+        q_10381975.processVersionHistory(configEqual);
 
         PostVersion version_2 = q_10381975.getPostVersion(23853971);
 
@@ -781,5 +776,22 @@ class PostVersionHistoryTest {
         PostBlockVersion postBlock12 = version_2.getPostBlocks().get(11);
         assertNotNull(postBlock12.getPred());
         assertEquals(Integer.valueOf(12), postBlock12.getPred().getLocalId());
+    }
+
+    @Test
+    void predContextLastPostBlockAnswer32841902() {
+        int postId = 32841902;
+        PostVersionList q_10381975 = PostVersionList.readFromCSV(pathToPostVersionLists, postId, 1, false);
+        q_10381975.processVersionHistory(configEqual);
+
+        PostVersion version_2 = q_10381975.getPostVersion(100687945);
+
+        // the last two post blocks should be connected (version 1: localId 2+3; version 2: localId 5+6)
+        PostBlockVersion postBlock5 = version_2.getPostBlocks().get(4);
+        assertNotNull(postBlock5.getPred());
+        assertEquals(Integer.valueOf(2), postBlock5.getPred().getLocalId());
+        PostBlockVersion postBlock6 = version_2.getPostBlocks().get(5);
+        assertNotNull(postBlock6.getPred());
+        assertEquals(Integer.valueOf(3), postBlock6.getPred().getLocalId());
     }
 }
