@@ -760,4 +760,26 @@ class PostVersionHistoryTest {
         assertNotNull(postBlock13.getPred());
         assertEquals(13, postBlock13.getPred().getLocalId().intValue());
     }
+
+    @Test
+    void equalsTest() {
+        int postId = 10381975;
+        PostVersionList q_10381975 = PostVersionList.readFromCSV(pathToPostVersionLists, postId, 1, false);
+        q_10381975.processVersionHistory(Config.DEFAULT
+                .withTextSimilarityMetric(de.unitrier.st.stringsimilarity.equal.Variants::equal)
+                .withTextBackupSimilarityMetric(null)
+                .withTextSimilarityThreshold(1.0)
+                .withCodeSimilarityMetric(de.unitrier.st.stringsimilarity.equal.Variants::equal)
+                .withCodeBackupSimilarityMetric(null)
+                .withCodeSimilarityThreshold(1.0)
+        );
+
+        PostVersion version_2 = q_10381975.getPostVersion(23853971);
+
+        // post block with localId 12 is equal to post block with localId 8 and localId 12 in previous version
+        // it should be matched with the latter (smaller localId difference)
+        PostBlockVersion postBlock12 = version_2.getPostBlocks().get(11);
+        assertNotNull(postBlock12.getPred());
+        assertEquals(Integer.valueOf(12), postBlock12.getPred().getLocalId());
+    }
 }
