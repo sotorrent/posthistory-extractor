@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class PostVersionHistoryTest {
     static Path pathToPostVersionLists = Paths.get("testdata", "post_version_lists");
 
-    private Config configEqual = Config.DEFAULT
+    static Config configEqual = Config.DEFAULT
             .withTextSimilarityMetric(de.unitrier.st.stringsimilarity.equal.Variants::equal)
             .withTextBackupSimilarityMetric(null)
             .withTextSimilarityThreshold(1.0)
