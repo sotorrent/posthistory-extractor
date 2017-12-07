@@ -351,4 +351,31 @@ class GroundTruthTest {
             }
         }
     }
+
+
+    @Test
+    void testConsideringOfNeighbouringBlocks() {
+        int postId = 33076987;
+        PostVersionList q_33076987 = PostVersionList.readFromCSV(pathToPostHistory, postId, 1, false);
+        q_33076987.processVersionHistory(Config.DEFAULT
+                .withTextSimilarityMetric(de.unitrier.st.stringsimilarity.equal.Variants::equal)
+                .withTextBackupSimilarityMetric(null)
+                .withTextSimilarityThreshold(1.0)
+                .withCodeSimilarityMetric(de.unitrier.st.stringsimilarity.equal.Variants::equal)
+                .withCodeBackupSimilarityMetric(null)
+                .withCodeSimilarityThreshold(1.0)
+        );
+        PostGroundTruth q_33076987_gt = PostGroundTruth.readFromCSV(pathToGroundTruth, postId);
+
+        q_33076987.processVersionHistory();
+
+        PostVersion version_2 = q_33076987.get(1);
+        List<PostBlockVersion> postBlocks =  version_2.getPostBlocks();
+        assertEquals(1, postBlocks.get(0).getPred().getLocalId().intValue());
+        assertEquals(2, postBlocks.get(1).getPred().getLocalId().intValue());
+        assertEquals(5, postBlocks.get(2).getPred().getLocalId().intValue());
+        assertEquals(6, postBlocks.get(3).getPred().getLocalId().intValue());
+        assertEquals(7, postBlocks.get(4).getPred().getLocalId().intValue());
+        assertEquals(8, postBlocks.get(5).getPred().getLocalId().intValue());
+    }
 }
