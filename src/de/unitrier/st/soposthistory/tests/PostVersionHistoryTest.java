@@ -781,7 +781,7 @@ class PostVersionHistoryTest {
     @Test
     void predContextLastPostBlockAnswer32841902() {
         int postId = 32841902;
-        PostVersionList q_10381975 = PostVersionList.readFromCSV(pathToPostVersionLists, postId, 1, false);
+        PostVersionList q_10381975 = PostVersionList.readFromCSV(pathToPostVersionLists, postId, 2, false);
         q_10381975.processVersionHistory(configEqual);
 
         PostVersion version_2 = q_10381975.getPostVersion(100687945);
@@ -790,8 +790,28 @@ class PostVersionHistoryTest {
         PostBlockVersion postBlock5 = version_2.getPostBlocks().get(4);
         assertNotNull(postBlock5.getPred());
         assertEquals(Integer.valueOf(2), postBlock5.getPred().getLocalId());
+
         PostBlockVersion postBlock6 = version_2.getPostBlocks().get(5);
         assertNotNull(postBlock6.getPred());
         assertEquals(Integer.valueOf(3), postBlock6.getPred().getLocalId());
+    }
+
+    @Test
+    void equalsContextAnswer37196630() {
+        int postId = 37196630;
+        PostVersionList a_37196630 = PostVersionList.readFromCSV(pathToPostVersionLists, postId, 2, false);
+        a_37196630.normalizeLinks();
+        a_37196630.processVersionHistory(configEqual);
+
+        PostVersion version_3 = a_37196630.getPostVersion(117953545);
+
+        // text block "which gives:" is present several times (version 1: localId 3; version 2: localId 3+7)
+        // correct match using context: localId 7
+        PostBlockVersion postBlock3 = version_3.getPostBlocks().get(2);
+        assertNull(postBlock3.getPred());
+
+        PostBlockVersion postBlock7 = version_3.getPostBlocks().get(6);
+        assertNotNull(postBlock7.getPred());
+        assertEquals(Integer.valueOf(3), postBlock7.getPred().getLocalId());
     }
 }
