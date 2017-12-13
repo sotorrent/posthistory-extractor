@@ -362,32 +362,32 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
         return connections;
     }
 
-    public int getPossibleConnections() {
-        return getPossibleConnections(PostBlockVersion.getAllPostBlockTypeIdFilters());
+    public int getPossibleComparisons() {
+        return getPossibleComparisons(PostBlockVersion.getAllPostBlockTypeIdFilters());
     }
 
-    public int getPossibleConnections(Set<Integer> postBlockTypeFilter) {
-        int possibleConnections = 0;
+    public int getPossibleComparisons(Set<Integer> postBlockTypeFilter) {
+        int possibleComparisons = 0;
         for (int postHistoryId : postHistoryIds) {
-            possibleConnections += getPossibleConnections(postHistoryId, postBlockTypeFilter);
+            possibleComparisons += getPossibleComparisons(postHistoryId, postBlockTypeFilter);
         }
-        return possibleConnections;
+        return possibleComparisons;
     }
 
-    public int getPossibleConnections(int postHistoryId) {
-        return getPossibleConnections(postHistoryId, PostBlockVersion.getAllPostBlockTypeIdFilters());
+    public int getPossibleComparisons(int postHistoryId) {
+        return getPossibleComparisons(postHistoryId, PostBlockVersion.getAllPostBlockTypeIdFilters());
     }
 
-    public int getPossibleConnections(int postHistoryId, Set<Integer> postBlockTypeFilter) {
+    public int getPossibleComparisons(int postHistoryId, Set<Integer> postBlockTypeFilter) {
         int index = postHistoryIds.indexOf(postHistoryId);
 
-        // first version cannot have connections
+        // first version cannot have comparisons
         if (index < 1) {
             return 0;
         }
 
-        // determine possible connections
-        int possibleConnections = 0;
+        // determine possible comparisons
+        int possibleComparisons = 0;
         List<PostBlockLifeSpanVersion> currentVersion = versions.get(postHistoryIds.get(index));
         List<PostBlockLifeSpanVersion> previousVersion = versions.get(postHistoryIds.get(index-1));
 
@@ -399,7 +399,7 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
             int previousVersionTextBlocks = Math.toIntExact(previousVersion.stream()
                     .filter(b -> b.getPostBlockTypeId() == TextBlockVersion.postBlockTypeId)
                     .count());
-            possibleConnections += currentVersionTextBlocks * previousVersionTextBlocks;
+            possibleComparisons += currentVersionTextBlocks * previousVersionTextBlocks;
         }
 
         // code blocks
@@ -410,10 +410,10 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
             int previousVersionCodeBlocks = Math.toIntExact(previousVersion.stream()
                     .filter(b -> b.getPostBlockTypeId() == CodeBlockVersion.postBlockTypeId)
                     .count());
-            possibleConnections += currentVersionCodeBlocks * previousVersionCodeBlocks;
+            possibleComparisons += currentVersionCodeBlocks * previousVersionCodeBlocks;
         }
 
-        return possibleConnections;
+        return possibleComparisons;
     }
 
     public List<Integer> getPostHistoryIds() {

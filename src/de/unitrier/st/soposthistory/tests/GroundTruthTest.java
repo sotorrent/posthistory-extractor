@@ -137,13 +137,13 @@ class GroundTruthTest {
     }
 
     @Test
-    void testPostBlockPossibleConnectionsComparison() {
+    void testPostBlockPossibleComparisonsAnswer22037280() {
         int postId = 22037280;
         PostVersionList a_22037280 = PostVersionList.readFromCSV(pathToPostHistory, postId, 2);
         PostGroundTruth a_22037280_gt = PostGroundTruth.readFromCSV(pathToGroundTruth, postId);
 
-        assertEquals(78, a_22037280.getPossibleConnections());
-        assertEquals(a_22037280.getPossibleConnections(), a_22037280_gt.getPossibleConnections());
+        assertEquals(78, a_22037280.getPossibleComparisons());
+        assertEquals(a_22037280.getPossibleComparisons(), a_22037280_gt.getPossibleComparisons());
     }
 
     @Test
@@ -251,14 +251,14 @@ class GroundTruthTest {
     }
 
     @Test
-    void testGetPossibleConnections() {
+    void testGetPossibleComparisons() {
         int postId = 22037280;
         PostVersionList a_22037280 = PostVersionList.readFromCSV(pathToPostHistory, postId, 2);
         PostGroundTruth a_22037280_gt = PostGroundTruth.readFromCSV(pathToGroundTruth, postId);
 
         assertEquals(7, a_22037280.size());
 
-        assertEquals(a_22037280.getPossibleConnections(), a_22037280_gt.getPossibleConnections());
+        assertEquals(a_22037280.getPossibleComparisons(), a_22037280_gt.getPossibleComparisons());
 
         for (PostVersion postVersion : a_22037280) {
             assertEquals(3, postVersion.getTextBlocks().size());
@@ -266,30 +266,30 @@ class GroundTruthTest {
         }
 
         Set<Integer> set = new HashSet<>();
-        assertEquals(0, a_22037280.getPossibleConnections(set));
+        assertEquals(0, a_22037280.getPossibleComparisons(set));
 
-        int possibleTextConnections = a_22037280.getPossibleConnections(TextBlockVersion.getPostBlockTypeIdFilter());
-        assertEquals(6 * 9, possibleTextConnections); // 6 versions with each 9=3*3 possible text connections
+        int possibleTextConnections = a_22037280.getPossibleComparisons(TextBlockVersion.getPostBlockTypeIdFilter());
+        assertEquals(6 * 9, possibleTextConnections); // 6 versions with each 9=3*3 possible text comparisons
 
-        int possibleCodeConnections = a_22037280.getPossibleConnections(CodeBlockVersion.getPostBlockTypeIdFilter());
-        assertEquals(6 * 4, possibleCodeConnections); // 6 versions with each 4=2*2 possible code connections
+        int possibleCodeConnections = a_22037280.getPossibleComparisons(CodeBlockVersion.getPostBlockTypeIdFilter());
+        assertEquals(6 * 4, possibleCodeConnections); // 6 versions with each 4=2*2 possible code comparisons
 
-        int possibleConnections = a_22037280.getPossibleConnections(PostBlockVersion.getAllPostBlockTypeIdFilters());
-        assertEquals(6 * 4 + 6 * 9, possibleConnections); // 6 versions with each 4=2*2 and 9=3*3 possible connections
+        int possibleConnections = a_22037280.getPossibleComparisons(PostBlockVersion.getAllPostBlockTypeIdFilters());
+        assertEquals(6 * 4 + 6 * 9, possibleConnections); // 6 versions with each 4=2*2 and 9=3*3 possible comparisons
 
-        // compare results of getPossibleConnections() for PostVersion and PostVersionList
+        // compare results of getPossibleComparisons() for PostVersion and PostVersionList
         possibleConnections = 0;
         for (PostVersion current : a_22037280) {
-            possibleConnections += current.getPossibleConnections();
+            possibleConnections += current.getPossibleComparisons();
         }
-        assertEquals(a_22037280.getPossibleConnections(), possibleConnections);
+        assertEquals(a_22037280.getPossibleComparisons(), possibleConnections);
 
         // check if post version pred and succ assignments are also set in case post history has not been processed yet
         possibleConnections = 0;
         for (PostVersion current : a_22037280) {
-            possibleConnections += current.getPossibleConnections();
+            possibleConnections += current.getPossibleComparisons();
         }
-        assertEquals(a_22037280.getPossibleConnections(), possibleConnections);
+        assertEquals(a_22037280.getPossibleComparisons(), possibleConnections);
     }
 
     @Test

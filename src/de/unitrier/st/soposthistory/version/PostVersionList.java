@@ -18,7 +18,6 @@ import org.hibernate.StatelessSession;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
@@ -430,12 +429,12 @@ public class PostVersionList extends LinkedList<PostVersion> {
         return connections;
     }
 
-    public int getPossibleConnections() {
-        return getPossibleConnections(PostBlockVersion.getAllPostBlockTypeIdFilters());
+    public int getPossibleComparisons() {
+        return getPossibleComparisons(PostBlockVersion.getAllPostBlockTypeIdFilters());
     }
 
-    public int getPossibleConnections(Set<Integer> postBlockTypeFilter) {
-        // we can only determine the possible connections if the list has been sorted and thus the predecessor references are set
+    public int getPossibleComparisons(Set<Integer> postBlockTypeFilter) {
+        // we can only determine the possible comparisons if the list has been sorted and thus the predecessor references are set
         if (!this.isSorted()) {
             String msg = "Possible connections can only be determined if PostVersionList has been sorted.";
             logger.warning(msg);
@@ -444,9 +443,8 @@ public class PostVersionList extends LinkedList<PostVersion> {
         int possibleConnections = 0;
         for (int i=1; i<this.size(); i++) {
             PostVersion currentVersion = this.get(i);
-            PostVersion previousVersion = this.get(i-1);
             // this also works if post history has not been extracted yet
-            possibleConnections += currentVersion.getPossibleConnections(postBlockTypeFilter);
+            possibleConnections += currentVersion.getPossibleComparisons(postBlockTypeFilter);
         }
         return possibleConnections;
     }

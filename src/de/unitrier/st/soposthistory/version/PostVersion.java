@@ -295,35 +295,35 @@ public class PostVersion {
         return connections;
     }
 
-    public int getPossibleConnections() {
-        return getPossibleConnections(PostBlockVersion.getAllPostBlockTypeIdFilters());
+    public int getPossibleComparisons() {
+        return getPossibleComparisons(PostBlockVersion.getAllPostBlockTypeIdFilters());
     }
 
-    public int getPossibleConnections(Set<Integer> postBlockTypeFilter) {
+    public int getPossibleComparisons(Set<Integer> postBlockTypeFilter) {
         // this only works if the post version list has already been sorted (meaning pred is set for this PostVersion)
 
-        // first version cannot have connections
+        // first version cannot have comparisons
         if (pred == null) {
             return 0;
         }
 
-        int possibleConnections = 0;
+        int possibleComparisons = 0;
 
         // text blocks
         if (postBlockTypeFilter.contains(TextBlockVersion.postBlockTypeId)) {
             int textBlockCount = getTextBlocks().size();
             int predTextBlockCount = pred.getTextBlocks().size();
-            possibleConnections += textBlockCount * predTextBlockCount;
+            possibleComparisons += textBlockCount * predTextBlockCount;
         }
 
         // code blocks
         if (postBlockTypeFilter.contains(CodeBlockVersion.postBlockTypeId)) {
             int codeBlockCount = getCodeBlocks().size();
             int predCodeBlockCount = pred.getCodeBlocks().size();
-            possibleConnections += codeBlockCount * predCodeBlockCount;
+            possibleComparisons += codeBlockCount * predCodeBlockCount;
         }
 
-        return possibleConnections;
+        return possibleComparisons;
     }
 
     public int getFailedPredecessorComparisons() {
