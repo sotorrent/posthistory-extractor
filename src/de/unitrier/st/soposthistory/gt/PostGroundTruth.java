@@ -416,6 +416,53 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
         return possibleComparisons;
     }
 
+    public int getPossibleConnections() {
+        return getPossibleConnections(PostBlockVersion.getAllPostBlockTypeIdFilters());
+    }
+
+    public int getPossibleConnections(Set<Integer> postBlockTypeFilter) {
+        int possibleConnections = 0;
+        for (int postHistoryId : postHistoryIds) {
+            possibleConnections += getPossibleConnections(postHistoryId, postBlockTypeFilter);
+        }
+        return possibleConnections;
+    }
+
+    public int getPossibleConnections(int postHistoryId) {
+        return getPossibleConnections(postHistoryId, PostBlockVersion.getAllPostBlockTypeIdFilters());
+    }
+
+    public int getPossibleConnections(int postHistoryId, Set<Integer> postBlockTypeFilter) {
+        int index = postHistoryIds.indexOf(postHistoryId);
+
+        // first version cannot have connections
+        if (index < 1) {
+            return 0;
+        }
+
+        // determine possible connections
+        int possibleConnections = 0;
+        List<PostBlockLifeSpanVersion> currentVersion = versions.get(postHistoryIds.get(index));
+
+        // text blocks
+        if (postBlockTypeFilter.contains(TextBlockVersion.postBlockTypeId)) {
+            int currentVersionTextBlocks = Math.toIntExact(currentVersion.stream()
+                    .filter(b -> b.getPostBlockTypeId() == TextBlockVersion.postBlockTypeId)
+                    .count());
+            possibleConnections += currentVersionTextBlocks;
+        }
+
+        // code blocks
+        if (postBlockTypeFilter.contains(CodeBlockVersion.postBlockTypeId)) {
+            int currentVersionCodeBlocks = Math.toIntExact(currentVersion.stream()
+                    .filter(b -> b.getPostBlockTypeId() == CodeBlockVersion.postBlockTypeId)
+                    .count());
+            possibleConnections += currentVersionCodeBlocks;
+        }
+
+        return possibleConnections;
+    }
+
     public List<Integer> getPostHistoryIds() {
         return postHistoryIds;
     }
