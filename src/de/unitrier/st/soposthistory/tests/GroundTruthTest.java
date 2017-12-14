@@ -274,22 +274,22 @@ class GroundTruthTest {
         int possibleCodeConnections = a_22037280.getPossibleComparisons(CodeBlockVersion.getPostBlockTypeIdFilter());
         assertEquals(6 * 4, possibleCodeConnections); // 6 versions with each 4=2*2 possible code comparisons
 
-        int possibleConnections = a_22037280.getPossibleComparisons(PostBlockVersion.getAllPostBlockTypeIdFilters());
-        assertEquals(6 * 4 + 6 * 9, possibleConnections); // 6 versions with each 4=2*2 and 9=3*3 possible comparisons
+        int possibleComparisons = a_22037280.getPossibleComparisons(PostBlockVersion.getAllPostBlockTypeIdFilters());
+        assertEquals(6 * 4 + 6 * 9, possibleComparisons); // 6 versions with each 4=2*2 and 9=3*3 possible comparisons
 
         // compare results of getPossibleComparisons() for PostVersion and PostVersionList
-        possibleConnections = 0;
+        possibleComparisons = 0;
         for (PostVersion current : a_22037280) {
-            possibleConnections += current.getPossibleComparisons();
+            possibleComparisons += current.getPossibleComparisons();
         }
-        assertEquals(a_22037280.getPossibleComparisons(), possibleConnections);
+        assertEquals(a_22037280.getPossibleComparisons(), possibleComparisons);
 
         // check if post version pred and succ assignments are also set in case post history has not been processed yet
-        possibleConnections = 0;
+        possibleComparisons = 0;
         for (PostVersion current : a_22037280) {
-            possibleConnections += current.getPossibleComparisons();
+            possibleComparisons += current.getPossibleComparisons();
         }
-        assertEquals(a_22037280.getPossibleComparisons(), possibleConnections);
+        assertEquals(a_22037280.getPossibleComparisons(), possibleComparisons);
     }
 
     @Test

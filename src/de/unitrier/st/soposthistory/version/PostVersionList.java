@@ -436,6 +436,26 @@ public class PostVersionList extends LinkedList<PostVersion> {
     public int getPossibleComparisons(Set<Integer> postBlockTypeFilter) {
         // we can only determine the possible comparisons if the list has been sorted and thus the predecessor references are set
         if (!this.isSorted()) {
+            String msg = "Possible comparisons can only be determined if PostVersionList has been sorted.";
+            logger.warning(msg);
+            throw new IllegalStateException(msg);
+        }
+        int possibleComparisons = 0;
+        for (int i=1; i<this.size(); i++) {
+            PostVersion currentVersion = this.get(i);
+            // this also works if post history has not been extracted yet
+            possibleComparisons += currentVersion.getPossibleComparisons(postBlockTypeFilter);
+        }
+        return possibleComparisons;
+    }
+
+    public int getPossibleConnections() {
+        return getPossibleConnections(PostBlockVersion.getAllPostBlockTypeIdFilters());
+    }
+
+    public int getPossibleConnections(Set<Integer> postBlockTypeFilter) {
+        // we can only determine the possible comparisons if the list has been sorted, because first element cannot have connections
+        if (!this.isSorted()) {
             String msg = "Possible connections can only be determined if PostVersionList has been sorted.";
             logger.warning(msg);
             throw new IllegalStateException(msg);
@@ -444,7 +464,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
         for (int i=1; i<this.size(); i++) {
             PostVersion currentVersion = this.get(i);
             // this also works if post history has not been extracted yet
-            possibleConnections += currentVersion.getPossibleComparisons(postBlockTypeFilter);
+            possibleConnections += currentVersion.getPossibleConnections(postBlockTypeFilter);
         }
         return possibleConnections;
     }

@@ -326,6 +326,21 @@ public class PostVersion {
         return possibleComparisons;
     }
 
+    public int getPossibleConnections() {
+        return getPossibleConnections(PostBlockVersion.getAllPostBlockTypeIdFilters());
+    }
+
+    public int getPossibleConnections(Set<Integer> postBlockTypeFilter) {
+        // this only works if the post version list has already been sorted (meaning pred is set for this PostVersion)
+
+        // first version cannot have connections
+        if (pred == null) {
+            return 0;
+        } else {
+            return getPostBlocks(postBlockTypeFilter).size();
+        }
+    }
+
     public int getFailedPredecessorComparisons() {
         return getFailedPredecessorComparisons(PostBlockVersion.getAllPostBlockTypeIdFilters());
     }
