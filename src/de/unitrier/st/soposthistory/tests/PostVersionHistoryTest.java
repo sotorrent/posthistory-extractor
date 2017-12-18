@@ -2,6 +2,7 @@ package de.unitrier.st.soposthistory.tests;
 
 import de.unitrier.st.soposthistory.Config;
 import de.unitrier.st.soposthistory.blocks.CodeBlockVersion;
+import de.unitrier.st.soposthistory.blocks.PostBlockSimilarity;
 import de.unitrier.st.soposthistory.blocks.PostBlockVersion;
 import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
 import de.unitrier.st.soposthistory.version.PostVersion;
@@ -28,11 +29,13 @@ class PostVersionHistoryTest {
 
     static Config configEqual = Config.DEFAULT
             .withTextSimilarityMetric(de.unitrier.st.stringsimilarity.equal.Variants::equal)
-            .withTextBackupSimilarityMetric(null)
             .withTextSimilarityThreshold(1.0)
+            .withTextBackupSimilarityMetric(null)
+            .withTextBackupSimilarityThreshold(1.0)
             .withCodeSimilarityMetric(de.unitrier.st.stringsimilarity.equal.Variants::equal)
+            .withCodeSimilarityThreshold(1.0)
             .withCodeBackupSimilarityMetric(null)
-            .withCodeSimilarityThreshold(1.0);
+            .withCodeBackupSimilarityThreshold(1.0);
 
     private void testPredecessorSimilarities(PostVersion postVersion) {
         for (PostBlockVersion currentPostBlockVersion : postVersion.getPostBlocks()) {
@@ -667,7 +670,8 @@ class PostVersionHistoryTest {
         assertThrows(InputTooShortException.class, () -> textBlock1.compareTo(textBlock2,
                 Config.DEFAULT.withTextBackupSimilarityMetric(null))
         );
-        assertEquals(0.0, textBlock1.compareTo(textBlock2, Config.EMPTY));
+        PostBlockSimilarity similarity = textBlock1.compareTo(textBlock2, Config.EMPTY);
+        assertEquals(0.0, similarity.getMetricResult());
 
         // code blocks
         CodeBlockVersion codeBlock1 = new CodeBlockVersion(1, 1);
@@ -679,7 +683,8 @@ class PostVersionHistoryTest {
         assertThrows(InputTooShortException.class, () -> codeBlock1.compareTo(codeBlock2,
                 Config.DEFAULT.withCodeBackupSimilarityMetric(null))
         );
-        assertEquals(0.0, codeBlock1.compareTo(codeBlock2, Config.EMPTY));
+        similarity = codeBlock1.compareTo(codeBlock2, Config.EMPTY);
+        assertEquals(0.0, similarity.getMetricResult());
     }
 
     @Test
@@ -699,6 +704,16 @@ class PostVersionHistoryTest {
     void testReset() {
         PostVersionList a_3758880 = PostVersionList.readFromCSV(pathToPostVersionLists, 3758880, 2, false);
 
+        Config config = Config.DEFAULT
+                .withTextSimilarityMetric(de.unitrier.st.stringsimilarity.set.Variants::fourGramOverlap)
+                .withTextSimilarityThreshold(0.6)
+                .withTextBackupSimilarityMetric(de.unitrier.st.stringsimilarity.edit.Variants::levenshtein)
+                .withTextBackupSimilarityThreshold(0.6)
+                .withCodeSimilarityMetric(de.unitrier.st.stringsimilarity.set.Variants::fourGramOverlap)
+                .withCodeSimilarityThreshold(0.6)
+                .withCodeBackupSimilarityMetric(de.unitrier.st.stringsimilarity.edit.Variants::levenshtein)
+                .withCodeBackupSimilarityThreshold(0.6);
+
         // there are 11 versions of this post
         assertEquals(11, a_3758880.size());
 
@@ -706,7 +721,7 @@ class PostVersionHistoryTest {
         assertEquals(47, a_3758880.getPostBlockVersionCount());
         assertEquals(a_3758880.getPostBlockVersionCount(), a_3758880.getPostBlockLifeSpans().size());
 
-        a_3758880.processVersionHistory();
+        a_3758880.processVersionHistory(config);
 
         // the post blocks have been extracted
         assertEquals(10, a_3758880.getPostBlockLifeSpans().size());

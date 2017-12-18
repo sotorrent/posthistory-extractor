@@ -35,9 +35,23 @@ public class TextBlockVersion extends PostBlockVersion {
     }
 
     @Override
-    public double compareTo(PostBlockVersion otherBlock, Config config) {
-        setSimilarityThreshold(config.getTextSimilarityThreshold());
+    public PostBlockSimilarity compareTo(PostBlockVersion otherBlock, Config config) {
         return compareTo(otherBlock, config.getTextSimilarityMetric(), config.getTextBackupSimilarityMetric());
+    }
+
+    @Override
+    void retrieveMatchingPredecessors(Config config) {
+        // retrieve predecessors with maximal similarity
+
+        // return if maximum similarity is below the configured similarity threshold
+        if (getMaxSimilarity() < Math.max
+                (config.getCodeSimilarityThreshold(),
+                        config.getCodeBackupSimilarityThreshold())) {
+            return;
+        }
+
+        // retrieve matching predecessors
+        retrieveMatchingPredecessors(config.getCodeSimilarityThreshold(), config.getCodeBackupSimilarityThreshold());
     }
 
     @Override

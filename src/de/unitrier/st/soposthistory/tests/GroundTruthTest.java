@@ -235,7 +235,6 @@ class GroundTruthTest {
                 assertEquals(0, currentPostBlockVersion.getMatchingPredecessors().size());
                 assertEquals(0, currentPostBlockVersion.getPredecessorSimilarities().size());
                 assertEquals(-1.0, currentPostBlockVersion.getMaxSimilarity());
-                assertEquals(-1.0, currentPostBlockVersion.getSimilarityThreshold());
                 assertFalse(currentPostBlockVersion.isLifeSpanExtracted());
             }
         }

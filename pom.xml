@@ -45,7 +45,7 @@
         <dependency>
             <groupId>de.unitrier.st</groupId>
             <artifactId>string-similarity</artifactId>
-            <version>1.3.0</version>
+            <version>1.3.1</version>
         </dependency>
         <!-- https://github.com/sotorrent/util/tree/master/releases/ -->
         <dependency>

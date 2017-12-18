@@ -252,15 +252,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
                 // set predecessors of text and code blocks if only one predecessor matches and if this predecessor is
                 // only matched by one block in the current version
                 for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks(postBlockTypeFilter)) {
-                      if (currentPostBlock.getMatchingPredecessors().size() == 1) {
-                        // only one matching predecessor found
-                        PostBlockVersion matchingPredecessor = currentPostBlock.getMatchingPredecessors().get(0);
-                        if (matchedPredecessors.get(matchingPredecessor).size() == 1 && matchingPredecessor.isAvailable()) {
-                            // the matched predecessor is only matched for currentPostBlock and is available
-                            currentPostBlock.setPred(matchingPredecessor);
-                            matchingPredecessor.setSucc(currentPostBlock);
-                        }
-                    }
+                    currentPostBlock.setUniqueMatchingPred(matchedPredecessors);
                 }
 
                 // next, try to set remaining predecessors using context (neighboring blocks of post block and matching predecessor)
