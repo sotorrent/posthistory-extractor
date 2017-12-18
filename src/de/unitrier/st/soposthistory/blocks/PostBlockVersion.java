@@ -71,7 +71,7 @@ public abstract class PostBlockVersion {
     private List<PostBlockVersion> matchingPredecessors;
     private Map<PostBlockVersion, Double> predecessorSimilarities;
     private double maxSimilarity;
-    private double similarityThreshold;
+    private double maxBackupSimilarity;
     private boolean lifeSpanExtracted; // for extraction of PostBlockLifeSpan
     private Set<PostBlockVersion> failedPredecessorsComparisons; // needed for metrics comparison
 
@@ -118,7 +118,7 @@ public abstract class PostBlockVersion {
         this.matchingPredecessors = new LinkedList<>();
         this.predecessorSimilarities = new HashMap<>();
         this.maxSimilarity = -1.0;
-        this.similarityThreshold = -1.0;
+        this.maxBackupSimilarity = -1.0;
         this.lifeSpanExtracted = false;
         this.failedPredecessorsComparisons = new HashSet<>();
     }
@@ -277,31 +277,43 @@ public abstract class PostBlockVersion {
         return pred;
     }
 
-    public void setPred(PostBlockVersion pred, double predSimilarity) {
+    private void setPred(PostBlockVersion pred) {
+        setPred(pred, getMaxSimilarity());
+    }
+
+    private void setPred(PostBlockVersion pred, double predSimilarity) {
         try {
+            // set pred and post block id of pred
             this.pred = pred;
-            this.predSimilarity = predSimilarity;
             this.predPostBlockId = pred.getId();
+            // set pred similarity
+            if (maxSimilarity == EQUALITY_SIMILARITY) {
+                this.predSimilarity = 1.0;
+                setPredEqual(true);
+            } else {
+                this.predSimilarity = predSimilarity;
+                setPredEqual(false);
+            }
+            // compute line-based diff to pred
             predDiff = diff(pred);
+            // mark predecessor as not available
+            pred.setNotAvailable();
         } catch (Exception e) {
             logger.warning("Unable to set predecessor " + pred);
             e.printStackTrace();
         }
     }
 
-    public void setPred(PostBlockVersion pred) {
-        if (maxSimilarity == EQUALITY_SIMILARITY) {
-            // pred is equal
-            setPred(pred, 1.0); // computes diff
-            setPredEqual(true);
-        } else {
-            // pred is similar
-            setPred(pred, maxSimilarity); // computes diff
-            setPredEqual(false);
+    public void setUniqueMatchingPred(Map<PostBlockVersion, List<PostBlockVersion>> matchedPredecessors) {
+        if (matchingPredecessors.size() == 1) {
+            // only one matching predecessor found
+            PostBlockVersion matchingPredecessor = matchingPredecessors.get(0);
+            if (matchedPredecessors.get(matchingPredecessor).size() == 1 && matchingPredecessor.isAvailable()) {
+                // the matched predecessor is only matched for currentPostBlock and is available
+                setPred(matchingPredecessor);
+                matchingPredecessor.setSucc(this);
+            }
         }
-
-        // mark predecessor as not available
-        pred.setNotAvailable();
     }
 
     public void setPredLocalId(Map<PostBlockVersion, List<PostBlockVersion>> matchedPredecessorsPreviousVersion) {
@@ -520,25 +532,27 @@ public abstract class PostBlockVersion {
         }
     }
 
-    abstract public double compareTo(PostBlockVersion otherBlock, Config config);
+    abstract public PostBlockSimilarity compareTo(PostBlockVersion otherBlock, Config config);
 
-    double compareTo(PostBlockVersion otherBlock,
+    PostBlockSimilarity compareTo(PostBlockVersion otherBlock,
                      BiFunction<String, String, Double> similarityMetric,
                      BiFunction<String, String, Double> backupSimilarityMetric) {
 
-        Double similarity;
+        PostBlockSimilarity similarity = new PostBlockSimilarity();
         try {
-            similarity = similarityMetric.apply(getContent(), otherBlock.getContent());
+            similarity.setMetricResult(similarityMetric.apply(getContent(), otherBlock.getContent()));
+            similarity.setBackupSimilarity(false);
         } catch (InputTooShortException e) {
             if (backupSimilarityMetric != null) {
-                similarity = backupSimilarityMetric.apply(getContent(), otherBlock.getContent());
+                similarity.setMetricResult(backupSimilarityMetric.apply(getContent(), otherBlock.getContent()));
+                similarity.setBackupSimilarity(true);
             } else {
                 throw e;
             }
         }
 
-        if (Util.lessThan(similarity, 0.0) || Util.greaterThan(similarity, 1.0)) {
-            String msg = "Similarity value must be in range [0.0, 1.0], but was " + similarity;
+        if (Util.lessThan(similarity.getMetricResult(), 0.0) || Util.greaterThan(similarity.getMetricResult(), 1.0)) {
+            String msg = "Metric result must be in range [0.0, 1.0], but was " + similarity.getMetricResult();
             logger.warning(msg);
             throw new IllegalSimilarityValueException(msg);
         }
@@ -560,25 +574,17 @@ public abstract class PostBlockVersion {
         return predecessorSimilarities;
     }
 
-    @Transient
-    public double getSimilarityThreshold() {
-        return similarityThreshold;
-    }
-
-    void setSimilarityThreshold(double similarityThreshold) {
-        this.similarityThreshold = similarityThreshold;
-    }
 
     @Transient
     public double getMaxSimilarity() {
-        return maxSimilarity;
+        return Math.max(maxSimilarity, maxBackupSimilarity);
     }
 
     public <T extends PostBlockVersion> List<PostBlockVersion> findMatchingPredecessors(List<T> previousVersionPostBlocks,
                                                                                         Config config,
                                                                                         Set<Integer> postBlockTypeFilter) {
         retrievePredecessorSimilarities(previousVersionPostBlocks, config, postBlockTypeFilter);
-        retrieveMatchingPredecessors();
+        retrieveMatchingPredecessors(config);
         return matchingPredecessors;
     }
 
@@ -601,41 +607,47 @@ public abstract class PostBlockVersion {
             // test equality
             boolean equal = getContent().equals(previousVersionPostBlock.getContent());
 
-            // compare post block version and, if configured, catch InputTooShortExceptions
-            double similarity;
-            try {
-                similarity = compareTo(previousVersionPostBlock, config);
-            } catch (InputTooShortException e) {
-                if (config.getCatchInputTooShortExceptions()) {
-                    failedPredecessorsComparisons.add(previousVersionPostBlock);
-                    similarity = 0.0;
-                } else {
-                    throw e;
-                }
-            }
-
             if (equal) {
                 // equal predecessors have similarity 10.0 (see final static constant EQUALITY_SIMILARITY)
                 predecessorSimilarities.put(previousVersionPostBlock, EQUALITY_SIMILARITY);
                 maxSimilarity = EQUALITY_SIMILARITY;
             } else {
-                predecessorSimilarities.put(previousVersionPostBlock, similarity);
-                if (similarity > maxSimilarity) {
-                    maxSimilarity = similarity;
+                // compare post block version and, if configured, catch InputTooShortExceptions
+                PostBlockSimilarity similarity;
+                try {
+                    similarity = compareTo(previousVersionPostBlock, config);
+                } catch (InputTooShortException e) {
+                    if (config.getCatchInputTooShortExceptions()) {
+                        failedPredecessorsComparisons.add(previousVersionPostBlock);
+                        similarity = new PostBlockSimilarity();
+                    } else {
+                        throw e;
+                    }
+                }
+
+                predecessorSimilarities.put(previousVersionPostBlock, similarity.getMetricResult());
+                if (similarity.isBackupSimilarity()) {
+                    if (similarity.getMetricResult() > maxBackupSimilarity) {
+                        maxBackupSimilarity = similarity.getMetricResult();
+                    }
+                } else {
+                    if (similarity.getMetricResult() > maxSimilarity) {
+                        maxSimilarity = similarity.getMetricResult();
+                    }
                 }
             }
         }
     }
 
-    private void retrieveMatchingPredecessors() {
+    abstract void retrieveMatchingPredecessors(Config config);
+
+    void retrieveMatchingPredecessors(double similarityThreshold, double backupSimilarityThreshold) {
         // retrieve predecessors with maximal similarity
 
-        // return if maximum similarity is below the configured similarity threshold
-        if (Util.lessThan(maxSimilarity, getSimilarityThreshold())) {
-            return;
-        }
+        // threshold check already conducted in subclasses (TextBlockVersion, CodeBlockVersion)
 
-        final double finalMaxSimilarity = maxSimilarity; // final value needed for lambda expression
+        // get max similarity, final value needed for lambda expression
+        final double finalMaxSimilarity = getMaxSimilarity();
 
         // get predecessors with max. similarity, sorted by similarity (may vary within Util.EPSILON)
         matchingPredecessors = predecessorSimilarities.entrySet()
