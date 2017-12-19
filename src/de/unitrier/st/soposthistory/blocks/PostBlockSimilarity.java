@@ -5,7 +5,11 @@ public class PostBlockSimilarity {
     private boolean isBackupSimilarity;
 
     PostBlockSimilarity() {
-        this(0.0, false);
+        this(-1.0, false);
+    }
+
+    PostBlockSimilarity(double metricResult) {
+        this(metricResult, false);
     }
 
     PostBlockSimilarity(double metricResult, boolean isBackupSimilarity) {

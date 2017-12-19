@@ -39,8 +39,8 @@ class PostVersionHistoryTest {
 
     private void testPredecessorSimilarities(PostVersion postVersion) {
         for (PostBlockVersion currentPostBlockVersion : postVersion.getPostBlocks()) {
-            for (double similarity : currentPostBlockVersion.getPredecessorSimilarities().values()) {
-                assertThat(similarity, either(
+            for (PostBlockSimilarity similarity : currentPostBlockVersion.getPredecessorSimilarities().values()) {
+                assertThat(similarity.getMetricResult(), either(
                         allOf(greaterThanOrEqualTo(0.0), lessThanOrEqualTo(1.0)))
                         .or(equalTo(EQUALITY_SIMILARITY))
                 );

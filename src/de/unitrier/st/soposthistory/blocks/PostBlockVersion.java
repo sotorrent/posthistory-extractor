@@ -69,9 +69,8 @@ public abstract class PostBlockVersion {
     private PostBlockVersion rootPostBlock;
     private boolean isAvailable; // false if this post block is set as a predecessor of a block in the next version
     private List<PostBlockVersion> matchingPredecessors;
-    private Map<PostBlockVersion, Double> predecessorSimilarities;
-    protected double maxSimilarity;
-    protected double maxBackupSimilarity;
+    private Map<PostBlockVersion, PostBlockSimilarity> predecessorSimilarities;
+    protected PostBlockSimilarity maxSimilarity;
     private boolean lifeSpanExtracted; // for extraction of PostBlockLifeSpan
     private Set<PostBlockVersion> failedPredecessorsComparisons; // needed for metrics comparison
 
@@ -117,8 +116,7 @@ public abstract class PostBlockVersion {
         this.isAvailable = true;
         this.matchingPredecessors = new LinkedList<>();
         this.predecessorSimilarities = new HashMap<>();
-        this.maxSimilarity = -1.0;
-        this.maxBackupSimilarity = -1.0;
+        this.maxSimilarity = new PostBlockSimilarity();
         this.lifeSpanExtracted = false;
         this.failedPredecessorsComparisons = new HashSet<>();
     }
@@ -278,13 +276,8 @@ public abstract class PostBlockVersion {
     }
 
     @Transient
-    public double getMaxSimilarity() {
+    public PostBlockSimilarity getMaxSimilarity() {
         return maxSimilarity;
-    }
-
-    @Transient
-    public double getMaxBackupSimilarity() {
-        return maxBackupSimilarity;
     }
 
     private void setPred(PostBlockVersion pred) {
@@ -293,11 +286,11 @@ public abstract class PostBlockVersion {
             this.pred = pred;
             this.predPostBlockId = pred.getId();
             // set pred similarity
-            if (maxSimilarity == EQUALITY_SIMILARITY) {
+            if (maxSimilarity.getMetricResult() == EQUALITY_SIMILARITY) {
                 this.predSimilarity = 1.0;
                 setPredEqual(true);
             } else {
-                this.predSimilarity = Math.max(maxSimilarity, maxBackupSimilarity);
+                this.predSimilarity = maxSimilarity.getMetricResult();
                 setPredEqual(false);
             }
             // compute line-based diff to pred
@@ -544,14 +537,18 @@ public abstract class PostBlockVersion {
                      BiFunction<String, String, Double> similarityMetric,
                      BiFunction<String, String, Double> backupSimilarityMetric) {
 
-        PostBlockSimilarity similarity = new PostBlockSimilarity();
+        PostBlockSimilarity similarity;
         try {
-            similarity.setMetricResult(similarityMetric.apply(getContent(), otherBlock.getContent()));
-            similarity.setBackupSimilarity(false);
+            similarity = new PostBlockSimilarity(
+                    similarityMetric.apply(getContent(), otherBlock.getContent()),
+                    false
+            );
         } catch (InputTooShortException e) {
             if (backupSimilarityMetric != null) {
-                similarity.setMetricResult(backupSimilarityMetric.apply(getContent(), otherBlock.getContent()));
-                similarity.setBackupSimilarity(true);
+                similarity = new PostBlockSimilarity(
+                        backupSimilarityMetric.apply(getContent(), otherBlock.getContent()),
+                        true
+                );
             } else {
                 throw e;
             }
@@ -576,7 +573,7 @@ public abstract class PostBlockVersion {
     }
 
     @Transient
-    public Map<PostBlockVersion, Double> getPredecessorSimilarities() {
+    public Map<PostBlockVersion, PostBlockSimilarity> getPredecessorSimilarities() {
         return predecessorSimilarities;
     }
 
@@ -604,16 +601,17 @@ public abstract class PostBlockVersion {
                 continue;
             }
 
+            PostBlockSimilarity similarity;
             // test equality
             boolean equal = getContent().equals(previousVersionPostBlock.getContent());
 
             if (equal) {
                 // equal predecessors have similarity 10.0 (see final static constant EQUALITY_SIMILARITY)
-                predecessorSimilarities.put(previousVersionPostBlock, EQUALITY_SIMILARITY);
-                maxSimilarity = EQUALITY_SIMILARITY;
+                similarity = new PostBlockSimilarity(EQUALITY_SIMILARITY);
+                predecessorSimilarities.put(previousVersionPostBlock, similarity);
+                maxSimilarity = similarity;
             } else {
                 // compare post block version and, if configured, catch InputTooShortExceptions
-                PostBlockSimilarity similarity;
                 try {
                     similarity = compareTo(previousVersionPostBlock, config);
                 } catch (InputTooShortException e) {
@@ -625,15 +623,9 @@ public abstract class PostBlockVersion {
                     }
                 }
 
-                predecessorSimilarities.put(previousVersionPostBlock, similarity.getMetricResult());
-                if (similarity.isBackupSimilarity()) {
-                    if (similarity.getMetricResult() > maxBackupSimilarity) {
-                        maxBackupSimilarity = similarity.getMetricResult();
-                    }
-                } else {
-                    if (similarity.getMetricResult() > maxSimilarity) {
-                        maxSimilarity = similarity.getMetricResult();
-                    }
+                predecessorSimilarities.put(previousVersionPostBlock, similarity);
+                if (similarity.getMetricResult() > maxSimilarity.getMetricResult()) {
+                    maxSimilarity = similarity;
                 }
             }
         }
@@ -647,15 +639,15 @@ public abstract class PostBlockVersion {
         // threshold check already conducted in subclasses (TextBlockVersion, CodeBlockVersion)
 
         // get max similarity, final value needed for lambda expression
-        final double finalMaxSimilarity = Math.max(maxSimilarity, maxBackupSimilarity);
+        final double finalMaxSimilarity = maxSimilarity.getMetricResult();
 
         // get predecessors with max. similarity, sorted by similarity (may vary within Util.EPSILON)
         matchingPredecessors = predecessorSimilarities.entrySet()
                 .stream()
-                .filter(e -> Util.equals(e.getValue(), finalMaxSimilarity))
+                .filter(e -> Util.equals(e.getValue().getMetricResult(), finalMaxSimilarity))
                 .sorted((v1, v2) -> {
                     // sort descending according to similarity
-                    int result = Double.compare(v2.getValue(), v1.getValue());
+                    int result = Double.compare(v2.getValue().getMetricResult(), v1.getValue().getMetricResult());
                     if (result == 0) {
                         // in case of same similarity, sort ascending according to local id
                         return Integer.compare(v1.getKey().getLocalId(), v2.getKey().getLocalId());
