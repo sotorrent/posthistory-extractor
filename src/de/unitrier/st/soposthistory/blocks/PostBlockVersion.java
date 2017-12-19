@@ -277,6 +277,16 @@ public abstract class PostBlockVersion {
         return pred;
     }
 
+    @Transient
+    public double getMaxSimilarity() {
+        return maxSimilarity;
+    }
+
+    @Transient
+    public double getMaxBackupSimilarity() {
+        return maxBackupSimilarity;
+    }
+
     private void setPred(PostBlockVersion pred) {
         try {
             // set pred and post block id of pred
