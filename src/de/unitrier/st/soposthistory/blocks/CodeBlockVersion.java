@@ -45,15 +45,18 @@ public class CodeBlockVersion extends PostBlockVersion {
     void retrieveMatchingPredecessors(Config config) {
         // retrieve predecessors with maximal similarity
 
-        // return if maximum similarity is below the configured similarity threshold
-        if (getMaxSimilarity() < Math.max
-                (config.getTextSimilarityThreshold(),
-                config.getTextBackupSimilarityThreshold())) {
+        // return if maximum similarity is below the configured similarity thresholds
+        boolean similarityBelowThreshold = maxSimilarity < config.getCodeSimilarityThreshold();
+        boolean backupSimilarityBelowThreshold = maxBackupSimilarity < config.getCodeBackupSimilarityThreshold();
+        boolean backupMetricConfigured = config.getCodeBackupSimilarityMetric() != null;
+
+        if ((!backupMetricConfigured && similarityBelowThreshold)
+                || (backupMetricConfigured && similarityBelowThreshold && backupSimilarityBelowThreshold)) {
             return;
         }
 
         // retrieve matching predecessors
-        retrieveMatchingPredecessors(config.getTextSimilarityThreshold(), config.getTextBackupSimilarityThreshold());
+        retrieveMatchingPredecessors(config.getCodeSimilarityThreshold(), config.getCodeBackupSimilarityThreshold());
     }
 
     @Override

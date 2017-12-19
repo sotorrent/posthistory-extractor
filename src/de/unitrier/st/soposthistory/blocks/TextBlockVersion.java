@@ -43,15 +43,18 @@ public class TextBlockVersion extends PostBlockVersion {
     void retrieveMatchingPredecessors(Config config) {
         // retrieve predecessors with maximal similarity
 
-        // return if maximum similarity is below the configured similarity threshold
-        if (getMaxSimilarity() < Math.max
-                (config.getCodeSimilarityThreshold(),
-                        config.getCodeBackupSimilarityThreshold())) {
+        // return if maximum similarity is below the configured similarity thresholds
+        boolean similarityBelowThreshold = maxSimilarity < config.getTextSimilarityThreshold();
+        boolean backupSimilarityBelowThreshold = maxBackupSimilarity < config.getTextBackupSimilarityThreshold();
+        boolean backupMetricConfigured = config.getTextBackupSimilarityMetric() != null;
+
+        if ((!backupMetricConfigured && similarityBelowThreshold)
+                || (backupMetricConfigured && similarityBelowThreshold && backupSimilarityBelowThreshold)) {
             return;
         }
 
         // retrieve matching predecessors
-        retrieveMatchingPredecessors(config.getCodeSimilarityThreshold(), config.getCodeBackupSimilarityThreshold());
+        retrieveMatchingPredecessors(config.getTextSimilarityThreshold(), config.getTextBackupSimilarityThreshold());
     }
 
     @Override

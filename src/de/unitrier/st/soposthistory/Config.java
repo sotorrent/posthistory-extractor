@@ -63,13 +63,13 @@ public class Config {
             false,
             true,
             (str1, str2) -> 0.0,
-            0.6,
+            1.0,
             null,
-            0.6,
+            1.0,
             (str1, str2) -> 0.0,
-            0.6,
+            1.0,
             null,
-            0.6
+            1.0
     );
 
     public static final Config DEFAULT = new Config(

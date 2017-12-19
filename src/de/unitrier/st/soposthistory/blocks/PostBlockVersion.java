@@ -70,8 +70,8 @@ public abstract class PostBlockVersion {
     private boolean isAvailable; // false if this post block is set as a predecessor of a block in the next version
     private List<PostBlockVersion> matchingPredecessors;
     private Map<PostBlockVersion, Double> predecessorSimilarities;
-    private double maxSimilarity;
-    private double maxBackupSimilarity;
+    protected double maxSimilarity;
+    protected double maxBackupSimilarity;
     private boolean lifeSpanExtracted; // for extraction of PostBlockLifeSpan
     private Set<PostBlockVersion> failedPredecessorsComparisons; // needed for metrics comparison
 
@@ -278,10 +278,6 @@ public abstract class PostBlockVersion {
     }
 
     private void setPred(PostBlockVersion pred) {
-        setPred(pred, getMaxSimilarity());
-    }
-
-    private void setPred(PostBlockVersion pred, double predSimilarity) {
         try {
             // set pred and post block id of pred
             this.pred = pred;
@@ -291,7 +287,7 @@ public abstract class PostBlockVersion {
                 this.predSimilarity = 1.0;
                 setPredEqual(true);
             } else {
-                this.predSimilarity = predSimilarity;
+                this.predSimilarity = Math.max(maxSimilarity, maxBackupSimilarity);
                 setPredEqual(false);
             }
             // compute line-based diff to pred
@@ -574,12 +570,6 @@ public abstract class PostBlockVersion {
         return predecessorSimilarities;
     }
 
-
-    @Transient
-    public double getMaxSimilarity() {
-        return Math.max(maxSimilarity, maxBackupSimilarity);
-    }
-
     public <T extends PostBlockVersion> List<PostBlockVersion> findMatchingPredecessors(List<T> previousVersionPostBlocks,
                                                                                         Config config,
                                                                                         Set<Integer> postBlockTypeFilter) {
@@ -647,7 +637,7 @@ public abstract class PostBlockVersion {
         // threshold check already conducted in subclasses (TextBlockVersion, CodeBlockVersion)
 
         // get max similarity, final value needed for lambda expression
-        final double finalMaxSimilarity = getMaxSimilarity();
+        final double finalMaxSimilarity = Math.max(maxSimilarity, maxBackupSimilarity);
 
         // get predecessors with max. similarity, sorted by similarity (may vary within Util.EPSILON)
         matchingPredecessors = predecessorSimilarities.entrySet()
