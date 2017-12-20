@@ -23,6 +23,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -91,7 +92,7 @@ public class PostHistoryIterator {
                 .buildSessionFactory();
     }
 
-    public void extractAndSavePostIds() {
+    public void extractSaveAndSplitPostIds() {
         if (sessionFactory == null) {
             throw new IllegalStateException("Static session factory not created yet.");
         }
@@ -284,8 +285,6 @@ public class PostHistoryIterator {
                 throw new IllegalStateException("Static session factory not created yet.");
             }
 
-
-
             // read post ids from CSV file and process them
             File inputFile = Paths.get(dataDir.toString(), filename).toFile();
             if (!inputFile.exists()) {
@@ -312,10 +311,13 @@ public class PostHistoryIterator {
                         int postId = Integer.parseInt(record.get("PostId"));
                         int postTypeId = Integer.parseInt(record.get("PostTypeId"));
 
+                        // log only every LOG_PACE record
                         if (i == 0 || i == recordCount-1 || i % LOG_PACE == 0) {
-                            // do not log all records
-                            logger.info("Thread " + partition + ": Current PostId: " + postId + " (PostTypeId: "
-                                    + postTypeId + "; record " + i + " of " + recordCount + ")");
+                            // Locale.ROOT -> force '.' as decimal separator
+                            String progress = String.format(Locale.ROOT, "%.2f%%", (((double)(i+1))/recordCount*100));
+                            logger.info( "Thread " + partition + ": Current PostId: " + postId
+                                    + " (PostTypeId: " + postTypeId
+                                    + "; record " + (i+1) + " of " + recordCount + "; " + progress + ")");
                         }
 
                         if (postTypeId == 1 || postTypeId == 2) { // question or answer

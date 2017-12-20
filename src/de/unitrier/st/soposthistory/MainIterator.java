@@ -14,7 +14,8 @@ class MainIterator {
 
         Options options = new Options();
 
-        Option dataDirOption = new Option("d", "data-dir", true, "path to data directory (used to store post id lists");
+        Option dataDirOption = new Option("d", "data-dir", true,
+                "path to data directory (used to store post id lists");
         dataDirOption.setRequired(true);
         options.addOption(dataDirOption);
 
@@ -22,6 +23,11 @@ class MainIterator {
                 "path to hibernate config file");
         hibernateConfigFileOption.setRequired(true);
         options.addOption(hibernateConfigFileOption);
+
+        Option partitionCountOption = new Option("p", "partition-count", true,
+                "number of partitions created from post id lists (one worker thread per partition, default value: 4)");
+        partitionCountOption.setRequired(false);
+        options.addOption(partitionCountOption);
 
         Option tagsOption = new Option("t", "tags", true,
                 "tags for filtering questions and answers (separated by a space)");
@@ -44,17 +50,23 @@ class MainIterator {
         Path dataDirPath = Paths.get(commandLine.getOptionValue("data-dir"));
         Path hibernateConfigFilePath = Paths.get(commandLine.getOptionValue("hibernate-config"));
         String[] tags = {}; // no tags provided -> all posts
+        int partitionCount = 4;
 
         if (commandLine.hasOption("tags")) {
             tags = commandLine.getOptionValue("tags").split(" ");
         }
 
+        if (commandLine.hasOption("partition-count")) {
+            partitionCount = Integer.parseInt(commandLine.getOptionValue("partition-count"));
+        }
+
         PostHistoryIterator.createSessionFactory(hibernateConfigFilePath);
 
-        PostHistoryIterator postHistoryIterator = new PostHistoryIterator(dataDirPath, "all",
-                4, tags);
+        PostHistoryIterator postHistoryIterator = new PostHistoryIterator(
+                dataDirPath, "all", partitionCount, tags
+        );
 
-        postHistoryIterator.extractAndSavePostIds(); // including split
+        postHistoryIterator.extractSaveAndSplitPostIds(); // including split
 
         postHistoryIterator.extractDataFromPostHistory("questions");
         postHistoryIterator.extractDataFromPostHistory("answers");
