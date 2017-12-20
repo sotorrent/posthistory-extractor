@@ -5,6 +5,7 @@ import de.unitrier.st.soposthistory.Config;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 import java.util.Set;
 
 @Entity
@@ -27,16 +28,19 @@ public class CodeBlockVersion extends PostBlockVersion {
     }
 
     @Override
+    @Transient
     public int getPostBlockTypeId() {
         return CodeBlockVersion.postBlockTypeId;
     }
 
     @Override
+    @Transient
     public boolean isSelected(Set<Integer> postBlockTypeFilter) {
         return postBlockTypeFilter.contains(CodeBlockVersion.postBlockTypeId);
     }
 
     @Override
+    @Transient
     public PostBlockSimilarity compareTo(PostBlockVersion otherBlock, Config config) {
         return compareTo(otherBlock, config.getCodeSimilarityMetric(), config.getCodeBackupSimilarityMetric());
     }

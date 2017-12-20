@@ -261,10 +261,12 @@ public class PostVersion {
         }
     }
 
+    @Transient
     public Set<PostBlockConnection> getConnections() {
         return getConnections(PostBlockVersion.getAllPostBlockTypeIdFilters());
     }
 
+    @Transient
     public Set<PostBlockConnection> getConnections(Set<Integer> postBlockTypeFilter) {
         HashSet<PostBlockConnection> connections = new HashSet<>();
 
@@ -295,10 +297,12 @@ public class PostVersion {
         return connections;
     }
 
+    @Transient
     public int getPossibleComparisons() {
         return getPossibleComparisons(PostBlockVersion.getAllPostBlockTypeIdFilters());
     }
 
+    @Transient
     public int getPossibleComparisons(Set<Integer> postBlockTypeFilter) {
         // this only works if the post version list has already been sorted (meaning pred is set for this PostVersion)
 
@@ -326,10 +330,12 @@ public class PostVersion {
         return possibleComparisons;
     }
 
+    @Transient
     public int getPossibleConnections() {
         return getPossibleConnections(PostBlockVersion.getAllPostBlockTypeIdFilters());
     }
 
+    @Transient
     public int getPossibleConnections(Set<Integer> postBlockTypeFilter) {
         // this only works if the post version list has already been sorted (meaning pred is set for this PostVersion)
 
@@ -341,10 +347,12 @@ public class PostVersion {
         }
     }
 
+    @Transient
     public int getFailedPredecessorComparisons() {
         return getFailedPredecessorComparisons(PostBlockVersion.getAllPostBlockTypeIdFilters());
     }
 
+    @Transient
     public int getFailedPredecessorComparisons(Set<Integer> postBlockTypeFilter) {
         int sum = 0;
         for (PostBlockVersion postBlockVersion : postBlocks) {

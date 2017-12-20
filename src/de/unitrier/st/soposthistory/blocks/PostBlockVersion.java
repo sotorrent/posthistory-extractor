@@ -531,6 +531,7 @@ public abstract class PostBlockVersion {
         }
     }
 
+    @Transient
     abstract public PostBlockSimilarity compareTo(PostBlockVersion otherBlock, Config config);
 
     PostBlockSimilarity compareTo(PostBlockVersion otherBlock,
@@ -577,6 +578,7 @@ public abstract class PostBlockVersion {
         return predecessorSimilarities;
     }
 
+    @Transient
     public <T extends PostBlockVersion> List<PostBlockVersion> findMatchingPredecessors(List<T> previousVersionPostBlocks,
                                                                                         Config config,
                                                                                         Set<Integer> postBlockTypeFilter) {
@@ -665,18 +667,22 @@ public abstract class PostBlockVersion {
         }
     }
 
+    @Transient
     abstract public boolean isSelected(Set<Integer> postBlockTypeFilter);
 
+    @Transient
     abstract public int getPostBlockTypeId();
 
     public static Set<Integer> getAllPostBlockTypeIdFilters() {
         return Sets.newHashSet(TextBlockVersion.postBlockTypeId, CodeBlockVersion.postBlockTypeId);
     }
 
+    @Transient
     public Set<PostBlockVersion> getFailedPredecessorsComparisons() {
         return getFailedPredecessorsComparisons(getAllPostBlockTypeIdFilters());
     }
 
+    @Transient
     public Set<PostBlockVersion> getFailedPredecessorsComparisons(Set<Integer> postBlockTypeFilter) {
         return failedPredecessorsComparisons.stream()
                 .filter(b -> b.isSelected(postBlockTypeFilter))
