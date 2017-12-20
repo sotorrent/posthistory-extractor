@@ -14,7 +14,7 @@ class MainIterator {
 
         Options options = new Options();
 
-        Option dataDirOption = new Option("d", "data-dir", true, "path to data directory");
+        Option dataDirOption = new Option("d", "data-dir", true, "path to data directory (used to store post id lists");
         dataDirOption.setRequired(true);
         options.addOption(dataDirOption);
 

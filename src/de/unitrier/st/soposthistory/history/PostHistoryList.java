@@ -16,28 +16,16 @@ import java.util.LinkedList;
 import java.util.logging.Logger;
 
 public class PostHistoryList extends LinkedList<PostHistory> {
-    // TODO: Merge with PostHistoryIterator?
-
-    private static final Path logFileDir  = Paths.get(System.getProperty("user.dir"));
-    private static final CSVFormat outputCSVFormat;
-    private static final CSVFormat inputCSVFormat;
 
     private static Logger logger = null;
+    private static final CSVFormat outputCSVFormat;
+    private static final CSVFormat inputCSVFormat;
     public static SessionFactory sessionFactory = null;
 
     private int postId;
     private int postTypeId;
 
     static {
-        // ensure that log dir exists
-        try {
-            if (!Files.exists(logFileDir)) {
-                Files.createDirectory(logFileDir);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         // configure logger
         try {
             logger = Util.getClassLogger(PostHistoryList.class);
