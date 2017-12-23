@@ -78,12 +78,12 @@ public class Config {
             false,
             de.unitrier.st.stringsimilarity.profile.Variants::manhattanFourGramNormalized,
             0.17,
-            de.unitrier.st.stringsimilarity.profile.Variants::cosineTokenNormalizedBool,
-            0.32,
-            de.unitrier.st.stringsimilarity.fingerprint.Variants::winnowingFourGramOptimalAlignment,
-            0.25,
-            de.unitrier.st.stringsimilarity.profile.Variants::cosineTokenNormalizedBool,
-            0.38
+            de.unitrier.st.stringsimilarity.profile.Variants::cosineTokenNormalizedTermFrequency,
+            0.37,
+            de.unitrier.st.stringsimilarity.fingerprint.Variants::winnowingFourGramDiceNormalized,
+            0.23,
+            de.unitrier.st.stringsimilarity.profile.Variants::cosineTokenNormalizedNormalizedTermFrequency,
+            0.26
     );
 
     public BiFunction<String, String, Double> getTextSimilarityMetric() {
