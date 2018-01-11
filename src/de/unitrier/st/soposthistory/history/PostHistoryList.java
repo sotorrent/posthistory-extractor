@@ -160,4 +160,12 @@ public class PostHistoryList extends LinkedList<PostHistory> {
             e.printStackTrace();
         }
     }
+
+    public int getPostId() {
+        return postId;
+    }
+
+    public int getPostTypeId() {
+        return postTypeId;
+    }
 }

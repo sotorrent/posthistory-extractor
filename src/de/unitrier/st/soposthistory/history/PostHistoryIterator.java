@@ -266,10 +266,12 @@ public class PostHistoryIterator {
     }
 
     private class ExtractionThread extends Thread {
+        private final String baseFilename;
         private final String filename;
         private final int partition;
 
         ExtractionThread(String baseFilename, int partition) {
+            this.baseFilename = baseFilename;
             this.filename = baseFilename + "_" + partition + ".csv";
             this.partition = partition;
         }
@@ -296,6 +298,8 @@ public class PostHistoryIterator {
                     "and diffs back to database...");
 
             // read all PostIds from the CSV file and extract history from table PostHistory
+            List<PostVersionList> postsWithoutVersions = new LinkedList<>(); // store posts without extracted versions
+            int postsWithVersionsCount = 0;
             Transaction t = null; // see https://docs.jboss.org/hibernate/orm/3.3/reference/en/html/transactions.html
             try (StatelessSession session = sessionFactory.openStatelessSession()) {
                 try (CSVParser csvParser = new CSVParser(
@@ -336,6 +340,7 @@ public class PostHistoryIterator {
 
                             ScrollableResults postHistoryIterator = session.createQuery(currentPostHistoryQuery)
                                     .scroll(ScrollMode.FORWARD_ONLY);
+
                             while (postHistoryIterator.next()) {
                                 // first, get one PostHistory entity from the SO database schema...
                                 PostHistory currentPostHistoryEntity = (PostHistory)postHistoryIterator.get(0);
@@ -358,23 +363,39 @@ public class PostHistoryIterator {
                                 postVersionList.add(currentPostVersion);
                             }
 
-                            // sort post history chronologically (according to post history id)
-                            postVersionList.sort();
+                            if (postVersionList.size() == 0) {
+                                logger.info("Thread " + partition + ": " + "No versions extracted for PostId " + postId);
+                                postsWithoutVersions.add(postVersionList);
+                            } else {
+                                postsWithVersionsCount++;
 
-                            // (1) set pred and succ references for post versions
-                            // (2) compute similarity for text and code blocks
-                            // (3) compute diffs for similar text and code blocks
-                            postVersionList.processVersionHistory();
+                                // sort post history chronologically (according to post history id)
+                                postVersionList.sort();
 
-                            // write post history versions to database and update post blocks
-                            postVersionList.insert(session);
+                                // (1) set pred and succ references for post versions
+                                // (2) compute similarity for text and code blocks
+                                // (3) compute diffs for similar text and code blocks
+                                postVersionList.processVersionHistory();
+
+                                // write post history versions to database and update post blocks
+                                postVersionList.insert(session);
+                            }
 
                             // commit transaction
                             t.commit();
                         }
                     }
 
-                    logger.info("Thread " + partition + ": All PostIds have been processed.");
+                    int processedPostsCount = postsWithVersionsCount + postsWithoutVersions.size();
+                    logger.info("Thread " + partition + ": " + processedPostsCount + " PostIds have been processed.");
+                    if (processedPostsCount != recordCount) {
+                        logger.warning("Thread " + partition + ": Processed post count does not match record count " +
+                                "(records: " + recordCount + "; processed posts: " + processedPostsCount + ")");
+                    }
+
+                    logger.info("Thread " + partition + ": Writing PostIds of " + postsWithoutVersions.size()
+                            + " posts for which no versions have been extracted...");
+                    writePostIdsWithoutVersionsToCSV(postsWithoutVersions);
 
                 } catch (IOException e) {
                     logger.warning(Util.exceptionStackTraceToString(e));
@@ -384,6 +405,26 @@ public class PostHistoryIterator {
                 if (t != null) {
                     t.rollback();
                 }
+            }
+        }
+
+        private void writePostIdsWithoutVersionsToCSV(List<PostVersionList> postHistoryLists) {
+            String filename =  baseFilename + "_" + partition + "_no_versions.csv";
+            File outputFile = Paths.get(dataDir.toString(), filename).toFile();
+            if (outputFile.exists()) {
+                if (!outputFile.delete()) {
+                    throw new IllegalStateException("Error while deleting output file: " + outputFile);
+                }
+            }
+            logger.info("Writing data to CSV file " + outputFile.getName() + " ...");
+            try (CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(outputFile), csvFormat)) {
+                // header is automatically written
+                // write postIds along with postTypeId
+                for (PostVersionList postHistoryList : postHistoryLists) {
+                    csvPrinter.printRecord(postHistoryList.getPostId(), postHistoryList.getPostTypeId());
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
