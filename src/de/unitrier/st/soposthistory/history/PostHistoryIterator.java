@@ -305,6 +305,8 @@ public class PostHistoryIterator {
                     List<CSVRecord> records = csvParser.getRecords();
                     int recordCount = records.size();
 
+                    logger.info("Thread " + partition + ": " + recordCount + " posts read.");
+
                     // iterate over records
                     for (int i=0; i<recordCount; i++) {
                         CSVRecord record = records.get(i);
@@ -371,12 +373,12 @@ public class PostHistoryIterator {
                     logger.info("Thread " + partition + ": All PostIds have been processed.");
 
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.warning(Util.exceptionStackTraceToString(e));
                 }
             } catch (RuntimeException e) {
+                logger.warning(Util.exceptionStackTraceToString(e));
                 if (t != null) {
                     t.rollback();
-                    e.printStackTrace();
                 }
             }
         }
