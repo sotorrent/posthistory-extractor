@@ -206,6 +206,12 @@ public class PostHistory {
         postBlocks = new LinkedList<>();
         localIdCount = 0;
 
+        // the text may be null, see, e.g., PostId 2967852, PostHistoryId 6127192
+        if (text == null) {
+            text = "";
+            return;
+        }
+
         // http://stackoverflow.com/a/454913
         String[] lines = text.split("&#xD;&#xA;");
         PostBlockVersion currentPostBlock = null;
