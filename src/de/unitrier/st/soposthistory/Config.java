@@ -79,7 +79,7 @@ public class Config {
             de.unitrier.st.stringsimilarity.profile.Variants::manhattanFourGramNormalized,
             0.17,
             de.unitrier.st.stringsimilarity.profile.Variants::cosineTokenNormalizedTermFrequency,
-            0.37,
+            0.36,
             de.unitrier.st.stringsimilarity.fingerprint.Variants::winnowingFourGramDiceNormalized,
             0.23,
             de.unitrier.st.stringsimilarity.profile.Variants::cosineTokenNormalizedNormalizedTermFrequency,
