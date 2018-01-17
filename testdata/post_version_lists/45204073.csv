@@ -1,0 +1,2 @@
+Id;PostHistoryTypeId;PostId;RevisionGUID;CreationDate;UserId;UserDisplayName;Comment;Text
+152002924;2;45204073;b1eeea75-2200-41fe-9410-ce2c33df22c2;2017-07-20 02:29:54;3528524;;;"`it` is just a default param name inside of all single argument closures. You could specify param name by yourself:&#xA;&#xA;<!-- language: lang-kotlin -->&#xA;&#xA;    collection.forEach { customName -> &#xA;        ...&#xA;    }"

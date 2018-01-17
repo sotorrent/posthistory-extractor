@@ -847,4 +847,19 @@ class PostVersionHistoryTest {
         assertTrue(textBlock.getContent().trim().length() > 0);
     }
 
+    @Test
+    void testReadPostHistoryAnswer45204073() {
+        int postId = 45204073;
+
+        PostVersionList a_45204073 = PostVersionList.readFromCSV(pathToPostVersionLists, postId, 2);
+        assertEquals(a_45204073.size(), 1);
+
+        PostVersion version_1 = a_45204073.get(0);
+
+        assertEquals(2, version_1.getPostBlocks().size());
+        assertEquals(1, version_1.getTextBlocks().size());
+        assertEquals(1, version_1.getCodeBlocks().size());
+    }
+
+
 }

@@ -213,7 +213,7 @@ public class PostHistory {
         }
 
         // http://stackoverflow.com/a/454913
-        String[] lines = text.split("&#xD;&#xA;");
+        String[] lines = text.split("&#xD;&#xA;|&#xA;&#xA;");
         PostBlockVersion currentPostBlock = null;
         boolean inStackSnippetCodeBlock = false;
         boolean inAlternativeCodeBlock = false;
