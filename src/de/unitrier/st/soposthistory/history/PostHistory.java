@@ -46,8 +46,8 @@ public class PostHistory {
     // see https://stackoverflow.com/editing-help#syntax-highlighting
     private static final Pattern snippetLanguagePattern = Pattern.compile(".*<!--\\s+language:[^>]+>");
     // see https://meta.stackexchange.com/q/125148; example: https://stackoverflow.com/posts/32342082/revisions
-    private static final Pattern alternativeCodeBlockBeginPattern = Pattern.compile("\\s*(```).*");
-    private static final Pattern alternativeCodeBlockEndPattern = Pattern.compile(".*(```)\\s*");
+    private static final Pattern alternativeCodeBlockBeginPattern = Pattern.compile("^\\s*(```)");
+    private static final Pattern alternativeCodeBlockEndPattern = Pattern.compile("(```)\\s*$");
     // see, e.g., source of question 19175014 (<pre><code> ... </pre></code> instead of correct indention)
     private static final Pattern codeTagBeginPattern = Pattern.compile("\\s*<pre><code>");
     private static final Pattern codeTagEndPattern = Pattern.compile(".*</pre></code>");
@@ -312,17 +312,23 @@ public class PostHistory {
 
                 // see https://meta.stackexchange.com/q/125148; example: https://stackoverflow.com/posts/32342082/revisions
                 Matcher alternativeCodeBlockBeginMatcher = alternativeCodeBlockBeginPattern.matcher(line);
-                boolean isAlternativeCodeBlockBegin = alternativeCodeBlockBeginMatcher.matches(); // match whole line
+                boolean isAlternativeCodeBlockBegin = alternativeCodeBlockBeginMatcher.find(); // only match beginning of line
                 Matcher alternativeCodeBlockEndMatcher = alternativeCodeBlockEndPattern.matcher(line);
-                boolean isAlternativeCodeBlockEnd = alternativeCodeBlockEndMatcher.matches(); // match whole line
+                boolean isAlternativeCodeBlockEnd = alternativeCodeBlockEndMatcher.find(); // only match beginning of line
 
                 if (isAlternativeCodeBlockBegin) {
-                    // remove "```" from line
-                    line = alternativeCodeBlockBeginMatcher.replaceAll("");
+                    // remove first "```" from line
+                    line = alternativeCodeBlockBeginMatcher.replaceFirst("");
                     inAlternativeCodeBlock = true;
                     // continue if line only contained "```"
                     if (line.trim().length() == 0) {
                         continue;
+                    } else {
+                        if (line.contains("```")) {
+                            // alternative code block was inline code block (which should be part of a text block)
+                            line = line.replaceAll("```", "");
+                            inAlternativeCodeBlock = false;
+                        }
                     }
                 }
 

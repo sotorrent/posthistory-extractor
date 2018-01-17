@@ -829,4 +829,22 @@ class PostVersionHistoryTest {
         assertNotNull(postBlock7.getPred());
         assertEquals(Integer.valueOf(3), postBlock7.getPred().getLocalId());
     }
+
+    @Test
+    void testReadPostHistoryQuestion47555767() {
+        int postId = 47555767;
+
+        PostVersionList q_47555767 = PostVersionList.readFromCSV(pathToPostVersionLists, postId, 1);
+        assertEquals(q_47555767.size(), 1);
+
+        PostVersion version_1 = q_47555767.get(0);
+
+        assertEquals(1, version_1.getPostBlocks().size());
+        assertEquals(1, version_1.getTextBlocks().size());
+        assertEquals(0, version_1.getCodeBlocks().size());
+
+        TextBlockVersion textBlock = version_1.getTextBlocks().get(0);
+        assertTrue(textBlock.getContent().trim().length() > 0);
+    }
+
 }
