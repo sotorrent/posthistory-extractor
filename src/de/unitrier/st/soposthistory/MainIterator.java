@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 
 class MainIterator {
     // TODO : Also store n-grams of code blocks in database? -> would result in a very large database
+    // TODO: Evolution of question title (PostHistoryTypeId 1)
 
     public static void main (String[] args) {
         System.out.println("SOPostHistory (Iterator Mode)");
