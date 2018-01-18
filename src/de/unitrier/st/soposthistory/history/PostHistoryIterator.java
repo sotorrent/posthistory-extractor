@@ -30,7 +30,8 @@ import java.util.stream.Collectors;
 public class PostHistoryIterator {
 
     private static Logger logger = null;
-    private static final CSVFormat csvFormat;
+    public static final CSVFormat csvFormatPost;
+    private static final CSVFormat csvFormatVersion;
     private static final int LOG_PACE = 1000;
     public static SessionFactory sessionFactory = null;
 
@@ -48,8 +49,17 @@ public class PostHistoryIterator {
         }
 
         // configure CSV format for in- and output
-        csvFormat = CSVFormat.DEFAULT
+        csvFormatPost = CSVFormat.DEFAULT
                 .withHeader("PostId", "PostTypeId")
+                .withDelimiter(',')
+                .withQuote('"')
+                .withQuoteMode(QuoteMode.MINIMAL)
+                .withEscape('\\')
+                .withNullString("");
+
+        // configure CSV format for output of versions without blocks
+        csvFormatVersion = CSVFormat.DEFAULT
+                .withHeader("PostId", "PostTypeId", "PostHistoryId")
                 .withDelimiter(',')
                 .withQuote('"')
                 .withQuoteMode(QuoteMode.MINIMAL)
@@ -171,7 +181,7 @@ public class PostHistoryIterator {
             }
         }
         logger.info("Writing data to CSV file " + outputFile.getName() + " ...");
-        try (CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(outputFile), csvFormat)) {
+        try (CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(outputFile), csvFormatPost)) {
             // header is automatically written
             // write postIds along with postTypeId
             for (int postId : postIds) {
@@ -191,7 +201,7 @@ public class PostHistoryIterator {
         }
         logger.info("Reading file " + inputFile.getName() + " ...");
 
-        try (CSVParser csvParser = new CSVParser(new FileReader(inputFile), csvFormat.withFirstRecordAsHeader())) {
+        try (CSVParser csvParser = new CSVParser(new FileReader(inputFile), csvFormatPost.withFirstRecordAsHeader())) {
             // read all records into memory
             List<CSVRecord> records = csvParser.getRecords();
             postIds = records.stream()
@@ -299,11 +309,12 @@ public class PostHistoryIterator {
 
             // read all PostIds from the CSV file and extract history from table PostHistory
             List<PostVersionList> postsWithoutVersions = new LinkedList<>(); // store posts without extracted versions
+            List<PostVersion> postsVersionsWithoutBlocks = new LinkedList<>(); // store post versions without extracted post blocks
             int postsWithVersionsCount = 0;
             Transaction t = null; // see https://docs.jboss.org/hibernate/orm/3.3/reference/en/html/transactions.html
             try (StatelessSession session = sessionFactory.openStatelessSession()) {
                 try (CSVParser csvParser = new CSVParser(
-                        new FileReader(inputFile), csvFormat.withFirstRecordAsHeader())) {
+                        new FileReader(inputFile), csvFormatPost.withFirstRecordAsHeader())) {
 
                     // read all records into memory
                     List<CSVRecord> records = csvParser.getRecords();
@@ -353,6 +364,11 @@ public class PostHistoryIterator {
                                 // ...convert them into a PostVersion (our schema)...
                                 currentPostHistoryEntity.setPostTypeId(postTypeId);
                                 PostVersion currentPostVersion = currentPostHistoryEntity.toPostVersion();
+                                // ...check if post blocks have been extracted...
+                                if (currentPostVersion.getPostBlocks().size() ==  0) {
+                                    logger.warning("Thread " + partition + ": " + "No post blocks extracted for PostId: " + postId + "; PostHistoryId: " + currentPostVersion.getPostHistoryId());
+                                    postsVersionsWithoutBlocks.add(currentPostVersion);
+                                }
                                 // ...and write the extracted post blocks to the database
                                 currentPostVersion.insertPostBlocks(session);
                                 // extract URLs from text blocks...
@@ -364,7 +380,7 @@ public class PostHistoryIterator {
                             }
 
                             if (postVersionList.size() == 0) {
-                                logger.info("Thread " + partition + ": " + "No versions extracted for PostId " + postId);
+                                logger.warning("Thread " + partition + ": " + "No versions extracted for PostId " + postId);
                                 postsWithoutVersions.add(postVersionList);
                             } else {
                                 postsWithVersionsCount++;
@@ -395,7 +411,11 @@ public class PostHistoryIterator {
 
                     logger.info("Thread " + partition + ": Writing PostIds of " + postsWithoutVersions.size()
                             + " posts for which no versions have been extracted...");
-                    writePostIdsWithoutVersionsToCSV(postsWithoutVersions);
+                    writePostsWithoutVersionsToCSV(postsWithoutVersions);
+
+                    logger.info("Thread " + partition + ": Writing PostIds and PostHistoryIds of " + postsVersionsWithoutBlocks.size()
+                            + " post versions for which no post blocks have been extracted...");
+                    writePostVersionsWithoutBlocksToCSV(postsVersionsWithoutBlocks);
 
                 } catch (IOException e) {
                     logger.warning(Util.exceptionStackTraceToString(e));
@@ -408,7 +428,7 @@ public class PostHistoryIterator {
             }
         }
 
-        private void writePostIdsWithoutVersionsToCSV(List<PostVersionList> postHistoryLists) {
+        private void writePostsWithoutVersionsToCSV(List<PostVersionList> postVersionLists) {
             String filename =  baseFilename + "_" + partition + "_no_versions.csv";
             File outputFile = Paths.get(dataDir.toString(), filename).toFile();
             if (outputFile.exists()) {
@@ -417,11 +437,31 @@ public class PostHistoryIterator {
                 }
             }
             logger.info("Writing data to CSV file " + outputFile.getName() + " ...");
-            try (CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(outputFile), csvFormat)) {
+            try (CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(outputFile), csvFormatPost)) {
                 // header is automatically written
                 // write postIds along with postTypeId
-                for (PostVersionList postHistoryList : postHistoryLists) {
-                    csvPrinter.printRecord(postHistoryList.getPostId(), postHistoryList.getPostTypeId());
+                for (PostVersionList postVersionList : postVersionLists) {
+                    csvPrinter.printRecord(postVersionList.getPostId(), postVersionList.getPostTypeId());
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        private void writePostVersionsWithoutBlocksToCSV(List<PostVersion> postVersions) {
+            String filename =  baseFilename + "_" + partition + "_no_blocks.csv";
+            File outputFile = Paths.get(dataDir.toString(), filename).toFile();
+            if (outputFile.exists()) {
+                if (!outputFile.delete()) {
+                    throw new IllegalStateException("Error while deleting output file: " + outputFile);
+                }
+            }
+            logger.info("Writing data to CSV file " + outputFile.getName() + " ...");
+            try (CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(outputFile), csvFormatVersion)) {
+                // header is automatically written
+                // write postIds along with postTypeId and postHistoryId
+                for (PostVersion postVersion : postVersions) {
+                    csvPrinter.printRecord(postVersion.getPostId(), postVersion.getPostTypeId(), postVersion.getPostHistoryId());
                 }
             } catch (IOException e) {
                 e.printStackTrace();
