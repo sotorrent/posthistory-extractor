@@ -861,5 +861,32 @@ class PostVersionHistoryTest {
         assertEquals(1, version_1.getCodeBlocks().size());
     }
 
+    @Test
+    void testReadPostHistoryAnswer2376203() {
+        int postId = 2376203;
+
+        PostVersionList a_2376203 = PostVersionList.readFromCSV(pathToPostVersionLists, postId, 2);
+        assertEquals(a_2376203.size(), 1);
+
+        PostVersion version_1 = a_2376203.get(0);
+
+        assertEquals(1, version_1.getPostBlocks().size());
+        assertEquals(0, version_1.getTextBlocks().size()); // should have one TextBlock with content "......", but this is merged according to our heuristic
+        assertEquals(1, version_1.getCodeBlocks().size());
+    }
+
+    @Test
+    void testReadPostHistoryAnswer45163319() {
+        int postId = 45163319;
+
+        PostVersionList a_45163319 = PostVersionList.readFromCSV(pathToPostVersionLists, postId, 2);
+        assertEquals(a_45163319.size(), 1);
+
+        PostVersion version_1 = a_45163319.get(0);
+
+        assertEquals(1, version_1.getPostBlocks().size());
+        assertEquals(1, version_1.getTextBlocks().size());
+        assertEquals(0, version_1.getCodeBlocks().size());
+    }
 
 }

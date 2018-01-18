@@ -41,19 +41,19 @@ public class PostHistory {
     private static final Pattern whiteSpaceLinePattern = Pattern.compile("^\\s+$");
     private static final Pattern containsLetterOrDigitPattern = Pattern.compile("[a-zA-Z0-9]");
     // see https://stackoverflow.blog/2014/09/16/introducing-runnable-javascript-css-and-html-code-snippets/
-    private static final Pattern stackSnippetBeginPattern = Pattern.compile(".*<!--\\s+begin\\s+snippet[^>]+>");
-    private static final Pattern stackSnippetEndPattern = Pattern.compile(".*<!--\\s+end\\s+snippet\\s+-->");
+    private static final Pattern stackSnippetBeginPattern = Pattern.compile("<!--\\s+begin\\s+snippet[^>]+>");
+    private static final Pattern stackSnippetEndPattern = Pattern.compile("<!--\\s+end\\s+snippet\\s+-->");
     // see https://stackoverflow.com/editing-help#syntax-highlighting
-    private static final Pattern snippetLanguagePattern = Pattern.compile(".*<!--\\s+language:[^>]+>");
+    private static final Pattern snippetLanguagePattern = Pattern.compile("<!--\\s+language:[^>]+>");
     // see https://meta.stackexchange.com/q/125148; example: https://stackoverflow.com/posts/32342082/revisions
     private static final Pattern alternativeCodeBlockBeginPattern = Pattern.compile("^\\s*(```)");
     private static final Pattern alternativeCodeBlockEndPattern = Pattern.compile("(```)\\s*$");
     // see, e.g., source of question 19175014 (<pre><code> ... </pre></code> instead of correct indention)
-    private static final Pattern codeTagBeginPattern = Pattern.compile("\\s*<pre><code>");
-    private static final Pattern codeTagEndPattern = Pattern.compile(".*</pre></code>");
+    private static final Pattern codeTagBeginPattern = Pattern.compile("^\\s*<pre><code>");
+    private static final Pattern codeTagEndPattern = Pattern.compile("</pre></code>\\s*$");
     // see, e.g., source of question 3381751 version 1 (<script type="text/javascript"> ... </script> instead of correct indention)
-    private static final Pattern scriptTagBeginPattern = Pattern.compile("\\s*<script[^>]+>");
-    private static final Pattern scriptTagEndPattern = Pattern.compile(".*</script>");
+    private static final Pattern scriptTagBeginPattern = Pattern.compile("^\\s*<script[^>]+>");
+    private static final Pattern scriptTagEndPattern = Pattern.compile("</script>\\s*$");
 
     // database
     private int id;
@@ -241,7 +241,8 @@ public class PostHistory {
             // check if line only contains whitespaces (ignore whitespaces at the beginning of posts and not end blocks with whitespace lines)
             boolean isWhitespaceLine = whiteSpaceLinePattern.matcher(line).matches(); // match whole line
             // e.g. "<!-- language: lang-js -->" (see https://stackoverflow.com/editing-help#syntax-highlighting)
-            boolean isSnippetLanguage = snippetLanguagePattern.matcher(line).find(); // only match beginning of line
+            Matcher snippetLanguageMatcher = snippetLanguagePattern.matcher(line);
+            boolean isSnippetLanguage = snippetLanguageMatcher.matches(); // match whole line
 
             // if line is not part of a regular Stack Overflow code block, try to detect alternative code block styles
             if (!isCodeLine && !isWhitespaceLine && !isSnippetLanguage) {
@@ -263,7 +264,6 @@ public class PostHistory {
                 // code block that is marked by <pre><code> ... </pre></code> instead of correct indention
                 boolean isCodeTagBegin = codeTagBeginPattern.matcher(line).find(); // only match beginning of line
                 boolean isCodeTagEnd = codeTagEndPattern.matcher(line).find(); // only match beginning of line
-
                 if (isCodeTagBegin) {
                     line = line.replace("<pre><code>", "");
                     inCodeTagCodeBlock = true;
@@ -339,8 +339,13 @@ public class PostHistory {
                 }
             }
 
+            if (isSnippetLanguage) {
+                // remove snippet language information
+                line = snippetLanguageMatcher.replaceAll("");
+            }
+
             // decide if the current line is part of a code block
-            boolean inCodeBlock = isCodeLine || isSnippetLanguage || inStackSnippetCodeBlock || inAlternativeCodeBlock
+            boolean inCodeBlock = isCodeLine || (isSnippetLanguage && line.trim().length() == 0) || inStackSnippetCodeBlock || inAlternativeCodeBlock
                     || inCodeTagCodeBlock || inScriptTagCodeBlock;
 
             if (currentPostBlock == null) {
@@ -435,13 +440,18 @@ public class PostHistory {
                 // current post block is first one
                 if (postBlocks.size() > 1) {
                     PostBlockVersion nextPostBlock = postBlocks.get(i+1);
-                    nextPostBlock.append(currentPostBlock.getContent());
+                    nextPostBlock.prepend(currentPostBlock.getContent());
                     nextPostBlock.finalizeContent();
                     markedForDeletion.add(currentPostBlock);
                 }
             } else {
                 // current post block is not first one (has predecessor)
                 PostBlockVersion previousPostBlock = postBlocks.get(i-1);
+
+                if (markedForDeletion.contains(previousPostBlock)) {
+                    continue;
+                }
+
                 previousPostBlock.append(currentPostBlock.getContent());
                 previousPostBlock.finalizeContent();
                 markedForDeletion.add(currentPostBlock);

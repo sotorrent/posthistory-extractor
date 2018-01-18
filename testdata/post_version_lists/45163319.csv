@@ -1,0 +1,2 @@
+Id;PostHistoryTypeId;PostId;RevisionGUID;CreationDate;UserId;UserDisplayName;Comment;Text
+151843190;2;45163319;83c42a5b-42ce-4691-a4dd-a5ecfcaf5308;2017-07-18 09:55:11;8324484;;;I have the same problem and for me, I solve this problem with inserting <!-- language: lang-sql -->`SET FMTONLY OFF` at top of stored procedure (just after <!-- language: lang-sql -->`SET NOCOUNT ON`)
