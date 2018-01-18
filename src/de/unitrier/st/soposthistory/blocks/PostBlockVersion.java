@@ -485,6 +485,24 @@ public abstract class PostBlockVersion {
         this.lifeSpanExtracted = lifeSpanExtracted;
     }
 
+    public void prepend(String line) {
+        if (contentBuilder.length() == 0) {
+            if (line.length() == 0) {
+                contentBuilder = new StringBuilder("\n");
+            } else {
+                contentBuilder = new StringBuilder(line);
+            }
+        } else {
+            if (line.length() == 0) {
+                contentBuilder = new StringBuilder("\n" + contentBuilder.toString());
+            } else {
+                contentBuilder = new StringBuilder(line + "\n" + contentBuilder.toString());
+            }
+        }
+
+        this.length++;
+    }
+
     public void append(String line) {
         if (contentBuilder.length() > 0) {
             // end previous line with line break
