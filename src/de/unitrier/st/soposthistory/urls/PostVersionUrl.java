@@ -3,7 +3,7 @@ package de.unitrier.st.soposthistory.urls;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "PostVersionUrl", schema = "stackoverflow16_12")
+@Table(name="PostVersionUrl")
 public class PostVersionUrl{
     private int id;
     private Integer postId;

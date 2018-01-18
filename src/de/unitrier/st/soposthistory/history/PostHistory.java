@@ -15,7 +15,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Entity
-@Table(name = "PostHistory", schema = "stackoverflow16_12")
+@Table(name="PostHistory")
 public class PostHistory {
     /*
      * 2: Initial Body - The first raw body text a post is submitted with.

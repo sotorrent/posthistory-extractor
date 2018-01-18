@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Entity
-@Table(name = "PostBlockVersion", schema = "stackoverflow16_12")
+@Table(name="PostBlockVersion")
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name="PostBlockTypeId",discriminatorType=DiscriminatorType.INTEGER)
 public abstract class PostBlockVersion {

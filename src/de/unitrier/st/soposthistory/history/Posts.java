@@ -3,7 +3,7 @@ package de.unitrier.st.soposthistory.history;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "Posts", schema = "stackoverflow16_12")
+@Table(name="Posts")
 public class Posts {
     private int Id;
     private int postTypeId;

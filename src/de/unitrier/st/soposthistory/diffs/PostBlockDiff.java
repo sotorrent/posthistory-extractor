@@ -3,7 +3,7 @@ package de.unitrier.st.soposthistory.diffs;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "PostBlockDiff", schema = "stackoverflow16_12")
+@Table(name="PostBlockDiff")
 public class PostBlockDiff {
     private int id;
     private int postId;

@@ -16,7 +16,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity
-@Table(name = "PostVersion", schema = "stackoverflow16_12")
+@Table(name="PostVersion")
 public class PostVersion {
     // database
     private int id;
