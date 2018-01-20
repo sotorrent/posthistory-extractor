@@ -246,24 +246,34 @@ public class PostHistory {
 
             // if line is not part of a regular Stack Overflow code block, try to detect alternative code block styles
             if (!isCodeLine && !isWhitespaceLine && !isSnippetLanguage) {
-                // see https://stackoverflow.blog/2014/09/16/introducing-runnable-javascript-css-and-html-code-snippets/
-                boolean isStackSnippetBegin = stackSnippetBeginPattern.matcher(line).find(); // only match beginning of line
-                boolean isStackSnippetEnd = stackSnippetEndPattern.matcher(line).find(); // only match beginning of line
 
-                // ignore Stack Snippet information
+                // see https://stackoverflow.blog/2014/09/16/introducing-runnable-javascript-css-and-html-code-snippets/
+                Matcher stackSnippetBeginMatcher = stackSnippetBeginPattern.matcher(line);
+                boolean isStackSnippetBegin = stackSnippetBeginMatcher.find(); // only match beginning of line
+                // ignore stack snippet begin
                 if (isStackSnippetBegin) {
                     inStackSnippetCodeBlock = true;
-                    continue;
+                    line = stackSnippetBeginMatcher.replaceAll("");
+                    if (line.trim().isEmpty()) {
+                        // line only contained stack snippet begin
+                        continue;
+                    }
                 }
 
+                Matcher stackSnippetEndMatcher = stackSnippetEndPattern.matcher(line);
+                boolean isStackSnippetEnd = stackSnippetEndMatcher.find(); // only match beginning of line
+                // ignore stack snippet end
                 if (isStackSnippetEnd) {
                     inStackSnippetCodeBlock = false;
-                    continue;
+                    line = stackSnippetEndMatcher.replaceAll("");
+                    if (line.trim().isEmpty()) {
+                        // line only contained stack snippet begin
+                        continue;
+                    }
                 }
 
                 // code block that is marked by <pre><code> ... </pre></code> instead of correct indention
                 boolean isCodeTagBegin = codeTagBeginPattern.matcher(line).find(); // only match beginning of line
-                boolean isCodeTagEnd = codeTagEndPattern.matcher(line).find(); // only match beginning of line
                 if (isCodeTagBegin) {
                     line = line.replace("<pre><code>", "");
                     inCodeTagCodeBlock = true;
@@ -273,6 +283,7 @@ public class PostHistory {
                     }
                 }
 
+                boolean isCodeTagEnd = codeTagEndPattern.matcher(line).find(); // only match beginning of line
                 if (isCodeTagEnd) {
                     line = line.replace("</pre></code>", "");
                     if (line.trim().isEmpty()) {
@@ -287,8 +298,6 @@ public class PostHistory {
 
                 // code block that is marked by <script...> ... </script> instead of correct indention
                 boolean isScriptTagBegin = scriptTagBeginPattern.matcher(line).find(); // only match beginning of line
-                boolean isScriptTagEnd = scriptTagEndPattern.matcher(line).find(); // only match beginning of line
-
                 if (isScriptTagBegin) {
                     line = line.replaceFirst("<script[^>]+>", "");
                     inScriptTagCodeBlock = true;
@@ -298,6 +307,7 @@ public class PostHistory {
                     }
                 }
 
+                boolean isScriptTagEnd = scriptTagEndPattern.matcher(line).find(); // only match beginning of line
                 if (isScriptTagEnd) {
                     line = line.replace("</script>", "");
                     if (line.trim().isEmpty()) {
@@ -313,9 +323,6 @@ public class PostHistory {
                 // see https://meta.stackexchange.com/q/125148; example: https://stackoverflow.com/posts/32342082/revisions
                 Matcher alternativeCodeBlockBeginMatcher = alternativeCodeBlockBeginPattern.matcher(line);
                 boolean isAlternativeCodeBlockBegin = alternativeCodeBlockBeginMatcher.find(); // only match beginning of line
-                Matcher alternativeCodeBlockEndMatcher = alternativeCodeBlockEndPattern.matcher(line);
-                boolean isAlternativeCodeBlockEnd = alternativeCodeBlockEndMatcher.find(); // only match beginning of line
-
                 if (isAlternativeCodeBlockBegin) {
                     // remove first "```" from line
                     line = alternativeCodeBlockBeginMatcher.replaceFirst("");
@@ -332,6 +339,8 @@ public class PostHistory {
                     }
                 }
 
+                Matcher alternativeCodeBlockEndMatcher = alternativeCodeBlockEndPattern.matcher(line);
+                boolean isAlternativeCodeBlockEnd = alternativeCodeBlockEndMatcher.find(); // only match beginning of line
                 if (isAlternativeCodeBlockEnd) {
                     // remove "```" from line
                     line = alternativeCodeBlockEndMatcher.replaceAll("");

@@ -889,4 +889,45 @@ class PostVersionHistoryTest {
         assertEquals(0, version_1.getCodeBlocks().size());
     }
 
+    @Test
+    void testReadPostHistoryQuestion1257964() {
+        int postId = 1257964;
+
+        PostVersionList q_1257964 = PostVersionList.readFromCSV(pathToPostVersionLists, postId, 1);
+        assertEquals(q_1257964.size(), 5);
+
+        // content of this version contains only whitespace ("  &#xD;&#xA;   ")
+        PostVersion version_3 = q_1257964.getPostVersion(2575481);
+        assertEquals(0, version_3.getPostBlocks().size());
+        assertEquals(0, version_3.getTextBlocks().size());
+        assertEquals(0, version_3.getCodeBlocks().size());
+    }
+
+    @Test
+    void testReadPostHistoryQuestion1450250() {
+        int postId = 1450250;
+
+        PostVersionList q_1450250 = PostVersionList.readFromCSV(pathToPostVersionLists, postId, 1);
+        assertEquals(q_1450250.size(), 2);
+
+        // content of this version is empty
+        PostVersion version_1 = q_1450250.getPostVersion(2870161);
+        assertEquals(0, version_1.getPostBlocks().size());
+        assertEquals(0, version_1.getTextBlocks().size());
+        assertEquals(0, version_1.getCodeBlocks().size());
+    }
+
+    @Test
+    void testReadPostHistoryQuestion26365857() {
+        int postId = 26365857;
+
+        PostVersionList q_26365857 = PostVersionList.readFromCSV(pathToPostVersionLists, postId, 1);
+        assertEquals(q_26365857.size(), 3);
+
+        // this version contains inline stack snippets with language information -> considered part of text block
+        PostVersion version_2 = q_26365857.getPostVersion(75518502);
+        assertEquals(1, version_2.getPostBlocks().size());
+        assertEquals(1, version_2.getTextBlocks().size());
+        assertEquals(0, version_2.getCodeBlocks().size());
+    }
 }
