@@ -6,6 +6,7 @@ import de.unitrier.st.soposthistory.history.PostHistoryList;
 import de.unitrier.st.soposthistory.version.PostVersion;
 import de.unitrier.st.soposthistory.version.PostVersionList;
 import de.unitrier.st.util.Util;
+import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.hibernate.ScrollMode;
@@ -26,7 +27,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class DisabledTests {
     private static Logger logger;
-    private static Path pathToCSV = Paths.get("testdata", "post_versions_no_blocks.csv");
+    private static Path sotorrent_2018_01_12 = Paths.get("testdata", "sotorrent_2018-01-12", "post_versions_no_blocks.csv");
+    private static Path sotorrent_2018_01_12_questions = Paths.get("testdata", "sotorrent_2018-01-18", "all_questions_no_blocks.csv");
     private static Path pathToHibernateConfig = Paths.get("hibernate", "hibernate.cfg.xml");
 
     static {
@@ -41,6 +43,11 @@ class DisabledTests {
     @Disabled
     @Test
     void testPostVersionsWithoutBlocks() {
+        testPostBlockExtraction(sotorrent_2018_01_12, PostHistoryIterator.csvFormatPost);
+        testPostBlockExtraction(sotorrent_2018_01_12_questions, PostHistoryIterator.csvFormatVersion);
+    }
+
+    private void testPostBlockExtraction(Path pathToCSV, CSVFormat csvFormat) {
         if (PostHistoryList.sessionFactory == null) {
             PostHistoryList.createSessionFactory(pathToHibernateConfig);
         }
@@ -56,7 +63,7 @@ class DisabledTests {
 
         try (StatelessSession session = PostHistoryList.sessionFactory.openStatelessSession()) {
             try (CSVParser csvParser = new CSVParser(
-                    new FileReader(inputFile), PostHistoryIterator.csvFormatPost.withFirstRecordAsHeader())) {
+                    new FileReader(inputFile), csvFormat.withFirstRecordAsHeader())) {
 
                 // read all records into memory
                 List<CSVRecord> records = csvParser.getRecords();

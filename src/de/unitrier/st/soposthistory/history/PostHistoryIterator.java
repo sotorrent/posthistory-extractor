@@ -31,7 +31,7 @@ public class PostHistoryIterator {
 
     private static Logger logger = null;
     public static final CSVFormat csvFormatPost;
-    private static final CSVFormat csvFormatVersion;
+    public static final CSVFormat csvFormatVersion;
     private static final int LOG_PACE = 1000;
     public static SessionFactory sessionFactory = null;
 
