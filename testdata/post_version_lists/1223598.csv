@@ -1,0 +1,5 @@
+Id;PostHistoryTypeId;PostId;RevisionGUID;CreationDate;UserId;UserDisplayName;Comment;Text
+2398799;2;1223598;a0bc8de9-7cd0-43d5-b079-d545a3dd5656;2009-08-03 17:36:06;104849;;;                                       
+2398824;12;1223598;dfdacabc-e0a2-4f60-9419-8c5a8b5c39de;2009-08-03 17:37:28;104849;;;{"Voters":[{"Id":104849,"DisplayName":"Tony Borf"}]}
+2398869;5;1223598;156e91e2-272d-4fad-92cc-7b3c8dd6f054;2009-08-03 17:41:19;104849;;added 399 characters in body;"If you want a strongly typed view then why are you passing in an other ViewData, that defeats the purpose of having it strongly typed. If this view does need both types then create an object model that contains both types an strongly type to that object.&#xD;&#xA;&#xD;&#xA;Then you can enumerate through each like this,&#xD;&#xA;&#xD;&#xA;    foreach (var item in Model.My1stType)....&#xD;&#xA;&#xD;&#xA;and&#xD;&#xA;&#xD;&#xA;    foreach (var item in Model.My2ndType)....&#xD;&#xA;&#xD;&#xA;                         "
+2398870;13;1223598;78053042-8cf8-4011-9ff7-88c7427e7ab5;2009-08-03 17:41:23;104849;;;{"Voters":[{"Id":104849,"DisplayName":"Tony Borf"}]}

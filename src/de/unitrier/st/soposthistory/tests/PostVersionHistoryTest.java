@@ -904,20 +904,6 @@ class PostVersionHistoryTest {
     }
 
     @Test
-    void testReadPostHistoryQuestion1450250() {
-        int postId = 1450250;
-
-        PostVersionList q_1450250 = PostVersionList.readFromCSV(pathToPostVersionLists, postId, 1);
-        assertEquals(q_1450250.size(), 2);
-
-        // content of this version is empty
-        PostVersion version_1 = q_1450250.getPostVersion(2870161);
-        assertEquals(0, version_1.getPostBlocks().size());
-        assertEquals(0, version_1.getTextBlocks().size());
-        assertEquals(0, version_1.getCodeBlocks().size());
-    }
-
-    @Test
     void testReadPostHistoryQuestion26365857() {
         int postId = 26365857;
 
@@ -930,4 +916,28 @@ class PostVersionHistoryTest {
         assertEquals(1, version_2.getTextBlocks().size());
         assertEquals(0, version_2.getCodeBlocks().size());
     }
+
+    @Test
+    void testReadPostHistoryWithEmptyVersion() {
+        int postId = 1450250;
+        PostVersionList q_1450250 = PostVersionList.readFromCSV(pathToPostVersionLists, postId, 1);
+        assertEquals(q_1450250.size(), 2);
+
+        // content of this version is empty
+        PostVersion version_1 = q_1450250.getPostVersion(2870161);
+        assertEquals(0, version_1.getPostBlocks().size());
+        assertEquals(0, version_1.getTextBlocks().size());
+        assertEquals(0, version_1.getCodeBlocks().size());
+
+        postId = 1223598;
+        PostVersionList a_1223598 = PostVersionList.readFromCSV(pathToPostVersionLists, postId, 2);
+        assertEquals(a_1223598.size(), 2);
+
+        // content of this version is empty
+        version_1 = a_1223598.getPostVersion(2398799);
+        assertEquals(0, version_1.getPostBlocks().size());
+        assertEquals(0, version_1.getTextBlocks().size());
+        assertEquals(0, version_1.getCodeBlocks().size());
+    }
+
 }
