@@ -796,10 +796,10 @@ class PostVersionHistoryTest {
     @Test
     void predContextLastPostBlockAnswer32841902() {
         int postId = 32841902;
-        PostVersionList q_10381975 = PostVersionList.readFromCSV(pathToPostVersionLists, postId, 2, false);
-        q_10381975.processVersionHistory(configEqual);
+        PostVersionList a_10381975 = PostVersionList.readFromCSV(pathToPostVersionLists, postId, 2, false);
+        a_10381975.processVersionHistory(configEqual);
 
-        PostVersion version_2 = q_10381975.getPostVersion(100687945);
+        PostVersion version_2 = a_10381975.getPostVersion(100687945);
 
         // the last two post blocks should be connected (version 1: localId 2+3; version 2: localId 5+6)
         PostBlockVersion postBlock5 = version_2.getPostBlocks().get(4);
