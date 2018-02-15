@@ -4,7 +4,7 @@
         "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
     <session-factory>
-        <property name="connection.url">jdbc:mysql://frodo.uni-trier.de:3306/sotorrent17_12</property>
+        <property name="connection.url">jdbc:mysql://localhost:3306/sotorrent17_12</property>
         <property name="connection.username">sotorrent</property>
         <property name="connection.password"></property>
         <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
