@@ -953,7 +953,7 @@ class PostVersionHistoryTest {
     void testReadPostHistoryEmptyCodeBlock() {
         int postId = 5864258;
         PostVersionList a_5864258 = PostVersionList.readFromCSV(pathToPostVersionLists, postId, 2);
-        assertEquals(a_5864258.size(), 2);
+        assertEquals(2, a_5864258.size());
 
         // content of this version is an empty code block, which is ignored
         PostVersion version_1 = a_5864258.getPostVersion(12646646);
@@ -970,6 +970,20 @@ class PostVersionHistoryTest {
         assertEquals(0, version_1.getPostBlocks().size());
         assertEquals(0, version_1.getTextBlocks().size());
         assertEquals(0, version_1.getCodeBlocks().size());
+    }
+
+    @Test
+    void testOrderOfPostHistory() {
+        int postId = 1669;
+        PostVersionList q_1669 = PostVersionList.readFromCSV(pathToPostVersionLists, postId, 1);
+        assertEquals(10, q_1669.size());
+
+        // assert that versions are ordered chronologically
+        for (int i = 1; i < q_1669.size(); i++) {
+            PostVersion currentPostVersion = q_1669.get(i);
+            PostVersion previousPostVersion = q_1669.get(i-1);
+            assertTrue(currentPostVersion.getCreationDate().after(previousPostVersion.getCreationDate()));
+        }
     }
 
 }

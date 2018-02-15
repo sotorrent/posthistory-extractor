@@ -28,8 +28,6 @@ import java.util.regex.Pattern;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PostVersionList extends LinkedList<PostVersion> {
-    //TODO: Add methods to extract history of code or text blocks (either ignoring versions where only blocks of the other type changed (global) or where one particular block did not change (local)
-
     public static final Pattern fileNamePattern = Pattern.compile("(\\d+)\\.csv");
     private static Logger logger = null;
     private static final CSVFormat csvFormatVersionList;
@@ -134,7 +132,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
                 }
             }
 
-            // sort list according to PostHistoryId, because order in CSV may not be chronologically
+            // sort list according to CreationDate, because order in CSV may not be chronologically
             postVersionList.sort();
 
             if (processVersionHistory) {
@@ -165,9 +163,8 @@ public class PostVersionList extends LinkedList<PostVersion> {
     }
 
     public void sort() {
-        this.sort((v1, v2) ->
-                v1.getPostHistoryId() < v2.getPostHistoryId() ? -1 : v1.getPostHistoryId() > v2.getPostHistoryId() ? 1 : 0
-        );
+        // sort versions according to their creation date
+        this.sort(Comparator.comparing(PostVersion::getCreationDate));
 
         // set predecessors and successors
         for (int i=1; i<this.size(); i++) {

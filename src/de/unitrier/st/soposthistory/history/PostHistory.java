@@ -503,7 +503,7 @@ public class PostHistory {
     @Transient
     public PostVersion toPostVersion() {
         // convert PostHistory (SO Database Schema) to PostVersion (Our Schema)
-        PostVersion postVersion = new PostVersion(postId, id, postTypeId);
+        PostVersion postVersion = new PostVersion(postId, id, postTypeId, creationDate);
         postVersion.addPostBlockList(postBlocks);
         return postVersion;
     }

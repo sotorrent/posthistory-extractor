@@ -12,6 +12,7 @@ import de.unitrier.st.util.Util;
 import org.hibernate.StatelessSession;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -23,6 +24,7 @@ public class PostVersion {
     private Integer postId;
     private Integer postHistoryId;
     private Integer postTypeId;
+    private Timestamp creationDate;
     private Integer predPostHistoryId;
     private Integer succPostHistoryId;
     // internal
@@ -36,6 +38,7 @@ public class PostVersion {
         this.postId = null;
         this.postHistoryId = null;
         this.postTypeId = null;
+        this.creationDate = null;
         this.predPostHistoryId = null;
         this.succPostHistoryId = null;
         // internal
@@ -44,11 +47,12 @@ public class PostVersion {
         this.urls = new LinkedList<>();
     }
 
-    public PostVersion(Integer postId, Integer postHistoryId, Integer postTypeId) {
+    public PostVersion(Integer postId, Integer postHistoryId, Integer postTypeId, Timestamp creationDate) {
         this();
         this.postId = postId;
         this.postHistoryId = postHistoryId;
         this.postTypeId = postTypeId;
+        this.creationDate = creationDate;
         this.postBlocks = new LinkedList<>();
     }
 
@@ -91,6 +95,16 @@ public class PostVersion {
 
     public void setPostHistoryId(Integer postHistoryId) {
         this.postHistoryId = postHistoryId;
+    }
+
+    @Basic
+    @Column(name = "CreationDate")
+    public Timestamp getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Timestamp creationDate) {
+        this.creationDate = creationDate;
     }
 
     @Basic
