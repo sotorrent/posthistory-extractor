@@ -8,6 +8,7 @@ import de.unitrier.st.soposthistory.diffs.PostBlockDiffList;
 import de.unitrier.st.soposthistory.gt.PostBlockConnection;
 import de.unitrier.st.soposthistory.gt.PostBlockLifeSpan;
 import de.unitrier.st.soposthistory.history.PostHistory;
+import de.unitrier.st.soposthistory.history.Posts;
 import de.unitrier.st.soposthistory.urls.Link;
 import de.unitrier.st.util.Util;
 import org.apache.commons.csv.CSVFormat;
@@ -33,7 +34,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
     private static final CSVFormat csvFormatVersionList;
 
     private int postId;
-    private int postTypeId;
+    private byte postTypeId;
     private boolean sorted;
     private PostBlockDiffList diffs;
 
@@ -55,7 +56,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
                 .withFirstRecordAsHeader();
     }
 
-    public PostVersionList(int postId, int postTypeId) {
+    public PostVersionList(int postId, byte postTypeId) {
         super();
         this.postId = postId;
         this.postTypeId = postTypeId;
@@ -75,11 +76,11 @@ public class PostVersionList extends LinkedList<PostVersion> {
         return sorted;
     }
 
-    public static PostVersionList readFromCSV(Path dir, int postId, int postTypeId) {
+    public static PostVersionList readFromCSV(Path dir, int postId, byte postTypeId) {
         return readFromCSV(dir, postId, postTypeId, true);
     }
 
-    public static PostVersionList readFromCSV(Path dir, int postId, int postTypeId, boolean processVersionHistory) {
+    public static PostVersionList readFromCSV(Path dir, int postId, byte postTypeId, boolean processVersionHistory) {
         // ensure that input directory exists
         Util.ensureDirectoryExists(dir);
 
@@ -103,7 +104,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
                 for (CSVRecord record : records) {
                     byte postHistoryTypeId = Byte.parseByte(record.get("PostHistoryTypeId"));
                     // only consider relevant Post History Types
-                    if (!PostHistory.relevantPostHistoryTypes.contains((int)postHistoryTypeId)) {
+                    if (!PostHistory.relevantPostHistoryTypes.contains(postHistoryTypeId)) {
                         continue;
                     }
 
@@ -156,7 +157,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
                 file -> PostVersionList.readFromCSV(
                         dir,
                         Integer.parseInt(file.toFile().getName().replace(".csv", "")),
-                        0, // cannot determine this from file name or file content
+                        Posts.UNKNOWN_ID, // cannot determine this from file name or file content
                         processVersionHistory
                 )
         );
@@ -183,7 +184,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
         processVersionHistory(PostBlockVersion.getAllPostBlockTypeIdFilters());
     }
 
-    public void processVersionHistory(Set<Integer> postBlockTypeFilter) {
+    public void processVersionHistory(Set<Byte> postBlockTypeFilter) {
         processVersionHistory(Config.DEFAULT, postBlockTypeFilter);
     }
 
@@ -198,7 +199,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
      * @param config Configuration with similarity metrics and thresholds
      * @param postBlockTypeFilter Set of postBlockTypeIds (1 for text blocks, 2 for code blocks), mainly needed for evaluation of similarity metrics
      */
-    public void processVersionHistory(Config config, Set<Integer> postBlockTypeFilter) {
+    public void processVersionHistory(Config config, Set<Byte> postBlockTypeFilter) {
         // list must be sorted (in particular the pred and succ references must be set)
         if (!this.isSorted()) {
             this.sort();
@@ -321,7 +322,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
 
     public boolean setPostBlockPredContext(PostVersion currentVersion,
                                            PostVersion previousVersion,
-                                           Set<Integer> postBlockTypeFilter,
+                                           Set<Byte> postBlockTypeFilter,
                                            PostBlockVersion.MatchingStrategy matchingStrategy) {
 
         for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks(postBlockTypeFilter)) {
@@ -373,7 +374,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
         return getPostBlockLifeSpans(PostBlockVersion.getAllPostBlockTypeIdFilters());
     }
 
-    public List<PostBlockLifeSpan> getPostBlockLifeSpans(Set<Integer> postBlockTypeFilter) {
+    public List<PostBlockLifeSpan> getPostBlockLifeSpans(Set<Byte> postBlockTypeFilter) {
         List<PostBlockLifeSpan> lifeSpans = new LinkedList<>();
 
         if (!this.sorted) {
@@ -410,7 +411,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
         return getConnections(PostBlockVersion.getAllPostBlockTypeIdFilters());
     }
 
-    public Set<PostBlockConnection> getConnections(Set<Integer> postBlockTypeFilter) {
+    public Set<PostBlockConnection> getConnections(Set<Byte> postBlockTypeFilter) {
         Set<PostBlockConnection> connections = new HashSet<>();
         for (PostVersion currentVersion : this) {
             connections.addAll(currentVersion.getConnections(postBlockTypeFilter));
@@ -422,7 +423,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
         return getPossibleComparisons(PostBlockVersion.getAllPostBlockTypeIdFilters());
     }
 
-    public int getPossibleComparisons(Set<Integer> postBlockTypeFilter) {
+    public int getPossibleComparisons(Set<Byte> postBlockTypeFilter) {
         // we can only determine the possible comparisons if the list has been sorted and thus the predecessor references are set
         if (!this.isSorted()) {
             String msg = "Possible comparisons can only be determined if PostVersionList has been sorted.";
@@ -442,7 +443,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
         return getPossibleConnections(PostBlockVersion.getAllPostBlockTypeIdFilters());
     }
 
-    public int getPossibleConnections(Set<Integer> postBlockTypeFilter) {
+    public int getPossibleConnections(Set<Byte> postBlockTypeFilter) {
         // we can only determine the possible comparisons if the list has been sorted, because first element cannot have connections
         if (!this.isSorted()) {
             String msg = "Possible connections can only be determined if PostVersionList has been sorted.";
@@ -470,7 +471,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
         return getPostBlockVersionCount(CodeBlockVersion.getPostBlockTypeIdFilter());
     }
 
-    public int getPostBlockVersionCount(Set<Integer> postBlockTypeFilter) {
+    public int getPostBlockVersionCount(Set<Byte> postBlockTypeFilter) {
         return Math.toIntExact(this.stream()
                 .map(v -> v.getPostBlocks(postBlockTypeFilter))
                 .mapToLong(List::size)
@@ -506,7 +507,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
         return getFailedPredecessorComparisons(PostBlockVersion.getAllPostBlockTypeIdFilters());
     }
 
-    public int getFailedPredecessorComparisons(Set<Integer> postBlockTypeFilter) {
+    public int getFailedPredecessorComparisons(Set<Byte> postBlockTypeFilter) {
         int sum = 0;
         for (PostVersion version : this) {
             sum += version.getFailedPredecessorComparisons(postBlockTypeFilter);

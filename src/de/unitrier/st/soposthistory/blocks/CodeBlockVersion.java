@@ -11,7 +11,7 @@ import java.util.Set;
 @Entity
 @DiscriminatorValue(value="2")
 public class CodeBlockVersion extends PostBlockVersion {
-    public static final int postBlockTypeId = 2;
+    public static final byte postBlockTypeId = 2;
 
     // TODO: Derive programming language from question tags and/or content of code block. Other option: HTML comments (see http://stackoverflow.com/editing-help#syntax-highlighting)
 
@@ -23,19 +23,19 @@ public class CodeBlockVersion extends PostBlockVersion {
         super(postId, postHistoryId);
     }
 
-    public static Set<Integer> getPostBlockTypeIdFilter() {
+    public static Set<Byte> getPostBlockTypeIdFilter() {
         return Sets.newHashSet(CodeBlockVersion.postBlockTypeId);
     }
 
     @Override
     @Transient
-    public int getPostBlockTypeId() {
+    public Byte getPostBlockTypeId() {
         return CodeBlockVersion.postBlockTypeId;
     }
 
     @Override
     @Transient
-    public boolean isSelected(Set<Integer> postBlockTypeFilter) {
+    public boolean isSelected(Set<Byte> postBlockTypeFilter) {
         return postBlockTypeFilter.contains(CodeBlockVersion.postBlockTypeId);
     }
 

@@ -5,6 +5,10 @@ import javax.persistence.*;
 @Entity
 @Table(name="Posts")
 public class Posts {
+    public static final byte UNKNOWN_ID = 0;
+    public static final byte QUESTION_ID = 1;
+    public static final byte ANSWER_ID = 2;
+
     private int Id;
     private int postTypeId;
     private String tags;

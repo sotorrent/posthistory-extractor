@@ -9,6 +9,7 @@ import de.unitrier.st.soposthistory.gt.PostBlockConnection;
 import de.unitrier.st.soposthistory.gt.PostBlockLifeSpan;
 import de.unitrier.st.soposthistory.gt.PostBlockLifeSpanVersion;
 import de.unitrier.st.soposthistory.gt.PostGroundTruth;
+import de.unitrier.st.soposthistory.history.Posts;
 import de.unitrier.st.soposthistory.version.PostVersion;
 import de.unitrier.st.soposthistory.version.PostVersionList;
 import org.junit.jupiter.api.Test;
@@ -43,13 +44,13 @@ class GroundTruthTest {
     @Test
     void testPostBlockLifeSpanVersionsEqual() {
         // compare two PostBlockLifeSpanVersions
-        PostBlockLifeSpanVersion original = new PostBlockLifeSpanVersion(4711, 42, 1, 0, 0, 0, "");
-        PostBlockLifeSpanVersion differentPostId = new PostBlockLifeSpanVersion(4712, 42, 1, 0, 0, 0, "");
-        PostBlockLifeSpanVersion differentPostHistoryId = new PostBlockLifeSpanVersion(4711, 43, 1, 0, 0, 0, "");
-        PostBlockLifeSpanVersion differentPostBlockTypeId = new PostBlockLifeSpanVersion(4711, 42, 2, 0, 0, 0, "");
-        PostBlockLifeSpanVersion differentLocalId = new PostBlockLifeSpanVersion(4711, 42, 1, 1, 0, 0, "");
-        PostBlockLifeSpanVersion differentPredId = new PostBlockLifeSpanVersion(4711, 42, 1, 0, 1, 0, "");
-        PostBlockLifeSpanVersion differentSuccId = new PostBlockLifeSpanVersion(4711, 42, 1, 0, 0, 1, "");
+        PostBlockLifeSpanVersion original = new PostBlockLifeSpanVersion(4711, 42, TextBlockVersion.postBlockTypeId, 0, 0, 0, "");
+        PostBlockLifeSpanVersion differentPostId = new PostBlockLifeSpanVersion(4712, 42, TextBlockVersion.postBlockTypeId, 0, 0, 0, "");
+        PostBlockLifeSpanVersion differentPostHistoryId = new PostBlockLifeSpanVersion(4711, 43, TextBlockVersion.postBlockTypeId, 0, 0, 0, "");
+        PostBlockLifeSpanVersion differentPostBlockTypeId = new PostBlockLifeSpanVersion(4711, 42, CodeBlockVersion.postBlockTypeId, 0, 0, 0, "");
+        PostBlockLifeSpanVersion differentLocalId = new PostBlockLifeSpanVersion(4711, 42, TextBlockVersion.postBlockTypeId, 1, 0, 0, "");
+        PostBlockLifeSpanVersion differentPredId = new PostBlockLifeSpanVersion(4711, 42, TextBlockVersion.postBlockTypeId, 0, 1, 0, "");
+        PostBlockLifeSpanVersion differentSuccId = new PostBlockLifeSpanVersion(4711, 42, TextBlockVersion.postBlockTypeId, 0, 0, 1, "");
 
         assertTrue(original.equals(original));
         assertFalse(original.equals(differentPostId));
@@ -63,7 +64,7 @@ class GroundTruthTest {
     @Test
     void testPostBlockLifeSpanExtraction() {
         int postId = 22037280;
-        PostVersionList a_22037280 = PostVersionList.readFromCSV(pathToPostHistory, postId, 2);
+        PostVersionList a_22037280 = PostVersionList.readFromCSV(pathToPostHistory, postId, Posts.ANSWER_ID);
         PostGroundTruth a_22037280_gt = PostGroundTruth.readFromCSV(pathToGroundTruth, postId);
 
         List<PostBlockLifeSpan> lifeSpans = a_22037280.getPostBlockLifeSpans();
@@ -78,7 +79,7 @@ class GroundTruthTest {
     @Test
     void testPostBlockLifeSpanExtractionFilter() {
         int postId = 22037280;
-        PostVersionList a_22037280 = PostVersionList.readFromCSV(pathToPostHistory, postId, 2);
+        PostVersionList a_22037280 = PostVersionList.readFromCSV(pathToPostHistory, postId, Posts.ANSWER_ID);
         PostGroundTruth a_22037280_gt = PostGroundTruth.readFromCSV(pathToGroundTruth, postId);
 
         // text
@@ -111,7 +112,7 @@ class GroundTruthTest {
     @Test
     void testPostBlockConnectionExtraction() {
         int postId = 22037280;
-        PostVersionList a_22037280 = PostVersionList.readFromCSV(pathToPostHistory, postId, 2);
+        PostVersionList a_22037280 = PostVersionList.readFromCSV(pathToPostHistory, postId, Posts.ANSWER_ID);
         PostGroundTruth a_22037280_gt = PostGroundTruth.readFromCSV(pathToGroundTruth, postId);
 
         List<PostBlockLifeSpan> lifeSpans = a_22037280.getPostBlockLifeSpans();
@@ -139,7 +140,7 @@ class GroundTruthTest {
     @Test
     void testPostBlockPossibleComparisonsAnswer22037280() {
         int postId = 22037280;
-        PostVersionList a_22037280 = PostVersionList.readFromCSV(pathToPostHistory, postId, 2);
+        PostVersionList a_22037280 = PostVersionList.readFromCSV(pathToPostHistory, postId, Posts.ANSWER_ID);
         PostGroundTruth a_22037280_gt = PostGroundTruth.readFromCSV(pathToGroundTruth, postId);
 
         assertEquals(78, a_22037280.getPossibleComparisons());
@@ -148,11 +149,11 @@ class GroundTruthTest {
 
     @Test
     void testPostBlockConnectionEquals() {
-        PostBlockLifeSpanVersion v1_1 = new PostBlockLifeSpanVersion(1, 1, 1, 1);
-        PostBlockLifeSpanVersion v1_2 = new PostBlockLifeSpanVersion(1, 1, 1, 1);
-        PostBlockLifeSpanVersion v2 = new PostBlockLifeSpanVersion(1, 2, 1, 1);
-        PostBlockLifeSpanVersion v3 = new PostBlockLifeSpanVersion(1, 3, 1, 1);
-        PostBlockLifeSpanVersion v4 = new PostBlockLifeSpanVersion(1, 4, 1, 1);
+        PostBlockLifeSpanVersion v1_1 = new PostBlockLifeSpanVersion(1, 1, TextBlockVersion.postBlockTypeId, 1);
+        PostBlockLifeSpanVersion v1_2 = new PostBlockLifeSpanVersion(1, 1, TextBlockVersion.postBlockTypeId, 1);
+        PostBlockLifeSpanVersion v2 = new PostBlockLifeSpanVersion(1, 2, TextBlockVersion.postBlockTypeId, 1);
+        PostBlockLifeSpanVersion v3 = new PostBlockLifeSpanVersion(1, 3, TextBlockVersion.postBlockTypeId, 1);
+        PostBlockLifeSpanVersion v4 = new PostBlockLifeSpanVersion(1, 4, TextBlockVersion.postBlockTypeId, 1);
 
         // test equality of PostBlockLifeSpanVersions
         assertEquals(v1_1.getPostId(), v1_2.getPostId());
@@ -184,7 +185,7 @@ class GroundTruthTest {
     @Test
     void testGetConnections() {
         int postId = 22037280;
-        PostVersionList a_22037280 = PostVersionList.readFromCSV(pathToPostHistory, postId, 2);
+        PostVersionList a_22037280 = PostVersionList.readFromCSV(pathToPostHistory, postId, Posts.ANSWER_ID);
         PostGroundTruth a_22037280_gt = PostGroundTruth.readFromCSV(pathToGroundTruth, postId);
 
         List<Integer> postVersionListPostHistoryIds = a_22037280.getPostHistoryIds();
@@ -203,7 +204,7 @@ class GroundTruthTest {
     @Test
     void testProcessVersionHistoryWithIntermediateResetting() {
         int postId = 22037280;
-        PostVersionList a_22037280 = PostVersionList.readFromCSV(pathToPostHistory, postId, 2, false);
+        PostVersionList a_22037280 = PostVersionList.readFromCSV(pathToPostHistory, postId, Posts.ANSWER_ID, false);
 
         testPostBlockVersionHistoryReset(a_22037280);
         assertNull(a_22037280.get(1).getTextBlocks().get(0).getPred()); // predecessors of post blocks have not been set yet
@@ -235,7 +236,7 @@ class GroundTruthTest {
                 assertEquals(0, currentPostBlockVersion.getMatchingPredecessors().size());
                 assertEquals(0, currentPostBlockVersion.getPredecessorSimilarities().size());
                 assertEquals(-1.0, currentPostBlockVersion.getMaxSimilarity().getMetricResult());
-                assertEquals(false, currentPostBlockVersion.getMaxSimilarity().isBackupSimilarity());
+                assertFalse(currentPostBlockVersion.getMaxSimilarity().isBackupSimilarity());
                 assertFalse(currentPostBlockVersion.isLifeSpanExtracted());
             }
         }
@@ -253,7 +254,7 @@ class GroundTruthTest {
     @Test
     void testGetPossibleComparisons() {
         int postId = 22037280;
-        PostVersionList a_22037280 = PostVersionList.readFromCSV(pathToPostHistory, postId, 2);
+        PostVersionList a_22037280 = PostVersionList.readFromCSV(pathToPostHistory, postId, Posts.ANSWER_ID);
         PostGroundTruth a_22037280_gt = PostGroundTruth.readFromCSV(pathToGroundTruth, postId);
 
         assertEquals(7, a_22037280.size());
@@ -265,7 +266,7 @@ class GroundTruthTest {
             assertEquals(2, postVersion.getCodeBlocks().size());
         }
 
-        Set<Integer> set = new HashSet<>();
+        Set<Byte> set = new HashSet<>();
         assertEquals(0, a_22037280.getPossibleComparisons(set));
 
         int possibleTextConnections = a_22037280.getPossibleComparisons(TextBlockVersion.getPostBlockTypeIdFilter());
@@ -297,7 +298,7 @@ class GroundTruthTest {
         // this checks whether a block can be predecessor of more than one block when choosing a very low threshold.
 
         int postId = 3758880;
-        PostVersionList a_3758880 = PostVersionList.readFromCSV(pathToPostHistory, postId, 2, false);
+        PostVersionList a_3758880 = PostVersionList.readFromCSV(pathToPostHistory, postId, Posts.ANSWER_ID, false);
 
         a_3758880.processVersionHistory(
                 Config.DEFAULT
@@ -312,7 +313,7 @@ class GroundTruthTest {
         assertEquals(new Integer(3), textBlocks.get(1).getPred().getLocalId());
         assertEquals(new Integer(3), textBlocks.get(1).getLocalId());
 
-        assertEquals(null, textBlocks.get(2).getPred());
+        assertNull(textBlocks.get(2).getPred());
         assertEquals(new Integer(5), textBlocks.get(2).getLocalId());
     }
 
@@ -355,7 +356,7 @@ class GroundTruthTest {
     @Test
     void testConsideringOfNeighbouringBlocks() {
         int postId = 33076987;
-        PostVersionList q_33076987 = PostVersionList.readFromCSV(pathToPostHistory, postId, 1, false);
+        PostVersionList q_33076987 = PostVersionList.readFromCSV(pathToPostHistory, postId, Posts.QUESTION_ID, false);
         q_33076987.processVersionHistory(PostVersionHistoryTest.configEqual);
 
         PostVersion version_2 = q_33076987.get(1);

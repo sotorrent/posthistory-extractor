@@ -326,7 +326,7 @@ public class PostHistoryIterator {
                     for (int i=0; i<recordCount; i++) {
                         CSVRecord record = records.get(i);
                         int postId = Integer.parseInt(record.get("PostId"));
-                        int postTypeId = Integer.parseInt(record.get("PostTypeId"));
+                        byte postTypeId = Byte.parseByte(record.get("PostTypeId"));
 
                         // log only every LOG_PACE record
                         if (i == 0 || i == recordCount-1 || i % LOG_PACE == 0) {

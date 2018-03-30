@@ -1,5 +1,6 @@
 package de.unitrier.st.soposthistory.tests;
 
+import de.unitrier.st.soposthistory.history.Posts;
 import de.unitrier.st.soposthistory.urls.*;
 import de.unitrier.st.soposthistory.version.PostVersion;
 import de.unitrier.st.soposthistory.version.PostVersionList;
@@ -11,8 +12,7 @@ import java.util.List;
 import static de.unitrier.st.soposthistory.tests.PostVersionHistoryTest.pathToPostVersionLists;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.junit.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 class UrlExtractionTest {
     @Test
@@ -27,7 +27,7 @@ class UrlExtractionTest {
         [Reference.](http://msdn.microsoft.com/en-us/library/system.math.round.aspx)
          */
 
-        PostVersionList a_33 = PostVersionList.readFromCSV(pathToPostVersionLists, 33, 2);
+        PostVersionList a_33 = PostVersionList.readFromCSV(pathToPostVersionLists, 33, Posts.ANSWER_ID);
 
         PostVersion version_1 = a_33.getFirst();
         List<Link> extractedUrls = Link.extractAll(version_1.getContent());
@@ -57,7 +57,7 @@ class UrlExtractionTest {
 
         [1]: http://msdn.microsoft.com/en-us/library/system.threading.manualresetevent.aspx "MSDN Reference"
          */
-        PostVersionList a_44 = PostVersionList.readFromCSV(pathToPostVersionLists, 44, 2);
+        PostVersionList a_44 = PostVersionList.readFromCSV(pathToPostVersionLists, 44, Posts.ANSWER_ID);
 
         PostVersion version_1 = a_44.getFirst();
         List<Link> extractedUrls = Link.extractAll(version_1.getContent());
@@ -86,7 +86,7 @@ class UrlExtractionTest {
         Disappointing answer - I bet you were hoping for some slick XAML code :-)
          */
 
-        PostVersionList a_1629423 = PostVersionList.readFromCSV(pathToPostVersionLists, 1629423, 2);
+        PostVersionList a_1629423 = PostVersionList.readFromCSV(pathToPostVersionLists, 1629423, Posts.ANSWER_ID);
 
         PostVersion version_1 = a_1629423.getFirst();
         List<Link> extractedUrls = Link.extractAll(version_1.getContent());
@@ -139,7 +139,7 @@ class UrlExtractionTest {
             }
          */
 
-        PostVersionList a_52 = PostVersionList.readFromCSV(pathToPostVersionLists, 52, 2);
+        PostVersionList a_52 = PostVersionList.readFromCSV(pathToPostVersionLists, 52, Posts.ANSWER_ID);
 
         PostVersion version_1 = a_52.getFirst();
         List<Link> extractedUrls = Link.extractAll(version_1.getContent());
@@ -171,7 +171,7 @@ class UrlExtractionTest {
         Essentially you just try to update a column that doesn't exist.
          */
 
-        PostVersionList a_49 = PostVersionList.readFromCSV(pathToPostVersionLists, 49, 2);
+        PostVersionList a_49 = PostVersionList.readFromCSV(pathToPostVersionLists, 49, Posts.ANSWER_ID);
 
         PostVersion version_1 = a_49.getFirst();
         List<Link> extractedUrls = Link.extractAll(version_1.getContent());
@@ -189,15 +189,15 @@ class UrlExtractionTest {
     @Test
     void testNormalizationOfPostVersionLists(){
 
-        PostVersionList a_33 = PostVersionList.readFromCSV(pathToPostVersionLists, 33, 2);
+        PostVersionList a_33 = PostVersionList.readFromCSV(pathToPostVersionLists, 33, Posts.ANSWER_ID);
 
-        PostVersionList a_44 = PostVersionList.readFromCSV(pathToPostVersionLists, 44, 2);
+        PostVersionList a_44 = PostVersionList.readFromCSV(pathToPostVersionLists, 44, Posts.ANSWER_ID);
 
-        PostVersionList a_49 = PostVersionList.readFromCSV(pathToPostVersionLists, 49, 2);
+        PostVersionList a_49 = PostVersionList.readFromCSV(pathToPostVersionLists, 49, Posts.ANSWER_ID);
 
-        PostVersionList a_52 = PostVersionList.readFromCSV(pathToPostVersionLists, 52, 2);
+        PostVersionList a_52 = PostVersionList.readFromCSV(pathToPostVersionLists, 52, Posts.ANSWER_ID);
 
-        PostVersionList a_1629423 = PostVersionList.readFromCSV(pathToPostVersionLists, 1629423, 2);
+        PostVersionList a_1629423 = PostVersionList.readFromCSV(pathToPostVersionLists, 1629423, Posts.ANSWER_ID);
 
 
         LinkedList<Link> extractedLinks = new LinkedList<>();
@@ -224,7 +224,7 @@ class UrlExtractionTest {
 
 
         for(Link link : extractedLinks){
-            assertEquals(false, link instanceof MarkdownLinkReference);
+            assertFalse(link instanceof MarkdownLinkReference);
         }
     }
 
@@ -257,7 +257,7 @@ class UrlExtractionTest {
     void testDeletionOfEmptyTextBlocksAfterNormalization () {
         // version 2 should have 4 text blocks and 2 code blocks
         // after normalization, the last block, which contains only a reference and a URL, should be deleted because it's empty
-        PostVersionList a_19049539 = PostVersionList.readFromCSV(pathToPostVersionLists, 19049539, 2);
+        PostVersionList a_19049539 = PostVersionList.readFromCSV(pathToPostVersionLists, 19049539, Posts.ANSWER_ID);
         a_19049539.normalizeLinks();
         PostVersion version_2_a_19049539 = a_19049539.get(1);
         assertEquals(version_2_a_19049539.getTextBlocks().size(), 3);

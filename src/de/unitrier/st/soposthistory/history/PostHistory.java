@@ -29,12 +29,16 @@ public class PostHistory {
      *     (see http://meta.stackexchange.com/a/2678)
      *  => Frequency: 77,957 (2017-01-27)
      */
-    public static final Set<Integer> relevantPostHistoryTypes = new HashSet<>();
+    public static final Set<Byte> relevantPostHistoryTypes = new HashSet<>();
     static {
-        relevantPostHistoryTypes.add(2); // Initial Body
-        relevantPostHistoryTypes.add(5); // Edit Body
-        relevantPostHistoryTypes.add(8); // Rollback Body
+        // TODO: check PostHistoryTypeIds for other relevant changes
+        relevantPostHistoryTypes.add((byte)2); // Initial Body
+        relevantPostHistoryTypes.add((byte)5); // Edit Body
+        relevantPostHistoryTypes.add((byte)8); // Rollback Body
     }
+
+    // regex for escaped newline characters
+    public static final String newLineRegex = "&#xD;&#xA;|&#xA;&#xA;";
 
     // a code block is indented by four spaces or a tab (which can be preceded by spaces)
     private static final Pattern codeBlockPattern = Pattern.compile("^( {4}|[ ]*\\t)");
@@ -67,11 +71,11 @@ public class PostHistory {
     private String comment;
     // internal
     private List<PostBlockVersion> postBlocks;
-    private int postTypeId;
+    private byte postTypeId;
     private int localIdCount;
 
     public static String getRelevantPostHistoryTypes() {
-        Integer[] relevantTypes = new Integer[PostHistory.relevantPostHistoryTypes.size()];
+        Byte[] relevantTypes = new Byte[PostHistory.relevantPostHistoryTypes.size()];
         relevantPostHistoryTypes.toArray(relevantTypes);
         StringBuilder relevantTypesString = new StringBuilder();
         for (int i=0; i<relevantTypes.length-1; i++) {
@@ -84,7 +88,7 @@ public class PostHistory {
 
     public PostHistory() {}
 
-    public PostHistory(int id, int postId, int postTypeId, String userId, byte postHistoryTypeId, String revisionGuid,
+    public PostHistory(int id, int postId, byte postTypeId, String userId, byte postHistoryTypeId, String revisionGuid,
                        Timestamp creationDate, String text, String userDisplayName, String comment) {
         this.id = id;
         this.postId = postId;
@@ -189,11 +193,11 @@ public class PostHistory {
     }
 
     @Transient
-    public int getPostTypeId() {
+    public byte getPostTypeId() {
         return postTypeId;
     }
 
-    public void setPostTypeId(int postTypeId) {
+    public void setPostTypeId(byte postTypeId) {
         this.postTypeId = postTypeId;
     }
 
@@ -213,7 +217,7 @@ public class PostHistory {
         }
 
         // http://stackoverflow.com/a/454913
-        String[] lines = text.split("&#xD;&#xA;|&#xA;&#xA;");
+        String[] lines = text.split(newLineRegex);
         PostBlockVersion currentPostBlock = null;
         boolean inStackSnippetCodeBlock = false;
         boolean inAlternativeCodeBlock = false;
@@ -503,7 +507,7 @@ public class PostHistory {
     @Transient
     public PostVersion toPostVersion() {
         // convert PostHistory (SO Database Schema) to PostVersion (Our Schema)
-        PostVersion postVersion = new PostVersion(postId, id, postTypeId, creationDate);
+        PostVersion postVersion = new PostVersion(postId, id, postTypeId, postHistoryTypeId, creationDate);
         postVersion.addPostBlockList(postBlocks);
         return postVersion;
     }

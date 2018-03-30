@@ -6,7 +6,7 @@ public class PostBlockLifeSpanVersion {
     // data in CSV
     private int postId;
     private int postHistoryId;
-    private int postBlockTypeId;
+    private byte postBlockTypeId;
     private int localId;
     private Integer predLocalId;
     private Integer succLocalId;
@@ -14,16 +14,16 @@ public class PostBlockLifeSpanVersion {
     // internal
     private boolean processed;
 
-    public PostBlockLifeSpanVersion(int postId, int postHistoryId, int postBlockTypeId, int localId) {
+    public PostBlockLifeSpanVersion(int postId, int postHistoryId, byte postBlockTypeId, int localId) {
         this(postId, postHistoryId, postBlockTypeId, localId, null, null, "");
     }
 
-    public PostBlockLifeSpanVersion(int postId, int postHistoryId, int postBlockTypeId, int localId,
+    public PostBlockLifeSpanVersion(int postId, int postHistoryId, byte postBlockTypeId, int localId,
                                     Integer predLocalId, Integer succLocalId) {
         this(postId, postHistoryId, postBlockTypeId, localId, predLocalId, succLocalId, "");
     }
 
-    public PostBlockLifeSpanVersion(int postId, int postHistoryId, int postBlockTypeId, int localId,
+    public PostBlockLifeSpanVersion(int postId, int postHistoryId, byte postBlockTypeId, int localId,
                                     Integer predLocalId, Integer succLocalId, String comment) {
         this.postId = postId;
         this.postHistoryId = postHistoryId;
@@ -56,11 +56,7 @@ public class PostBlockLifeSpanVersion {
         return postBlockTypeId;
     }
 
-    public void setPostBlockTypeId(int postBlockTypeId) {
-        this.postBlockTypeId = postBlockTypeId;
-    }
-
-    public void setPostBlockTypeId(Integer postBlockTypeId) {
+    public void setPostBlockTypeId(Byte postBlockTypeId) {
         this.postBlockTypeId = postBlockTypeId;
     }
 
@@ -104,7 +100,7 @@ public class PostBlockLifeSpanVersion {
         this.processed = processed;
     }
 
-    public boolean isSelected(Set<Integer> postBlockTypeFilter) {
+    public boolean isSelected(Set<Byte> postBlockTypeFilter) {
         return postBlockTypeFilter.contains(postBlockTypeId);
     }
 

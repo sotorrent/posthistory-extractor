@@ -43,7 +43,7 @@ public class PostBlockLifeSpan extends LinkedList<PostBlockLifeSpanVersion> {
 
         while (currentVersion != null) {
             int postId = currentVersion.getPostId();
-            int postBlockTypeId = currentVersion.getPostBlockTypeId();
+            byte postBlockTypeId = currentVersion.getPostBlockTypeId();
             int postHistoryId = currentVersion.getPostHistoryId();
             int localId = currentVersion.getLocalId();
 

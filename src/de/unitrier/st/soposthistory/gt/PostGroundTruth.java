@@ -71,7 +71,7 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
                     throw new IllegalArgumentException(msg);
                 }
                 int postHistoryId = Integer.parseInt(currentRecord.get("PostHistoryId"));
-                int postBlockTypeId = Integer.parseInt(currentRecord.get("PostBlockTypeId"));
+                byte postBlockTypeId = Byte.parseByte(currentRecord.get("PostBlockTypeId"));
                 int localId = Integer.parseInt(currentRecord.get("LocalId"));
                 Integer predLocalId = currentRecord.get("PredLocalId") == null ? null : Integer.parseInt(currentRecord.get("PredLocalId"));
                 Integer succLocalId = currentRecord.get("SuccLocalId") == null ? null : Integer.parseInt(currentRecord.get("SuccLocalId"));
@@ -138,7 +138,7 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
         return getPostBlockLifeSpans(PostBlockVersion.getAllPostBlockTypeIdFilters());
     }
 
-    public List<PostBlockLifeSpan> getPostBlockLifeSpans(Set<Integer> postBlockTypeFilter) {
+    public List<PostBlockLifeSpan> getPostBlockLifeSpans(Set<Byte> postBlockTypeFilter) {
         List<PostBlockLifeSpan> postBlockLifeSpans = new LinkedList<>();
 
         for (int i = 0; i< postHistoryIds.size(); i++) {
@@ -319,7 +319,7 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
         return getConnections(PostBlockVersion.getAllPostBlockTypeIdFilters());
     }
 
-    public Set<PostBlockConnection> getConnections(Set<Integer> postBlockTypeFilter) {
+    public Set<PostBlockConnection> getConnections(Set<Byte> postBlockTypeFilter) {
         Set<PostBlockConnection> connections = new HashSet<>();
         for (int postHistoryId : postHistoryIds) {
             connections.addAll(getConnections(postHistoryId, postBlockTypeFilter));
@@ -331,7 +331,7 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
         return getConnections(postHistoryId, PostBlockVersion.getAllPostBlockTypeIdFilters());
     }
 
-    public Set<PostBlockConnection> getConnections(int postHistoryId, Set<Integer> postBlockTypeFilter) {
+    public Set<PostBlockConnection> getConnections(int postHistoryId, Set<Byte> postBlockTypeFilter) {
         Set<PostBlockConnection> connections = new HashSet<>();
         int index = postHistoryIds.indexOf(postHistoryId);
 
@@ -366,7 +366,7 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
         return getPossibleComparisons(PostBlockVersion.getAllPostBlockTypeIdFilters());
     }
 
-    public int getPossibleComparisons(Set<Integer> postBlockTypeFilter) {
+    public int getPossibleComparisons(Set<Byte> postBlockTypeFilter) {
         int possibleComparisons = 0;
         for (int postHistoryId : postHistoryIds) {
             possibleComparisons += getPossibleComparisons(postHistoryId, postBlockTypeFilter);
@@ -378,7 +378,7 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
         return getPossibleComparisons(postHistoryId, PostBlockVersion.getAllPostBlockTypeIdFilters());
     }
 
-    public int getPossibleComparisons(int postHistoryId, Set<Integer> postBlockTypeFilter) {
+    public int getPossibleComparisons(int postHistoryId, Set<Byte> postBlockTypeFilter) {
         int index = postHistoryIds.indexOf(postHistoryId);
 
         // first version cannot have comparisons
@@ -420,7 +420,7 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
         return getPossibleConnections(PostBlockVersion.getAllPostBlockTypeIdFilters());
     }
 
-    public int getPossibleConnections(Set<Integer> postBlockTypeFilter) {
+    public int getPossibleConnections(Set<Byte> postBlockTypeFilter) {
         int possibleConnections = 0;
         for (int postHistoryId : postHistoryIds) {
             possibleConnections += getPossibleConnections(postHistoryId, postBlockTypeFilter);
@@ -432,7 +432,7 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
         return getPossibleConnections(postHistoryId, PostBlockVersion.getAllPostBlockTypeIdFilters());
     }
 
-    public int getPossibleConnections(int postHistoryId, Set<Integer> postBlockTypeFilter) {
+    public int getPossibleConnections(int postHistoryId, Set<Byte> postBlockTypeFilter) {
         int index = postHistoryIds.indexOf(postHistoryId);
 
         // first version cannot have connections

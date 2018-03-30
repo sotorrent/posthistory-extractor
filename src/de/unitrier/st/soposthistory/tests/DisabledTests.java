@@ -74,7 +74,7 @@ class DisabledTests {
                 // iterate over records
                 for (CSVRecord record : records) {
                     int postId = Integer.parseInt(record.get(0));
-                    int postTypeId = Integer.parseInt(record.get(1));
+                    byte postTypeId = Byte.parseByte(record.get(1));
 
                     if (postTypeId == 1 || postTypeId == 2) { // question or answer
                         // retrieve data from post history...
@@ -89,8 +89,10 @@ class DisabledTests {
                         while (postHistoryIterator.next()) {
                             PostHistory currentPostHistoryEntity = (PostHistory) postHistoryIterator.get(0);
 
-                            // ignore versions that don't have any content
-                            if (currentPostHistoryEntity.getText() == null || currentPostHistoryEntity.getText().length() == 0) {
+                            String text = currentPostHistoryEntity.getText();
+                            // ignore versions that don't have any content (or only whitespaces)
+                            if (text == null
+                                    || text.replaceAll(PostHistory.newLineRegex, "").trim().length() == 0) {
                                 continue;
                             }
 

@@ -23,7 +23,8 @@ public class PostVersion {
     private int id;
     private Integer postId;
     private Integer postHistoryId;
-    private Integer postTypeId;
+    private Byte postTypeId;
+    private Byte postHistoryTypeId;
     private Timestamp creationDate;
     private Integer predPostHistoryId;
     private Integer succPostHistoryId;
@@ -38,6 +39,7 @@ public class PostVersion {
         this.postId = null;
         this.postHistoryId = null;
         this.postTypeId = null;
+        this.postHistoryTypeId = null;
         this.creationDate = null;
         this.predPostHistoryId = null;
         this.succPostHistoryId = null;
@@ -47,11 +49,13 @@ public class PostVersion {
         this.urls = new LinkedList<>();
     }
 
-    public PostVersion(Integer postId, Integer postHistoryId, Integer postTypeId, Timestamp creationDate) {
+    public PostVersion(Integer postId, Integer postHistoryId, Byte postTypeId, Byte postHistoryTypeId,
+                       Timestamp creationDate) {
         this();
         this.postId = postId;
         this.postHistoryId = postHistoryId;
         this.postTypeId = postTypeId;
+        this.postHistoryTypeId = postHistoryTypeId;
         this.creationDate = creationDate;
         this.postBlocks = new LinkedList<>();
     }
@@ -78,16 +82,6 @@ public class PostVersion {
     }
 
     @Basic
-    @Column(name = "PostTypeId")
-    public Integer getPostTypeId() {
-        return postTypeId;
-    }
-
-    public void setPostTypeId(Integer postTypeId) {
-        this.postTypeId = postTypeId;
-    }
-
-    @Basic
     @Column(name = "PostHistoryId")
     public Integer getPostHistoryId() {
         return postHistoryId;
@@ -95,6 +89,26 @@ public class PostVersion {
 
     public void setPostHistoryId(Integer postHistoryId) {
         this.postHistoryId = postHistoryId;
+    }
+
+    @Basic
+    @Column(name = "PostTypeId")
+    public Byte getPostTypeId() {
+        return postTypeId;
+    }
+
+    public void setPostTypeId(Byte postTypeId) {
+        this.postTypeId = postTypeId;
+    }
+
+    @Basic
+    @Column(name = "PostHistoryTypeId")
+    public Byte getPostHistoryTypeId() {
+        return postHistoryTypeId;
+    }
+
+    public void setPostHistoryTypeId(Byte postHistoryTypeId) {
+        this.postHistoryTypeId = postHistoryTypeId;
     }
 
     @Basic
@@ -150,7 +164,7 @@ public class PostVersion {
     }
 
     @Transient
-    public List<PostBlockVersion> getPostBlocks(Set<Integer> postBlockTypeFilter) {
+    public List<PostBlockVersion> getPostBlocks(Set<Byte> postBlockTypeFilter) {
         return postBlocks
                 .stream()
                 .filter(b -> b.isSelected(postBlockTypeFilter))
@@ -242,7 +256,7 @@ public class PostVersion {
                                                 List<PostBlockVersion> currentVersionPostBlocks,
                                                 List<PostBlockVersion> previousVersionPostBlocks,
                                                 Config config,
-                                                Set<Integer> postBlockTypeFilter) {
+                                                Set<Byte> postBlockTypeFilter) {
 
         Map<PostBlockVersion, List<PostBlockVersion>> matchedPredecessors = new HashMap<>();
 
@@ -281,7 +295,7 @@ public class PostVersion {
     }
 
     @Transient
-    public Set<PostBlockConnection> getConnections(Set<Integer> postBlockTypeFilter) {
+    public Set<PostBlockConnection> getConnections(Set<Byte> postBlockTypeFilter) {
         HashSet<PostBlockConnection> connections = new HashSet<>();
 
         for (PostBlockVersion currentBlock : postBlocks) {
@@ -317,7 +331,7 @@ public class PostVersion {
     }
 
     @Transient
-    public int getPossibleComparisons(Set<Integer> postBlockTypeFilter) {
+    public int getPossibleComparisons(Set<Byte> postBlockTypeFilter) {
         // this only works if the post version list has already been sorted (meaning pred is set for this PostVersion)
 
         // first version cannot have comparisons
@@ -350,7 +364,7 @@ public class PostVersion {
     }
 
     @Transient
-    public int getPossibleConnections(Set<Integer> postBlockTypeFilter) {
+    public int getPossibleConnections(Set<Byte> postBlockTypeFilter) {
         // this only works if the post version list has already been sorted (meaning pred is set for this PostVersion)
 
         // first version cannot have connections
@@ -367,7 +381,7 @@ public class PostVersion {
     }
 
     @Transient
-    public int getFailedPredecessorComparisons(Set<Integer> postBlockTypeFilter) {
+    public int getFailedPredecessorComparisons(Set<Byte> postBlockTypeFilter) {
         int sum = 0;
         for (PostBlockVersion postBlockVersion : postBlocks) {
             sum += postBlockVersion.getFailedPredecessorsComparisons(postBlockTypeFilter).size();

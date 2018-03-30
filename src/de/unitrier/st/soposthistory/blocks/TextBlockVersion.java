@@ -11,7 +11,7 @@ import java.util.Set;
 @Entity
 @DiscriminatorValue(value="1")
 public class TextBlockVersion extends PostBlockVersion {
-    public static final int postBlockTypeId = 1;
+    public static final byte postBlockTypeId = 1;
 
     public TextBlockVersion() {
         super();
@@ -21,19 +21,19 @@ public class TextBlockVersion extends PostBlockVersion {
         super(postId, postHistoryId);
     }
 
-    public static Set<Integer> getPostBlockTypeIdFilter() {
+    public static Set<Byte> getPostBlockTypeIdFilter() {
         return Sets.newHashSet(TextBlockVersion.postBlockTypeId);
     }
 
     @Override
     @Transient
-    public int getPostBlockTypeId() {
+    public Byte getPostBlockTypeId() {
         return TextBlockVersion.postBlockTypeId;
     }
 
     @Override
     @Transient
-    public boolean isSelected(Set<Integer> postBlockTypeFilter) {
+    public boolean isSelected(Set<Byte> postBlockTypeFilter) {
         return postBlockTypeFilter.contains(TextBlockVersion.postBlockTypeId);
     }
 

@@ -599,7 +599,7 @@ public abstract class PostBlockVersion {
     @Transient
     public <T extends PostBlockVersion> List<PostBlockVersion> findMatchingPredecessors(List<T> previousVersionPostBlocks,
                                                                                         Config config,
-                                                                                        Set<Integer> postBlockTypeFilter) {
+                                                                                        Set<Byte> postBlockTypeFilter) {
         retrievePredecessorSimilarities(previousVersionPostBlocks, config, postBlockTypeFilter);
         retrieveMatchingPredecessors(config);
         return matchingPredecessors;
@@ -608,7 +608,7 @@ public abstract class PostBlockVersion {
     private <T extends PostBlockVersion> void retrievePredecessorSimilarities(
             List<T> previousVersionPostBlocks,
             Config config,
-            Set<Integer> postBlockTypeFilter) {
+            Set<Byte> postBlockTypeFilter) {
 
         for (PostBlockVersion previousVersionPostBlock : previousVersionPostBlocks) {
             // apply post type filter
@@ -617,7 +617,7 @@ public abstract class PostBlockVersion {
             }
 
             // only compare post blocks of same type
-            if (getPostBlockTypeId() != previousVersionPostBlock.getPostBlockTypeId()) {
+            if (!getPostBlockTypeId().equals(previousVersionPostBlock.getPostBlockTypeId())) {
                 continue;
             }
 
@@ -686,12 +686,12 @@ public abstract class PostBlockVersion {
     }
 
     @Transient
-    abstract public boolean isSelected(Set<Integer> postBlockTypeFilter);
+    abstract public boolean isSelected(Set<Byte> postBlockTypeFilter);
 
     @Transient
-    abstract public int getPostBlockTypeId();
+    abstract public Byte getPostBlockTypeId();
 
-    public static Set<Integer> getAllPostBlockTypeIdFilters() {
+    public static Set<Byte> getAllPostBlockTypeIdFilters() {
         return Sets.newHashSet(TextBlockVersion.postBlockTypeId, CodeBlockVersion.postBlockTypeId);
     }
 
@@ -701,7 +701,7 @@ public abstract class PostBlockVersion {
     }
 
     @Transient
-    public Set<PostBlockVersion> getFailedPredecessorsComparisons(Set<Integer> postBlockTypeFilter) {
+    public Set<PostBlockVersion> getFailedPredecessorsComparisons(Set<Byte> postBlockTypeFilter) {
         return failedPredecessorsComparisons.stream()
                 .filter(b -> b.isSelected(postBlockTypeFilter))
                 .collect(Collectors.toSet());
