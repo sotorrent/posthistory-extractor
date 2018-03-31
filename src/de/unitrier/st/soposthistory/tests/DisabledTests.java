@@ -23,6 +23,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.logging.Logger;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class DisabledTests {
@@ -146,5 +147,45 @@ class DisabledTests {
 
         assertFalse(emptyPostBlockListPresent);
         assertFalse(emptyPostVersionListPresent);
+    }
+
+    @Disabled
+    @Test
+    void testSOTorrent() {
+        if (PostHistoryList.sessionFactory == null) {
+            PostHistoryIterator.createSessionFactory(pathToHibernateConfig);
+        }
+
+        try (StatelessSession session = PostHistoryIterator.sessionFactory.openStatelessSession()) {
+            // test different properties of the SOTorrent tables
+
+            String postVersionPostIdsQuery = "select count(*) from PostVersion";
+            long postVersionPostIds = (long)session.createQuery(postVersionPostIdsQuery).list().get(0);
+            assertEquals(62162417, postVersionPostIds);
+
+            String postVersionPostHistoryIdsQuery = "select count(distinct PostHistoryId) from PostVersion";
+            long postVersionPostHistoryIds = (long)session.createQuery(postVersionPostHistoryIdsQuery).list().get(0);
+            assertEquals(postVersionPostIds, postVersionPostHistoryIds);
+
+            String postVersionDistinctPostIdsQuery = "select count(distinct PostId) from PostVersion";
+            long postVersionDistinctPostIds = (long)session.createQuery(postVersionDistinctPostIdsQuery).list().get(0);
+            assertEquals(39554826, postVersionDistinctPostIds);
+
+            String postBlockVersionsQuery = "select count(*) from PostBlockVersion";
+            long postBlockVersions = (long)session.createQuery(postBlockVersionsQuery).list().get(0);
+            assertEquals(193750023, postBlockVersions);
+
+            String postBlockVersionPostIdsQuery = "select count(distinct PostId) from PostBlockVersion";
+            long postBlockVersionPostIds = (long)session.createQuery(postBlockVersionPostIdsQuery).list().get(0);
+            assertEquals(39554826, postBlockVersionPostIds);
+
+            String postVersionUrlsQuery = "select count(*) from PostVersionUrl";
+            long postVersionUrls = (long) session.createQuery(postVersionUrlsQuery).list().get(0);
+            assertEquals(31356424, postVersionUrls);
+
+            String postReferenceGHQuery = "select count(*) from PostReferenceGH";
+            long postReferenceGH = (long) session.createQuery(postReferenceGHQuery).list().get(0);
+            assertEquals(5979034, postReferenceGH);
+        }
     }
 }

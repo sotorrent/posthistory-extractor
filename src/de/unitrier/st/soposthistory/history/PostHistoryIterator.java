@@ -4,6 +4,7 @@ import de.unitrier.st.soposthistory.blocks.CodeBlockVersion;
 import de.unitrier.st.soposthistory.blocks.PostBlockVersion;
 import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
 import de.unitrier.st.soposthistory.diffs.PostBlockDiff;
+import de.unitrier.st.soposthistory.urls.PostReferenceGH;
 import de.unitrier.st.soposthistory.urls.PostVersionUrl;
 import de.unitrier.st.soposthistory.version.PostVersion;
 import de.unitrier.st.soposthistory.version.PostVersionList;
@@ -98,6 +99,7 @@ public class PostHistoryIterator {
                 .addAnnotatedClass(PostBlockDiff.class)
                 .addAnnotatedClass(Posts.class)
                 .addAnnotatedClass(PostVersionUrl.class)
+                .addAnnotatedClass(PostReferenceGH.class)
                 .configure(hibernateConfigFilePath.toFile())
                 .buildSessionFactory();
     }
