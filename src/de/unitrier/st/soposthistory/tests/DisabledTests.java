@@ -27,9 +27,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class DisabledTests {
     private static Logger logger;
-    private static Path sotorrent_2018_01_12 = Paths.get("testdata", "sotorrent_2018-01-12", "post_versions_no_blocks.csv");
-    private static Path sotorrent_2018_01_12_questions = Paths.get("testdata", "sotorrent_2018-01-18", "all_questions_no_blocks.csv");
     private static Path pathToHibernateConfig = Paths.get("hibernate", "hibernate.cfg.xml");
+    private static Path sotorrent_2018_01_12_no_blocks = Paths.get("testdata", "sotorrent_2018-01-12", "post_versions_no_blocks.csv");
+    private static Path sotorrent_2018_01_12_questions_no_blocks = Paths.get("testdata", "sotorrent_2018-01-18", "all_questions_no_blocks.csv");
+    private static Path sotorrent_2018_03_28_questions_no_blocks = Paths.get("testdata", "sotorrent_2018-03-28", "all_questions_no_blocks.csv");
+    private static Path sotorrent_2018_03_28_answers_no_blocks = Paths.get("testdata", "sotorrent_2018-03-28", "all_answers_no_blocks.csv");
 
     static {
         // configure logger
@@ -43,8 +45,10 @@ class DisabledTests {
     @Disabled
     @Test
     void testPostVersionsWithoutBlocks() {
-        testPostBlockExtraction(sotorrent_2018_01_12, PostHistoryIterator.csvFormatPost);
-        testPostBlockExtraction(sotorrent_2018_01_12_questions, PostHistoryIterator.csvFormatVersion);
+        testPostBlockExtraction(sotorrent_2018_01_12_no_blocks, PostHistoryIterator.csvFormatPost);
+        testPostBlockExtraction(sotorrent_2018_01_12_questions_no_blocks, PostHistoryIterator.csvFormatVersion);
+        testPostBlockExtraction(sotorrent_2018_03_28_questions_no_blocks, PostHistoryIterator.csvFormatVersion);
+        testPostBlockExtraction(sotorrent_2018_03_28_answers_no_blocks, PostHistoryIterator.csvFormatVersion);
     }
 
     private void testPostBlockExtraction(Path pathToCSV, CSVFormat csvFormat) {

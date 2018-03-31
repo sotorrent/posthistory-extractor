@@ -952,6 +952,10 @@ class PostVersionHistoryTest {
 
     @Test
     void testReadPostHistoryEmptyCodeBlock() {
+        // the following posts were removed from the test data for test case testPostVersionsWithoutBlocks (disabled),
+        // because they have non-whitespace content, but should still be treated as having no post blocks
+        // (i.e., they only contain an empty code block)
+
         int postId = 5864258;
         PostVersionList a_5864258 = PostVersionList.readFromCSV(pathToPostVersionLists, postId, Posts.ANSWER_ID);
         assertEquals(2, a_5864258.size());
