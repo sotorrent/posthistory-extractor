@@ -28,10 +28,14 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 class DisabledTests {
     private static Logger logger;
     private static Path pathToHibernateConfig = Paths.get("hibernate", "hibernate.cfg.xml");
+    // posts without post blocks
     private static Path sotorrent_2018_01_12_no_blocks = Paths.get("testdata", "sotorrent_2018-01-12", "post_versions_no_blocks.csv");
     private static Path sotorrent_2018_01_12_questions_no_blocks = Paths.get("testdata", "sotorrent_2018-01-18", "all_questions_no_blocks.csv");
     private static Path sotorrent_2018_03_28_questions_no_blocks = Paths.get("testdata", "sotorrent_2018-03-28", "all_questions_no_blocks.csv");
     private static Path sotorrent_2018_03_28_answers_no_blocks = Paths.get("testdata", "sotorrent_2018-03-28", "all_answers_no_blocks.csv");
+    // posts without post versions
+    private static Path sotorrent_2018_03_28_questions_no_versions = Paths.get("testdata", "sotorrent_2018-03-28", "all_questions_no_versions.csv");
+    private static Path sotorrent_2018_03_28_answers_no_versions = Paths.get("testdata", "sotorrent_2018-03-28", "all_answers_no_versions.csv");
 
     static {
         // configure logger
@@ -45,10 +49,14 @@ class DisabledTests {
     @Disabled
     @Test
     void testPostVersionsWithoutBlocks() {
+        // posts without post blocks
         testPostBlockExtraction(sotorrent_2018_01_12_no_blocks, PostHistoryIterator.csvFormatPost);
         testPostBlockExtraction(sotorrent_2018_01_12_questions_no_blocks, PostHistoryIterator.csvFormatVersion);
         testPostBlockExtraction(sotorrent_2018_03_28_questions_no_blocks, PostHistoryIterator.csvFormatVersion);
         testPostBlockExtraction(sotorrent_2018_03_28_answers_no_blocks, PostHistoryIterator.csvFormatVersion);
+        // posts without post versions
+        testPostBlockExtraction(sotorrent_2018_03_28_questions_no_versions, PostHistoryIterator.csvFormatVersion);
+        testPostBlockExtraction(sotorrent_2018_03_28_answers_no_versions, PostHistoryIterator.csvFormatVersion);
     }
 
     private void testPostBlockExtraction(Path pathToCSV, CSVFormat csvFormat) {
@@ -56,7 +64,7 @@ class DisabledTests {
             PostHistoryList.createSessionFactory(pathToHibernateConfig);
         }
 
-        // read post ids of posts without post blocks from CSV file
+        // read post ids of posts without post blocks or versions from CSV file
         File inputFile = pathToCSV.toFile();
         if (!inputFile.exists()) {
             throw new IllegalArgumentException("Error while reading input file: " + inputFile);
@@ -90,7 +98,9 @@ class DisabledTests {
                         ScrollableResults postHistoryIterator = session.createQuery(currentPostHistoryQuery)
                                 .scroll(ScrollMode.FORWARD_ONLY);
 
+                        int count = 0;
                         while (postHistoryIterator.next()) {
+                            count++;
                             PostHistory currentPostHistoryEntity = (PostHistory) postHistoryIterator.get(0);
 
                             String text = currentPostHistoryEntity.getText();
@@ -111,6 +121,11 @@ class DisabledTests {
 
                             currentPostVersion.extractUrlsFromTextBlocks();
                             postVersionList.add(currentPostVersion);
+                        }
+
+                        if (count == 0) {
+                            logger.warning("No data available in table PostHistory for PostId " + postId);
+                            continue;
                         }
 
                         if (postVersionList.size() == 0) {
