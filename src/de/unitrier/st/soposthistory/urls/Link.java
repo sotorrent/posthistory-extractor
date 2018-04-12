@@ -96,24 +96,24 @@ public class Link {
 
         String normalizedMarkdownContent = markdownContent;
 
-        for (Link currrentLink : extractedLinks) {
-            if (currrentLink instanceof MarkdownLinkInline // this is the normalized form
-                    || currrentLink instanceof AnchorLink // this would be the result after markup
-                    || currrentLink instanceof MarkdownLinkAngleBrackets) { // this URL will be converted by Commonmark)
+        for (Link currentLink : extractedLinks) {
+            if (currentLink instanceof MarkdownLinkInline // this is the normalized form
+                    || currentLink instanceof AnchorLink // this would be the result after markup
+                    || currentLink instanceof MarkdownLinkAngleBrackets) { // this URL will be converted by Commonmark)
                 continue;
             }
 
-            if (currrentLink instanceof MarkdownLinkReference) {
-                String[] usageAndDefinition = currrentLink.getFullMatch().split("\n");
+            if (currentLink instanceof MarkdownLinkReference) {
+                String[] usageAndDefinition = currentLink.getFullMatch().split("\n");
                 String usage = usageAndDefinition[0];
                 String definition = usageAndDefinition[1];
 
-                if (currrentLink.getAnchor().isEmpty()) { // handles, e.g., post 42695138
+                if (currentLink.getAnchor().isEmpty()) { // handles, e.g., post 42695138
                     normalizedMarkdownContent = normalizedMarkdownContent.replace(usage, "");
                 } else {
                     normalizedMarkdownContent = normalizedMarkdownContent.replace(usage,
-                            "[" + currrentLink.getAnchor() + "](" + currrentLink.getUrl() +
-                                    ((currrentLink.getTitle() != null) ? " \"" + currrentLink.getTitle() + "\"" : "")
+                            "[" + currentLink.getAnchor() + "](" + currentLink.getUrl() +
+                                    ((currentLink.getTitle() != null) ? " \"" + currentLink.getTitle() + "\"" : "")
                                     + ")"
                     );
                 }
@@ -122,8 +122,8 @@ public class Link {
             } else {
                 // bare link
                 normalizedMarkdownContent = normalizedMarkdownContent.replace(
-                        currrentLink.getFullMatch(),
-                        "<" + currrentLink.getUrl() + ">"
+                        currentLink.getFullMatch(),
+                        "<" + currentLink.getUrl() + ">"
                 );
             }
         }

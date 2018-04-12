@@ -16,11 +16,11 @@ public class PostVersionUrl{
         this.url = null;
     }
 
-    public PostVersionUrl(int postId, int postHistoryId, int postBlockVersionId, String urls){
+    public PostVersionUrl(int postId, int postHistoryId, int postBlockVersionId, String url){
         this.postId = postId;
         this.postHistoryId = postHistoryId;
         this.postBlockVersionId = postBlockVersionId;
-        this.url = urls;
+        this.url = url;
     }
 
     @Id
