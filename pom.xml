@@ -5,12 +5,43 @@
     <name>SOPostHistoryExtractor</name>
     <groupId>de.unitrier.st.soposthistory</groupId>
     <artifactId>so-posthistory-extractor</artifactId>
-    <version>1.9.1</version>
+    <version>1.10.0</version>
     <url>https://github.com/sotorrent/so-posthistory-extractor</url>
 
     <properties>
+        <!-- Project -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <project.build.sourceDirectory>src</project.build.sourceDirectory>
+        <project.build.testSourceDirectory>src/de/unitrier/st/soposthistory/tests</project.build.testSourceDirectory>
+        <!-- Maven -->
+        <maven.mainclass>de.unitrier.st.soposthistory.MainIterator</maven.mainclass>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.plugin.version>3.7.0</maven.compiler.plugin.version>
+        <maven.jar.plugin.version>3.0.2</maven.jar.plugin.version>
+        <maven.assembly.plugin.version>3.1.0</maven.assembly.plugin.version>
+        <maven.source.plugin.version>3.0.1</maven.source.plugin.version>
+        <maven.javadoc.plugin.version>3.0.0</maven.javadoc.plugin.version>
+        <maven.deploy.plugin.version>2.8.2</maven.deploy.plugin.version>
+        <maven.surefire.plugin.version>2.19.1</maven.surefire.plugin.version>
+        <!--
+        "Due to a memory leak in Surefire 2.20 and issues running on Java 9, the junit-platform-surefire-provider
+        currently only works with Surefire 2.19.1."
+        (see https://junit.org/junit5/docs/current/user-guide/#running-tests-build-maven)
+        -->
+        <!-- JUnit -->
+        <junit.platform.version>1.1.1</junit.platform.version>
+        <junit.jupiter.version>5.1.1</junit.jupiter.version>
+        <hamcrest.junit.version>2.0.0.0</hamcrest.junit.version>
+        <!-- Other dependencies -->
+        <string-similarity.version>1.3.4</string-similarity.version>
+        <util.version>1.0.7</util.version>
+        <commons-cli.version>1.4</commons-cli.version>
+        <commons-io.version>2.6</commons-io.version>
+        <commons-csv.version>1.5</commons-csv.version>
+        <hibernate.version>5.2.16.Final</hibernate.version>
+        <mysql-connector-java.version>5.1.46</mysql-connector-java.version>
     </properties>
 
     <distributionManagement>
@@ -45,81 +76,81 @@
         <dependency>
             <groupId>de.unitrier.st</groupId>
             <artifactId>string-similarity</artifactId>
-            <version>1.3.3</version>
+            <version>${string-similarity.version}</version>
         </dependency>
         <!-- https://github.com/sotorrent/util/tree/master/releases/ -->
         <dependency>
             <groupId>de.unitrier.st</groupId>
             <artifactId>util</artifactId>
-            <version>1.0.5</version>
+            <version>${util.version}</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/commons-cli/commons-cli -->
         <dependency>
             <groupId>commons-cli</groupId>
             <artifactId>commons-cli</artifactId>
-            <version>1.4</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-core -->
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-            <version>5.2.12.Final</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-csv -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-csv</artifactId>
-            <version>1.4</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.45</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>5.0.1</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.hamcrest/hamcrest-junit -->
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-junit</artifactId>
-            <version>2.0.0.0</version>
+            <version>${commons-cli.version}</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.6</version>
+            <version>${commons-io.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-csv -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-csv</artifactId>
+            <version>${commons-csv.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-core -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql-connector-java.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit.jupiter.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.hamcrest/hamcrest-junit -->
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-junit</artifactId>
+            <version>${hamcrest.junit.version}</version>
         </dependency>
     </dependencies>
 
     <build>
         <!-- configure source and test directories-->
-        <sourceDirectory>src</sourceDirectory>
-        <testSourceDirectory>src/de/unitrier/st/soposthistory/tests</testSourceDirectory>
+        <sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
+        <testSourceDirectory>${project.build.testSourceDirectory}</testSourceDirectory>
 
         <plugins>
             <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.7.0</version>
+                <version>${maven.compiler.plugin.version}</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
                 </configuration>
             </plugin>
             <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-jar-plugin -->
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.0.2</version>
+                <version>${maven.jar.plugin.version}</version>
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>de.unitrier.st.soposthistory.MainIterator</mainClass>
+                            <mainClass>${maven.mainclass}</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -127,11 +158,11 @@
             <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-assembly-plugin -->
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>${maven.assembly.plugin.version}</version>
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>de.unitrier.st.soposthistory.MainIterator</mainClass>
+                            <mainClass>${maven.mainclass}</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
@@ -151,7 +182,7 @@
             <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-source-plugin -->
             <plugin>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.0.1</version>
+                <version>${maven.source.plugin.version}</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -165,7 +196,7 @@
             <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-javadoc-plugin -->
             <plugin>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.0.0-M1</version>
+                <version>${maven.javadoc.plugin.version}</version>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
@@ -180,22 +211,20 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <!-- "Due to a memory leak in Surefire 2.20, the junit-platform-surefire-provider currently only works
-                with Surefire 2.19.1." (https://stackoverflow.com/a/46360977) -->
-                <version>2.19.1</version>
+                <version>${maven.surefire.plugin.version}</version>
                 <!-- http://junit.org/junit5/docs/current/user-guide/#running-tests-build-maven -->
                 <dependencies>
                     <!-- https://mvnrepository.com/artifact/org.junit.platform/junit-platform-surefire-provider -->
                     <dependency>
                         <groupId>org.junit.platform</groupId>
                         <artifactId>junit-platform-surefire-provider</artifactId>
-                        <version>1.0.1</version>
+                        <version>${junit.platform.version}</version>
                     </dependency>
                     <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine -->
                     <dependency>
                         <groupId>org.junit.jupiter</groupId>
                         <artifactId>junit-jupiter-engine</artifactId>
-                        <version>5.0.1</version>
+                        <version>${junit.jupiter.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -203,7 +232,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
-                <version>2.8.2</version>
+                <version>${maven.deploy.plugin.version}</version>
             </plugin>
         </plugins>
     </build>
