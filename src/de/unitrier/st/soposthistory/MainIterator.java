@@ -1,5 +1,6 @@
 package de.unitrier.st.soposthistory;
 
+import de.unitrier.st.soposthistory.comments.CommentsIterator;
 import de.unitrier.st.soposthistory.history.PostHistoryIterator;
 import org.apache.commons.cli.*;
 
@@ -61,8 +62,8 @@ class MainIterator {
             partitionCount = Integer.parseInt(commandLine.getOptionValue("partition-count"));
         }
 
+        // process version history
         PostHistoryIterator.createSessionFactory(hibernateConfigFilePath);
-
         PostHistoryIterator postHistoryIterator = new PostHistoryIterator(
                 dataDirPath, "all", partitionCount, tags
         );
@@ -73,5 +74,11 @@ class MainIterator {
         postHistoryIterator.extractDataFromPostHistory("answers");
 
         PostHistoryIterator.sessionFactory.close();
+
+        // extract URLs from comments
+        CommentsIterator.createSessionFactory(hibernateConfigFilePath);
+        CommentsIterator commentsIterator = new CommentsIterator();
+
+        commentsIterator.extractUrlsFromComments();
     }
 }
