@@ -223,7 +223,7 @@ public class PostHistoryIterator {
         // split questions
         logger.info("Splitting questions...");
         postIds = readPostIdsFromCSV(baseFilename + "_questions.csv");
-        subLists = split(postIds);
+        subLists = Util.split(postIds, partitionCount);
         for (int i=0; i<subLists.length; i++) {
             List<Integer> list = subLists[i];
             writePostIdsToCSV(list, 1, baseFilename + "_questions_" + i + ".csv");
@@ -233,24 +233,12 @@ public class PostHistoryIterator {
         // split answers
         logger.info("Splitting answers...");
         postIds = readPostIdsFromCSV(baseFilename + "_answers.csv");
-        subLists = split(postIds);
+        subLists = Util.split(postIds, partitionCount);
         for (int i=0; i<subLists.length; i++) {
             List<Integer> list = subLists[i];
             writePostIdsToCSV(list, 2, baseFilename + "_answers_" + i + ".csv");
         }
         logger.info("Splitting of answers complete.");
-    }
-
-    private List<Integer>[] split(List<Integer> postIds) {
-        int partitionSize = (int)Math.ceil((double)postIds.size()/partitionCount);
-        @SuppressWarnings("unchecked")
-        List<Integer>[] subLists = new List[partitionCount];
-        int subListIndex = 0;
-        for (int i=0; i<postIds.size(); i+=partitionSize) {
-            subLists[subListIndex] = postIds.subList(i, Math.min(postIds.size(), i+partitionSize));
-            subListIndex++;
-        }
-        return subLists;
     }
 
     public void extractDataFromPostHistory(String type) {
@@ -356,7 +344,7 @@ public class PostHistoryIterator {
 
                             while (postHistoryIterator.next()) {
                                 // first, get one PostHistory entity from the SO database schema...
-                                PostHistory currentPostHistoryEntity = (PostHistory)postHistoryIterator.get(0);
+                                PostHistory currentPostHistoryEntity = (PostHistory) postHistoryIterator.get(0);
                                 // ignore versions that don't have any content
                                 if (currentPostHistoryEntity.getText() == null || currentPostHistoryEntity.getText().length() == 0) {
                                     continue;
