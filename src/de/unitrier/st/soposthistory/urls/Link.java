@@ -53,7 +53,7 @@ public class Link {
         }
     }
 
-    public static List<Link> extract(String markdownContent) {
+    public static List<Link> extractBare(String markdownContent) {
         LinkedList<Link> extractedLinks = new LinkedList<>();
         Matcher matcher = urlPattern.matcher(markdownContent);
 
@@ -70,8 +70,8 @@ public class Link {
         return extractedLinks;
     }
 
-    public static LinkedList<Link> extractAll(String markdownContent) {
-        LinkedList<Link> extractedLinks = new LinkedList<>();
+    public static List<Link> extractTyped(String markdownContent) {
+        List<Link> extractedLinks = new LinkedList<>();
 
         // extract markdown links im angle brackets: Have you ever seen <http://example.com>?
         extractedLinks.addAll(MarkdownLinkAngleBrackets.extract(markdownContent));
@@ -86,7 +86,7 @@ public class Link {
         extractedLinks.addAll(AnchorLink.extract(markdownContent));
 
         // extract bare links: http://www.google.com/
-        List<Link> extractedBareLinks = extract(markdownContent);
+        List<Link> extractedBareLinks = extractBare(markdownContent);
         // only add bare links that have not been matched before
         Set<String> extractedUrls = extractedLinks.stream().map(Link::getUrl).collect(Collectors.toSet());
         for (Link bareLink : extractedBareLinks) {
@@ -96,7 +96,7 @@ public class Link {
         }
 
         // validate the extracted links (possible issues include posts 36273118 and 37625877 with "double[][]" and anchor tags where href does not point to a valid URL)
-        LinkedList<Link> validLinks = new LinkedList<>();
+        List<Link> validLinks = new LinkedList<>();
         for (Link currentLink : extractedLinks) {
             if (currentLink.url != null) {
                 Matcher urlMatcher = urlPattern.matcher(currentLink.url.trim());

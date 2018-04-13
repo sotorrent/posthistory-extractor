@@ -9,18 +9,20 @@ public class PostVersionUrl{
     private Integer postId;
     private Integer postHistoryId;
     private Integer postBlockVersionId;
-    //private String domain; TODO: add mapping for column Domain, extract domain
+    private String domain;
     private String url;
 
     public PostVersionUrl(){
         this.postHistoryId = null;
+        this.domain = null;
         this.url = null;
     }
 
-    public PostVersionUrl(int postId, int postHistoryId, int postBlockVersionId, String url){
+    public PostVersionUrl(int postId, int postHistoryId, int postBlockVersionId, String domain, String url){
         this.postId = postId;
         this.postHistoryId = postHistoryId;
         this.postBlockVersionId = postBlockVersionId;
+        this.domain = domain;
         this.url = url;
     }
 
@@ -63,6 +65,16 @@ public class PostVersionUrl{
 
     public void setPostBlockVersionId(Integer postBlockVersionId) {
         this.postBlockVersionId = postBlockVersionId;
+    }
+
+    @Basic
+    @Column(name = "Domain")
+    public String getDomain() {
+        return domain;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
     }
 
     @Basic

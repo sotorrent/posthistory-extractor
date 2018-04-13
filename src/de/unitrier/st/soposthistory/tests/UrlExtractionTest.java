@@ -15,7 +15,6 @@ import static org.hamcrest.junit.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class UrlExtractionTest {
-    // TODO: Add test case for domain extraction
 
     @Test
     void testMarkdownLinkInline(){
@@ -32,7 +31,7 @@ class UrlExtractionTest {
         PostVersionList a_33 = PostVersionList.readFromCSV(pathToPostVersionLists, 33, Posts.ANSWER_ID);
 
         PostVersion version_1 = a_33.getFirst();
-        List<Link> extractedUrls = Link.extractAll(version_1.getContent());
+        List<Link> extractedUrls = Link.extractTyped(version_1.getContent());
 
         assertEquals(2, extractedUrls.size());
 
@@ -40,6 +39,7 @@ class UrlExtractionTest {
         assertEquals("reference", extractedUrls.get(0).getAnchor());
         assertNull(extractedUrls.get(0).getReference());
         assertEquals("http://msdn.microsoft.com/en-us/library/system.math.truncate.aspx", extractedUrls.get(0).getUrl());
+        assertEquals("msdn.microsoft.com", extractedUrls.get(0).getDomain());
         assertNull(extractedUrls.get(0).getTitle());
         assertThat(extractedUrls.get(0), instanceOf(MarkdownLinkInline.class));
 
@@ -47,6 +47,7 @@ class UrlExtractionTest {
         assertEquals("Reference.", extractedUrls.get(1).getAnchor());
         assertNull(extractedUrls.get(1).getReference());
         assertEquals("http://msdn.microsoft.com/en-us/library/system.math.round.aspx", extractedUrls.get(1).getUrl());
+        assertEquals("msdn.microsoft.com", extractedUrls.get(1).getDomain());
         assertNull(extractedUrls.get(1).getTitle());
         assertThat(extractedUrls.get(1), instanceOf(MarkdownLinkInline.class));
     }
@@ -62,7 +63,7 @@ class UrlExtractionTest {
         PostVersionList a_44 = PostVersionList.readFromCSV(pathToPostVersionLists, 44, Posts.ANSWER_ID);
 
         PostVersion version_1 = a_44.getFirst();
-        List<Link> extractedUrls = Link.extractAll(version_1.getContent());
+        List<Link> extractedUrls = Link.extractTyped(version_1.getContent());
 
         assertEquals(1, extractedUrls.size());
 
@@ -70,6 +71,7 @@ class UrlExtractionTest {
         assertEquals("ManualResetEvent", extractedUrls.get(0).getAnchor());
         assertEquals("1", extractedUrls.get(0).getReference());
         assertEquals("http://msdn.microsoft.com/en-us/library/system.threading.manualresetevent.aspx", extractedUrls.get(0).getUrl());
+        assertEquals("msdn.microsoft.com", extractedUrls.get(0).getDomain());
         assertEquals("MSDN Reference", extractedUrls.get(0).getTitle());
         assertThat(extractedUrls.get(0), instanceOf(MarkdownLinkReference.class));
     }
@@ -91,7 +93,7 @@ class UrlExtractionTest {
         PostVersionList a_1629423 = PostVersionList.readFromCSV(pathToPostVersionLists, 1629423, Posts.ANSWER_ID);
 
         PostVersion version_1 = a_1629423.getFirst();
-        List<Link> extractedUrls = Link.extractAll(version_1.getContent());
+        List<Link> extractedUrls = Link.extractTyped(version_1.getContent());
 
         assertEquals(2, extractedUrls.size());
 
@@ -99,6 +101,7 @@ class UrlExtractionTest {
         assertEquals("SelectionStart", extractedUrls.get(0).getAnchor());
         assertNull(extractedUrls.get(0).getReference());
         assertEquals("http://msdn.microsoft.com/en-us/library/system.windows.controls.textbox.selectionstart.aspx", extractedUrls.get(0).getUrl());
+        assertEquals("msdn.microsoft.com", extractedUrls.get(0).getDomain());
         assertNull(extractedUrls.get(0).getTitle());
         assertThat(extractedUrls.get(0), instanceOf(AnchorLink.class));
 
@@ -106,6 +109,7 @@ class UrlExtractionTest {
         assertEquals("SelectionLength", extractedUrls.get(1).getAnchor());
         assertNull(extractedUrls.get(1).getReference());
         assertEquals("http://msdn.microsoft.com/en-us/library/system.windows.controls.textbox.selectionlength.aspx", extractedUrls.get(1).getUrl());
+        assertEquals("msdn.microsoft.com", extractedUrls.get(1).getDomain());
         assertNull(extractedUrls.get(1).getTitle());
         assertThat(extractedUrls.get(1), instanceOf(AnchorLink.class));
     }
@@ -144,7 +148,7 @@ class UrlExtractionTest {
         PostVersionList a_52 = PostVersionList.readFromCSV(pathToPostVersionLists, 52, Posts.ANSWER_ID);
 
         PostVersion version_1 = a_52.getFirst();
-        List<Link> extractedUrls = Link.extractAll(version_1.getContent());
+        List<Link> extractedUrls = Link.extractTyped(version_1.getContent());
 
         assertEquals(2, extractedUrls.size());
 
@@ -152,6 +156,7 @@ class UrlExtractionTest {
         assertNull(extractedUrls.get(0).getAnchor());
         assertNull(extractedUrls.get(0).getReference());
         assertEquals("http://www.gskinner.com/blog/archives/2006/06/as3_resource_ma.html", extractedUrls.get(0).getUrl());
+        assertEquals("www.gskinner.com", extractedUrls.get(0).getDomain());
         assertNull(extractedUrls.get(0).getTitle());
         assertThat(extractedUrls.get(0), instanceOf(MarkdownLinkAngleBrackets.class));
 
@@ -159,6 +164,7 @@ class UrlExtractionTest {
         assertNull(extractedUrls.get(1).getAnchor());
         assertNull(extractedUrls.get(1).getReference());
         assertEquals("http://www.craftymind.com/2008/04/09/kick-starting-the-garbage-collector-in-actionscript-3-with-air/", extractedUrls.get(1).getUrl());
+        assertEquals("www.craftymind.com", extractedUrls.get(1).getDomain());
         assertNull(extractedUrls.get(1).getTitle());
         assertThat(extractedUrls.get(1), instanceOf(MarkdownLinkAngleBrackets.class));
     }
@@ -176,7 +182,7 @@ class UrlExtractionTest {
         PostVersionList a_49 = PostVersionList.readFromCSV(pathToPostVersionLists, 49, Posts.ANSWER_ID);
 
         PostVersion version_1 = a_49.getFirst();
-        List<Link> extractedUrls = Link.extractAll(version_1.getContent());
+        List<Link> extractedUrls = Link.extractTyped(version_1.getContent());
 
         assertEquals(1, extractedUrls.size());
 
@@ -184,6 +190,7 @@ class UrlExtractionTest {
         assertNull(extractedUrls.get(0).getAnchor());
         assertNull(extractedUrls.get(0).getReference());
         assertEquals("http://www.brokenbuild.com/blog/2006/08/15/mysql-triggers-how-do-you-abort-an-insert-update-or-delete-with-a-trigger/", extractedUrls.get(0).getUrl());
+        assertEquals("www.brokenbuild.com", extractedUrls.get(0).getDomain());
         assertNull(extractedUrls.get(0).getTitle());
         assertThat(extractedUrls.get(0), instanceOf(Link.class));
     }
@@ -206,23 +213,23 @@ class UrlExtractionTest {
 
         a_33.normalizeLinks();
         PostVersion version_1_a33 = a_33.getFirst();
-        extractedLinks.addAll(Link.extractAll(version_1_a33.getContent()));
+        extractedLinks.addAll(Link.extractTyped(version_1_a33.getContent()));
 
         a_44.normalizeLinks();
         PostVersion version_1_a44 = a_44.getFirst();
-        extractedLinks.addAll(Link.extractAll(version_1_a44.getContent()));
+        extractedLinks.addAll(Link.extractTyped(version_1_a44.getContent()));
 
         a_49.normalizeLinks();
         PostVersion version_1_a49 = a_49.getFirst();
-        extractedLinks.addAll(Link.extractAll(version_1_a49.getContent()));
+        extractedLinks.addAll(Link.extractTyped(version_1_a49.getContent()));
 
         a_52.normalizeLinks();
         PostVersion version_1_a52 = a_52.getFirst();
-        extractedLinks.addAll(Link.extractAll(version_1_a52.getContent()));
+        extractedLinks.addAll(Link.extractTyped(version_1_a52.getContent()));
 
         a_1629423.normalizeLinks();
         PostVersion version_1_a1629423 = a_1629423.getFirst();
-        extractedLinks.addAll(Link.extractAll(version_1_a1629423.getContent()));
+        extractedLinks.addAll(Link.extractTyped(version_1_a1629423.getContent()));
 
 
         for(Link link : extractedLinks){
@@ -232,7 +239,7 @@ class UrlExtractionTest {
 
     @Test
     void testMarkdownLinkInlineTitle(){
-        List<Link> extractedUrls = Link.extractAll("[I'm an inline-style link with title](https://www.google.com \"Google's Homepage\")");
+        List<Link> extractedUrls = Link.extractTyped("[I'm an inline-style link with title](https://www.google.com \"Google's Homepage\")");
 
         assertEquals(1, extractedUrls.size());
 
@@ -243,7 +250,7 @@ class UrlExtractionTest {
         assertEquals("Google's Homepage", extractedUrls.get(0).getTitle());
         assertThat(extractedUrls.get(0), instanceOf(MarkdownLinkInline.class));
 
-        extractedUrls = Link.extractAll("[I'm an inline-style link without title](https://www.google.com)");
+        extractedUrls = Link.extractTyped("[I'm an inline-style link without title](https://www.google.com)");
 
         assertEquals(1, extractedUrls.size());
 
@@ -251,6 +258,7 @@ class UrlExtractionTest {
         assertEquals("I'm an inline-style link without title", extractedUrls.get(0).getAnchor());
         assertNull(extractedUrls.get(0).getReference());
         assertEquals("https://www.google.com", extractedUrls.get(0).getUrl());
+        assertEquals("www.google.com", extractedUrls.get(0).getDomain());
         assertNull(extractedUrls.get(0).getTitle());
         assertThat(extractedUrls.get(0), instanceOf(MarkdownLinkInline.class));
     }

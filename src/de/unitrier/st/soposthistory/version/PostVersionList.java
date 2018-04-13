@@ -356,7 +356,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
     public void normalizeLinks() {
         for (PostVersion postVersion : this) {
             String mergedTextBlocks = postVersion.getMergedTextBlockContent();
-            List<Link> extractedLinks = Link.extractAll(mergedTextBlocks);
+            List<Link> extractedLinks = Link.extractTyped(mergedTextBlocks);
 
             for (TextBlockVersion currentTextBlock : postVersion.getTextBlocks()) {
                 String normalizedMarkdownContent = Link.normalizeLinks(currentTextBlock.getContent(), extractedLinks);
