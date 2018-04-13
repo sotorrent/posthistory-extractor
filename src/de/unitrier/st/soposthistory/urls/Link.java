@@ -9,13 +9,16 @@ import java.util.stream.Collectors;
 
 public class Link {
     // for the basic regex, see https://stackoverflow.com/a/6041965, alternative: https://stackoverflow.com/a/29288898
-    private static final Pattern regex = Pattern.compile("(?:http|ftp|https)://(?:[\\w_-]+(?:(?:\\.[\\w_-]+)+))(?:[\\w.,@?^=%&:/~+#-]*[\\w@?^=%&/~+#-])");
+    private static final Pattern urlPattern = Pattern.compile("(?:http|ftp|https)://(?:[\\w_-]+(?:(?:\\.[\\w_-]+)+))(?:[\\w.,@?^=%&:/~+#-]*[\\w@?^=%&/~+#-])");
+    // pattern to extract domain from URL
+    private static final Pattern domainPattern = Pattern.compile("(?i:http|ftp|https)(?:://)([\\w_-]+(?:(?:\\.[\\w_-]+)+))");
 
     String fullMatch;
     String anchor; // the link anchor visible to the user
     String reference; // internal Markdown reference for the link
     String url;
     String title;
+    String domain;
 
     public String getFullMatch() {
         return fullMatch;
@@ -37,15 +40,29 @@ public class Link {
         return title;
     }
 
+    public String getDomain() {
+        return domain;
+    }
+
+    private void extractDomain() {
+        Matcher domainMatcher = domainPattern.matcher(url);
+        if (domainMatcher.find()) {
+            this.domain = domainMatcher.group(1);
+        } else {
+            throw new IllegalArgumentException("Extraction of domain failed for URL: " + url);
+        }
+    }
+
     public static List<Link> extract(String markdownContent) {
         LinkedList<Link> extractedLinks = new LinkedList<>();
-        Matcher matcher = regex.matcher(markdownContent);
+        Matcher matcher = urlPattern.matcher(markdownContent);
 
         while (matcher.find()) {
             Link extractedLink = new Link();
             extractedLink.fullMatch = matcher.group(0);
             extractedLink.url = matcher.group(0);
             if (extractedLink.url != null && extractedLink.url.length() > 0) {
+                extractedLink.extractDomain();
                 extractedLinks.add(extractedLink);
             }
         }
@@ -82,18 +99,21 @@ public class Link {
         LinkedList<Link> validLinks = new LinkedList<>();
         for (Link currentLink : extractedLinks) {
             if (currentLink.url != null) {
-                Matcher urlMatcher = regex.matcher(currentLink.url.trim());
+                Matcher urlMatcher = urlPattern.matcher(currentLink.url.trim());
                 if (urlMatcher.matches()) {
                     validLinks.add(currentLink);
                 }
             }
         }
 
+        for (Link link : validLinks) {
+            link.extractDomain();
+        }
+
         return validLinks;
     }
 
     public static String normalizeLinks(String markdownContent, List<Link> extractedLinks) {
-
         String normalizedMarkdownContent = markdownContent;
 
         for (Link currentLink : extractedLinks) {

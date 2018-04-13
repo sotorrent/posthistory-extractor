@@ -15,6 +15,8 @@ import static org.hamcrest.junit.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class UrlExtractionTest {
+    // TODO: Add test case for domain extraction
+
     @Test
     void testMarkdownLinkInline(){
         /*

@@ -9,6 +9,7 @@ public class PostVersionUrl{
     private Integer postId;
     private Integer postHistoryId;
     private Integer postBlockVersionId;
+    //private String domain; TODO: add mapping for column Domain, extract domain
     private String url;
 
     public PostVersionUrl(){

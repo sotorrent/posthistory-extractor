@@ -8,16 +8,19 @@ public class CommentUrl{
     private int id;
     private Integer postId;
     private Integer commentId;
+    private String domain;
     private String url;
 
     public CommentUrl(){
         this.commentId = null;
+        this.domain = null;
         this.url = null;
     }
 
-    public CommentUrl(int postId, int commentId, String url){
+    public CommentUrl(int postId, int commentId, String domain, String url){
         this.postId = postId;
         this.commentId = commentId;
+        this.domain = domain;
         this.url = url;
     }
 
@@ -50,6 +53,16 @@ public class CommentUrl{
 
     public void setCommentId(Integer commentId) {
         this.commentId = commentId;
+    }
+
+    @Basic
+    @Column(name = "Domain")
+    public String getDomain() {
+        return domain;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
     }
 
     @Basic

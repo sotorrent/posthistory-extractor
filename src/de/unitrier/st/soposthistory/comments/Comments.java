@@ -65,9 +65,14 @@ public class Comments {
     }
 
     void extractUrls() {
+        // Comments.Text may be null according to database schema
+        if (text == null) {
+            return;
+        }
+
         List<Link> extractedLinks = Link.extract(text);
         for (Link currentLink : extractedLinks) {
-            urls.add(new CommentUrl(postId, id, currentLink.getUrl()));
+            urls.add(new CommentUrl(postId, id, currentLink.getDomain(), currentLink.getUrl()));
         }
     }
 

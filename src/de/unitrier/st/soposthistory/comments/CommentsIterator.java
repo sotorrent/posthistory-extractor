@@ -8,14 +8,17 @@ import org.hibernate.cfg.Configuration;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Locale;
 import java.util.logging.Logger;
 
 public class CommentsIterator {
 
     private static Logger logger = null;
-    private static final int LOG_PACE = 1000;
-    private static SessionFactory sessionFactory = null;
+    private static final int LOG_PACE = 10000;
+    public static SessionFactory sessionFactory = null;
+
+    private int partitionCount;
 
     static {
         // configure logger
@@ -24,6 +27,10 @@ public class CommentsIterator {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public CommentsIterator(int partitionCount) {
+        this.partitionCount = partitionCount;
     }
 
     public static void createSessionFactory(Path hibernateConfigFilePath) {
@@ -45,42 +52,50 @@ public class CommentsIterator {
 
         logger.info("Starting extraction of URLs from comments...");
 
-        long processedComments = 0;
-
         Transaction t = null; // see https://docs.jboss.org/hibernate/orm/3.3/reference/en/html/transactions.html
         try (StatelessSession session = sessionFactory.openStatelessSession()) {
-            t = session.beginTransaction();
+            @SuppressWarnings("unchecked") // see https://stackoverflow.com/a/509115
+            List<Integer> commentIds = session.createQuery("SELECT id FROM Comments ORDER BY id").list();
+            List<Integer>[] partitions = Util.split(commentIds, partitionCount);
 
-            long commentCount = (long) session.createQuery("SELECT COUNT(*) FROM Comments").getSingleResult();
+            for (int i=0; i<partitions.length; i++) {
+                List<Integer> partition = partitions[i];
+                int minId = partition.get(0);
+                int maxId = partition.get(partition.size()-1);
 
-            logger.info("Processing " + commentCount + " comments...");
+                t = session.beginTransaction();
 
-            ScrollableResults commentsIterator = session.createQuery("FROM Comments")
-                    .scroll(ScrollMode.FORWARD_ONLY);
+                @SuppressWarnings("unchecked") // see https://stackoverflow.com/a/509115
+                List<Comments> comments = session.createQuery(String.format(
+                        "FROM Comments WHERE id >= %d and id <= %d", minId, maxId)
+                ).list();
 
-            while (commentsIterator.next()) {
-                processedComments++;
+                logger.info("Processing " + comments.size() + " comments in partition " + i + " ...");
 
-                // retrieve next comment
-                Comments currentComment = (Comments) commentsIterator.get(0);
-                // extract URLs
-                currentComment.extractUrls();
-                // add URLs to database
-                currentComment.insertUrls(session);
+                for (int j=0; j<comments.size()-1; j++) {
+                    // retrieve next comment
+                    Comments currentComment = comments.get(j);
+                    // extract URLs
+                    currentComment.extractUrls();
+                    // add URLs to database
+                    currentComment.insertUrls(session);
 
-                // log only every LOG_PACE record
-                if (processedComments == 1 || processedComments == commentCount || processedComments % LOG_PACE == 0) {
-                    // Locale.ROOT -> force '.' as decimal separator
-                    String progress = String.format(Locale.ROOT, "%.2f%%", (((double)(processedComments))/commentCount*100));
-                    logger.info( "Current CommentId: " + currentComment.getId()
-                            + "; record " + processedComments + " of " + commentCount + "; " + progress + ")");
+                    // log only every LOG_PACE record
+                    if (j == 0 || j == comments.size()-1 || j % LOG_PACE == 0) {
+                        // Locale.ROOT -> force '.' as decimal separator
+                        String progress = String.format(Locale.ROOT, "%.2f%%", (((double)(j+1))/comments.size()*100));
+                        logger.info( "Current CommentId: " + currentComment.getId()
+                                + "; record " + j + " of " + comments.size() + "; " + progress + ")");
+                    }
                 }
+
+                // commit transaction
+                t.commit();
+
+                logger.info("Extraction of URLs from comments in partition " + i + " finished...");
             }
 
-            // commit transaction
-            t.commit();
-
-            logger.info("Extraction of URLs from comments finished...");
+            logger.info("Extraction of URLs from comments in all partitions finished...");
 
         } catch (RuntimeException e) {
             logger.warning(Util.exceptionStackTraceToString(e));
