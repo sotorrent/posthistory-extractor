@@ -77,8 +77,10 @@ class MainIterator {
 
         // extract URLs from comments
         CommentsIterator.createSessionFactory(hibernateConfigFilePath);
-        CommentsIterator commentsIterator = new CommentsIterator();
+        CommentsIterator commentsIterator = new CommentsIterator(partitionCount);
 
         commentsIterator.extractUrlsFromComments();
+
+        CommentsIterator.sessionFactory.close();
     }
 }
