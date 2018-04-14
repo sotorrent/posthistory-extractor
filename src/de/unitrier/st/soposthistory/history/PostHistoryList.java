@@ -106,7 +106,7 @@ public class PostHistoryList extends LinkedList<PostHistory> {
 
             String postHistoryQueryString = String.format("FROM PostHistory WHERE PostId=%d " +
                             "AND postHistoryTypeId IN (%s) ORDER BY Id ASC",
-                    postId, PostHistory.getRelevantPostHistoryTypes()
+                    postId, Util.setToQueryString(PostHistory.contentPostHistoryTypes)
             );
             ScrollableResults postHistoryIterator = session.createQuery(postHistoryQueryString)
                     .scroll(ScrollMode.FORWARD_ONLY);

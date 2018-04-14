@@ -4,19 +4,43 @@ import de.unitrier.st.soposthistory.blocks.CodeBlockVersion;
 import de.unitrier.st.soposthistory.blocks.PostBlockVersion;
 import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
 import de.unitrier.st.soposthistory.version.PostVersion;
+import de.unitrier.st.soposthistory.version.TitleVersion;
+import de.unitrier.st.util.Util;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.csv.QuoteMode;
 
 import javax.persistence.*;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Entity
 @Table(name="PostHistory")
 public class PostHistory {
+    private static Logger logger = null;
+
+    static {
+        // configure logger
+        try {
+            logger = Util.getClassLogger(PostHistory.class, false);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     /*
      * 2: Initial Body - The first raw body text a post is submitted with.
      *  => Frequency: 34,112,377 (2017-01-27)
@@ -29,12 +53,34 @@ public class PostHistory {
      *     (see http://meta.stackexchange.com/a/2678)
      *  => Frequency: 77,957 (2017-01-27)
      */
-    public static final Set<Byte> relevantPostHistoryTypes = new HashSet<>();
+    public static final Set<Byte> contentPostHistoryTypes = new HashSet<>();
     static {
-        // TODO: check PostHistoryTypeIds for other relevant changes
-        relevantPostHistoryTypes.add((byte)2); // Initial Body
-        relevantPostHistoryTypes.add((byte)5); // Edit Body
-        relevantPostHistoryTypes.add((byte)8); // Rollback Body
+        // see https://meta.stackexchange.com/a/2678
+        contentPostHistoryTypes.add((byte)2); // Initial Body - initial post raw body text
+        contentPostHistoryTypes.add((byte)5); // Edit Body - modified post body (raw markdown)
+        contentPostHistoryTypes.add((byte)8); // Rollback Body - reverted body (raw markdown)
+    }
+
+    public static final Set<Byte> titlePostHistoryTypes = new HashSet<>();
+    static {
+        // see https://meta.stackexchange.com/a/2678
+        titlePostHistoryTypes.add((byte)1); // Initial Title - initial title (questions only)
+        titlePostHistoryTypes.add((byte)4); // Edit Title - modified title (questions only)
+        titlePostHistoryTypes.add((byte)8); // Rollback Title - reverted title (questions only)
+    }
+
+    public static final Pattern fileNamePattern = Pattern.compile("(\\d+)\\.csv");
+
+    public static final CSVFormat csvFormatPostHistory;
+    static {
+        // configure CSV format for ground truth
+        csvFormatPostHistory = CSVFormat.DEFAULT
+                .withHeader("Id", "PostId", "UserId", "PostHistoryTypeId", "RevisionGUID", "CreationDate", "Text", "UserDisplayName", "Comment")
+                .withDelimiter(';')
+                .withQuote('"')
+                .withQuoteMode(QuoteMode.MINIMAL)
+                .withEscape('\\')
+                .withFirstRecordAsHeader();
     }
 
     // regex for escaped newline characters
@@ -73,18 +119,6 @@ public class PostHistory {
     private List<PostBlockVersion> postBlocks;
     private byte postTypeId;
     private int localIdCount;
-
-    public static String getRelevantPostHistoryTypes() {
-        Byte[] relevantTypes = new Byte[PostHistory.relevantPostHistoryTypes.size()];
-        relevantPostHistoryTypes.toArray(relevantTypes);
-        StringBuilder relevantTypesString = new StringBuilder();
-        for (int i=0; i<relevantTypes.length-1; i++) {
-            relevantTypesString.append(relevantTypes[i]).append(",");
-        }
-        relevantTypesString.append(relevantTypes[relevantTypes.length - 1]);
-
-        return relevantTypesString.toString();
-    }
 
     public PostHistory() {}
 
@@ -506,10 +540,80 @@ public class PostHistory {
 
     @Transient
     public PostVersion toPostVersion() {
-        // convert PostHistory (SO Database Schema) to PostVersion (Our Schema)
+        if (!contentPostHistoryTypes.contains(postHistoryTypeId)) {
+            throw new IllegalStateException("Only versions modifying the content can be exported to PostVersion.");
+        }
+
+        // convert PostHistory (SO database schema) to PostVersion (our schema)
         PostVersion postVersion = new PostVersion(postId, id, postTypeId, postHistoryTypeId, creationDate);
         postVersion.addPostBlockList(postBlocks);
         return postVersion;
+    }
+
+    @Transient
+    public TitleVersion toTitleVersion() {
+        if (!titlePostHistoryTypes.contains(postHistoryTypeId)) {
+            throw new IllegalStateException("Only versions modifying the title can be exported to TitleVersion.");
+        }
+
+        // convert PostHistory (SO database schema) to TitleVersion (our schema)
+        return new TitleVersion(postId, id, postTypeId, postHistoryTypeId, creationDate, text);
+    }
+
+    public static List<PostHistory> readFromCSV(Path dir, int postId, byte postTypeId, Set<Byte> postHistoryTypes) {
+        // ensure that input directory exists
+        Util.ensureDirectoryExists(dir);
+
+        List<PostHistory> postHistoryList = new LinkedList<>();
+        Path pathToCSVFile = Paths.get(dir.toString(), postId + ".csv");
+
+        CSVParser parser;
+        try {
+            parser = CSVParser.parse(
+                    pathToCSVFile.toFile(),
+                    StandardCharsets.UTF_8,
+                    PostHistory.csvFormatPostHistory
+            );
+            parser.getHeaderMap();
+
+            logger.info("Reading version data from CSV file " + pathToCSVFile.toFile().toString() + " ...");
+
+            List<CSVRecord> records = parser.getRecords();
+
+            if (records.size() > 0) {
+                for (CSVRecord record : records) {
+                    byte postHistoryTypeId = Byte.parseByte(record.get("PostHistoryTypeId"));
+                    // only consider relevant post history types
+                    if (!postHistoryTypes.contains(postHistoryTypeId)) {
+                        continue;
+                    }
+
+                    String text = record.get("Text");
+                    // ignore entries where column "Text" is empty
+                    if (text.isEmpty()) {
+                        continue;
+                    }
+
+                    int id = Integer.parseInt(record.get("Id"));
+                    assertEquals(postId, Integer.parseInt(record.get("PostId")));
+                    String userId = record.get("UserId");
+                    String revisionGuid = record.get("RevisionGUID");
+                    Timestamp creationDate = Timestamp.valueOf(record.get("CreationDate"));
+                    String userDisplayName = record.get("UserDisplayName");
+                    String comment = record.get("Comment");
+
+                    PostHistory postHistory = new PostHistory(
+                            id, postId, postTypeId, userId, postHistoryTypeId, revisionGuid, creationDate,
+                            text, userDisplayName, comment);
+
+                    postHistoryList.add(postHistory);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return postHistoryList;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package de.unitrier.st.soposthistory.history;
 
+import com.google.common.collect.Sets;
 import de.unitrier.st.soposthistory.blocks.CodeBlockVersion;
 import de.unitrier.st.soposthistory.blocks.PostBlockVersion;
 import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
@@ -8,6 +9,7 @@ import de.unitrier.st.soposthistory.urls.PostReferenceGH;
 import de.unitrier.st.soposthistory.urls.PostVersionUrl;
 import de.unitrier.st.soposthistory.version.PostVersion;
 import de.unitrier.st.soposthistory.version.PostVersionList;
+import de.unitrier.st.soposthistory.version.TitleVersionList;
 import de.unitrier.st.util.Util;
 import org.apache.commons.csv.*;
 import org.hibernate.*;
@@ -298,9 +300,9 @@ public class PostHistoryIterator {
                     "and diffs back to database...");
 
             // read all PostIds from the CSV file and extract history from table PostHistory
-            List<PostVersionList> postsWithoutVersions = new LinkedList<>(); // store posts without extracted versions
+            List<PostVersionList> postsWithoutContentVersions = new LinkedList<>(); // store posts without extracted versions
             List<PostVersion> postsVersionsWithoutBlocks = new LinkedList<>(); // store post versions without extracted post blocks
-            int postsWithVersionsCount = 0;
+            int postsWithContentVersionsCount = 0;
             Transaction t = null; // see https://docs.jboss.org/hibernate/orm/3.3/reference/en/html/transactions.html
             try (StatelessSession session = sessionFactory.openStatelessSession()) {
                 try (CSVParser csvParser = new CSVParser(
@@ -328,13 +330,16 @@ public class PostHistoryIterator {
                         }
 
                         if (postTypeId == 1 || postTypeId == 2) { // question or answer
-                            // retrieve data from post history...
+                            // retrieve data from post history about title and body changes
                             PostVersionList postVersionList = new PostVersionList(postId, postTypeId);
+                            TitleVersionList titleVersionList = new TitleVersionList(postId);
 
                             // get all PostHistory entries for current PostId, order them chronologically
                             String currentPostHistoryQuery = String.format("FROM PostHistory " +
                                     "WHERE PostId=%d AND postHistoryTypeId IN (%s)",
-                                    postId, PostHistory.getRelevantPostHistoryTypes()
+                                    postId,
+                                    Util.setToQueryString(Sets.union(PostHistory.contentPostHistoryTypes,
+                                            PostHistory.titlePostHistoryTypes))
                             );
 
                             t = session.beginTransaction();
@@ -345,37 +350,49 @@ public class PostHistoryIterator {
                             while (postHistoryIterator.next()) {
                                 // first, get one PostHistory entity from the SO database schema...
                                 PostHistory currentPostHistoryEntity = (PostHistory) postHistoryIterator.get(0);
-                                // ignore versions that don't have any content
+
+                                // ignore versions that don't have any content (body or title)
                                 if (currentPostHistoryEntity.getText() == null || currentPostHistoryEntity.getText().length() == 0) {
                                     continue;
                                 }
-                                // then extract the post blocks (text or code)...
-                                currentPostHistoryEntity.extractPostBlocks();
-                                // ...convert them into a PostVersion (our schema)...
-                                currentPostHistoryEntity.setPostTypeId(postTypeId);
-                                PostVersion currentPostVersion = currentPostHistoryEntity.toPostVersion();
-                                // ...check if post blocks have been extracted...
-                                if (currentPostVersion.getPostBlocks().size() ==  0) {
-                                    logger.warning("Thread " + partition + ": " + "No post blocks extracted for PostId: " + postId + "; PostHistoryId: " + currentPostVersion.getPostHistoryId());
-                                    postsVersionsWithoutBlocks.add(currentPostVersion);
+
+                                if (PostHistory.contentPostHistoryTypes.contains(
+                                        currentPostHistoryEntity.getPostHistoryTypeId())) {
+                                    // content change
+
+                                    // extract the post blocks (text or code)...
+                                    currentPostHistoryEntity.extractPostBlocks();
+                                    // ...convert them into a PostVersion (our schema)...
+                                    currentPostHistoryEntity.setPostTypeId(postTypeId);
+                                    PostVersion currentPostVersion = currentPostHistoryEntity.toPostVersion();
+                                    // ...check if post blocks have been extracted...
+                                    if (currentPostVersion.getPostBlocks().size() ==  0) {
+                                        logger.warning("Thread " + partition + ": " + "No post blocks extracted for PostId: " + postId + "; PostHistoryId: " + currentPostVersion.getPostHistoryId());
+                                        postsVersionsWithoutBlocks.add(currentPostVersion);
+                                    }
+                                    // ...and write the extracted post blocks to the database
+                                    currentPostVersion.insertPostBlocks(session);
+                                    // extract URLs from text blocks...
+                                    currentPostVersion.extractUrlsFromTextBlocks();
+                                    // ...and write them to the database
+                                    currentPostVersion.insertUrls(session);
+                                    // finally, add this version to the post version list
+                                    postVersionList.add(currentPostVersion);
+
+                                } else if (PostHistory.titlePostHistoryTypes.contains(
+                                        currentPostHistoryEntity.getPostHistoryTypeId())) {
+                                    // title change
+                                    titleVersionList.add(currentPostHistoryEntity.toTitleVersion());
                                 }
-                                // ...and write the extracted post blocks to the database
-                                currentPostVersion.insertPostBlocks(session);
-                                // extract URLs from text blocks...
-                                currentPostVersion.extractUrlsFromTextBlocks();
-                                // ...and write them to the database
-                                currentPostVersion.insertUrls(session);
-                                // finally, add this version to the post version list
-                                postVersionList.add(currentPostVersion);
                             }
 
                             if (postVersionList.size() == 0) {
-                                logger.warning("Thread " + partition + ": " + "No versions extracted for PostId " + postId);
-                                postsWithoutVersions.add(postVersionList);
+                                logger.warning("Thread " + partition + ": " + "No content versions extracted for PostId " + postId);
+                                postsWithoutContentVersions.add(postVersionList);
                             } else {
-                                postsWithVersionsCount++;
+                                postsWithContentVersionsCount++;
 
-                                // sort post history chronologically (according to post history id)
+                                // sort post history chronologically
                                 postVersionList.sort();
 
                                 // (1) set pred and succ references for post versions
@@ -383,8 +400,22 @@ public class PostHistoryIterator {
                                 // (3) compute diffs for similar text and code blocks
                                 postVersionList.processVersionHistory();
 
-                                // write post history versions to database and update post blocks
+                                // write post versions to database and update post blocks
                                 postVersionList.insert(session);
+                            }
+
+                            if (postTypeId == Posts.QUESTION_ID && titleVersionList.size() == 0) {
+                                logger.warning("Thread " + partition + ": " + "No title versions extracted for PostId " + postId);
+                            } else {
+                                // sort post history chronologically
+                                titleVersionList.sort();
+
+                                // (1) set pred and succ references for title versions
+                                // (2) compute edit distance between title versions
+                                titleVersionList.processVersionHistory();
+
+                                // write title versions to database
+                                titleVersionList.insert(session);
                             }
 
                             // commit transaction
@@ -392,16 +423,16 @@ public class PostHistoryIterator {
                         }
                     }
 
-                    int processedPostsCount = postsWithVersionsCount + postsWithoutVersions.size();
+                    int processedPostsCount = postsWithContentVersionsCount + postsWithoutContentVersions.size();
                     logger.info("Thread " + partition + ": " + processedPostsCount + " PostIds have been processed.");
                     if (processedPostsCount != recordCount) {
                         logger.warning("Thread " + partition + ": Processed post count does not match record count " +
                                 "(records: " + recordCount + "; processed posts: " + processedPostsCount + ")");
                     }
 
-                    logger.info("Thread " + partition + ": Writing PostIds of " + postsWithoutVersions.size()
+                    logger.info("Thread " + partition + ": Writing PostIds of " + postsWithoutContentVersions.size()
                             + " posts for which no versions have been extracted...");
-                    writePostsWithoutVersionsToCSV(postsWithoutVersions);
+                    writePostsWithoutVersionsToCSV(postsWithoutContentVersions);
 
                     logger.info("Thread " + partition + ": Writing PostIds and PostHistoryIds of " + postsVersionsWithoutBlocks.size()
                             + " post versions for which no post blocks have been extracted...");

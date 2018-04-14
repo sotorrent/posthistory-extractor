@@ -11,27 +11,15 @@ import de.unitrier.st.soposthistory.history.PostHistory;
 import de.unitrier.st.soposthistory.history.Posts;
 import de.unitrier.st.soposthistory.urls.Link;
 import de.unitrier.st.util.Util;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
-import org.apache.commons.csv.QuoteMode;
 import org.hibernate.StatelessSession;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.sql.Timestamp;
 import java.util.*;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PostVersionList extends LinkedList<PostVersion> {
-    public static final Pattern fileNamePattern = Pattern.compile("(\\d+)\\.csv");
     private static Logger logger = null;
-    private static final CSVFormat csvFormatVersionList;
 
     private int postId;
     private byte postTypeId;
@@ -45,15 +33,6 @@ public class PostVersionList extends LinkedList<PostVersion> {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        // configure CSV format for ground truth
-        csvFormatVersionList = CSVFormat.DEFAULT
-                .withHeader("Id", "PostId", "UserId", "PostHistoryTypeId", "RevisionGUID", "CreationDate", "Text", "UserDisplayName", "Comment")
-                .withDelimiter(';')
-                .withQuote('"')
-                .withQuoteMode(QuoteMode.MINIMAL)
-                .withEscape('\\')
-                .withFirstRecordAsHeader();
     }
 
     public PostVersionList(int postId, byte postTypeId) {
@@ -81,67 +60,23 @@ public class PostVersionList extends LinkedList<PostVersion> {
     }
 
     public static PostVersionList readFromCSV(Path dir, int postId, byte postTypeId, boolean processVersionHistory) {
-        // ensure that input directory exists
-        Util.ensureDirectoryExists(dir);
+        // read post history
+        List<PostHistory> postHistoryList = PostHistory.readFromCSV(dir, postId, postTypeId, PostHistory.contentPostHistoryTypes);
 
+        // convert to post version list
         PostVersionList postVersionList = new PostVersionList(postId, postTypeId);
-        Path pathToCSVFile = Paths.get(dir.toString(), postId + ".csv");
+        for (PostHistory postHistory : postHistoryList) {
+            postHistory.extractPostBlocks();
+            PostVersion postVersion = postHistory.toPostVersion();
+            postVersion.extractUrlsFromTextBlocks();
+            postVersionList.add(postVersion);
+        }
 
-        CSVParser parser;
-        try {
-            parser = CSVParser.parse(
-                    pathToCSVFile.toFile(),
-                    StandardCharsets.UTF_8,
-                    csvFormatVersionList
-            );
-            parser.getHeaderMap();
+        // sort list according to CreationDate, because order in CSV may not be chronologically
+        postVersionList.sort();
 
-            logger.info("Reading version data from CSV file " + pathToCSVFile.toFile().toString() + " ...");
-
-            List<CSVRecord> records = parser.getRecords();
-
-            if (records.size() > 0) {
-                for (CSVRecord record : records) {
-                    byte postHistoryTypeId = Byte.parseByte(record.get("PostHistoryTypeId"));
-                    // only consider relevant Post History Types
-                    if (!PostHistory.relevantPostHistoryTypes.contains(postHistoryTypeId)) {
-                        continue;
-                    }
-
-                    String text = record.get("Text");
-                    // ignore entries where column "Text" is empty
-                    if (text.isEmpty()) {
-                        continue;
-                    }
-
-                    int id = Integer.parseInt(record.get("Id"));
-                    assertEquals(postId, Integer.parseInt(record.get("PostId")));
-                    String userId = record.get("UserId");
-                    String revisionGuid = record.get("RevisionGUID");
-                    Timestamp creationDate = Timestamp.valueOf(record.get("CreationDate"));
-                    String userDisplayName = record.get("UserDisplayName");
-                    String comment = record.get("Comment");
-
-                    PostHistory postHistory = new PostHistory(
-                            id, postId, postTypeId, userId, postHistoryTypeId, revisionGuid, creationDate,
-                            text, userDisplayName, comment);
-                    postHistory.extractPostBlocks();
-                    PostVersion postVersion = postHistory.toPostVersion();
-                    postVersion.extractUrlsFromTextBlocks();
-
-                    postVersionList.add(postVersion);
-                }
-            }
-
-            // sort list according to CreationDate, because order in CSV may not be chronologically
-            postVersionList.sort();
-
-            if (processVersionHistory) {
-                postVersionList.processVersionHistory();
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (processVersionHistory) {
+            postVersionList.processVersionHistory();
         }
 
         return postVersionList;
@@ -153,7 +88,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
 
     public static List<PostVersionList> readFromDirectory(Path dir, boolean processVersionHistory) {
         return Util.processFiles(dir,
-                file -> fileNamePattern.matcher(file.toFile().getName()).matches(),
+                file -> PostHistory.fileNamePattern.matcher(file.toFile().getName()).matches(),
                 file -> PostVersionList.readFromCSV(
                         dir,
                         Integer.parseInt(file.toFile().getName().replace(".csv", "")),

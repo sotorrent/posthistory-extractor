@@ -5,9 +5,12 @@ import de.unitrier.st.soposthistory.blocks.CodeBlockVersion;
 import de.unitrier.st.soposthistory.blocks.PostBlockSimilarity;
 import de.unitrier.st.soposthistory.blocks.PostBlockVersion;
 import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
+import de.unitrier.st.soposthistory.history.PostHistory;
 import de.unitrier.st.soposthistory.history.Posts;
 import de.unitrier.st.soposthistory.version.PostVersion;
 import de.unitrier.st.soposthistory.version.PostVersionList;
+import de.unitrier.st.soposthistory.version.TitleVersion;
+import de.unitrier.st.soposthistory.version.TitleVersionList;
 import de.unitrier.st.util.InputTooShortException;
 import org.junit.jupiter.api.Test;
 
@@ -693,7 +696,7 @@ class PostVersionHistoryTest {
         List<PostVersionList> postVersionList = PostVersionList.readFromDirectory(pathToPostVersionLists);
         try {
             assertEquals(Files.list(pathToPostVersionLists).filter(
-                    file -> PostVersionList.fileNamePattern.matcher(file.toFile().getName()).matches())
+                    file -> PostHistory.fileNamePattern.matcher(file.toFile().getName()).matches())
                             .count(),
                     postVersionList.size());
         } catch (IOException e) {
@@ -1002,6 +1005,56 @@ class PostVersionHistoryTest {
         assertEquals(1, version_1.getPostBlocks().size());
         assertEquals(1, version_1.getTextBlocks().size());
         assertEquals(0, version_1.getCodeBlocks().size());
+    }
+
+    @Test
+    void testTitleHistoryQuestion309424() {
+        int postId = 309424;
+        TitleVersionList q_309424 = TitleVersionList.readFromCSV(pathToPostVersionLists, postId);
+        assertEquals(5, q_309424.size());
+
+        TitleVersion currentVersion;
+
+        // first version
+        currentVersion = q_309424.getFirst();
+        assertNull(currentVersion.getPred());
+        assertNotNull(currentVersion.getSucc());
+        assertNotNull(currentVersion.getSuccEditDistance());
+        assertNotNull(currentVersion.getSuccPostHistoryId());
+
+        for (int i=1; i<q_309424.size()-1; i++) {
+            currentVersion = q_309424.get(i);
+            assertNotNull(currentVersion.getPred());
+            assertNotNull(currentVersion.getPredEditDistance());
+            assertNotNull(currentVersion.getPredPostHistoryId());
+            assertNotNull(currentVersion.getSucc());
+            assertNotNull(currentVersion.getSuccEditDistance());
+            assertNotNull(currentVersion.getSuccPostHistoryId());
+        }
+
+        // last version
+        currentVersion = q_309424.getLast();
+        assertNotNull(currentVersion.getPred());
+        assertNotNull(currentVersion.getPredEditDistance());
+        assertNotNull(currentVersion.getPredPostHistoryId());
+        assertNull(currentVersion.getSucc());
+    }
+
+    @Test
+    void testPostHistoryTransformation() {
+        int postId = 309424;
+
+        PostVersionList q_309424_content = PostVersionList.readFromCSV(pathToPostVersionLists, postId, Posts.QUESTION_ID);
+        assertEquals(4, q_309424_content.size());
+        for (PostVersion postVersion : q_309424_content) {
+            assertTrue(PostHistory.contentPostHistoryTypes.contains(postVersion.getPostHistoryTypeId()));
+        }
+
+        TitleVersionList q_309424_title = TitleVersionList.readFromCSV(pathToPostVersionLists, postId);
+        assertEquals(5, q_309424_title.size());
+        for (TitleVersion titleVersion : q_309424_title) {
+            assertTrue(PostHistory.titlePostHistoryTypes.contains(titleVersion.getPostHistoryTypeId()));
+        }
     }
 
 }
