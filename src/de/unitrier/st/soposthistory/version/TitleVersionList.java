@@ -45,6 +45,11 @@ public class TitleVersionList extends LinkedList<TitleVersion> {
     }
 
     public void sort() {
+        // empty list is already sorted
+        if (this.size() == 0) {
+            return;
+        }
+
         // sort versions according to their creation date
         this.sort(Comparator.comparing(TitleVersion::getCreationDate));
 
@@ -59,7 +64,7 @@ public class TitleVersionList extends LinkedList<TitleVersion> {
             currentVersion.setEditDistance();
             pred.setEditDistance();
         }
-        this.getLast().setEditDistance();
+        this.getLast().setEditDistance(); // this element exists, because of size check above
 
         this.sorted = true;
     }

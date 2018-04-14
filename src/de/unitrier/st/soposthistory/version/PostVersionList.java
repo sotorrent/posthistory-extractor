@@ -99,6 +99,11 @@ public class PostVersionList extends LinkedList<PostVersion> {
     }
 
     public void sort() {
+        // empty list is already sorted
+        if (this.size() == 0) {
+            return;
+        }
+
         // sort versions according to their creation date
         this.sort(Comparator.comparing(PostVersion::getCreationDate));
 

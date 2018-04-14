@@ -1057,4 +1057,13 @@ class PostVersionHistoryTest {
         }
     }
 
+    @Test
+    void testEmptyVersionList() {
+        PostVersionList postVersionList = new PostVersionList(1, Posts.QUESTION_ID);
+        postVersionList.sort(); // this should not throw an exception
+
+        TitleVersionList titleVersionList = new TitleVersionList(1);
+        titleVersionList.sort(); // this should not throw an exception
+    }
+
 }
