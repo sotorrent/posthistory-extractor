@@ -186,6 +186,8 @@ class DisabledTests {
             String postReferenceGHQuery = "select count(*) from PostReferenceGH";
             long postReferenceGH = (long) session.createQuery(postReferenceGHQuery).list().get(0);
             assertEquals(5979034, postReferenceGH);
+
+            //TODO: add title version, commenturl
         }
     }
 }
