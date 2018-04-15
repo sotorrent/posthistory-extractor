@@ -117,16 +117,14 @@ public class PostHistory {
     private String comment;
     // internal
     private List<PostBlockVersion> postBlocks;
-    private byte postTypeId;
     private int localIdCount;
 
     public PostHistory() {}
 
-    public PostHistory(int id, int postId, byte postTypeId, String userId, byte postHistoryTypeId, String revisionGuid,
+    public PostHistory(int id, int postId, String userId, byte postHistoryTypeId, String revisionGuid,
                        Timestamp creationDate, String text, String userDisplayName, String comment) {
         this.id = id;
         this.postId = postId;
-        this.postTypeId = postTypeId;
         this.userId = userId;
         this.postHistoryTypeId = postHistoryTypeId;
         this.revisionGuid = revisionGuid;
@@ -224,15 +222,6 @@ public class PostHistory {
 
     public void setComment(String comment) {
         this.comment = comment;
-    }
-
-    @Transient
-    public byte getPostTypeId() {
-        return postTypeId;
-    }
-
-    public void setPostTypeId(byte postTypeId) {
-        this.postTypeId = postTypeId;
     }
 
     @Transient
@@ -539,7 +528,7 @@ public class PostHistory {
     }
 
     @Transient
-    public PostVersion toPostVersion() {
+    public PostVersion toPostVersion(byte postTypeId) {
         if (!contentPostHistoryTypes.contains(postHistoryTypeId)) {
             throw new IllegalStateException("Only versions modifying the content can be exported to PostVersion.");
         }
@@ -551,7 +540,7 @@ public class PostHistory {
     }
 
     @Transient
-    public TitleVersion toTitleVersion() {
+    public TitleVersion toTitleVersion(byte postTypeId) {
         if (!titlePostHistoryTypes.contains(postHistoryTypeId)) {
             throw new IllegalStateException("Only versions modifying the title can be exported to TitleVersion.");
         }
@@ -560,7 +549,7 @@ public class PostHistory {
         return new TitleVersion(postId, id, postTypeId, postHistoryTypeId, creationDate, text);
     }
 
-    public static List<PostHistory> readFromCSV(Path dir, int postId, byte postTypeId, Set<Byte> postHistoryTypes) {
+    public static List<PostHistory> readFromCSV(Path dir, int postId, Set<Byte> postHistoryTypes) {
         // ensure that input directory exists
         Util.ensureDirectoryExists(dir);
 
@@ -603,7 +592,7 @@ public class PostHistory {
                     String comment = record.get("Comment");
 
                     PostHistory postHistory = new PostHistory(
-                            id, postId, postTypeId, userId, postHistoryTypeId, revisionGuid, creationDate,
+                            id, postId, userId, postHistoryTypeId, revisionGuid, creationDate,
                             text, userDisplayName, comment);
 
                     postHistoryList.add(postHistory);

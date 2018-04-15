@@ -112,8 +112,7 @@ class DisabledTests {
                             }
 
                             currentPostHistoryEntity.extractPostBlocks();
-                            currentPostHistoryEntity.setPostTypeId(postTypeId);
-                            PostVersion currentPostVersion = currentPostHistoryEntity.toPostVersion();
+                            PostVersion currentPostVersion = currentPostHistoryEntity.toPostVersion(postTypeId);
 
                             if (currentPostVersion.getPostBlocks().size() == 0) {
                                 logger.warning("No post blocks extracted for PostId: " + postId + "; PostHistoryId: " + currentPostVersion.getPostHistoryId());

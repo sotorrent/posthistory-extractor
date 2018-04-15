@@ -365,8 +365,7 @@ public class PostHistoryIterator {
                                     // extract the post blocks (text or code)...
                                     currentPostHistoryEntity.extractPostBlocks();
                                     // ...convert them into a PostVersion (our schema)...
-                                    currentPostHistoryEntity.setPostTypeId(postTypeId);
-                                    PostVersion currentPostVersion = currentPostHistoryEntity.toPostVersion();
+                                    PostVersion currentPostVersion = currentPostHistoryEntity.toPostVersion(postTypeId);
                                     // ...check if post blocks have been extracted...
                                     if (currentPostVersion.getPostBlocks().size() ==  0) {
                                         logger.warning("Thread " + partition + ": " + "No post blocks extracted for PostId: " + postId + "; PostHistoryId: " + currentPostVersion.getPostHistoryId());
@@ -384,7 +383,7 @@ public class PostHistoryIterator {
                                 } else if (PostHistory.titlePostHistoryTypes.contains(
                                         currentPostHistoryEntity.getPostHistoryTypeId())) {
                                     // title change
-                                    titleVersionList.add(currentPostHistoryEntity.toTitleVersion());
+                                    titleVersionList.add(currentPostHistoryEntity.toTitleVersion(postTypeId));
                                 }
                             }
 

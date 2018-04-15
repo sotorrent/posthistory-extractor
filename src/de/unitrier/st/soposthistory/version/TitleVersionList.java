@@ -2,30 +2,16 @@ package de.unitrier.st.soposthistory.version;
 
 import de.unitrier.st.soposthistory.history.PostHistory;
 import de.unitrier.st.soposthistory.history.Posts;
-import de.unitrier.st.util.Util;
 import org.hibernate.StatelessSession;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class TitleVersionList extends LinkedList<TitleVersion> {
-    private static Logger logger = null;
-
     private int postId;
     private boolean sorted;
-
-    static {
-        // configure logger
-        try {
-            logger = Util.getClassLogger(TitleVersionList.class, false);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     public TitleVersionList(int postId) {
         super();
@@ -82,12 +68,12 @@ public class TitleVersionList extends LinkedList<TitleVersion> {
 
     public static TitleVersionList readFromCSV(Path dir, int postId, boolean processVersionHistory) {
         // read post history
-        List<PostHistory> postHistoryList = PostHistory.readFromCSV(dir, postId, Posts.QUESTION_ID, PostHistory.titlePostHistoryTypes);
+        List<PostHistory> postHistoryList = PostHistory.readFromCSV(dir, postId, PostHistory.titlePostHistoryTypes);
 
         // convert to title version list
         TitleVersionList titleVersionList = new TitleVersionList(postId);
         for (PostHistory postHistory : postHistoryList) {
-            titleVersionList.add(postHistory.toTitleVersion());
+            titleVersionList.add(postHistory.toTitleVersion(Posts.QUESTION_ID));
         }
 
         // sort list according to CreationDate, because order in CSV may not be chronologically
@@ -98,5 +84,19 @@ public class TitleVersionList extends LinkedList<TitleVersion> {
         }
 
         return titleVersionList;
+    }
+
+    public int getPostId() {
+        return postId;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (TitleVersion version : this) {
+            sb.append(version.toString());
+            sb.append("\n");
+        }
+        return "TitleVersionList (PostId=" + postId + "):\n" + sb;
     }
 }

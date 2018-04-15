@@ -61,13 +61,13 @@ public class PostVersionList extends LinkedList<PostVersion> {
 
     public static PostVersionList readFromCSV(Path dir, int postId, byte postTypeId, boolean processVersionHistory) {
         // read post history
-        List<PostHistory> postHistoryList = PostHistory.readFromCSV(dir, postId, postTypeId, PostHistory.contentPostHistoryTypes);
+        List<PostHistory> postHistoryList = PostHistory.readFromCSV(dir, postId, PostHistory.contentPostHistoryTypes);
 
         // convert to post version list
         PostVersionList postVersionList = new PostVersionList(postId, postTypeId);
         for (PostHistory postHistory : postHistoryList) {
             postHistory.extractPostBlocks();
-            PostVersion postVersion = postHistory.toPostVersion();
+            PostVersion postVersion = postHistory.toPostVersion(postTypeId);
             postVersion.extractUrlsFromTextBlocks();
             postVersionList.add(postVersion);
         }
