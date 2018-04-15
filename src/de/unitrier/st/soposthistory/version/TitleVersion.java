@@ -1,5 +1,7 @@
 package de.unitrier.st.soposthistory.version;
 
+import de.unitrier.st.soposthistory.history.Posts;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 
@@ -44,6 +46,7 @@ public class TitleVersion {
         this();
         this.postId = postId;
         this.postHistoryId = postHistoryId;
+        setPostTypeId(postTypeId);
         this.postTypeId = postTypeId;
         this.postHistoryTypeId = postHistoryTypeId;
         this.creationDate = creationDate;
@@ -88,6 +91,10 @@ public class TitleVersion {
     }
 
     public void setPostTypeId(Byte postTypeId) {
+        if (postTypeId != Posts.QUESTION_ID) {
+            throw new IllegalArgumentException("Title versions can only exist for questions. PostTypeId was "
+                    + postTypeId + " for post " + postId + ".");
+        }
         this.postTypeId = postTypeId;
     }
 

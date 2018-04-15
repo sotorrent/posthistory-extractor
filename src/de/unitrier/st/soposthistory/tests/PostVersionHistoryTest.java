@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -1064,6 +1065,13 @@ class PostVersionHistoryTest {
 
         TitleVersionList titleVersionList = new TitleVersionList(1);
         titleVersionList.sort(); // this should not throw an exception
+    }
+
+    @Test
+    void testTitleVersionWrongPostType() {
+        assertThrows(IllegalArgumentException.class, () -> new TitleVersion(1, 1, Posts.ANSWER_ID,
+                (byte) 1, new Timestamp(0), "Title")
+        );
     }
 
 }
