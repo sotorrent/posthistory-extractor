@@ -9,6 +9,7 @@ import de.unitrier.st.soposthistory.urls.PostReferenceGH;
 import de.unitrier.st.soposthistory.urls.PostVersionUrl;
 import de.unitrier.st.soposthistory.version.PostVersion;
 import de.unitrier.st.soposthistory.version.PostVersionList;
+import de.unitrier.st.soposthistory.version.TitleVersion;
 import de.unitrier.st.soposthistory.version.TitleVersionList;
 import de.unitrier.st.util.Util;
 import org.apache.commons.csv.*;
@@ -102,6 +103,7 @@ public class PostHistoryIterator {
                 .addAnnotatedClass(Posts.class)
                 .addAnnotatedClass(PostVersionUrl.class)
                 .addAnnotatedClass(PostReferenceGH.class)
+                .addAnnotatedClass(TitleVersion.class)
                 .configure(hibernateConfigFilePath.toFile())
                 .buildSessionFactory();
     }
