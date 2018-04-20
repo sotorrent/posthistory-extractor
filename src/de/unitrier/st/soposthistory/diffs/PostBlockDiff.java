@@ -77,7 +77,7 @@ public class PostBlockDiff {
         return predLocalId;
     }
 
-    public void sePredLocalId(int predLocalId) {
+    public void setPredLocalId(int predLocalId) {
         this.predLocalId = predLocalId;
     }
 
