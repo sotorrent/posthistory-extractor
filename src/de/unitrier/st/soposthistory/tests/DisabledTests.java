@@ -1,5 +1,6 @@
 package de.unitrier.st.soposthistory.tests;
 
+import de.unitrier.st.soposthistory.comments.CommentsIterator;
 import de.unitrier.st.soposthistory.history.PostHistory;
 import de.unitrier.st.soposthistory.history.PostHistoryIterator;
 import de.unitrier.st.soposthistory.history.PostHistoryList;
@@ -151,13 +152,16 @@ class DisabledTests {
     @Disabled
     @Test
     void testSOTorrent() {
-        if (PostHistoryList.sessionFactory == null) {
+        if (PostHistoryIterator.sessionFactory == null) {
             PostHistoryIterator.createSessionFactory(pathToHibernateConfig);
         }
 
-        try (StatelessSession session = PostHistoryIterator.sessionFactory.openStatelessSession()) {
-            // test different properties of the SOTorrent tables
+        if (CommentsIterator.sessionFactory == null) {
+            CommentsIterator.createSessionFactory(pathToHibernateConfig);
+        }
 
+        // test different properties of the SOTorrent tables
+        try (StatelessSession session = PostHistoryIterator.sessionFactory.openStatelessSession()) {
             String postVersionPostIdsQuery = "select count(*) from PostVersion";
             long postVersionPostIds = (long)session.createQuery(postVersionPostIdsQuery).list().get(0);
             assertEquals(62162417, postVersionPostIds);
@@ -184,9 +188,17 @@ class DisabledTests {
 
             String postReferenceGHQuery = "select count(*) from PostReferenceGH";
             long postReferenceGH = (long) session.createQuery(postReferenceGHQuery).list().get(0);
-            assertEquals(5979034, postReferenceGH);
+            assertEquals(5982446, postReferenceGH);
 
-            //TODO: add title version, commenturl
+            String titleVersionQuery = "select count(*) from TitleVersion";
+            long titleVersions = (long) session.createQuery(titleVersionQuery).list().get(0);
+            assertEquals(17781747, titleVersions);
+        }
+
+        try (StatelessSession session = CommentsIterator.sessionFactory.openStatelessSession()) {
+            String commentUrlQuery = "select count(*) from CommentUrl";
+            long commentUrls = (long) session.createQuery(commentUrlQuery).list().get(0);
+            assertEquals(6740582, commentUrls);
         }
     }
 }
