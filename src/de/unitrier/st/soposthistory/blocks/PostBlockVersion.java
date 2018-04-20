@@ -49,6 +49,7 @@ public abstract class PostBlockVersion {
     protected int id;
     protected Integer postVersionId;
     protected Integer localId;
+    protected Integer predLocalId;
     protected Integer postId;
     protected Integer postHistoryId;
     protected String content;
@@ -78,6 +79,7 @@ public abstract class PostBlockVersion {
         // database
         this.postVersionId = null;
         this.localId = null;
+        this.predLocalId = null;
         this.postId = null;
         this.postHistoryId = null;
         this.content = null;
@@ -102,6 +104,7 @@ public abstract class PostBlockVersion {
     // reset data set in PostVersionList.processVersionHistory (needed for metrics comparison)
     public void resetVersionHistory() {
         // database
+        this.predLocalId = null;
         this.rootPostBlockId = null;
         this.predPostBlockId = null;
         this.predEqual = null;
@@ -146,6 +149,16 @@ public abstract class PostBlockVersion {
 
     public void setLocalId(Integer localId) {
         this.localId = localId;
+    }
+
+    @Basic
+    @Column(name = "PredLocalId")
+    public Integer getPredLocalId() {
+        return predLocalId;
+    }
+
+    public void setPredLocalId(Integer localId) {
+        this.predLocalId = localId;
     }
 
     public void setId(int id) {
@@ -282,10 +295,11 @@ public abstract class PostBlockVersion {
 
     private void setPred(PostBlockVersion pred) {
         try {
-            // set pred and post block id of pred
+            // set predecessor, local id of predecessor, and post block id of predecessor
             this.pred = pred;
+            this.predLocalId = pred.getLocalId();
             this.predPostBlockId = pred.getId();
-            // set pred similarity
+            // set predecessor similarity
             if (maxSimilarity.getMetricResult() == EQUALITY_SIMILARITY) {
                 this.predSimilarity = 1.0;
                 setPredEqual(true);
@@ -293,7 +307,7 @@ public abstract class PostBlockVersion {
                 this.predSimilarity = maxSimilarity.getMetricResult();
                 setPredEqual(false);
             }
-            // compute line-based diff to pred
+            // compute line-based diff to predecessor
             predDiff = diff(pred);
             // mark predecessor as not available
             pred.setNotAvailable();

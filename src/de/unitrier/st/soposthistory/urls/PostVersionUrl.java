@@ -18,7 +18,8 @@ public class PostVersionUrl{
         this.url = null;
     }
 
-    public PostVersionUrl(int postId, int postHistoryId, int postBlockVersionId, String domain, String url){
+    public PostVersionUrl(int postId, int postHistoryId, int postBlockVersionId,
+                          String domain, String url){
         this.postId = postId;
         this.postHistoryId = postHistoryId;
         this.postBlockVersionId = postBlockVersionId;

@@ -8,6 +8,8 @@ public class PostBlockDiff {
     private int id;
     private int postId;
     private int postHistoryId;
+    private int localId;
+    private int predLocalId;
     private int predPostBlockVersionId;
     private int postBlockVersionId;
     private int postBlockDiffOperationId;
@@ -15,11 +17,13 @@ public class PostBlockDiff {
 
     public PostBlockDiff() {}
 
-    public PostBlockDiff(int postId, int postHistoryId,
+    public PostBlockDiff(int postId, int postHistoryId, int localId, int predLocalId,
                          int predPostBlockVersionId, int postBlockVersionId,
                          int postBlockDiffOperationId, String text) {
         this.postId = postId;
         this.postHistoryId = postHistoryId;
+        this.localId = localId;
+        this.predLocalId = predLocalId;
         this.predPostBlockVersionId = predPostBlockVersionId;
         this.postBlockVersionId = postBlockVersionId;
         this.postBlockDiffOperationId = postBlockDiffOperationId;
@@ -55,6 +59,26 @@ public class PostBlockDiff {
 
     public void setPostHistoryId(int postHistoryId) {
         this.postHistoryId = postHistoryId;
+    }
+
+    @Basic
+    @Column(name = "LocalId")
+    public int getLocalId() {
+        return localId;
+    }
+
+    public void setLocalId(int localId) {
+        this.localId = localId;
+    }
+
+    @Basic
+    @Column(name = "PredLocalId")
+    public int getPredLocalId() {
+        return predLocalId;
+    }
+
+    public void sePredLocalId(int predLocalId) {
+        this.predLocalId = predLocalId;
     }
 
     @Basic

@@ -22,6 +22,8 @@ public class PostBlockDiffList extends LinkedList<PostBlockDiff> {
                     PostBlockDiff diffPrev = new PostBlockDiff(
                             block.getPostId(),
                             block.getPostHistoryId(),
+                            block.getLocalId(),
+                            block.getPredLocalId(),
                             block.getPredPostBlockId(),
                             block.getId(),
                             LineDiff.operationToInt(diff.operation),
