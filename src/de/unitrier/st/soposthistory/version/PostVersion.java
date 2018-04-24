@@ -22,8 +22,8 @@ public class PostVersion {
     // database
     private int id;
     private Integer postId;
-    private Integer postHistoryId;
     private Byte postTypeId;
+    private Integer postHistoryId;
     private Byte postHistoryTypeId;
     private Timestamp creationDate;
     private Integer predPostHistoryId;
@@ -37,8 +37,8 @@ public class PostVersion {
     public PostVersion() {
         // database
         this.postId = null;
-        this.postHistoryId = null;
         this.postTypeId = null;
+        this.postHistoryId = null;
         this.postHistoryTypeId = null;
         this.creationDate = null;
         this.predPostHistoryId = null;
@@ -49,12 +49,13 @@ public class PostVersion {
         this.urls = new LinkedList<>();
     }
 
-    public PostVersion(Integer postId, Integer postHistoryId, Byte postTypeId, Byte postHistoryTypeId,
+    public PostVersion(Integer postId, Byte postTypeId,
+                       Integer postHistoryId, Byte postHistoryTypeId,
                        Timestamp creationDate) {
         this();
         this.postId = postId;
-        this.postHistoryId = postHistoryId;
         this.postTypeId = postTypeId;
+        this.postHistoryId = postHistoryId;
         this.postHistoryTypeId = postHistoryTypeId;
         this.creationDate = creationDate;
         this.postBlocks = new LinkedList<>();
@@ -82,16 +83,6 @@ public class PostVersion {
     }
 
     @Basic
-    @Column(name = "PostHistoryId")
-    public Integer getPostHistoryId() {
-        return postHistoryId;
-    }
-
-    public void setPostHistoryId(Integer postHistoryId) {
-        this.postHistoryId = postHistoryId;
-    }
-
-    @Basic
     @Column(name = "PostTypeId")
     public Byte getPostTypeId() {
         return postTypeId;
@@ -99,6 +90,16 @@ public class PostVersion {
 
     public void setPostTypeId(Byte postTypeId) {
         this.postTypeId = postTypeId;
+    }
+
+    @Basic
+    @Column(name = "PostHistoryId")
+    public Integer getPostHistoryId() {
+        return postHistoryId;
+    }
+
+    public void setPostHistoryId(Integer postHistoryId) {
+        this.postHistoryId = postHistoryId;
     }
 
     @Basic

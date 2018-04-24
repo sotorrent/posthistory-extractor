@@ -8,24 +8,27 @@ public class PostBlockDiff {
     private int id;
     private int postId;
     private int postHistoryId;
+    private int postBlockVersionId;
     private int localId;
+    private int predPostHistoryId;
     private int predLocalId;
     private int predPostBlockVersionId;
-    private int postBlockVersionId;
     private int postBlockDiffOperationId;
     private String text;
 
     public PostBlockDiff() {}
 
-    public PostBlockDiff(int postId, int postHistoryId, int localId, int predLocalId,
-                         int predPostBlockVersionId, int postBlockVersionId,
+    public PostBlockDiff(int postId,
+                         int postHistoryId, int localId, int postBlockVersionId,
+                         int predPostHistoryId, int predLocalId, int predPostBlockVersionId,
                          int postBlockDiffOperationId, String text) {
         this.postId = postId;
         this.postHistoryId = postHistoryId;
         this.localId = localId;
+        this.postBlockVersionId = postBlockVersionId;
+        this.predPostHistoryId = predPostHistoryId;
         this.predLocalId = predLocalId;
         this.predPostBlockVersionId = predPostBlockVersionId;
-        this.postBlockVersionId = postBlockVersionId;
         this.postBlockDiffOperationId = postBlockDiffOperationId;
         this.text = text;
     }
@@ -72,6 +75,26 @@ public class PostBlockDiff {
     }
 
     @Basic
+    @Column(name = "PostBlockVersionId")
+    public int getPostBlockVersionId() {
+        return postBlockVersionId;
+    }
+
+    public void setPostBlockVersionId(int postBlockVersionId) {
+        this.postBlockVersionId = postBlockVersionId;
+    }
+
+    @Basic
+    @Column(name = "PredPostHistoryId")
+    public int getPredPostHistoryId() {
+        return predPostHistoryId;
+    }
+
+    public void setPredPostHistoryId(int predPostHistoryId) {
+        this.predPostHistoryId = predPostHistoryId;
+    }
+
+    @Basic
     @Column(name = "PredLocalId")
     public int getPredLocalId() {
         return predLocalId;
@@ -89,16 +112,6 @@ public class PostBlockDiff {
 
     public void setPredPostBlockVersionId(int predPostBlockVersionId) {
         this.predPostBlockVersionId = predPostBlockVersionId;
-    }
-
-    @Basic
-    @Column(name = "PostBlockVersionId")
-    public int getPostBlockVersionId() {
-        return postBlockVersionId;
-    }
-
-    public void setPostBlockVersionId(int postBlockVersionId) {
-        this.postBlockVersionId = postBlockVersionId;
     }
 
     @Basic

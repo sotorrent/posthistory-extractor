@@ -534,7 +534,7 @@ public class PostHistory {
         }
 
         // convert PostHistory (SO database schema) to PostVersion (our schema)
-        PostVersion postVersion = new PostVersion(postId, id, postTypeId, postHistoryTypeId, creationDate);
+        PostVersion postVersion = new PostVersion(postId, postTypeId, id, postHistoryTypeId, creationDate);
         postVersion.addPostBlockList(postBlocks);
         return postVersion;
     }

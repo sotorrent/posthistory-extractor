@@ -166,7 +166,6 @@ public class PostVersionList extends LinkedList<PostVersion> {
                 // the post blocks in the first version have themselves as root post blocks
                 for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks(postBlockTypeFilter)) {
                     currentPostBlock.setRootPostBlock(currentPostBlock);
-                    currentPostBlock.setRootPostBlockId(currentPostBlock.getId());
                 }
             } else {
                 // currentVersion >= second element
@@ -227,11 +226,9 @@ public class PostVersionList extends LinkedList<PostVersion> {
                     if (currentPostBlock.getPred() == null) {
                         // block has no predecessor -> set itself as root post block
                         currentPostBlock.setRootPostBlock(currentPostBlock);
-                        currentPostBlock.setRootPostBlockId(currentPostBlock.getId());
                     } else {
                         // block has predecessor -> set root post block of predecessor as root post block of this block
                         currentPostBlock.setRootPostBlock(currentPostBlock.getPred().getRootPostBlock());
-                        currentPostBlock.setRootPostBlockId(currentPostBlock.getPred().getRootPostBlockId());
                     }
                 }
             }
@@ -282,9 +279,8 @@ public class PostVersionList extends LinkedList<PostVersion> {
         for (PostVersion currentVersion : this) {
             // save current post version
             session.insert(currentVersion);
-            // set post version for all post blocks and update them (pred, succ, similarity, root post block)
+            // update all post blocks (pred, succ, similarity, root post block, etc.)
             for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks()) {
-                currentPostBlock.setPostVersionId(currentVersion.getId());
                 session.update(currentPostBlock);
             }
         }

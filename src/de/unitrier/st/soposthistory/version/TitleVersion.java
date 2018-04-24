@@ -13,8 +13,8 @@ public class TitleVersion {
     // database
     private int id;
     private Integer postId;
-    protected Integer postHistoryId;
     private Byte postTypeId;
+    protected Integer postHistoryId;
     private Byte postHistoryTypeId;
     private Timestamp creationDate;
     private Integer predPostHistoryId;
@@ -29,8 +29,8 @@ public class TitleVersion {
     public TitleVersion() {
         // database
         this.postId = null;
-        this.postHistoryId = null;
         this.postTypeId = null;
+        this.postHistoryId = null;
         this.postHistoryTypeId = null;
         this.creationDate = null;
         this.title = null;
@@ -45,9 +45,8 @@ public class TitleVersion {
                    Timestamp creationDate, String title) {
         this();
         this.postId = postId;
-        this.postHistoryId = postHistoryId;
         setPostTypeId(postTypeId);
-        this.postTypeId = postTypeId;
+        this.postHistoryId = postHistoryId;
         this.postHistoryTypeId = postHistoryTypeId;
         this.creationDate = creationDate;
         this.title = title;
@@ -75,16 +74,6 @@ public class TitleVersion {
     }
 
     @Basic
-    @Column(name = "PostHistoryId")
-    public Integer getPostHistoryId() {
-        return postHistoryId;
-    }
-
-    public void setPostHistoryId(Integer postHistoryId) {
-        this.postHistoryId = postHistoryId;
-    }
-
-    @Basic
     @Column(name = "PostTypeId")
     public Byte getPostTypeId() {
         return postTypeId;
@@ -96,6 +85,16 @@ public class TitleVersion {
                     + postTypeId + " for post " + postId + ".");
         }
         this.postTypeId = postTypeId;
+    }
+
+    @Basic
+    @Column(name = "PostHistoryId")
+    public Integer getPostHistoryId() {
+        return postHistoryId;
+    }
+
+    public void setPostHistoryId(Integer postHistoryId) {
+        this.postHistoryId = postHistoryId;
     }
 
     @Basic

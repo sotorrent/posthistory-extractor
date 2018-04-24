@@ -19,15 +19,11 @@ public class PostBlockDiffList extends LinkedList<PostBlockDiff> {
                     continue;
                 }
                 for (diff_match_patch.Diff diff : predDiff) {
-                    PostBlockDiff diffPrev = new PostBlockDiff(
-                            block.getPostId(),
-                            block.getPostHistoryId(),
-                            block.getLocalId(),
-                            block.getPredLocalId(),
-                            block.getPredPostBlockId(),
-                            block.getId(),
-                            LineDiff.operationToInt(diff.operation),
-                            diff.text
+                        PostBlockDiff diffPrev = new PostBlockDiff(
+                        block.getPostId(),
+                        block.getPostHistoryId(), block.getLocalId(), block.getId(),
+                        block.getPredPostHistoryId(), block.getPredLocalId(), block.getPredPostBlockVersionId(),
+                        LineDiff.operationToInt(diff.operation), diff.text
                     );
                     this.add(diffPrev);
                 }

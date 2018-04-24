@@ -47,20 +47,22 @@ public abstract class PostBlockVersion {
 
     // database
     protected int id;
-    protected Integer postVersionId;
-    protected Integer localId;
-    protected Integer predLocalId;
     protected Integer postId;
     protected Integer postHistoryId;
-    protected String content;
-    protected int length;
-    protected int lineCount;
-    protected Integer rootPostBlockId;
-    protected Integer predPostBlockId;
+    protected Integer localId;
+    protected Integer predPostBlockVersionId;
+    protected Integer predPostHistoryId;
+    protected Integer predLocalId;
+    protected Integer rootPostBlockVersionId;
+    protected Integer rootPostHistoryId;
+    protected Integer rootLocalId;
     protected Boolean predEqual;
     protected Double predSimilarity;
     protected int predCount; // this marks possible predecessors, which may not be available for linking (see below)
     protected int succCount;
+    protected int length;
+    protected int lineCount;
+    protected String content;
     // internal
     private StringBuilder contentBuilder;
     private LineDiff lineDiff;
@@ -77,14 +79,9 @@ public abstract class PostBlockVersion {
 
     public PostBlockVersion() {
         // database
-        this.postVersionId = null;
-        this.localId = null;
-        this.predLocalId = null;
         this.postId = null;
         this.postHistoryId = null;
-        this.content = null;
-        this.length = 0;
-        this.lineCount = 0;
+        this.localId = null;
         this.content = null;
         this.length = 0;
         this.lineCount = 0;
@@ -104,9 +101,12 @@ public abstract class PostBlockVersion {
     // reset data set in PostVersionList.processVersionHistory (needed for metrics comparison)
     public void resetVersionHistory() {
         // database
+        this.predPostBlockVersionId = null;
+        this.predPostHistoryId = null;
         this.predLocalId = null;
-        this.rootPostBlockId = null;
-        this.predPostBlockId = null;
+        this.rootPostBlockVersionId = null;
+        this.rootPostHistoryId = null;
+        this.rootLocalId = null;
         this.predEqual = null;
         this.predSimilarity = null;
         this.predCount = 0;
@@ -131,48 +131,8 @@ public abstract class PostBlockVersion {
         return id;
     }
 
-    public Integer getPostVersionId() {
-        return postVersionId;
-    }
-
-    @Basic
-    @Column(name = "PostVersionId")
-    public void setPostVersionId(Integer postVersionId) {
-        this.postVersionId = postVersionId;
-    }
-
-    @Basic
-    @Column(name = "LocalId")
-    public Integer getLocalId() {
-        return localId;
-    }
-
-    public void setLocalId(Integer localId) {
-        this.localId = localId;
-    }
-
-    @Basic
-    @Column(name = "PredLocalId")
-    public Integer getPredLocalId() {
-        return predLocalId;
-    }
-
-    public void setPredLocalId(Integer localId) {
-        this.predLocalId = localId;
-    }
-
     public void setId(int id) {
         this.id = id;
-    }
-
-    @Basic
-    @Column(name = "PostHistoryId")
-    public Integer getPostHistoryId() {
-        return postHistoryId;
-    }
-
-    public void setPostHistoryId(Integer postHistoryId) {
-        this.postHistoryId = postHistoryId;
     }
 
     @Basic
@@ -186,53 +146,83 @@ public abstract class PostBlockVersion {
     }
 
     @Basic
-    @Column(name = "Content")
-    public String getContent() {
-        return content == null ? contentBuilder.toString() : content;
+    @Column(name = "PostHistoryId")
+    public Integer getPostHistoryId() {
+        return postHistoryId;
     }
 
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    @Basic
-    @Column(name = "Length")
-    public int getLength() {
-        return content == null ? contentBuilder.length() : content.length();
-    }
-
-    public void setLength(int length) {
-        this.length = length;
+    public void setPostHistoryId(Integer postHistoryId) {
+        this.postHistoryId = postHistoryId;
     }
 
     @Basic
-    @Column(name = "LineCount")
-    public int getLineCount() {
-        return lineCount;
+    @Column(name = "LocalId")
+    public Integer getLocalId() {
+        return localId;
     }
 
-    public void setLineCount(int lineCount) {
-        this.lineCount = lineCount;
-    }
-
-    @Basic
-    @Column(name = "RootPostBlockId")
-    public Integer getRootPostBlockId() {
-        return rootPostBlockId;
-    }
-
-    public void setRootPostBlockId(Integer rootPostBlockId) {
-        this.rootPostBlockId = rootPostBlockId;
+    public void setLocalId(Integer localId) {
+        this.localId = localId;
     }
 
     @Basic
-    @Column(name = "PredPostBlockId")
-    public Integer getPredPostBlockId() {
-        return predPostBlockId;
+    @Column(name = "PredPostBlockVersionId")
+    public Integer getPredPostBlockVersionId() {
+        return predPostBlockVersionId;
     }
 
-    public void setPredPostBlockId(Integer predPostBlockId) {
-        this.predPostBlockId = predPostBlockId;
+    public void setPredPostBlockVersionId(Integer predPostBlockVersionId) {
+        this.predPostBlockVersionId = predPostBlockVersionId;
+    }
+
+    @Basic
+    @Column(name = "PredLocalId")
+    public Integer getPredLocalId() {
+        return predLocalId;
+    }
+
+    public void setPredLocalId(Integer localId) {
+        this.predLocalId = localId;
+    }
+
+    @Basic
+    @Column(name = "PredPostHistoryId")
+    public Integer getPredPostHistoryId() {
+        return predPostHistoryId;
+    }
+
+    public void setPredPostHistoryId(Integer predPostHistoryId) {
+        this.predPostHistoryId = predPostHistoryId;
+    }
+
+    @Basic
+    @Column(name = "RootPostBlockVersionId")
+    public Integer getRootPostBlockVersionId() {
+        return rootPostBlockVersionId;
+    }
+
+    public void setRootPostBlockVersionId(Integer rootPostBlockVersionId) {
+        this.rootPostBlockVersionId = rootPostBlockVersionId;
+    }
+
+    @Basic
+    @Column(name = "RootPostHistoryId")
+    public Integer getRootPostHistoryId() {
+        return rootPostHistoryId;
+    }
+
+    public void setRootPostHistoryId(Integer rootPostHistoryId) {
+        this.rootPostHistoryId = rootPostHistoryId;
+    }
+
+    @Basic
+    @Column(name = "RootLocalId")
+    public Integer getRootLocalId() {
+        return rootLocalId;
+    }
+
+    public void setRootLocalId(Integer rootLocalId) {
+        this.rootLocalId = rootLocalId;
     }
 
     @Basic
@@ -283,6 +273,36 @@ public abstract class PostBlockVersion {
         this.succCount++;
     }
 
+    @Basic
+    @Column(name = "Length")
+    public int getLength() {
+        return content == null ? contentBuilder.length() : content.length();
+    }
+
+    public void setLength(int length) {
+        this.length = length;
+    }
+
+    @Basic
+    @Column(name = "LineCount")
+    public int getLineCount() {
+        return lineCount;
+    }
+
+    public void setLineCount(int lineCount) {
+        this.lineCount = lineCount;
+    }
+
+    @Basic
+    @Column(name = "Content")
+    public String getContent() {
+        return content == null ? contentBuilder.toString() : content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
     @Transient
     public PostBlockVersion getPred() {
         return pred;
@@ -297,8 +317,9 @@ public abstract class PostBlockVersion {
         try {
             // set predecessor, local id of predecessor, and post block id of predecessor
             this.pred = pred;
+            this.predPostBlockVersionId = pred.getId();
+            this.predPostHistoryId = pred.getPostHistoryId();
             this.predLocalId = pred.getLocalId();
-            this.predPostBlockId = pred.getId();
             // set predecessor similarity
             if (maxSimilarity.getMetricResult() == EQUALITY_SIMILARITY) {
                 this.predSimilarity = 1.0;
@@ -488,6 +509,9 @@ public abstract class PostBlockVersion {
 
     public void setRootPostBlock(PostBlockVersion rootPostBlock) {
         this.rootPostBlock = rootPostBlock;
+        this.rootPostBlockVersionId = rootPostBlock.getId();
+        this.rootPostHistoryId = rootPostBlock.getPostHistoryId();
+        this.rootLocalId = rootPostBlock.getLocalId();
     }
 
     @Transient

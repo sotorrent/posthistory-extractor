@@ -222,8 +222,8 @@ class GroundTruthTest {
     private void testPostBlockVersionHistoryReset(PostVersionList postVersionList) {
         for (PostVersion currentPostVersion : postVersionList) {
             for (PostBlockVersion currentPostBlockVersion : currentPostVersion.getPostBlocks()) {
-                assertNull(currentPostBlockVersion.getRootPostBlockId());
-                assertNull(currentPostBlockVersion.getPredPostBlockId());
+                assertNull(currentPostBlockVersion.getRootPostBlockVersionId());
+                assertNull(currentPostBlockVersion.getPredPostBlockVersionId());
                 assertNull(currentPostBlockVersion.getPredEqual());
                 assertNull(currentPostBlockVersion.getPredSimilarity());
                 assertEquals(0, currentPostBlockVersion.getPredCount());
@@ -245,7 +245,7 @@ class GroundTruthTest {
     private void testPostBlockVersionHistoryProcessed(PostVersionList postVersionList) {
         for (PostVersion currentPostVersion : postVersionList) {
             for (PostBlockVersion currentPostBlockVersion : currentPostVersion.getPostBlocks()) {
-                assertNotNull(currentPostBlockVersion.getRootPostBlockId());
+                assertNotNull(currentPostBlockVersion.getRootPostBlockVersionId());
                 assertNotNull(currentPostBlockVersion.getRootPostBlock());
             }
         }
