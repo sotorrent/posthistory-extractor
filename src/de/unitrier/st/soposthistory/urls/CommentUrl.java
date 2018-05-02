@@ -8,20 +8,29 @@ public class CommentUrl{
     private int id;
     private Integer postId;
     private Integer commentId;
-    private String domain;
+    private String protocol;
+    private String completeDomain;
+    private String rootDomain;
+    private String path;
     private String url;
 
     public CommentUrl(){
         this.commentId = null;
-        this.domain = null;
+        this.protocol = null;
+        this.completeDomain = null;
+        this.rootDomain = null;
+        this.path = null;
         this.url = null;
     }
 
-    public CommentUrl(int postId, int commentId, String domain, String url){
+    public CommentUrl(int postId, int commentId, Link link){
         this.postId = postId;
         this.commentId = commentId;
-        this.domain = domain;
-        this.url = url;
+        this.protocol = link.getProtocol();
+        this.completeDomain = link.getCompleteDomain();
+        this.rootDomain = link.getRootDomain();
+        this.path = link.getPath();
+        this.url = link.getUrl();
     }
 
     @Id
@@ -56,13 +65,43 @@ public class CommentUrl{
     }
 
     @Basic
-    @Column(name = "Domain")
-    public String getDomain() {
-        return domain;
+    @Column(name = "Protocol")
+    public String getProtocol() {
+        return protocol;
     }
 
-    public void setDomain(String domain) {
-        this.domain = domain;
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
+    }
+
+    @Basic
+    @Column(name = "CompleteDomain")
+    public String getCompleteDomain() {
+        return completeDomain;
+    }
+
+    public void setCompleteDomain(String completeDomain) {
+        this.completeDomain = completeDomain;
+    }
+
+    @Basic
+    @Column(name = "RootDomain")
+    public String getRootDomain() {
+        return rootDomain;
+    }
+
+    public void setRootDomain(String rootDomain) {
+        this.rootDomain = rootDomain;
+    }
+
+    @Basic
+    @Column(name = "Path")
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 
     @Basic

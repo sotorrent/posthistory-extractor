@@ -72,7 +72,7 @@ public class Comments {
 
         List<Link> extractedLinks = Link.extractBare(text);
         for (Link currentLink : extractedLinks) {
-            urls.add(new CommentUrl(postId, id, currentLink.getCompleteDomain(), currentLink.getUrl()));
+            urls.add(new CommentUrl(postId, id, currentLink));
         }
     }
 
