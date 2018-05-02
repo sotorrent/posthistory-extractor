@@ -273,8 +273,6 @@ class UrlExtractionTest {
         assertEquals(version_2_a_19049539.getTextBlocks().size(), 3);
     }
 
-    // TODO: derive test cases from current data in PostVersionUrl and CommentUrl
-
     @Test
     void testUrlComponentExtraction() {
         testUrlComponents("https://developers.facebook.com/docs/messenger-platform/thread-settings/greeting-text/",

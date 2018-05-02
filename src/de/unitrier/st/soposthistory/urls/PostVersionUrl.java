@@ -9,22 +9,29 @@ public class PostVersionUrl{
     private Integer postId;
     private Integer postHistoryId;
     private Integer postBlockVersionId;
-    private String domain;
+    private String protocol;
+    private String completeDomain;
+    private String rootDomain;
+    private String path;
     private String url;
 
     public PostVersionUrl(){
         this.postHistoryId = null;
-        this.domain = null;
+        this.protocol = null;
+        this.completeDomain = null;
+        this.rootDomain = null;
+        this.path = null;
         this.url = null;
     }
 
-    public PostVersionUrl(int postId, int postHistoryId, int postBlockVersionId,
-                          String domain, String url){
+    public PostVersionUrl(int postId, int postHistoryId, int postBlockVersionId, Link link){
         this.postId = postId;
         this.postHistoryId = postHistoryId;
         this.postBlockVersionId = postBlockVersionId;
-        this.domain = domain;
-        this.url = url;
+        this.protocol = link.getProtocol();
+        this.completeDomain = link.getCompleteDomain();
+        this.rootDomain = link.getRootDomain();
+        this.url = link.getUrl();
     }
 
     @Id
@@ -69,13 +76,43 @@ public class PostVersionUrl{
     }
 
     @Basic
-    @Column(name = "Domain")
-    public String getDomain() {
-        return domain;
+    @Column(name = "Protocol")
+    public String getProtocol() {
+        return protocol;
     }
 
-    public void setDomain(String domain) {
-        this.domain = domain;
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
+    }
+
+    @Basic
+    @Column(name = "CompleteDomain")
+    public String getCompleteDomain() {
+        return completeDomain;
+    }
+
+    public void setCompleteDomain(String completeDomain) {
+        this.completeDomain = completeDomain;
+    }
+
+    @Basic
+    @Column(name = "RootDomain")
+    public String getRootDomain() {
+        return rootDomain;
+    }
+
+    public void setRootDomain(String rootDomain) {
+        this.rootDomain = rootDomain;
+    }
+
+    @Basic
+    @Column(name = "Path")
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 
     @Basic
