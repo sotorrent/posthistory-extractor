@@ -9,16 +9,31 @@ import java.util.stream.Collectors;
 
 public class Link {
     // for the basic regex, see https://stackoverflow.com/a/6041965, alternative: https://stackoverflow.com/a/29288898
-    private static final Pattern urlPattern = Pattern.compile("(?:http|ftp|https)://(?:[\\w_-]+(?:(?:\\.[\\w_-]+)+))(?:[\\w.,@?^=%&:/~+#-]*[\\w@?^=%&/~+#-])");
-    // pattern to extract domain from URL
-    private static final Pattern domainPattern = Pattern.compile("(?i:http|ftp|https)(?:://)([\\w_-]+(?:(?:\\.[\\w_-]+)+))");
+    // see also https://en.wikipedia.org/wiki/Uniform_Resource_Identifier
+    static String urlPatternString = "(?:https?|ftp)://(?:[\\w_-]+(?:(?:\\.[\\w_-]+)+))(?:/[\\w.,@^=%&:/~+-]+)?(?:\\?[\\w.,@?^=%&:/~+#-]+)?(?:#[\\w.,@?^=%&:/~+#-]+)?";
+    private static final Pattern urlPattern = Pattern.compile(urlPatternString);
+
+    // pattern to extract protocol from URL
+    private static final Pattern protocolPattern = Pattern.compile("^(https?|ftp)");
+
+    // pattern to extract domain (including subdomains) from URL
+    private static final Pattern completeDomainPattern = Pattern.compile("(?:https?|ftp)://([\\w_-]+(?:(?:\\.[\\w_-]+)+))");
+
+    // pattern to extract root domain from domain string
+    private static final Pattern rootDomainPattern = Pattern.compile("([\\w_-]+\\.[\\w_-]+)$");
+
+    // pattern to extract path from URL
+    private static final Pattern pathPattern = Pattern.compile("(?:https?|ftp)://(?:[\\w_-]+(?:(?:\\.[\\w_-]+)+))/([\\w.,@^=%&:/~+-]+)");
 
     String fullMatch;
     String anchor; // the link anchor visible to the user
     String reference; // internal Markdown reference for the link
     String url;
     String title;
-    String domain;
+    String protocol;
+    String completeDomain;
+    String rootDomain;
+    String path;
 
     public String getFullMatch() {
         return fullMatch;
@@ -40,29 +55,66 @@ public class Link {
         return title;
     }
 
-    public String getDomain() {
-        return domain;
+    public String getProtocol() {
+        return protocol;
     }
 
-    private void extractDomain() {
-        Matcher domainMatcher = domainPattern.matcher(url);
-        if (domainMatcher.find()) {
-            this.domain = domainMatcher.group(1);
+    public String getCompleteDomain() {
+        return completeDomain;
+    }
+
+    public String getRootDomain() {
+        return rootDomain;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    private void extractURLComponents() {
+        // protocol
+        Matcher protocolMatcher = protocolPattern.matcher(url);
+        if (protocolMatcher.find()) {
+            this.protocol = protocolMatcher.group(1);
         } else {
-            throw new IllegalArgumentException("Extraction of domain failed for URL: " + url);
+            throw new IllegalArgumentException("Extraction of protocol failed for URL: " + url);
+        }
+
+        // domain
+        Matcher completeDomainMatcher = completeDomainPattern.matcher(url);
+        if (completeDomainMatcher.find()) {
+            this.completeDomain = completeDomainMatcher.group(1);
+        } else {
+            throw new IllegalArgumentException("Extraction of complete domain failed for URL: " + url);
+        }
+        Matcher rootDomainMatcher = rootDomainPattern.matcher(completeDomain);
+        if (rootDomainMatcher.find()) {
+            this.rootDomain = rootDomainMatcher.group(1);
+        } else {
+            throw new IllegalArgumentException("Extraction of root domain failed for URL: " + url);
+        }
+
+        // path
+        Matcher pathMatcher = pathPattern.matcher(url);
+        if (pathMatcher.find()) {
+            this.path = pathMatcher.group(1);
+            // remove trailing slash
+            if (this.path.endsWith("/")) {
+                this.path = this.path.substring(0, this.path.length()-1);
+            }
         }
     }
 
     public static List<Link> extractBare(String markdownContent) {
         LinkedList<Link> extractedLinks = new LinkedList<>();
-        Matcher matcher = urlPattern.matcher(markdownContent);
+        Matcher urlMatcher = urlPattern.matcher(markdownContent);
 
-        while (matcher.find()) {
+        while (urlMatcher.find()) {
             Link extractedLink = new Link();
-            extractedLink.fullMatch = matcher.group(0);
-            extractedLink.url = matcher.group(0);
-            if (extractedLink.url != null && extractedLink.url.length() > 0) {
-                extractedLink.extractDomain();
+            extractedLink.fullMatch = urlMatcher.group(0).trim();
+            extractedLink.url = extractedLink.fullMatch;  // for bare links, the full match is equal to the url match
+            if (extractedLink.url.length() > 0) {
+                extractedLink.extractURLComponents();
                 extractedLinks.add(extractedLink);
             }
         }
@@ -107,7 +159,7 @@ public class Link {
         }
 
         for (Link link : validLinks) {
-            link.extractDomain();
+            link.extractURLComponents();
         }
 
         return validLinks;

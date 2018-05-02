@@ -39,7 +39,7 @@ class UrlExtractionTest {
         assertEquals("reference", extractedUrls.get(0).getAnchor());
         assertNull(extractedUrls.get(0).getReference());
         assertEquals("http://msdn.microsoft.com/en-us/library/system.math.truncate.aspx", extractedUrls.get(0).getUrl());
-        assertEquals("msdn.microsoft.com", extractedUrls.get(0).getDomain());
+        assertEquals("msdn.microsoft.com", extractedUrls.get(0).getCompleteDomain());
         assertNull(extractedUrls.get(0).getTitle());
         assertThat(extractedUrls.get(0), instanceOf(MarkdownLinkInline.class));
 
@@ -47,7 +47,7 @@ class UrlExtractionTest {
         assertEquals("Reference.", extractedUrls.get(1).getAnchor());
         assertNull(extractedUrls.get(1).getReference());
         assertEquals("http://msdn.microsoft.com/en-us/library/system.math.round.aspx", extractedUrls.get(1).getUrl());
-        assertEquals("msdn.microsoft.com", extractedUrls.get(1).getDomain());
+        assertEquals("msdn.microsoft.com", extractedUrls.get(1).getCompleteDomain());
         assertNull(extractedUrls.get(1).getTitle());
         assertThat(extractedUrls.get(1), instanceOf(MarkdownLinkInline.class));
     }
@@ -71,7 +71,7 @@ class UrlExtractionTest {
         assertEquals("ManualResetEvent", extractedUrls.get(0).getAnchor());
         assertEquals("1", extractedUrls.get(0).getReference());
         assertEquals("http://msdn.microsoft.com/en-us/library/system.threading.manualresetevent.aspx", extractedUrls.get(0).getUrl());
-        assertEquals("msdn.microsoft.com", extractedUrls.get(0).getDomain());
+        assertEquals("msdn.microsoft.com", extractedUrls.get(0).getCompleteDomain());
         assertEquals("MSDN Reference", extractedUrls.get(0).getTitle());
         assertThat(extractedUrls.get(0), instanceOf(MarkdownLinkReference.class));
     }
@@ -101,7 +101,7 @@ class UrlExtractionTest {
         assertEquals("SelectionStart", extractedUrls.get(0).getAnchor());
         assertNull(extractedUrls.get(0).getReference());
         assertEquals("http://msdn.microsoft.com/en-us/library/system.windows.controls.textbox.selectionstart.aspx", extractedUrls.get(0).getUrl());
-        assertEquals("msdn.microsoft.com", extractedUrls.get(0).getDomain());
+        assertEquals("msdn.microsoft.com", extractedUrls.get(0).getCompleteDomain());
         assertNull(extractedUrls.get(0).getTitle());
         assertThat(extractedUrls.get(0), instanceOf(AnchorLink.class));
 
@@ -109,7 +109,7 @@ class UrlExtractionTest {
         assertEquals("SelectionLength", extractedUrls.get(1).getAnchor());
         assertNull(extractedUrls.get(1).getReference());
         assertEquals("http://msdn.microsoft.com/en-us/library/system.windows.controls.textbox.selectionlength.aspx", extractedUrls.get(1).getUrl());
-        assertEquals("msdn.microsoft.com", extractedUrls.get(1).getDomain());
+        assertEquals("msdn.microsoft.com", extractedUrls.get(1).getCompleteDomain());
         assertNull(extractedUrls.get(1).getTitle());
         assertThat(extractedUrls.get(1), instanceOf(AnchorLink.class));
     }
@@ -156,7 +156,7 @@ class UrlExtractionTest {
         assertNull(extractedUrls.get(0).getAnchor());
         assertNull(extractedUrls.get(0).getReference());
         assertEquals("http://www.gskinner.com/blog/archives/2006/06/as3_resource_ma.html", extractedUrls.get(0).getUrl());
-        assertEquals("www.gskinner.com", extractedUrls.get(0).getDomain());
+        assertEquals("www.gskinner.com", extractedUrls.get(0).getCompleteDomain());
         assertNull(extractedUrls.get(0).getTitle());
         assertThat(extractedUrls.get(0), instanceOf(MarkdownLinkAngleBrackets.class));
 
@@ -164,7 +164,7 @@ class UrlExtractionTest {
         assertNull(extractedUrls.get(1).getAnchor());
         assertNull(extractedUrls.get(1).getReference());
         assertEquals("http://www.craftymind.com/2008/04/09/kick-starting-the-garbage-collector-in-actionscript-3-with-air/", extractedUrls.get(1).getUrl());
-        assertEquals("www.craftymind.com", extractedUrls.get(1).getDomain());
+        assertEquals("www.craftymind.com", extractedUrls.get(1).getCompleteDomain());
         assertNull(extractedUrls.get(1).getTitle());
         assertThat(extractedUrls.get(1), instanceOf(MarkdownLinkAngleBrackets.class));
     }
@@ -190,7 +190,7 @@ class UrlExtractionTest {
         assertNull(extractedUrls.get(0).getAnchor());
         assertNull(extractedUrls.get(0).getReference());
         assertEquals("http://www.brokenbuild.com/blog/2006/08/15/mysql-triggers-how-do-you-abort-an-insert-update-or-delete-with-a-trigger/", extractedUrls.get(0).getUrl());
-        assertEquals("www.brokenbuild.com", extractedUrls.get(0).getDomain());
+        assertEquals("www.brokenbuild.com", extractedUrls.get(0).getCompleteDomain());
         assertNull(extractedUrls.get(0).getTitle());
         assertThat(extractedUrls.get(0), instanceOf(Link.class));
     }
@@ -258,7 +258,7 @@ class UrlExtractionTest {
         assertEquals("I'm an inline-style link without title", extractedUrls.get(0).getAnchor());
         assertNull(extractedUrls.get(0).getReference());
         assertEquals("https://www.google.com", extractedUrls.get(0).getUrl());
-        assertEquals("www.google.com", extractedUrls.get(0).getDomain());
+        assertEquals("www.google.com", extractedUrls.get(0).getCompleteDomain());
         assertNull(extractedUrls.get(0).getTitle());
         assertThat(extractedUrls.get(0), instanceOf(MarkdownLinkInline.class));
     }
@@ -271,5 +271,55 @@ class UrlExtractionTest {
         a_19049539.normalizeLinks();
         PostVersion version_2_a_19049539 = a_19049539.get(1);
         assertEquals(version_2_a_19049539.getTextBlocks().size(), 3);
+    }
+
+    // TODO: derive test cases from current data in PostVersionUrl and CommentUrl
+
+    @Test
+    void testUrlComponentExtraction() {
+        testUrlComponents("https://developers.facebook.com/docs/messenger-platform/thread-settings/greeting-text/",
+                "https",
+                "developers.facebook.com", "facebook.com",
+                "docs/messenger-platform/thread-settings/greeting-text");
+
+        testUrlComponents("http://i.stack.imgur.com/Wl2DC.png",
+                "http",
+                "i.stack.imgur.com", "imgur.com",
+                "Wl2DC.png");
+
+        testUrlComponents("http://dev.mysql.com/doc/refman/5.5/en/create-table.html",
+                "http",
+                "dev.mysql.com", "mysql.com",
+                "doc/refman/5.5/en/create-table.html");
+
+        testUrlComponents("http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::image",
+                "http",
+                "book.cakephp.org", "cakephp.org",
+                "2.0/en/core-libraries/helpers/html.html");
+
+        testUrlComponents("https://webcache.googleusercontent.com/search?q=cache:F1YnhmHMSkwJ:https://www.w3.org/Addressing/URL/uri-spec.ps%20&cd=2&hl=en&ct=clnk&gl=uk",
+                "https",
+                "webcache.googleusercontent.com", "googleusercontent.com",
+                "search");
+
+        testUrlComponents("http://developer.android.com/reference/android/view/ViewGroup.html#indexOfChild%28android.view.View%29",
+                "http",
+                "developer.android.com", "android.com",
+                "reference/android/view/ViewGroup.html");
+
+        testUrlComponents("ftp://ftp.linux-magazine.com/pub/listings/magazine/185/ELKstack/configfiles/etc_logstash/conf.d/5003-postfix-filter.conf",
+                "ftp",
+                "ftp.linux-magazine.com", "linux-magazine.com",
+                "pub/listings/magazine/185/ELKstack/configfiles/etc_logstash/conf.d/5003-postfix-filter.conf");
+    }
+
+    private void testUrlComponents(String url, String expectedProtocol,
+                         String expectedCompleteDomain, String expectedRootDomain,
+                         String expectedPath) {
+        Link link = Link.extractBare(url).get(0);
+        assertEquals(expectedProtocol, link.getProtocol());
+        assertEquals(expectedCompleteDomain, link.getCompleteDomain());
+        assertEquals(expectedRootDomain, link.getRootDomain());
+        assertEquals(expectedPath, link.getPath());
     }
 }

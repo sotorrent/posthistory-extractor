@@ -237,7 +237,7 @@ public class PostVersion {
             for (Link currentLink : extractedLinks) {
                 urls.add(
                         new PostVersionUrl(postId, postHistoryId, currentTextBlock.getId(),
-                                currentLink.getDomain(), currentLink.getUrl()
+                                currentLink.getRootDomain(), currentLink.getUrl()
                         )
                 );
             }
