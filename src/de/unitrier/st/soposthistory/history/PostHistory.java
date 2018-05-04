@@ -66,7 +66,7 @@ public class PostHistory {
         // see https://meta.stackexchange.com/a/2678
         titlePostHistoryTypes.add((byte)1); // Initial Title - initial title (questions only)
         titlePostHistoryTypes.add((byte)4); // Edit Title - modified title (questions only)
-        titlePostHistoryTypes.add((byte)8); // Rollback Title - reverted title (questions only)
+        titlePostHistoryTypes.add((byte)7); // Rollback Title - reverted title (questions only)
     }
 
     public static final Pattern fileNamePattern = Pattern.compile("(\\d+)\\.csv");
