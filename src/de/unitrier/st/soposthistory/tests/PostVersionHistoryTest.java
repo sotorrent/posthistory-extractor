@@ -1063,7 +1063,7 @@ class PostVersionHistoryTest {
         PostVersionList postVersionList = new PostVersionList(1, Posts.QUESTION_ID);
         postVersionList.sort(); // this should not throw an exception
 
-        TitleVersionList titleVersionList = new TitleVersionList(1);
+        TitleVersionList titleVersionList = new TitleVersionList(1, Posts.QUESTION_ID);
         titleVersionList.sort(); // this should not throw an exception
     }
 

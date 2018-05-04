@@ -18,14 +18,9 @@ import java.util.stream.Collectors;
 
 @Entity
 @Table(name="PostVersion")
-public class PostVersion {
+public class PostVersion extends Version {
     // database
-    private int id;
-    private Integer postId;
-    private Byte postTypeId;
-    private Integer postHistoryId;
-    private Byte postHistoryTypeId;
-    private Timestamp creationDate;
+    // see superclass members
     private Integer predPostHistoryId;
     private Integer succPostHistoryId;
     // internal
@@ -64,60 +59,72 @@ public class PostVersion {
     @Id
     @Column(name = "Id")
     @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Override
     public int getId() {
         return id;
     }
 
+    @Override
     public void setId(int id) {
         this.id = id;
     }
 
     @Basic
     @Column(name = "PostId")
+    @Override
     public Integer getPostId() {
         return postId;
     }
 
+    @Override
     public void setPostId(Integer postId) {
         this.postId = postId;
     }
 
     @Basic
     @Column(name = "PostTypeId")
+    @Override
     public Byte getPostTypeId() {
         return postTypeId;
     }
 
+    @Override
     public void setPostTypeId(Byte postTypeId) {
         this.postTypeId = postTypeId;
     }
 
     @Basic
     @Column(name = "PostHistoryId")
+    @Override
     public Integer getPostHistoryId() {
         return postHistoryId;
     }
 
+    @Override
     public void setPostHistoryId(Integer postHistoryId) {
         this.postHistoryId = postHistoryId;
     }
 
     @Basic
     @Column(name = "PostHistoryTypeId")
+    @Override
     public Byte getPostHistoryTypeId() {
         return postHistoryTypeId;
     }
 
+    @Override
     public void setPostHistoryTypeId(Byte postHistoryTypeId) {
         this.postHistoryTypeId = postHistoryTypeId;
     }
 
     @Basic
     @Column(name = "CreationDate")
+    @Override
     public Timestamp getCreationDate() {
         return creationDate;
     }
 
+    @Override
     public void setCreationDate(Timestamp creationDate) {
         this.creationDate = creationDate;
     }

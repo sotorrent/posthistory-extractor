@@ -7,10 +7,7 @@ import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
 import de.unitrier.st.soposthistory.diffs.PostBlockDiff;
 import de.unitrier.st.soposthistory.urls.PostReferenceGH;
 import de.unitrier.st.soposthistory.urls.PostVersionUrl;
-import de.unitrier.st.soposthistory.version.PostVersion;
-import de.unitrier.st.soposthistory.version.PostVersionList;
-import de.unitrier.st.soposthistory.version.TitleVersion;
-import de.unitrier.st.soposthistory.version.TitleVersionList;
+import de.unitrier.st.soposthistory.version.*;
 import de.unitrier.st.util.Util;
 import org.apache.commons.csv.*;
 import org.hibernate.*;
@@ -24,10 +21,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -301,10 +295,17 @@ public class PostHistoryIterator {
             logger.info("Thread " + partition + ": Parsing history for provided PostIds and writing versions " +
                     "and diffs back to database...");
 
-            // read all PostIds from the CSV file and extract history from table PostHistory
-            List<PostVersionList> postsWithoutContentVersions = new LinkedList<>(); // store posts without extracted versions
-            List<PostVersion> postsVersionsWithoutBlocks = new LinkedList<>(); // store post versions without extracted post blocks
+            // data structures to capture erroneous post histories
+
+            // store posts without extracted versions
+            List<VersionList> postsWithoutContentVersions = new LinkedList<>();
             int postsWithContentVersionsCount = 0;
+            // stores post posts of questions without title versions
+            List<VersionList> postsWithoutTitleVersions = new LinkedList<>();
+            // store post versions without extracted post blocks
+            List<PostVersion> postsVersionsWithoutBlocks = new LinkedList<>();
+
+            // read all PostIds from the CSV file and extract history from table PostHistory
             Transaction t = null; // see https://docs.jboss.org/hibernate/orm/3.3/reference/en/html/transactions.html
             try (StatelessSession session = sessionFactory.openStatelessSession()) {
                 try (CSVParser csvParser = new CSVParser(
@@ -334,11 +335,14 @@ public class PostHistoryIterator {
                         if (postTypeId == 1 || postTypeId == 2) { // question or answer
                             // retrieve data from post history about title and body changes
                             PostVersionList postVersionList = new PostVersionList(postId, postTypeId);
-                            TitleVersionList titleVersionList = new TitleVersionList(postId);
+                            TitleVersionList titleVersionList = null;
+                            if (postTypeId == Posts.QUESTION_ID) {
+                                titleVersionList = new TitleVersionList(postId, postTypeId);
+                            }
 
-                            // get all PostHistory entries for current PostId, order them chronologically
+                            // get all PostHistory entries for current PostId
                             String currentPostHistoryQuery = String.format("FROM PostHistory " +
-                                    "WHERE PostId=%d AND postHistoryTypeId IN (%s)",
+                                            "WHERE PostId=%d AND postHistoryTypeId IN (%s)",
                                     postId,
                                     Util.setToQueryString(Sets.union(PostHistory.contentPostHistoryTypes,
                                             PostHistory.titlePostHistoryTypes))
@@ -358,8 +362,7 @@ public class PostHistoryIterator {
                                     continue;
                                 }
 
-                                if (PostHistory.contentPostHistoryTypes.contains(
-                                        currentPostHistoryEntity.getPostHistoryTypeId())) {
+                                if (PostHistory.contentPostHistoryTypes.contains(currentPostHistoryEntity.getPostHistoryTypeId())) {
                                     // content change
 
                                     // extract the post blocks (text or code)...
@@ -380,10 +383,9 @@ public class PostHistoryIterator {
                                     // finally, add this version to the post version list
                                     postVersionList.add(currentPostVersion);
 
-                                } else if (PostHistory.titlePostHistoryTypes.contains(
-                                        currentPostHistoryEntity.getPostHistoryTypeId())) {
+                                } else if (PostHistory.titlePostHistoryTypes.contains(currentPostHistoryEntity.getPostHistoryTypeId())) {
                                     // title change
-                                    titleVersionList.add(currentPostHistoryEntity.toTitleVersion(postTypeId));
+                                    Objects.requireNonNull(titleVersionList).add(currentPostHistoryEntity.toTitleVersion(postTypeId));
                                 }
                             }
 
@@ -407,9 +409,10 @@ public class PostHistoryIterator {
 
                             if (postTypeId == Posts.QUESTION_ID && titleVersionList.size() == 0) {
                                 logger.warning("Thread " + partition + ": " + "No title versions extracted for PostId " + postId);
+                                postsWithoutTitleVersions.add(titleVersionList);
                             } else {
                                 // sort post history chronologically
-                                titleVersionList.sort();
+                                Objects.requireNonNull(titleVersionList).sort();
 
                                 // (1) set pred and succ references for title versions
                                 // (2) compute edit distance between title versions
@@ -432,8 +435,12 @@ public class PostHistoryIterator {
                     }
 
                     logger.info("Thread " + partition + ": Writing PostIds of " + postsWithoutContentVersions.size()
-                            + " posts for which no versions have been extracted...");
-                    writePostsWithoutVersionsToCSV(postsWithoutContentVersions);
+                            + " posts for which no content versions have been extracted...");
+                    writePostsWithoutVersionsToCSV(postsWithoutContentVersions, "_no_content_versions");
+
+                    logger.info("Thread " + partition + ": Writing PostIds of " + postsWithoutTitleVersions.size()
+                            + " post versions for which no title versions have been extracted...");
+                    writePostsWithoutVersionsToCSV(postsWithoutTitleVersions, "_no_title_versions");
 
                     logger.info("Thread " + partition + ": Writing PostIds and PostHistoryIds of " + postsVersionsWithoutBlocks.size()
                             + " post versions for which no post blocks have been extracted...");
@@ -450,8 +457,8 @@ public class PostHistoryIterator {
             }
         }
 
-        private void writePostsWithoutVersionsToCSV(List<PostVersionList> postVersionLists) {
-            String filename =  baseFilename + "_" + partition + "_no_versions.csv";
+        private void writePostsWithoutVersionsToCSV(List<VersionList> versionLists, String filenamePrefix) {
+            String filename =  baseFilename + "_" + partition + filenamePrefix + ".csv";
             File outputFile = Paths.get(dataDir.toString(), filename).toFile();
             if (outputFile.exists()) {
                 if (!outputFile.delete()) {
@@ -462,8 +469,8 @@ public class PostHistoryIterator {
             try (CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(outputFile), csvFormatPost)) {
                 // header is automatically written
                 // write postIds along with postTypeId
-                for (PostVersionList postVersionList : postVersionLists) {
-                    csvPrinter.printRecord(postVersionList.getPostId(), postVersionList.getPostTypeId());
+                for (VersionList versionList : versionLists) {
+                    csvPrinter.printRecord(versionList.getPostId(), versionList.getPostTypeId());
                 }
             } catch (IOException e) {
                 e.printStackTrace();

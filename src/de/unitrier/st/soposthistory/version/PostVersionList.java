@@ -18,12 +18,13 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Logger;
 
-public class PostVersionList extends LinkedList<PostVersion> {
+public class PostVersionList extends LinkedList<PostVersion> implements VersionList {
     private static Logger logger = null;
 
     private int postId;
     private byte postTypeId;
     private boolean sorted;
+
     private PostBlockDiffList diffs;
 
     static {
@@ -435,7 +436,7 @@ public class PostVersionList extends LinkedList<PostVersion> {
         return postId;
     }
 
-    public int getPostTypeId() {
+    public byte getPostTypeId() {
         return postTypeId;
     }
 

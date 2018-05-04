@@ -9,14 +9,9 @@ import static de.unitrier.st.stringsimilarity.edit.Base.levenshteinDistance;
 
 @Entity
 @Table(name="TitleVersion")
-public class TitleVersion {
+public class TitleVersion extends Version {
     // database
-    private int id;
-    private Integer postId;
-    private Byte postTypeId;
-    protected Integer postHistoryId;
-    private Byte postHistoryTypeId;
-    private Timestamp creationDate;
+    // see superclass members
     private Integer predPostHistoryId;
     private Integer predEditDistance;
     private Integer succPostHistoryId;
@@ -55,30 +50,36 @@ public class TitleVersion {
     @Id
     @Column(name = "Id")
     @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Override
     public int getId() {
         return id;
     }
 
+    @Override
     public void setId(int id) {
         this.id = id;
     }
 
     @Basic
     @Column(name = "PostId")
+    @Override
     public Integer getPostId() {
         return postId;
     }
 
+    @Override
     public void setPostId(Integer postId) {
         this.postId = postId;
     }
 
     @Basic
     @Column(name = "PostTypeId")
+    @Override
     public Byte getPostTypeId() {
         return postTypeId;
     }
 
+    @Override
     public void setPostTypeId(Byte postTypeId) {
         if (postTypeId != Posts.QUESTION_ID) {
             throw new IllegalArgumentException("Title versions can only exist for questions. PostTypeId was "
@@ -89,30 +90,36 @@ public class TitleVersion {
 
     @Basic
     @Column(name = "PostHistoryId")
+    @Override
     public Integer getPostHistoryId() {
         return postHistoryId;
     }
 
+    @Override
     public void setPostHistoryId(Integer postHistoryId) {
         this.postHistoryId = postHistoryId;
     }
 
     @Basic
     @Column(name = "PostHistoryTypeId")
+    @Override
     public Byte getPostHistoryTypeId() {
         return postHistoryTypeId;
     }
 
+    @Override
     public void setPostHistoryTypeId(Byte postHistoryTypeId) {
         this.postHistoryTypeId = postHistoryTypeId;
     }
 
     @Basic
     @Column(name = "CreationDate")
+    @Override
     public Timestamp getCreationDate() {
         return creationDate;
     }
 
+    @Override
     public void setCreationDate(Timestamp creationDate) {
         this.creationDate = creationDate;
     }

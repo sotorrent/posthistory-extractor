@@ -9,13 +9,19 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
-public class TitleVersionList extends LinkedList<TitleVersion> {
+public class TitleVersionList extends LinkedList<TitleVersion> implements VersionList {
     private int postId;
+    private byte postTypeId;
     private boolean sorted;
 
-    public TitleVersionList(int postId) {
+    public TitleVersionList(int postId, byte postTypeId) {
         super();
+        if (postTypeId != Posts.QUESTION_ID) {
+            throw new IllegalArgumentException("Title versions can only exist for questions (expected id: "
+                    + Posts.QUESTION_ID + "; actual id: " + postTypeId + ")");
+        }
         this.postId = postId;
+        this.postTypeId = postTypeId;
         this.sorted = false;
     }
 
@@ -71,7 +77,7 @@ public class TitleVersionList extends LinkedList<TitleVersion> {
         List<PostHistory> postHistoryList = PostHistory.readFromCSV(dir, postId, PostHistory.titlePostHistoryTypes);
 
         // convert to title version list
-        TitleVersionList titleVersionList = new TitleVersionList(postId);
+        TitleVersionList titleVersionList = new TitleVersionList(postId, Posts.QUESTION_ID);
         for (PostHistory postHistory : postHistoryList) {
             titleVersionList.add(postHistory.toTitleVersion(Posts.QUESTION_ID));
         }
@@ -86,8 +92,14 @@ public class TitleVersionList extends LinkedList<TitleVersion> {
         return titleVersionList;
     }
 
+    @Override
     public int getPostId() {
         return postId;
+    }
+
+    @Override
+    public byte getPostTypeId() {
+        return postTypeId;
     }
 
     @Override
