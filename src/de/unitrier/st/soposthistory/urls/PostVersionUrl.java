@@ -31,6 +31,7 @@ public class PostVersionUrl{
         this.protocol = link.getProtocol();
         this.completeDomain = link.getCompleteDomain();
         this.rootDomain = link.getRootDomain();
+        this.path = link.getPath();
         this.url = link.getUrl();
     }
 
