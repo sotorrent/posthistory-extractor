@@ -385,7 +385,9 @@ public class PostHistoryIterator {
 
                                 } else if (PostHistory.titlePostHistoryTypes.contains(currentPostHistoryEntity.getPostHistoryTypeId())) {
                                     // title change
-                                    Objects.requireNonNull(titleVersionList).add(currentPostHistoryEntity.toTitleVersion(postTypeId));
+                                    if (titleVersionList != null) {
+                                        titleVersionList.add(currentPostHistoryEntity.toTitleVersion(postTypeId));
+                                    }
                                 }
                             }
 
@@ -411,15 +413,16 @@ public class PostHistoryIterator {
                                 logger.warning("Thread " + partition + ": " + "No title versions extracted for PostId " + postId);
                                 postsWithoutTitleVersions.add(titleVersionList);
                             } else {
-                                // sort post history chronologically
-                                Objects.requireNonNull(titleVersionList).sort();
+                                if (titleVersionList != null) {
+                                    // sort post history chronologically
+                                    titleVersionList.sort();
+                                    // (1) set pred and succ references for title versions
+                                    // (2) compute edit distance between title versions
+                                    titleVersionList.processVersionHistory();
 
-                                // (1) set pred and succ references for title versions
-                                // (2) compute edit distance between title versions
-                                titleVersionList.processVersionHistory();
-
-                                // write title versions to database
-                                titleVersionList.insert(session);
+                                    // write title versions to database
+                                    titleVersionList.insert(session);
+                                }
                             }
 
                             // commit transaction
@@ -457,8 +460,8 @@ public class PostHistoryIterator {
             }
         }
 
-        private void writePostsWithoutVersionsToCSV(List<VersionList> versionLists, String filenamePrefix) {
-            String filename =  baseFilename + "_" + partition + filenamePrefix + ".csv";
+        private void writePostsWithoutVersionsToCSV(List<VersionList> versionLists, String filenameSuffix) {
+            String filename =  baseFilename + "_" + partition + filenameSuffix + ".csv";
             File outputFile = Paths.get(dataDir.toString(), filename).toFile();
             if (outputFile.exists()) {
                 if (!outputFile.delete()) {
