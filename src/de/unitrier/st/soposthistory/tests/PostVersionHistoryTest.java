@@ -1074,4 +1074,12 @@ class PostVersionHistoryTest {
         );
     }
 
+    @Test
+    void testEmptyPostVersionsQuestion29813692() {
+        // this post has content on the SO website (https://stackoverflow.com/q/29813692),
+        // but not in the post history (https://stackoverflow.com/posts/29813692/revisions)
+        int postId = 29813692;
+        PostVersionList q_29813692 = PostVersionList.readFromCSV(pathToPostVersionLists, postId, Posts.QUESTION_ID);
+        assertEquals(0, q_29813692.size());
+    }
 }

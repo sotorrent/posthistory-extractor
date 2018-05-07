@@ -4,8 +4,10 @@ import de.unitrier.st.soposthistory.comments.CommentsIterator;
 import de.unitrier.st.soposthistory.history.PostHistory;
 import de.unitrier.st.soposthistory.history.PostHistoryIterator;
 import de.unitrier.st.soposthistory.history.PostHistoryList;
+import de.unitrier.st.soposthistory.history.Posts;
 import de.unitrier.st.soposthistory.version.PostVersion;
 import de.unitrier.st.soposthistory.version.PostVersionList;
+import de.unitrier.st.soposthistory.version.TitleVersionList;
 import de.unitrier.st.util.Util;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -31,13 +33,10 @@ class DisabledTests {
     private static Logger logger;
     private static Path pathToHibernateConfig = Paths.get("hibernate", "hibernate.cfg.xml");
     // posts without post blocks
-    private static Path sotorrent_2018_01_12_no_blocks = Paths.get("testdata", "sotorrent_2018-01-12", "post_versions_no_blocks.csv");
-    private static Path sotorrent_2018_01_12_questions_no_blocks = Paths.get("testdata", "sotorrent_2018-01-18", "all_questions_no_blocks.csv");
-    private static Path sotorrent_2018_03_28_questions_no_blocks = Paths.get("testdata", "sotorrent_2018-03-28", "all_questions_no_blocks.csv");
-    private static Path sotorrent_2018_03_28_answers_no_blocks = Paths.get("testdata", "sotorrent_2018-03-28", "all_answers_no_blocks.csv");
+    private static Path questions_no_blocks = Paths.get("testdata", "sotorrent_2018-05-04", "all_questions_no_blocks.csv");
     // posts without post versions
-    private static Path sotorrent_2018_03_28_questions_no_versions = Paths.get("testdata", "sotorrent_2018-03-28", "all_questions_no_versions.csv");
-    private static Path sotorrent_2018_03_28_answers_no_versions = Paths.get("testdata", "sotorrent_2018-03-28", "all_answers_no_versions.csv");
+    private static Path questions_no_content_versions = Paths.get("testdata", "sotorrent_2018-05-04", "all_questions_no_content_versions.csv");
+    private static Path questions_no_title_versions = Paths.get("testdata", "sotorrent_2018-05-04", "all_questions_no_title_versions.csv");
 
     static {
         // configure logger
@@ -52,13 +51,10 @@ class DisabledTests {
     @Test
     void testPostVersionsWithoutBlocks() {
         // posts without post blocks
-        testPostBlockExtraction(sotorrent_2018_01_12_no_blocks, PostHistoryIterator.csvFormatPost);
-        testPostBlockExtraction(sotorrent_2018_01_12_questions_no_blocks, PostHistoryIterator.csvFormatVersion);
-        testPostBlockExtraction(sotorrent_2018_03_28_questions_no_blocks, PostHistoryIterator.csvFormatVersion);
-        testPostBlockExtraction(sotorrent_2018_03_28_answers_no_blocks, PostHistoryIterator.csvFormatVersion);
+        testPostBlockExtraction(questions_no_blocks, PostHistoryIterator.csvFormatPost);
         // posts without post versions
-        testPostBlockExtraction(sotorrent_2018_03_28_questions_no_versions, PostHistoryIterator.csvFormatVersion);
-        testPostBlockExtraction(sotorrent_2018_03_28_answers_no_versions, PostHistoryIterator.csvFormatVersion);
+        testPostBlockExtraction(questions_no_content_versions, PostHistoryIterator.csvFormatVersion);
+        testPostBlockExtraction(questions_no_title_versions, PostHistoryIterator.csvFormatVersion);
     }
 
     private void testPostBlockExtraction(Path pathToCSV, CSVFormat csvFormat) {
@@ -74,6 +70,7 @@ class DisabledTests {
 
         boolean emptyPostBlockListPresent = false;
         boolean emptyPostVersionListPresent = false;
+        boolean emptyTitleVersionListPresent = false;
 
         try (StatelessSession session = PostHistoryList.sessionFactory.openStatelessSession()) {
             try (CSVParser csvParser = new CSVParser(
@@ -92,7 +89,8 @@ class DisabledTests {
 
                     if (postTypeId == 1 || postTypeId == 2) { // question or answer
                         // retrieve data from post history...
-                        PostVersionList postVersionList = new PostVersionList(postId, postTypeId);
+                        PostVersionList postVersions = new PostVersionList(postId, postTypeId);
+                        TitleVersionList titleVersions = new TitleVersionList(postId, postTypeId);
 
                         // get all PostHistory entries for current PostId, order them chronologically
                         String currentPostHistoryQuery = String.format("FROM PostHistory WHERE PostId=%d", postId);
@@ -100,10 +98,17 @@ class DisabledTests {
                         ScrollableResults postHistoryIterator = session.createQuery(currentPostHistoryQuery)
                                 .scroll(ScrollMode.FORWARD_ONLY);
 
-                        int count = 0;
+                        int contentVersionCount = 0;
+                        int titleVersionCount = 0;
+
                         while (postHistoryIterator.next()) {
-                            count++;
                             PostHistory currentPostHistoryEntity = (PostHistory) postHistoryIterator.get(0);
+
+                            if (PostHistory.contentPostHistoryTypes.contains(currentPostHistoryEntity.getPostHistoryTypeId())) {
+                                contentVersionCount++;
+                            } else if (PostHistory.titlePostHistoryTypes.contains(currentPostHistoryEntity.getPostHistoryTypeId())) {
+                                titleVersionCount++;
+                            }
 
                             String text = currentPostHistoryEntity.getText();
                             // ignore versions that don't have any content (or only whitespaces)
@@ -112,29 +117,45 @@ class DisabledTests {
                                 continue;
                             }
 
-                            currentPostHistoryEntity.extractPostBlocks();
-                            PostVersion currentPostVersion = currentPostHistoryEntity.toPostVersion(postTypeId);
+                            if (PostHistory.contentPostHistoryTypes.contains(currentPostHistoryEntity.getPostHistoryTypeId())) {
+                                currentPostHistoryEntity.extractPostBlocks();
+                                PostVersion currentPostVersion = currentPostHistoryEntity.toPostVersion(postTypeId);
 
-                            if (currentPostVersion.getPostBlocks().size() == 0) {
-                                logger.warning("No post blocks extracted for PostId: " + postId + "; PostHistoryId: " + currentPostVersion.getPostHistoryId());
-                                emptyPostBlockListPresent = true;
+                                if (currentPostVersion.getPostBlocks().size() == 0) {
+                                    logger.warning("No post blocks extracted for PostId: " + postId + "; PostHistoryId: " + currentPostVersion.getPostHistoryId());
+                                    emptyPostBlockListPresent = true;
+                                }
+
+                                currentPostVersion.extractUrlsFromTextBlocks();
+                                postVersions.add(currentPostVersion);
+                            } else if (PostHistory.titlePostHistoryTypes.contains(currentPostHistoryEntity.getPostHistoryTypeId())) {
+                                titleVersions.add(currentPostHistoryEntity.toTitleVersion(postTypeId));
                             }
-
-                            currentPostVersion.extractUrlsFromTextBlocks();
-                            postVersionList.add(currentPostVersion);
                         }
 
-                        if (count == 0) {
-                            logger.warning("No data available in table PostHistory for PostId " + postId);
+                        // ignore test case if no information about content versions of post available in table PostHistory
+                        if (contentVersionCount == 0) {
+                            logger.info("No content versions available in table PostHistory for PostId " + postId);
                             continue;
                         }
 
-                        if (postVersionList.size() == 0) {
-                            logger.warning("No versions extracted for PostId " + postId);
+                        // ignore test case if no information about title versions of post available in table PostHistory
+                        if (titleVersionCount == 0) {
+                            logger.info("No title versions available in table PostHistory for PostId " + postId);
+                            continue;
+                        }
+
+                        if (postVersions.size() == 0) {
+                            logger.warning("No content versions extracted for PostId " + postId);
                             emptyPostVersionListPresent = true;
                         } else {
-                            postVersionList.sort();
-                            postVersionList.processVersionHistory();
+                            postVersions.sort();
+                            postVersions.processVersionHistory();
+                        }
+
+                        if (postTypeId == Posts.QUESTION_ID && titleVersions.size() == 0) {
+                            logger.warning("No title versions extracted for PostId " + postId);
+                            emptyTitleVersionListPresent = true;
                         }
                     }
                 }
@@ -147,6 +168,7 @@ class DisabledTests {
 
         assertFalse(emptyPostBlockListPresent);
         assertFalse(emptyPostVersionListPresent);
+        assertFalse(emptyTitleVersionListPresent);
     }
 
     @Disabled
