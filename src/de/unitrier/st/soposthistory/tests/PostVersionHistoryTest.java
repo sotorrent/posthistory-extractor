@@ -956,7 +956,7 @@ class PostVersionHistoryTest {
 
     @Test
     void testReadPostHistoryEmptyCodeBlock() {
-        // the following posts were removed from the test data for test case testPostVersionsWithoutBlocks (disabled),
+        // the following posts were removed from the test data for test case testPostVersionsWithoutContent (disabled),
         // because they have non-whitespace content, but should still be treated as having no post blocks
         // (i.e., they only contain an empty code block)
 

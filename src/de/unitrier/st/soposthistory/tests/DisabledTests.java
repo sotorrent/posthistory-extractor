@@ -33,9 +33,10 @@ class DisabledTests {
     private static Logger logger;
     private static Path pathToHibernateConfig = Paths.get("hibernate", "hibernate.cfg.xml");
     // posts without post blocks
-    private static Path questions_no_blocks = Paths.get("testdata", "sotorrent_2018-05-04", "all_questions_no_blocks.csv");
-    // posts without post versions
-    private static Path questions_no_content_versions = Paths.get("testdata", "sotorrent_2018-05-04", "all_questions_no_content_versions.csv");
+    private static Path posts_no_blocks = Paths.get("testdata", "sotorrent_2018-05-04", "all_posts_no_blocks.csv");
+    // posts without content versions
+    private static Path posts_no_content_versions = Paths.get("testdata", "sotorrent_2018-05-04", "all_posts_no_content_versions.csv");
+    // questions without title versions
     private static Path questions_no_title_versions = Paths.get("testdata", "sotorrent_2018-05-04", "all_questions_no_title_versions.csv");
 
     static {
@@ -49,11 +50,11 @@ class DisabledTests {
 
     @Disabled
     @Test
-    void testPostVersionsWithoutBlocks() {
+    void testPostVersionsWithoutContent() {
         // posts without post blocks
-        testPostBlockExtraction(questions_no_blocks, PostHistoryIterator.csvFormatPost);
+        testPostBlockExtraction(posts_no_blocks, PostHistoryIterator.csvFormatPost);
         // posts without post versions
-        testPostBlockExtraction(questions_no_content_versions, PostHistoryIterator.csvFormatVersion);
+        testPostBlockExtraction(posts_no_content_versions, PostHistoryIterator.csvFormatVersion);
         testPostBlockExtraction(questions_no_title_versions, PostHistoryIterator.csvFormatVersion);
     }
 
@@ -90,7 +91,10 @@ class DisabledTests {
                     if (postTypeId == 1 || postTypeId == 2) { // question or answer
                         // retrieve data from post history...
                         PostVersionList postVersions = new PostVersionList(postId, postTypeId);
-                        TitleVersionList titleVersions = new TitleVersionList(postId, postTypeId);
+                        TitleVersionList titleVersions = null;
+                        if (postTypeId == Posts.QUESTION_ID) {
+                            titleVersions = new TitleVersionList(postId, postTypeId);
+                        }
 
                         // get all PostHistory entries for current PostId, order them chronologically
                         String currentPostHistoryQuery = String.format("FROM PostHistory WHERE PostId=%d", postId);
@@ -129,19 +133,21 @@ class DisabledTests {
                                 currentPostVersion.extractUrlsFromTextBlocks();
                                 postVersions.add(currentPostVersion);
                             } else if (PostHistory.titlePostHistoryTypes.contains(currentPostHistoryEntity.getPostHistoryTypeId())) {
-                                titleVersions.add(currentPostHistoryEntity.toTitleVersion(postTypeId));
+                                if (titleVersions != null) {
+                                    titleVersions.add(currentPostHistoryEntity.toTitleVersion(postTypeId));
+                                }
                             }
                         }
 
                         // ignore test case if no information about content versions of post available in table PostHistory
                         if (contentVersionCount == 0) {
-                            logger.info("No content versions available in table PostHistory for PostId " + postId);
+                            //logger.info("No content versions available in table PostHistory for PostId " + postId);
                             continue;
                         }
 
                         // ignore test case if no information about title versions of post available in table PostHistory
                         if (titleVersionCount == 0) {
-                            logger.info("No title versions available in table PostHistory for PostId " + postId);
+                            //logger.info("No title versions available in table PostHistory for PostId " + postId);
                             continue;
                         }
 
