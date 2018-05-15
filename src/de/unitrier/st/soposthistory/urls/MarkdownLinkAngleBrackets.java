@@ -1,5 +1,7 @@
 package de.unitrier.st.soposthistory.urls;
 
+import de.unitrier.st.util.Patterns;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -16,7 +18,7 @@ public class MarkdownLinkAngleBrackets extends Link {
     // http://www.example.com or <http://www.example.com> and sometimes
     // example.com (but not on Github, for example).
 
-    private static final Pattern regex = Pattern.compile("<(" + Link.urlPatternString + ")>");
+    private static final Pattern regex = Pattern.compile("<(" + Patterns.urlRegex + ")>");
 
     public static List<Link> extract(String markdownContent) {
         LinkedList<Link> extractedLinks = new LinkedList<>();

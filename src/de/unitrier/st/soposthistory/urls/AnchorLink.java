@@ -1,5 +1,7 @@
 package de.unitrier.st.soposthistory.urls;
 
+import de.unitrier.st.util.Patterns;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -7,7 +9,7 @@ import java.util.regex.Pattern;
 
 public class AnchorLink extends Link {
     // Example: <a href="http://example.com" title="example">example</a>
-    private static final Pattern regex = Pattern.compile("<a\\s+href\\s*=\\s*\"(" + Link.urlPatternString + ")?\"(?:\\s+(?:title=\"(.*?)\"))?>(.*?)</a>");
+    private static final Pattern regex = Pattern.compile("<a\\s+href\\s*=\\s*\"(" + Patterns.urlRegex + ")?\"(?:\\s+(?:title=\"(.*?)\"))?>(.*?)</a>");
 
     public static List<Link> extract(String markdownContent) {
         LinkedList<Link> extractedLinks = new LinkedList<>();

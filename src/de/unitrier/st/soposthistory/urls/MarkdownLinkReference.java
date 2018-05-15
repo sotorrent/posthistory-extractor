@@ -1,5 +1,7 @@
 package de.unitrier.st.soposthistory.urls;
 
+import de.unitrier.st.util.Patterns;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -24,7 +26,7 @@ public class MarkdownLinkReference extends Link {
 
     //public static final Pattern regex = Pattern.compile("\\[[^]]+]:\\s*((?:http|ftp|https)://(?:[\\w_-]+(?:(?:\\.[\\w_-]+)+))(?:[\\w.,@?^=%&:/~+#-]*[\\w@?^=%&/~+#-]))?");
     private static final Pattern regex_usages = Pattern.compile("\\[([^]]*)]\\[(\\s*.*?\\s*)]");
-    private static final Pattern regex_definitions = Pattern.compile("(?:\\[([^]]+)]:\\s*(" + Link.urlPatternString + ")?)(?:\\s+\"(.*)\")?");
+    private static final Pattern regex_definitions = Pattern.compile("(?:\\[([^]]+)]:\\s*(" + Patterns.urlRegex + ")?)(?:\\s+\"(.*)\")?");
 
     public static List<Link> extract(String markdownContent) {
         LinkedList<MarkdownLinkReference> extractedLinks = new LinkedList<>();

@@ -1,5 +1,7 @@
 package de.unitrier.st.soposthistory.urls;
 
+import de.unitrier.st.util.Patterns;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -15,7 +17,7 @@ public class MarkdownLinkInline extends Link {
     // Example 3: [I'm an inline-style link](https://www.google.com)
     // Example 4: [I'm an inline-style link with title](https://www.google.com "Google's Homepage")
 
-    private static final Pattern regex = Pattern.compile("\\[([^]]+)]\\(\\s*(" + Link.urlPatternString + ")?(?:\\s+\"([^\"]+)\")?\\s*\\)");
+    private static final Pattern regex = Pattern.compile("\\[([^]]+)]\\(\\s*(" + Patterns.urlRegex + ")?(?:\\s+\"([^\"]+)\")?\\s*\\)");
 
     public static List<Link> extract(String markdownContent) {
         LinkedList<Link> extractedLinks = new LinkedList<>();
