@@ -55,7 +55,7 @@ public class Link {
         return path;
     }
 
-    private void extractURLComponents() {
+    public void extractURLComponents() {
         // protocol
         Matcher protocolMatcher = Patterns.protocol.matcher(url);
         if (protocolMatcher.find()) {
