@@ -55,38 +55,11 @@ public class Link {
         return path;
     }
 
-    public void extractURLComponents() {
-        // protocol
-        Matcher protocolMatcher = Patterns.protocol.matcher(url);
-        if (protocolMatcher.find()) {
-            this.protocol = protocolMatcher.group(1);
-        } else {
-            throw new IllegalArgumentException("Extraction of protocol failed for URL: " + url);
-        }
-
-        // domain
-        Matcher completeDomainMatcher = Patterns.completeDomain.matcher(url);
-        if (completeDomainMatcher.find()) {
-            this.completeDomain = completeDomainMatcher.group(1);
-        } else {
-            throw new IllegalArgumentException("Extraction of complete domain failed for URL: " + url);
-        }
-        Matcher rootDomainMatcher = Patterns.rootDomain.matcher(completeDomain);
-        if (rootDomainMatcher.find()) {
-            this.rootDomain = rootDomainMatcher.group(1);
-        } else {
-            throw new IllegalArgumentException("Extraction of root domain failed for URL: " + url);
-        }
-
-        // path
-        Matcher pathMatcher = Patterns.path.matcher(url);
-        if (pathMatcher.find()) {
-            this.path = pathMatcher.group(1);
-            // remove trailing slash
-            if (this.path.endsWith("/")) {
-                this.path = this.path.substring(0, this.path.length()-1);
-            }
-        }
+    private void extractURLComponents() {
+        this.protocol = Patterns.extractProtocol(url);
+        this.completeDomain = Patterns.extractCompleteDomain(url);
+        this.rootDomain = Patterns.extractRootDomain(completeDomain);
+        this.path = Patterns.extractPath(url);
     }
 
     public static List<Link> extractBare(String markdownContent) {
