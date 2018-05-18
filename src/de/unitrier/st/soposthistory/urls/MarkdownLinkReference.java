@@ -23,10 +23,8 @@ public class MarkdownLinkReference extends Link {
     // [1]: http://slashdot.org
     // [link text itself]: http://www.reddit.com
 
-
-    //public static final Pattern regex = Pattern.compile("\\[[^]]+]:\\s*((?:http|ftp|https)://(?:[\\w_-]+(?:(?:\\.[\\w_-]+)+))(?:[\\w.,@?^=%&:/~+#-]*[\\w@?^=%&/~+#-]))?");
-    private static final Pattern regex_usages = Pattern.compile("\\[([^]]*)]\\[(\\s*.*?\\s*)]");
-    private static final Pattern regex_definitions = Pattern.compile("(?:\\[([^]]+)]:\\s*(" + Patterns.urlRegex + ")?)(?:\\s+\"(.*)\")?");
+    private static final Pattern regex_usages = Pattern.compile("\\[([^]]*)]\\[(\\s*.*?\\s*)]", Pattern.CASE_INSENSITIVE);
+    private static final Pattern regex_definitions = Pattern.compile("(?:\\[([^]]+)]:\\s*(" + Patterns.urlRegex + ")?)(?:\\s+\"(.*)\")?", Pattern.CASE_INSENSITIVE);
 
     public static List<Link> extract(String markdownContent) {
         LinkedList<MarkdownLinkReference> extractedLinks = new LinkedList<>();
