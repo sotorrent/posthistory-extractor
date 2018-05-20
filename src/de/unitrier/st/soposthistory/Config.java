@@ -1,6 +1,6 @@
 package de.unitrier.st.soposthistory;
 
-import de.unitrier.st.util.Util;
+import de.unitrier.st.util.MathUtils;
 
 import java.util.function.BiFunction;
 
@@ -155,8 +155,8 @@ public class Config {
     }
 
     public Config withTextSimilarityThreshold(double textSimilarityThreshold){
-        if (Util.lessThan(textSimilarityThreshold, 0.0)
-                || Util.greaterThan(textSimilarityThreshold, 1.0)) {
+        if (MathUtils.lessThan(textSimilarityThreshold, 0.0)
+                || MathUtils.greaterThan(textSimilarityThreshold, 1.0)) {
             throw new IllegalArgumentException("Similarity threshold must be in range [0.0, 1.0]");
         }
         return new Config(extractUrls, computeDiffs, catchInputTooShortExceptions,
@@ -171,8 +171,8 @@ public class Config {
     }
 
     public Config withTextBackupSimilarityThreshold(double textBackupSimilarityThreshold){
-        if (Util.lessThan(textBackupSimilarityThreshold, 0.0)
-                || Util.greaterThan(textBackupSimilarityThreshold, 1.0)) {
+        if (MathUtils.lessThan(textBackupSimilarityThreshold, 0.0)
+                || MathUtils.greaterThan(textBackupSimilarityThreshold, 1.0)) {
             throw new IllegalArgumentException("Similarity threshold must be in range [0.0, 1.0]");
         }
         return new Config(extractUrls, computeDiffs, catchInputTooShortExceptions,
@@ -187,8 +187,8 @@ public class Config {
     }
 
     public Config withCodeSimilarityThreshold(double codeSimilarityThreshold){
-        if (Util.lessThan(codeSimilarityThreshold, 0.0)
-                || Util.greaterThan(codeSimilarityThreshold, 1.0)) {
+        if (MathUtils.lessThan(codeSimilarityThreshold, 0.0)
+                || MathUtils.greaterThan(codeSimilarityThreshold, 1.0)) {
             throw new IllegalArgumentException("Similarity threshold must be in range [0.0, 1.0]");
         }
         return new Config(extractUrls, computeDiffs, catchInputTooShortExceptions,
@@ -203,8 +203,8 @@ public class Config {
     }
 
     public Config withCodeBackupSimilarityThreshold(double codeBackupSimilarityThreshold){
-        if (Util.lessThan(codeBackupSimilarityThreshold, 0.0)
-                || Util.greaterThan(codeBackupSimilarityThreshold, 1.0)) {
+        if (MathUtils.lessThan(codeBackupSimilarityThreshold, 0.0)
+                || MathUtils.greaterThan(codeBackupSimilarityThreshold, 1.0)) {
             throw new IllegalArgumentException("Similarity threshold must be in range [0.0, 1.0]");
         }
         return new Config(extractUrls, computeDiffs, catchInputTooShortExceptions,

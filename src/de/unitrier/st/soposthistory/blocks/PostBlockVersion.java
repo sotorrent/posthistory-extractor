@@ -5,9 +5,10 @@ import de.unitrier.st.soposthistory.Config;
 import de.unitrier.st.soposthistory.diffs.LineDiff;
 import de.unitrier.st.soposthistory.diffs.diff_match_patch;
 import de.unitrier.st.soposthistory.version.PostVersion;
-import de.unitrier.st.util.IllegalSimilarityValueException;
-import de.unitrier.st.util.InputTooShortException;
-import de.unitrier.st.util.Util;
+import de.unitrier.st.util.LogUtils;
+import de.unitrier.st.util.MathUtils;
+import de.unitrier.st.util.exceptions.IllegalSimilarityValueException;
+import de.unitrier.st.util.exceptions.InputTooShortException;
 
 import javax.persistence.*;
 import java.io.IOException;
@@ -29,7 +30,7 @@ public abstract class PostBlockVersion {
     static {
         // configure logger
         try {
-            logger = Util.getClassLogger(PostBlockVersion.class, false);
+            logger = LogUtils.getClassLogger(PostBlockVersion.class, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -611,7 +612,7 @@ public abstract class PostBlockVersion {
             }
         }
 
-        if (Util.lessThan(similarity.getMetricResult(), 0.0) || Util.greaterThan(similarity.getMetricResult(), 1.0)) {
+        if (MathUtils.lessThan(similarity.getMetricResult(), 0.0) || MathUtils.greaterThan(similarity.getMetricResult(), 1.0)) {
             String msg = "Metric result must be in range [0.0, 1.0], but was " + similarity.getMetricResult();
             logger.warning(msg);
             throw new IllegalSimilarityValueException(msg);
@@ -702,7 +703,7 @@ public abstract class PostBlockVersion {
         // get predecessors with max. similarity, sorted by similarity (may vary within Util.EPSILON)
         matchingPredecessors = predecessorSimilarities.entrySet()
                 .stream()
-                .filter(e -> Util.equals(e.getValue().getMetricResult(), finalMaxSimilarity))
+                .filter(e -> MathUtils.equals(e.getValue().getMetricResult(), finalMaxSimilarity))
                 .sorted((v1, v2) -> {
                     // sort descending according to similarity
                     int result = Double.compare(v2.getValue().getMetricResult(), v1.getValue().getMetricResult());

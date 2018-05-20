@@ -8,7 +8,10 @@ import de.unitrier.st.soposthistory.diffs.PostBlockDiff;
 import de.unitrier.st.soposthistory.urls.PostReferenceGH;
 import de.unitrier.st.soposthistory.urls.PostVersionUrl;
 import de.unitrier.st.soposthistory.version.*;
-import de.unitrier.st.util.Util;
+import de.unitrier.st.util.HibernateUtils;
+import de.unitrier.st.util.LogUtils;
+import de.unitrier.st.util.collections.CollectionUtils;
+import de.unitrier.st.util.exceptions.ErrorUtils;
 import org.apache.commons.csv.*;
 import org.hibernate.*;
 import org.hibernate.cfg.Configuration;
@@ -41,7 +44,7 @@ public class PostHistoryIterator {
     static {
         // configure logger
         try {
-            logger = Util.getClassLogger(PostHistoryIterator.class);
+            logger = LogUtils.getClassLogger(PostHistoryIterator.class);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -221,7 +224,7 @@ public class PostHistoryIterator {
         // split questions
         logger.info("Splitting questions...");
         postIds = readPostIdsFromCSV(baseFilename + "_questions.csv");
-        subLists = Util.split(postIds, partitionCount);
+        subLists = CollectionUtils.split(postIds, partitionCount);
         for (int i=0; i<subLists.length; i++) {
             List<Integer> list = subLists[i];
             writePostIdsToCSV(list, 1, baseFilename + "_questions_" + i + ".csv");
@@ -231,7 +234,7 @@ public class PostHistoryIterator {
         // split answers
         logger.info("Splitting answers...");
         postIds = readPostIdsFromCSV(baseFilename + "_answers.csv");
-        subLists = Util.split(postIds, partitionCount);
+        subLists = CollectionUtils.split(postIds, partitionCount);
         for (int i=0; i<subLists.length; i++) {
             List<Integer> list = subLists[i];
             writePostIdsToCSV(list, 2, baseFilename + "_answers_" + i + ".csv");
@@ -344,7 +347,7 @@ public class PostHistoryIterator {
                             String currentPostHistoryQuery = String.format("FROM PostHistory " +
                                             "WHERE PostId=%d AND postHistoryTypeId IN (%s)",
                                     postId,
-                                    Util.setToQueryString(Sets.union(PostHistory.contentPostHistoryTypes,
+                                    HibernateUtils.setToQueryString(Sets.union(PostHistory.contentPostHistoryTypes,
                                             PostHistory.titlePostHistoryTypes))
                             );
 
@@ -450,10 +453,10 @@ public class PostHistoryIterator {
                     writePostVersionsWithoutBlocksToCSV(postsVersionsWithoutBlocks);
 
                 } catch (IOException e) {
-                    logger.warning(Util.exceptionStackTraceToString(e));
+                    logger.warning(ErrorUtils.exceptionStackTraceToString(e));
                 }
             } catch (RuntimeException e) {
-                logger.warning(Util.exceptionStackTraceToString(e));
+                logger.warning(ErrorUtils.exceptionStackTraceToString(e));
                 if (t != null) {
                     t.rollback();
                 }

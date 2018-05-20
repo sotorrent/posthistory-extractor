@@ -3,7 +3,7 @@ package de.unitrier.st.soposthistory.diffs;
 import de.unitrier.st.soposthistory.blocks.PostBlockVersion;
 import de.unitrier.st.soposthistory.version.PostVersion;
 import de.unitrier.st.soposthistory.version.PostVersionList;
-import de.unitrier.st.util.Util;
+import de.unitrier.st.util.HibernateUtils;
 import org.hibernate.StatelessSession;
 
 import java.util.LinkedList;
@@ -32,6 +32,6 @@ public class PostBlockDiffList extends LinkedList<PostBlockDiff> {
     }
 
     public void insert(StatelessSession session) {
-        Util.insertList(session, this);
+        HibernateUtils.insertList(session, this);
     }
 }

@@ -10,7 +10,8 @@ import de.unitrier.st.soposthistory.gt.PostBlockLifeSpan;
 import de.unitrier.st.soposthistory.history.PostHistory;
 import de.unitrier.st.soposthistory.history.Posts;
 import de.unitrier.st.soposthistory.urls.Link;
-import de.unitrier.st.util.Util;
+import de.unitrier.st.util.FileUtils;
+import de.unitrier.st.util.LogUtils;
 import org.hibernate.StatelessSession;
 
 import java.io.IOException;
@@ -30,7 +31,7 @@ public class PostVersionList extends LinkedList<PostVersion> implements VersionL
     static {
         // configure logger
         try {
-            logger = Util.getClassLogger(PostVersionList.class, false);
+            logger = LogUtils.getClassLogger(PostVersionList.class, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -88,7 +89,7 @@ public class PostVersionList extends LinkedList<PostVersion> implements VersionL
     }
 
     public static List<PostVersionList> readFromDirectory(Path dir, boolean processVersionHistory) {
-        return Util.processFiles(dir,
+        return FileUtils.processFiles(dir,
                 file -> PostHistory.fileNamePattern.matcher(file.toFile().getName()).matches(),
                 file -> PostVersionList.readFromCSV(
                         dir,

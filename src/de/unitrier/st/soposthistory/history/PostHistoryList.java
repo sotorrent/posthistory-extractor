@@ -1,6 +1,8 @@
 package de.unitrier.st.soposthistory.history;
 
-import de.unitrier.st.util.Util;
+import de.unitrier.st.util.FileUtils;
+import de.unitrier.st.util.HibernateUtils;
+import de.unitrier.st.util.LogUtils;
 import org.apache.commons.csv.*;
 import org.hibernate.*;
 import org.hibernate.cfg.Configuration;
@@ -28,7 +30,7 @@ public class PostHistoryList extends LinkedList<PostHistory> {
     static {
         // configure logger
         try {
-            logger = Util.getClassLogger(PostHistoryList.class);
+            logger = LogUtils.getClassLogger(PostHistoryList.class);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -72,8 +74,8 @@ public class PostHistoryList extends LinkedList<PostHistory> {
 
     public static void readRetrieveAndWrite(Path inputFile, Path outputDir) {
         try {
-            Util.ensureFileExists(inputFile);
-            Util.ensureEmptyDirectoryExists(outputDir);
+            FileUtils.checkIfFileExists(inputFile);
+            FileUtils.ensureEmptyDirectoryExists(outputDir);
 
             logger.info("Reading file " + inputFile.getFileName() + " ...");
 
@@ -106,7 +108,7 @@ public class PostHistoryList extends LinkedList<PostHistory> {
 
             String postHistoryQueryString = String.format("FROM PostHistory WHERE PostId=%d " +
                             "AND postHistoryTypeId IN (%s) ORDER BY Id ASC",
-                    postId, Util.setToQueryString(PostHistory.contentPostHistoryTypes)
+                    postId, HibernateUtils.setToQueryString(PostHistory.contentPostHistoryTypes)
             );
             ScrollableResults postHistoryIterator = session.createQuery(postHistoryQueryString)
                     .scroll(ScrollMode.FORWARD_ONLY);

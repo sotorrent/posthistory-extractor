@@ -8,7 +8,7 @@ import de.unitrier.st.soposthistory.history.Posts;
 import de.unitrier.st.soposthistory.version.PostVersion;
 import de.unitrier.st.soposthistory.version.PostVersionList;
 import de.unitrier.st.soposthistory.version.TitleVersionList;
-import de.unitrier.st.util.Util;
+import de.unitrier.st.util.LogUtils;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -42,7 +42,7 @@ class DisabledTests {
     static {
         // configure logger
         try {
-            logger = Util.getClassLogger(DisabledTests.class);
+            logger = LogUtils.getClassLogger(DisabledTests.class);
         } catch (IOException e) {
             e.printStackTrace();
         }

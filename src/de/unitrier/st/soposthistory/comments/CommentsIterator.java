@@ -1,7 +1,9 @@
 package de.unitrier.st.soposthistory.comments;
 
 import de.unitrier.st.soposthistory.urls.CommentUrl;
-import de.unitrier.st.util.Util;
+import de.unitrier.st.util.LogUtils;
+import de.unitrier.st.util.collections.CollectionUtils;
+import de.unitrier.st.util.exceptions.ErrorUtils;
 import org.hibernate.*;
 import org.hibernate.cfg.Configuration;
 
@@ -23,7 +25,7 @@ public class CommentsIterator {
     static {
         // configure logger
         try {
-            logger = Util.getClassLogger(CommentsIterator.class);
+            logger = LogUtils.getClassLogger(CommentsIterator.class);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -56,7 +58,7 @@ public class CommentsIterator {
         try (StatelessSession session = sessionFactory.openStatelessSession()) {
             @SuppressWarnings("unchecked") // see https://stackoverflow.com/a/509115
             List<Integer> commentIds = session.createQuery("SELECT id FROM Comments ORDER BY id").list();
-            List<Integer>[] partitions = Util.split(commentIds, partitionCount);
+            List<Integer>[] partitions = CollectionUtils.split(commentIds, partitionCount);
 
             for (int i=0; i<partitions.length; i++) {
                 List<Integer> partition = partitions[i];
@@ -98,7 +100,7 @@ public class CommentsIterator {
             logger.info("Extraction of URLs from comments in all partitions finished...");
 
         } catch (RuntimeException e) {
-            logger.warning(Util.exceptionStackTraceToString(e));
+            logger.warning(ErrorUtils.exceptionStackTraceToString(e));
             if (t != null) {
                 t.rollback();
             }

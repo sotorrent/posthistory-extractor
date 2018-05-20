@@ -1,7 +1,7 @@
 package de.unitrier.st.soposthistory.gt;
 
 import de.unitrier.st.soposthistory.blocks.PostBlockVersion;
-import de.unitrier.st.util.Util;
+import de.unitrier.st.util.LogUtils;
 
 import java.io.IOException;
 import java.util.*;
@@ -12,7 +12,7 @@ public class PostBlockLifeSpan extends LinkedList<PostBlockLifeSpanVersion> {
 
     static {
         try {
-            logger = Util.getClassLogger(PostBlockLifeSpan.class);
+            logger = LogUtils.getClassLogger(PostBlockLifeSpan.class);
         } catch (IOException e) {
             e.printStackTrace();
         }

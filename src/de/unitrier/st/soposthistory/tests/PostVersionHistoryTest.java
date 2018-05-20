@@ -11,7 +11,7 @@ import de.unitrier.st.soposthistory.version.PostVersion;
 import de.unitrier.st.soposthistory.version.PostVersionList;
 import de.unitrier.st.soposthistory.version.TitleVersion;
 import de.unitrier.st.soposthistory.version.TitleVersionList;
-import de.unitrier.st.util.InputTooShortException;
+import de.unitrier.st.util.exceptions.InputTooShortException;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;

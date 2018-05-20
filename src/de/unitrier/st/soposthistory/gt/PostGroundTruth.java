@@ -3,7 +3,8 @@ package de.unitrier.st.soposthistory.gt;
 import de.unitrier.st.soposthistory.blocks.CodeBlockVersion;
 import de.unitrier.st.soposthistory.blocks.PostBlockVersion;
 import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
-import de.unitrier.st.util.Util;
+import de.unitrier.st.util.FileUtils;
+import de.unitrier.st.util.LogUtils;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -32,7 +33,7 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
     static {
         // configure logger
         try {
-            logger = Util.getClassLogger(PostGroundTruth.class, false);
+            logger = LogUtils.getClassLogger(PostGroundTruth.class, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -55,7 +56,11 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
 
     public static PostGroundTruth readFromCSV(Path dir, int postId) {
         // ensure that input directory exists
-        Util.ensureDirectoryExists(dir);
+        try {
+            FileUtils.ensureDirectoryExists(dir);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         Path pathToCSVFile = Paths.get(dir.toString(), "completed_" + postId + ".csv");
         PostGroundTruth gt = new PostGroundTruth(postId);
@@ -91,7 +96,7 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
     }
 
     public static List<PostGroundTruth> readFromDirectory(Path dir) {
-        return Util.processFiles(dir,
+        return FileUtils.processFiles(dir,
                 file -> fileNamePattern.matcher(file.toFile().getName()).matches(),
                 file -> {
                     Matcher m = fileNamePattern.matcher(file.toFile().getName());

@@ -5,7 +5,8 @@ import de.unitrier.st.soposthistory.blocks.PostBlockVersion;
 import de.unitrier.st.soposthistory.blocks.TextBlockVersion;
 import de.unitrier.st.soposthistory.version.PostVersion;
 import de.unitrier.st.soposthistory.version.TitleVersion;
-import de.unitrier.st.util.Util;
+import de.unitrier.st.util.FileUtils;
+import de.unitrier.st.util.LogUtils;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -35,7 +36,7 @@ public class PostHistory {
     static {
         // configure logger
         try {
-            logger = Util.getClassLogger(PostHistory.class, false);
+            logger = LogUtils.getClassLogger(PostHistory.class, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -551,7 +552,11 @@ public class PostHistory {
 
     public static List<PostHistory> readFromCSV(Path dir, int postId, Set<Byte> postHistoryTypes) {
         // ensure that input directory exists
-        Util.ensureDirectoryExists(dir);
+        try {
+            FileUtils.ensureDirectoryExists(dir);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         List<PostHistory> postHistoryList = new LinkedList<>();
         Path pathToCSVFile = Paths.get(dir.toString(), postId + ".csv");

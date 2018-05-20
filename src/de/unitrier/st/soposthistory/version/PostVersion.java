@@ -8,7 +8,7 @@ import de.unitrier.st.soposthistory.gt.PostBlockConnection;
 import de.unitrier.st.soposthistory.gt.PostBlockLifeSpanVersion;
 import de.unitrier.st.soposthistory.urls.Link;
 import de.unitrier.st.soposthistory.urls.PostVersionUrl;
-import de.unitrier.st.util.Util;
+import de.unitrier.st.util.HibernateUtils;
 import org.hibernate.StatelessSession;
 
 import javax.persistence.*;
@@ -231,11 +231,11 @@ public class PostVersion extends Version {
     }
 
     public void insertPostBlocks(StatelessSession session) {
-        Util.insertList(session, postBlocks);
+        HibernateUtils.insertList(session, postBlocks);
     }
 
     public void updateBlocks(StatelessSession session) {
-        Util.updateList(session, postBlocks);
+        HibernateUtils.updateList(session, postBlocks);
     }
 
     public void extractUrlsFromTextBlocks() {
@@ -250,7 +250,7 @@ public class PostVersion extends Version {
     }
 
     public void insertUrls(StatelessSession session) {
-        Util.insertList(session, urls);
+        HibernateUtils.insertList(session, urls);
     }
 
     /**

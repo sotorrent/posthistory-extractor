@@ -2,7 +2,7 @@ package de.unitrier.st.soposthistory.comments;
 
 import de.unitrier.st.soposthistory.urls.CommentUrl;
 import de.unitrier.st.soposthistory.urls.Link;
-import de.unitrier.st.util.Util;
+import de.unitrier.st.util.HibernateUtils;
 import org.hibernate.StatelessSession;
 
 import javax.persistence.*;
@@ -77,6 +77,6 @@ public class Comments {
     }
 
     void insertUrls(StatelessSession session) {
-        Util.insertList(session, urls);
+        HibernateUtils.insertList(session, urls);
     }
 }
