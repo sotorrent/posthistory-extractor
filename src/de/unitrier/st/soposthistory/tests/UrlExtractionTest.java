@@ -326,14 +326,17 @@ class UrlExtractionTest {
     @Test
     void testDoctypeUrl() {
         String inputString = "DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd";
+
         Matcher urlMatcher = Patterns.url.matcher(inputString);
         assertTrue(urlMatcher.find());
-        String url = urlMatcher.group(0);
-        assertEquals("http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd", url);
-        assertEquals("http", Patterns.extractProtocolFromUrl(url));
-        String completeDomain = Patterns.extractCompleteDomainFromUrl(url);
+        Link link = Link.extractBare(inputString).get(0);
+        assertEquals(urlMatcher.group(0), link.getUrl());
+
+        assertEquals("http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd", link.getUrl());
+        assertEquals("http", Patterns.extractProtocolFromUrl(link.getUrl()));
+        String completeDomain = Patterns.extractCompleteDomainFromUrl(link.getUrl());
         assertEquals("www.w3.org", completeDomain);
         assertEquals("w3.org", Patterns.extractRootDomainFromCompleteDomain(completeDomain));
-        assertEquals("TR/xhtml11/DTD/xhtml11.dtd", Patterns.extractPathFromUrl(url));
+        assertEquals("TR/xhtml11/DTD/xhtml11.dtd", Patterns.extractPathFromUrl(link.getUrl()));
     }
 }
