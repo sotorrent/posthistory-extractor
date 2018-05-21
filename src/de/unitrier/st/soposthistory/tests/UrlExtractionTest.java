@@ -4,10 +4,12 @@ import de.unitrier.st.soposthistory.history.Posts;
 import de.unitrier.st.soposthistory.urls.*;
 import de.unitrier.st.soposthistory.version.PostVersion;
 import de.unitrier.st.soposthistory.version.PostVersionList;
+import de.unitrier.st.util.Patterns;
 import org.junit.jupiter.api.Test;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
 
 import static de.unitrier.st.soposthistory.tests.PostVersionHistoryTest.pathToPostVersionLists;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -319,5 +321,19 @@ class UrlExtractionTest {
         assertEquals(expectedCompleteDomain, link.getCompleteDomain());
         assertEquals(expectedRootDomain, link.getRootDomain());
         assertEquals(expectedPath, link.getPath());
+    }
+
+    @Test
+    void testDoctypeUrl() {
+        String inputString = "DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd";
+        Matcher urlMatcher = Patterns.url.matcher(inputString);
+        assertTrue(urlMatcher.find());
+        String url = urlMatcher.group(0);
+        assertEquals("http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd", url);
+        assertEquals("http", Patterns.extractProtocolFromUrl(url));
+        String completeDomain = Patterns.extractCompleteDomainFromUrl(url);
+        assertEquals("www.w3.org", completeDomain);
+        assertEquals("w3.org", Patterns.extractRootDomainFromCompleteDomain(completeDomain));
+        assertEquals("TR/xhtml11/DTD/xhtml11.dtd", Patterns.extractPathFromUrl(url));
     }
 }

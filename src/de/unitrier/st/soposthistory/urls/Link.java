@@ -56,10 +56,10 @@ public class Link {
     }
 
     private void extractURLComponents() {
-        this.protocol = Patterns.extractProtocol(url);
-        this.completeDomain = Patterns.extractCompleteDomain(url);
-        this.rootDomain = Patterns.extractRootDomain(completeDomain);
-        this.path = Patterns.extractPath(url);
+        this.protocol = Patterns.extractProtocolFromUrl(url);
+        this.completeDomain = Patterns.extractCompleteDomainFromUrl(url);
+        this.rootDomain = Patterns.extractRootDomainFromCompleteDomain(completeDomain);
+        this.path = Patterns.extractPathFromUrl(url);
     }
 
     public static List<Link> extractBare(String markdownContent) {

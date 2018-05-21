@@ -26,9 +26,9 @@
         <maven.deploy.plugin.version>2.8.2</maven.deploy.plugin.version>
         <maven.surefire.plugin.version>2.19.1</maven.surefire.plugin.version>
         <!--
-        "Due to a memory leak in Surefire 2.20 and issues running on Java 9, the junit-platform-surefire-provider
-        currently only works with Surefire 2.19.1."
-        (see https://junit.org/junit5/docs/current/user-guide/#running-tests-build-maven)
+            "Due to a memory leak in Surefire 2.20 and issues running on Java 9, the junit-platform-surefire-provider
+            currently only works with Surefire 2.19.1."
+            (see https://junit.org/junit5/docs/current/user-guide/#running-tests-build-maven)
         -->
         <!-- JUnit -->
         <junit.platform.version>1.1.1</junit.platform.version>
@@ -36,7 +36,7 @@
         <hamcrest.junit.version>2.0.0.0</hamcrest.junit.version>
         <!-- Other dependencies -->
         <string-similarity.version>1.3.6</string-similarity.version>
-        <util.version>2.0.1</util.version>
+        <util.version>2.0.2</util.version>
         <commons-cli.version>1.4</commons-cli.version>
         <commons-io.version>2.6</commons-io.version>
         <commons-csv.version>1.5</commons-csv.version>
