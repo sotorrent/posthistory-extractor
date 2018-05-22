@@ -5,7 +5,7 @@
     <name>PostHistoryExtractor</name>
     <groupId>org.sotorrent</groupId>
     <artifactId>posthistory-extractor</artifactId>
-    <version>3.0.1</version>
+    <version>3.0.2</version>
     <url>https://github.com/sotorrent/posthistory-extractor</url>
 
     <properties>
