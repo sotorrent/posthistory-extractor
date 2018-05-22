@@ -53,6 +53,13 @@ class PostVersionHistoryTest {
         }
     }
 
+    private void testPostBlockCount(PostVersion postVersion,
+                                    int expectedPostBlockCount, int expectedTextBlockCount, int expectedCodeBlockCount) {
+        assertEquals(expectedPostBlockCount, postVersion.getPostBlocks().size());
+        assertEquals(expectedTextBlockCount, postVersion.getTextBlocks().size());
+        assertEquals(expectedCodeBlockCount, postVersion.getCodeBlocks().size());
+    }
+
     @Test
     void testReadPostHistoryAnswer1109108() {
         PostVersionList a_1109108 = PostVersionList.readFromCSV(pathToPostVersionLists, 1109108, Posts.ANSWER_ID);
@@ -62,9 +69,7 @@ class PostVersionHistoryTest {
         PostVersion version_7 = a_1109108.get(6);
         testPredecessorSimilarities(version_7);
 
-        assertEquals(3, version_7.getPostBlocks().size());
-        assertEquals(2, version_7.getTextBlocks().size());
-        assertEquals(1, version_7.getCodeBlocks().size());
+        testPostBlockCount(version_7, 3, 2, 1);
 
         CodeBlockVersion codeBlock_1 = version_7.getCodeBlocks().get(0);
         String[] lines = codeBlock_1.getContent().split("\n");
@@ -90,9 +95,7 @@ class PostVersionHistoryTest {
         PostVersion version_7 = a_3145655.get(6);
         testPredecessorSimilarities(version_7);
 
-        assertEquals(5, version_7.getPostBlocks().size());
-        assertEquals(3, version_7.getTextBlocks().size());
-        assertEquals(2, version_7.getCodeBlocks().size());
+        testPostBlockCount(version_7, 5,3, 2);
 
         CodeBlockVersion codeBlock_1 = version_7.getCodeBlocks().get(0);
         String[] lines = codeBlock_1.getContent().split("\n");
@@ -118,9 +121,7 @@ class PostVersionHistoryTest {
         PostVersion version_11 = a_9855338.get(10);
         testPredecessorSimilarities(version_11);
 
-        assertEquals(3, version_11.getPostBlocks().size());
-        assertEquals(2, version_11.getTextBlocks().size());
-        assertEquals(1, version_11.getCodeBlocks().size());
+        testPostBlockCount(version_11, 3, 2, 1);
 
         CodeBlockVersion codeBlock_1 = version_11.getCodeBlocks().get(0);
         String[] lines = codeBlock_1.getContent().split("\n");
@@ -146,9 +147,7 @@ class PostVersionHistoryTest {
         PostVersion version_3 = a_2581754.get(2);
         testPredecessorSimilarities(version_3);
 
-        assertEquals(6, version_3.getPostBlocks().size());
-        assertEquals(3, version_3.getTextBlocks().size());
-        assertEquals(3, version_3.getCodeBlocks().size());
+        testPostBlockCount(version_3, 6, 3, 3);
 
         CodeBlockVersion codeBlock_1 = version_3.getCodeBlocks().get(0);
         String[] lines = codeBlock_1.getContent().split("\n");
@@ -168,29 +167,19 @@ class PostVersionHistoryTest {
     @Test
     void testReadPostHistoryAnswer20991163() {
         PostVersionList a_20991163 = PostVersionList.readFromCSV(pathToPostVersionLists, 20991163, Posts.ANSWER_ID);
-
         // this post should only consist of one code block (not an empty text block at the end)
         assertEquals(1, a_20991163.size());
-
         PostVersion version_1 = a_20991163.get(0);
-
-        assertEquals(1, version_1.getPostBlocks().size());
-        assertEquals(0, version_1.getTextBlocks().size());
-        assertEquals(1, version_1.getCodeBlocks().size());
+        testPostBlockCount(version_1, 1, 0, 1);
     }
 
     @Test
     void testReadPostHistoryAnswer32012927() {
         PostVersionList a_32012927 = PostVersionList.readFromCSV(pathToPostVersionLists, 32012927, Posts.ANSWER_ID);
-
         assertEquals(4, a_32012927.size());
-
         // the first version of this post should only consist of one text block
         PostVersion version_1 = a_32012927.get(0);
-
-        assertEquals(1, version_1.getPostBlocks().size());
-        assertEquals(1, version_1.getTextBlocks().size());
-        assertEquals(0, version_1.getCodeBlocks().size());
+        testPostBlockCount(version_1, 1, 1, 0);
     }
 
     @Test
@@ -201,11 +190,7 @@ class PostVersionHistoryTest {
 
         // the first and only version of this post should consist of three text blocks and two code blocks
         PostVersion version_1 = a_10734905.get(0);
-
-        assertEquals(5, version_1.getPostBlocks().size());
-        assertEquals(3, version_1.getTextBlocks().size());
-        assertEquals(2, version_1.getCodeBlocks().size());
-
+        testPostBlockCount(version_1, 5, 3, 2);
         List<PostBlockVersion> postBlocks = version_1.getPostBlocks();
 
         assertTrue(postBlocks.get(0) instanceof TextBlockVersion);
@@ -223,11 +208,7 @@ class PostVersionHistoryTest {
 
         // the first and only version of this post should consist of two text blocks and two code blocks
         PostVersion version_1 = a_31965641.get(0);
-
-        assertEquals(4, version_1.getPostBlocks().size());
-        assertEquals(2, version_1.getTextBlocks().size());
-        assertEquals(2, version_1.getCodeBlocks().size());
-
+        testPostBlockCount(version_1, 4, 2, 2);
         List<PostBlockVersion> postBlocks = version_1.getPostBlocks();
 
         assertTrue(postBlocks.get(0) instanceof TextBlockVersion);
@@ -283,10 +264,7 @@ class PostVersionHistoryTest {
         assertEquals(2, q_22360443.size());
 
         PostVersion version_1 = q_22360443.get(0);
-
-        assertEquals(4, version_1.getPostBlocks().size());
-        assertEquals(2, version_1.getTextBlocks().size());
-        assertEquals(2, version_1.getCodeBlocks().size());
+        testPostBlockCount(version_1, 4, 2, 2);
         List<PostBlockVersion> postBlocks = version_1.getPostBlocks();
         assertTrue(postBlocks.get(0) instanceof CodeBlockVersion);
         assertTrue(postBlocks.get(1) instanceof TextBlockVersion);
@@ -295,10 +273,7 @@ class PostVersionHistoryTest {
 
         PostVersion version_2 = q_22360443.get(1);
         testPredecessorSimilarities(version_2);
-
-        assertEquals(5, version_2.getPostBlocks().size());
-        assertEquals(3, version_2.getTextBlocks().size());
-        assertEquals(2, version_2.getCodeBlocks().size());
+        testPostBlockCount(version_2, 5, 3, 2);
         postBlocks = version_2.getPostBlocks();
         assertTrue(postBlocks.get(0) instanceof TextBlockVersion);
         assertTrue(postBlocks.get(1) instanceof CodeBlockVersion);
@@ -318,10 +293,7 @@ class PostVersionHistoryTest {
         // are correctly handled (language info splits code blocks).
         PostVersion version_4 = a_32143330.get(3);
         testPredecessorSimilarities(version_4);
-
-        assertEquals(6, version_4.getPostBlocks().size());
-        assertEquals(3, version_4.getTextBlocks().size());
-        assertEquals(3, version_4.getCodeBlocks().size());
+        testPostBlockCount(version_4, 6, 3, 3);
         List<PostBlockVersion> postBlocks = version_4.getPostBlocks();
         assertTrue(postBlocks.get(0) instanceof TextBlockVersion);
         assertTrue(postBlocks.get(1) instanceof CodeBlockVersion);
@@ -339,10 +311,7 @@ class PostVersionHistoryTest {
 
         PostVersion version_12 = a_26044128.get(11);
         testPredecessorSimilarities(version_12);
-
-        assertEquals(8, version_12.getPostBlocks().size());
-        assertEquals(4, version_12.getTextBlocks().size());
-        assertEquals(4, version_12.getCodeBlocks().size());
+        testPostBlockCount(version_12, 8, 4, 4);
         List<PostBlockVersion> postBlocks = version_12.getPostBlocks();
         assertTrue(postBlocks.get(0) instanceof TextBlockVersion);
         assertTrue(postBlocks.get(1) instanceof CodeBlockVersion);
@@ -363,10 +332,7 @@ class PostVersionHistoryTest {
         // version 5 contains an alternative (GitHub-style) code block (see https://stackoverflow.com/revisions/32342082/5)
         PostVersion version_5 = q_32342082.get(4);
         testPredecessorSimilarities(version_5);
-
-        assertEquals(5, version_5.getPostBlocks().size());
-        assertEquals(3, version_5.getTextBlocks().size());
-        assertEquals(2, version_5.getCodeBlocks().size());
+        testPostBlockCount(version_5, 5, 3, 2);
         List<PostBlockVersion> postBlocks = version_5.getPostBlocks();
         assertTrue(postBlocks.get(0) instanceof TextBlockVersion);
         assertTrue(postBlocks.get(1) instanceof CodeBlockVersion);
@@ -384,11 +350,7 @@ class PostVersionHistoryTest {
         // version 1+2 contain a code block marked by <pre><code> ... </pre></code> instead of correct indention (see https://stackoverflow.com/revisions/19175014/2)
         PostVersion version_2 = q_19175014.get(1);
         testPredecessorSimilarities(version_2);
-
-        assertEquals(2, version_2.getPostBlocks().size());
-        assertEquals(1, version_2.getTextBlocks().size());
-        assertEquals(1, version_2.getCodeBlocks().size());
-
+        testPostBlockCount(version_2, 2, 1, 1);
         List<PostBlockVersion> postBlocks = version_2.getPostBlocks();
         assertTrue(postBlocks.get(0) instanceof TextBlockVersion);
         assertTrue(postBlocks.get(1) instanceof CodeBlockVersion);
@@ -413,11 +375,7 @@ class PostVersionHistoryTest {
 
         // version 1 contains a code block marked by <script type="text/javascript"> ... </script> instead of correct indention (see https://stackoverflow.com/revisions/3381751/1)
         PostVersion version_1 = q_3381751.get(0);
-
-        assertEquals(3, version_1.getPostBlocks().size());
-        assertEquals(2, version_1.getTextBlocks().size());
-        assertEquals(1, version_1.getCodeBlocks().size());
-
+        testPostBlockCount(version_1, 3, 2, 1);
         List<PostBlockVersion> postBlocks = version_1.getPostBlocks();
         assertTrue(postBlocks.get(0) instanceof TextBlockVersion);
         assertTrue(postBlocks.get(1) instanceof CodeBlockVersion);
@@ -433,11 +391,7 @@ class PostVersionHistoryTest {
         // version 1+2 contain an indented code block containing <script> tags (see https://stackoverflow.com/revisions/28598648/2)
         PostVersion version_2 = q_28598648.get(1);
         testPredecessorSimilarities(version_2);
-
-        assertEquals(2, version_2.getPostBlocks().size());
-        assertEquals(1, version_2.getTextBlocks().size());
-        assertEquals(1, version_2.getCodeBlocks().size());
-
+        testPostBlockCount(version_2, 2, 1, 1);
         List<PostBlockVersion> postBlocks = version_2.getPostBlocks();
         assertTrue(postBlocks.get(0) instanceof CodeBlockVersion);
         assertTrue(postBlocks.get(1) instanceof TextBlockVersion);
@@ -506,10 +460,7 @@ class PostVersionHistoryTest {
 
         PostVersion version_2 = q_23459881.get(1);
         testPredecessorSimilarities(version_2);
-
-        assertEquals(8, version_2.getPostBlocks().size());
-        assertEquals(4, version_2.getTextBlocks().size());
-        assertEquals(4, version_2.getCodeBlocks().size());
+        testPostBlockCount(version_2, 8, 4, 4);
         List<PostBlockVersion> postBlocks = version_2.getPostBlocks();
         assertTrue(postBlocks.get(0) instanceof TextBlockVersion);
         assertTrue(postBlocks.get(1) instanceof CodeBlockVersion);
@@ -546,10 +497,7 @@ class PostVersionHistoryTest {
 
         PostVersion version_2 = q_36082771.get(1);
         testPredecessorSimilarities(version_2);
-
-        assertEquals(12, version_2.getPostBlocks().size());
-        assertEquals(6, version_2.getTextBlocks().size());
-        assertEquals(6, version_2.getCodeBlocks().size());
+        testPostBlockCount(version_2, 12, 6, 6);
         List<PostBlockVersion> version_2_postBlocks = version_2.getPostBlocks();
         assertTrue(version_2_postBlocks.get(0) instanceof TextBlockVersion);
         assertTrue(version_2_postBlocks.get(1) instanceof CodeBlockVersion);
@@ -590,10 +538,7 @@ class PostVersionHistoryTest {
 
         PostVersion version_2 = q_18276636.get(1);
         testPredecessorSimilarities(version_2);
-
-        assertEquals(17, version_2.getPostBlocks().size());
-        assertEquals(9, version_2.getTextBlocks().size());
-        assertEquals(8, version_2.getCodeBlocks().size());
+        testPostBlockCount(version_2, 17, 9, 8);
         List<PostBlockVersion> postBlocks = version_2.getPostBlocks();
         assertTrue(postBlocks.get(0) instanceof TextBlockVersion);
         assertTrue(postBlocks.get(1) instanceof CodeBlockVersion);
@@ -635,11 +580,7 @@ class PostVersionHistoryTest {
 
         // version 1 contains a broken text block, which has an indented line. Stack Overflow displays this correctly  (see https://stackoverflow.com/revisions/15372744/1)
         PostVersion version_1 = q_15372744.get(0);
-
-        assertEquals(1, version_1.getPostBlocks().size());
-        assertEquals(1, version_1.getTextBlocks().size());
-        assertEquals(0, version_1.getCodeBlocks().size());
-
+        testPostBlockCount(version_1, 1, 1, 0);
         List<PostBlockVersion> postBlocks = version_1.getPostBlocks();
         assertTrue(postBlocks.get(0) instanceof TextBlockVersion);
     }
@@ -843,11 +784,7 @@ class PostVersionHistoryTest {
         assertEquals(1, q_47555767.size());
 
         PostVersion version_1 = q_47555767.get(0);
-
-        assertEquals(1, version_1.getPostBlocks().size());
-        assertEquals(1, version_1.getTextBlocks().size());
-        assertEquals(0, version_1.getCodeBlocks().size());
-
+        testPostBlockCount(version_1, 1, 1, 0);
         TextBlockVersion textBlock = version_1.getTextBlocks().get(0);
         assertTrue(textBlock.getContent().trim().length() > 0);
     }
@@ -860,10 +797,7 @@ class PostVersionHistoryTest {
         assertEquals(1, a_45204073.size());
 
         PostVersion version_1 = a_45204073.get(0);
-
-        assertEquals(2, version_1.getPostBlocks().size());
-        assertEquals(1, version_1.getTextBlocks().size());
-        assertEquals(1, version_1.getCodeBlocks().size());
+        testPostBlockCount(version_1, 2, 1, 1);
     }
 
     @Test
@@ -874,10 +808,8 @@ class PostVersionHistoryTest {
         assertEquals(1, a_2376203.size());
 
         PostVersion version_1 = a_2376203.get(0);
-
-        assertEquals(1, version_1.getPostBlocks().size());
-        assertEquals(0, version_1.getTextBlocks().size()); // should have one TextBlock with content "......", but this is merged according to our heuristic
-        assertEquals(1, version_1.getCodeBlocks().size());
+        // should have one TextBlock with content "......", but this is merged according to our heuristic
+        testPostBlockCount(version_1, 1, 0, 1);
     }
 
     @Test
@@ -888,10 +820,7 @@ class PostVersionHistoryTest {
         assertEquals(1, a_45163319.size());
 
         PostVersion version_1 = a_45163319.get(0);
-
-        assertEquals(1, version_1.getPostBlocks().size());
-        assertEquals(1, version_1.getTextBlocks().size());
-        assertEquals(0, version_1.getCodeBlocks().size());
+        testPostBlockCount(version_1, 1, 1, 0);
     }
 
     @Test
@@ -903,9 +832,7 @@ class PostVersionHistoryTest {
 
         // content of this version contains only whitespace ("  &#xD;&#xA;   ")
         PostVersion version_3 = q_1257964.getPostVersion(2575481);
-        assertEquals(0, version_3.getPostBlocks().size());
-        assertEquals(0, version_3.getTextBlocks().size());
-        assertEquals(0, version_3.getCodeBlocks().size());
+        testPostBlockCount(version_3, 0, 0, 0);
     }
 
     @Test
@@ -916,9 +843,7 @@ class PostVersionHistoryTest {
 
         // this version contains inline stack snippets with language information -> considered part of text block
         PostVersion version_2 = q_26365857.getPostVersion(75518502);
-        assertEquals(1, version_2.getPostBlocks().size());
-        assertEquals(1, version_2.getTextBlocks().size());
-        assertEquals(0, version_2.getCodeBlocks().size());
+        testPostBlockCount(version_2, 1, 1, 0);
 
         postId = 27994382;
         PostVersionList a_27994382 = PostVersionList.readFromCSV(pathToPostVersionLists, postId, Posts.QUESTION_ID);
@@ -926,9 +851,7 @@ class PostVersionHistoryTest {
 
         // this version contains inline stack snippets with language information -> considered part of text block
         PostVersion version_1 = a_27994382.getPostVersion(81771332);
-        assertEquals(1, version_1.getPostBlocks().size());
-        assertEquals(1, version_1.getTextBlocks().size());
-        assertEquals(0, version_1.getCodeBlocks().size());
+        testPostBlockCount(version_1, 1, 1, 0);
     }
 
     @Test
@@ -939,9 +862,7 @@ class PostVersionHistoryTest {
 
         // content of this version is empty
         PostVersion version_1 = q_1450250.getPostVersion(2870161);
-        assertEquals(0, version_1.getPostBlocks().size());
-        assertEquals(0, version_1.getTextBlocks().size());
-        assertEquals(0, version_1.getCodeBlocks().size());
+        testPostBlockCount(version_1, 0, 0, 0);
 
         postId = 1223598;
         PostVersionList a_1223598 = PostVersionList.readFromCSV(pathToPostVersionLists, postId, Posts.ANSWER_ID);
@@ -949,9 +870,7 @@ class PostVersionHistoryTest {
 
         // content of this version is empty
         version_1 = a_1223598.getPostVersion(2398799);
-        assertEquals(0, version_1.getPostBlocks().size());
-        assertEquals(0, version_1.getTextBlocks().size());
-        assertEquals(0, version_1.getCodeBlocks().size());
+        testPostBlockCount(version_1, 0, 0, 0);
     }
 
     @Test
@@ -966,9 +885,7 @@ class PostVersionHistoryTest {
 
         // content of this version is an empty code block, which is ignored
         PostVersion version_1 = a_5864258.getPostVersion(12646646);
-        assertEquals(0, version_1.getPostBlocks().size());
-        assertEquals(0, version_1.getTextBlocks().size());
-        assertEquals(0, version_1.getCodeBlocks().size());
+        testPostBlockCount(version_1, 0, 0, 0);
 
         postId = 9875710;
         PostVersionList a_9875710 = PostVersionList.readFromCSV(pathToPostVersionLists, postId, Posts.ANSWER_ID);
@@ -976,9 +893,7 @@ class PostVersionHistoryTest {
 
         // content of this version is an empty code block, which is ignored
         version_1 = a_9875710.getPostVersion(22583841);
-        assertEquals(0, version_1.getPostBlocks().size());
-        assertEquals(0, version_1.getTextBlocks().size());
-        assertEquals(0, version_1.getCodeBlocks().size());
+        testPostBlockCount(version_1, 0, 0, 0);
     }
 
     @Test
@@ -1003,9 +918,7 @@ class PostVersionHistoryTest {
         assertEquals(1, a_28280446.size());
 
         PostVersion version_1 = a_28280446.get(0);
-        assertEquals(1, version_1.getPostBlocks().size());
-        assertEquals(1, version_1.getTextBlocks().size());
-        assertEquals(0, version_1.getCodeBlocks().size());
+        testPostBlockCount(version_1, 1, 1, 0);
     }
 
     @Test
@@ -1082,4 +995,16 @@ class PostVersionHistoryTest {
         PostVersionList q_29813692 = PostVersionList.readFromCSV(pathToPostVersionLists, postId, Posts.QUESTION_ID);
         assertEquals(0, q_29813692.size());
     }
+
+    @Test
+    void testSnipppetDividerAnswer33058542() {
+        // in this post, an empty XML comment ("<!-- -->") is used to divide code blocks
+        int postId = 33058542;
+        PostVersionList a_33058542 = PostVersionList.readFromCSV(pathToPostVersionLists, postId, Posts.ANSWER_ID);
+
+        PostVersion version_1 = a_33058542.get(0);
+        testPostBlockCount(version_1, 5, 2, 3);
+
+        PostVersion version_2 = a_33058542.get(1);
+        testPostBlockCount(version_2, 5, 2, 3);    }
 }

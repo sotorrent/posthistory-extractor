@@ -94,6 +94,7 @@ public class PostHistory {
     // see https://stackoverflow.blog/2014/09/16/introducing-runnable-javascript-css-and-html-code-snippets/
     private static final Pattern stackSnippetBeginPattern = Pattern.compile("<!--\\s+begin\\s+snippet[^>]+>", Pattern.CASE_INSENSITIVE);
     private static final Pattern stackSnippetEndPattern = Pattern.compile("<!--\\s+end\\s+snippet\\s+-->", Pattern.CASE_INSENSITIVE);
+    private static final Pattern snippetDividerPattern = Pattern.compile("<!--\\s-->");
     // see https://stackoverflow.com/editing-help#syntax-highlighting
     private static final Pattern snippetLanguagePattern = Pattern.compile("<!--\\s+language:[^>]+>", Pattern.CASE_INSENSITIVE);
     // see https://meta.stackexchange.com/q/125148; example: https://stackoverflow.com/posts/32342082/revisions
@@ -271,6 +272,8 @@ public class PostHistory {
             // e.g. "<!-- language: lang-js -->" (see https://stackoverflow.com/editing-help#syntax-highlighting)
             Matcher snippetLanguageMatcher = snippetLanguagePattern.matcher(line);
             boolean isSnippetLanguage = snippetLanguageMatcher.matches(); // match whole line
+            // in some posts an empty XML comment ("<!-- -->") is used to divide code blocks (see, e.g., post 33058542)
+            boolean isSnippetDivider = snippetDividerPattern.matcher(line).matches();
 
             // if line is not part of a regular Stack Overflow code block, try to detect alternative code block styles
             if (!isCodeLine && !isWhitespaceLine && !isSnippetLanguage) {
@@ -412,8 +415,8 @@ public class PostHistory {
                 }
 
                 if (currentPostBlock instanceof CodeBlockVersion) {
-                    // snippet language divides two code blocks (if first block is not empty)
-                    if (isSnippetLanguage) {
+                    // snippet language or snippet divider divide two code blocks (if first block is not empty)
+                    if (isSnippetLanguage || isSnippetDivider) {
                         addPostBlock(currentPostBlock);
                         currentPostBlock = new CodeBlockVersion(postId, id);
                     } else if(!inCodeBlock && !isWhitespaceLine) {
