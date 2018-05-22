@@ -1014,4 +1014,20 @@ class PostVersionHistoryTest {
         version_2 = a_33845232.get(1);
         testPostBlockCount(version_2, 5, 1, 4);
     }
+
+    @Test
+    void testPreWithoutCode() {
+        // this post has code blocks enclosed by <pre> ... </pre> without a <code> tag
+        int postId = 18932575;
+        PostVersionList q_18932575 = PostVersionList.readFromCSV(pathToPostVersionLists, postId, Posts.QUESTION_ID);
+
+        PostVersion version_1 = q_18932575.get(0);
+        testPostBlockCount(version_1, 7, 4, 3);
+
+        // the second and third code snippet start with a non-indented line that is nevertheless part of the code snippet
+        CodeBlockVersion code_block_2 = version_1.getCodeBlocks().get(1);
+        assertTrue(code_block_2.getContent().startsWith("> package "));
+        CodeBlockVersion code_block_3 = version_1.getCodeBlocks().get(2);
+        assertTrue(code_block_3.getContent().startsWith("> package "));
+    }
 }
