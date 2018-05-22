@@ -997,14 +997,21 @@ class PostVersionHistoryTest {
     }
 
     @Test
-    void testSnipppetDividerAnswer33058542() {
+    void testSnipppetDivider() {
         // in this post, an empty XML comment ("<!-- -->") is used to divide code blocks
         int postId = 33058542;
         PostVersionList a_33058542 = PostVersionList.readFromCSV(pathToPostVersionLists, postId, Posts.ANSWER_ID);
-
         PostVersion version_1 = a_33058542.get(0);
         testPostBlockCount(version_1, 5, 2, 3);
-
         PostVersion version_2 = a_33058542.get(1);
-        testPostBlockCount(version_2, 5, 2, 3);    }
+        testPostBlockCount(version_2, 5, 2, 3);
+
+        // in the second version of this post, an empty XML processing instruction ("<?-- -->") is used to divide code blocks
+        postId = 33845232;
+        PostVersionList a_33845232 = PostVersionList.readFromCSV(pathToPostVersionLists, postId, Posts.ANSWER_ID);
+        version_1 = a_33845232.get(0);
+        testPostBlockCount(version_1, 1, 1, 0);
+        version_2 = a_33845232.get(1);
+        testPostBlockCount(version_2, 5, 1, 4);
+    }
 }

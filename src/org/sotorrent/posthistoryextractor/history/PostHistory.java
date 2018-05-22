@@ -94,7 +94,7 @@ public class PostHistory {
     // see https://stackoverflow.blog/2014/09/16/introducing-runnable-javascript-css-and-html-code-snippets/
     private static final Pattern stackSnippetBeginPattern = Pattern.compile("<!--\\s+begin\\s+snippet[^>]+>", Pattern.CASE_INSENSITIVE);
     private static final Pattern stackSnippetEndPattern = Pattern.compile("<!--\\s+end\\s+snippet\\s+-->", Pattern.CASE_INSENSITIVE);
-    private static final Pattern snippetDividerPattern = Pattern.compile("<!--\\s-->");
+    private static final Pattern snippetDividerPattern = Pattern.compile("<([!?])--\\s+-->\\s*");
     // see https://stackoverflow.com/editing-help#syntax-highlighting
     private static final Pattern snippetLanguagePattern = Pattern.compile("<!--\\s+language:[^>]+>", Pattern.CASE_INSENSITIVE);
     // see https://meta.stackexchange.com/q/125148; example: https://stackoverflow.com/posts/32342082/revisions
