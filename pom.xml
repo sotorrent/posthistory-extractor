@@ -47,7 +47,7 @@
     <distributionManagement>
         <repository>
             <id>releases</id>
-            <url>file://${basedir}/../maven/</url>
+            <url>file://${basedir}/../releases/</url>
         </repository>
     </distributionManagement>
 
@@ -55,7 +55,7 @@
         <!-- see also https://stackoverflow.com/a/14013645 -->
         <repository>
             <id>sotorrent</id>
-            <url>https://raw.github.com/sotorrent/maven/master/</url>
+            <url>https://raw.github.com/sotorrent/releases/master/</url>
             <snapshots>
                 <enabled>true</enabled>
                 <updatePolicy>always</updatePolicy>
