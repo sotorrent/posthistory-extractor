@@ -15,7 +15,7 @@
         <project.build.sourceDirectory>src</project.build.sourceDirectory>
         <project.build.testSourceDirectory>src/org/sotorrent/posthistoryextractor/tests</project.build.testSourceDirectory>
         <!-- Maven -->
-        <maven.mainclass>MainIterator</maven.mainclass>
+        <maven.mainclass>org.sotorrent.posthistoryextractor.MainIterator</maven.mainclass>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.plugin.version>3.7.0</maven.compiler.plugin.version>
