@@ -32,12 +32,13 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 class DisabledTests {
     private static Logger logger;
     private static Path pathToHibernateConfig = Paths.get("hibernate", "hibernate.cfg.xml");
+    private static final String SOTORRENT_VERSION = "sotorrent_2018-06-17";
     // posts without post blocks
-    private static Path posts_no_blocks = Paths.get("testdata", "sotorrent_2018-05-04", "all_posts_no_blocks.csv");
+    private static Path posts_no_blocks = Paths.get("testdata", SOTORRENT_VERSION, "all_posts_no_blocks.csv");
     // posts without content versions
-    private static Path posts_no_content_versions = Paths.get("testdata", "sotorrent_2018-05-04", "all_posts_no_content_versions.csv");
+    private static Path posts_no_content_versions = Paths.get("testdata", SOTORRENT_VERSION, "all_posts_no_content_versions.csv");
     // questions without title versions
-    private static Path questions_no_title_versions = Paths.get("testdata", "sotorrent_2018-05-04", "all_questions_no_title_versions.csv");
+    private static Path questions_no_title_versions = Paths.get("testdata", SOTORRENT_VERSION, "all_questions_no_title_versions.csv");
 
     static {
         // configure logger
@@ -192,7 +193,7 @@ class DisabledTests {
         try (StatelessSession session = PostHistoryIterator.sessionFactory.openStatelessSession()) {
             String postVersionPostIdsQuery = "select count(*) from PostVersion";
             long postVersionPostIds = (long)session.createQuery(postVersionPostIdsQuery).list().get(0);
-            assertEquals(62162417, postVersionPostIds);
+            assertEquals(63914798, postVersionPostIds);
 
             String postVersionPostHistoryIdsQuery = "select count(distinct PostHistoryId) from PostVersion";
             long postVersionPostHistoryIds = (long)session.createQuery(postVersionPostHistoryIdsQuery).list().get(0);
@@ -200,33 +201,33 @@ class DisabledTests {
 
             String postVersionDistinctPostIdsQuery = "select count(distinct PostId) from PostVersion";
             long postVersionDistinctPostIds = (long)session.createQuery(postVersionDistinctPostIdsQuery).list().get(0);
-            assertEquals(39554826, postVersionDistinctPostIds);
+            assertEquals(40606918, postVersionDistinctPostIds);
 
             String postBlockVersionsQuery = "select count(*) from PostBlockVersion";
             long postBlockVersions = (long)session.createQuery(postBlockVersionsQuery).list().get(0);
-            assertEquals(193750023, postBlockVersions);
+            assertEquals(200251924, postBlockVersions);
 
             String postBlockVersionPostIdsQuery = "select count(distinct PostId) from PostBlockVersion";
             long postBlockVersionPostIds = (long)session.createQuery(postBlockVersionPostIdsQuery).list().get(0);
-            assertEquals(39554826, postBlockVersionPostIds);
+            assertEquals(40606918, postBlockVersionPostIds);
 
             String postVersionUrlsQuery = "select count(*) from PostVersionUrl";
             long postVersionUrls = (long) session.createQuery(postVersionUrlsQuery).list().get(0);
-            assertEquals(31356424, postVersionUrls);
+            assertEquals(32296579, postVersionUrls);
 
             String postReferenceGHQuery = "select count(*) from PostReferenceGH";
             long postReferenceGH = (long) session.createQuery(postReferenceGHQuery).list().get(0);
-            assertEquals(5982446, postReferenceGH);
+            assertEquals(5994213, postReferenceGH);
 
             String titleVersionQuery = "select count(*) from TitleVersion";
             long titleVersions = (long) session.createQuery(titleVersionQuery).list().get(0);
-            assertEquals(17781747, titleVersions);
+            assertEquals(18335844, titleVersions);
         }
 
         try (StatelessSession session = CommentsIterator.sessionFactory.openStatelessSession()) {
             String commentUrlQuery = "select count(*) from CommentUrl";
             long commentUrls = (long) session.createQuery(commentUrlQuery).list().get(0);
-            assertEquals(6740582, commentUrls);
+            assertEquals(6971943, commentUrls);
         }
     }
 }
