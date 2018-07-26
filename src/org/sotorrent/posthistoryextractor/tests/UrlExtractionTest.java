@@ -383,4 +383,25 @@ class UrlExtractionTest {
         assertEquals("BareLink", commentUrl.getLinkType());
         assertTrue(commentUrl.getLinkOnlyComment());
     }
+
+    @Test
+    void testFragmentsAndPathDomain() {
+        Link link;
+
+        link = new Link("http://en.wikipedia.org/wiki/regular_expression#syntax");
+        assertEquals("wiki/regular_expression", link.getPath());
+        assertEquals("syntax", link.getFragmentIdentifier());
+
+        link = new Link("http://www.regular-expressions.info/lookaround.html");
+        assertEquals("lookaround.html", link.getPath());
+        assertNull(link.getFragmentIdentifier());
+
+        link = new Link("https://docs.oracle.com/");
+        assertNull(link.getPath());
+        assertNull(link.getFragmentIdentifier());
+
+        link = new Link("https://docs.oracle.com");
+        assertNull(link.getPath());
+        assertNull(link.getFragmentIdentifier());
+    }
 }

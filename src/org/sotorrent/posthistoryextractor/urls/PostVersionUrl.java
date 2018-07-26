@@ -14,6 +14,7 @@ public class PostVersionUrl{
     private String completeDomain;
     private String rootDomain;
     private String path;
+    private String fragmentIdentifier;
     private String url;
 
     public PostVersionUrl(){
@@ -23,6 +24,7 @@ public class PostVersionUrl{
         this.completeDomain = null;
         this.rootDomain = null;
         this.path = null;
+        this.fragmentIdentifier = null;
         this.url = null;
     }
 
@@ -35,6 +37,7 @@ public class PostVersionUrl{
         this.completeDomain = link.getCompleteDomain();
         this.rootDomain = link.getRootDomain();
         this.path = link.getPath();
+        this.fragmentIdentifier = link.getFragmentIdentifier();
         this.url = link.getUrl();
     }
 
@@ -127,6 +130,16 @@ public class PostVersionUrl{
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    @Basic
+    @Column(name = "FragmentIdentifier")
+    public String getFragmentIdentifier() {
+        return fragmentIdentifier;
+    }
+
+    public void setFragmentIdentifier(String fragmentIdentifier) {
+        this.fragmentIdentifier = fragmentIdentifier;
     }
 
     @Basic

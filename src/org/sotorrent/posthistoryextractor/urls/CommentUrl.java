@@ -13,6 +13,7 @@ public class CommentUrl{
     private String completeDomain;
     private String rootDomain;
     private String path;
+    private String fragmentIdentifier;
     private String url;
     private Boolean linkOnlyComment;
 
@@ -23,6 +24,7 @@ public class CommentUrl{
         this.completeDomain = null;
         this.rootDomain = null;
         this.path = null;
+        this.fragmentIdentifier = null;
         this.url = null;
         this.linkOnlyComment = null;
     }
@@ -35,6 +37,7 @@ public class CommentUrl{
         this.completeDomain = link.getCompleteDomain();
         this.rootDomain = link.getRootDomain();
         this.path = link.getPath();
+        this.fragmentIdentifier = link.getFragmentIdentifier();
         this.url = link.getUrl();
         this.linkOnlyComment = link.getFullMatch().trim().equals(markdownContent.trim());
     }
@@ -118,6 +121,16 @@ public class CommentUrl{
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    @Basic
+    @Column(name = "FragmentIdentifier")
+    public String getFragmentIdentifier() {
+        return fragmentIdentifier;
+    }
+
+    public void setFragmentIdentifier(String fragmentIdentifier) {
+        this.fragmentIdentifier = fragmentIdentifier;
     }
 
     @Basic

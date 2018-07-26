@@ -18,6 +18,14 @@ public class Link {
     String completeDomain;
     String rootDomain;
     String path;
+    String fragmentIdentifier;
+
+    public Link() {}
+
+    public Link(String url) {
+        this.url = url;
+        extractURLComponents();
+    }
 
     public String getFullMatch() {
         return fullMatch;
@@ -60,11 +68,20 @@ public class Link {
         return path;
     }
 
+    public String getFragmentIdentifier() {
+        return fragmentIdentifier;
+    }
+
     private void extractURLComponents() {
         this.protocol = Patterns.extractProtocolFromUrl(url);
         this.completeDomain = Patterns.extractCompleteDomainFromUrl(url);
         this.rootDomain = Patterns.extractRootDomainFromCompleteDomain(completeDomain);
         this.path = Patterns.extractPathFromUrl(url);
+        String fragmentIdentifier = Patterns.extractFragmentIdentifierFromUrl(this.url);
+        if (fragmentIdentifier != null) {
+            fragmentIdentifier = fragmentIdentifier.replace("#", "");
+        }
+        this.fragmentIdentifier = fragmentIdentifier;
     }
 
     public static List<Link> extractBare(String markdownContent) {
