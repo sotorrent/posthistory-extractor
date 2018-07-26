@@ -1,5 +1,6 @@
 package org.sotorrent.posthistoryextractor.tests;
 
+import org.sotorrent.posthistoryextractor.comments.Comments;
 import org.sotorrent.posthistoryextractor.history.Posts;
 import org.sotorrent.posthistoryextractor.urls.*;
 import org.sotorrent.posthistoryextractor.version.PostVersion;
@@ -7,6 +8,8 @@ import org.sotorrent.posthistoryextractor.version.PostVersionList;
 import org.junit.jupiter.api.Test;
 import org.sotorrent.util.Patterns;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -17,6 +20,7 @@ import static org.hamcrest.junit.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class UrlExtractionTest {
+    static Path pathToComments = Paths.get("testdata", "comments");
 
     @Test
     void testMarkdownLinkInline(){
@@ -367,5 +371,16 @@ class UrlExtractionTest {
         extractedLink = Link.extractTyped(postVersionList.getFirst().getContent()).get(0);
         assertEquals("[ManualResetEvent][1]\n[1]: http://msdn.microsoft.com/en-us/library/system.threading.manualresetevent.aspx \"MSDN Reference\"", extractedLink.getFullMatch());
         assertEquals("MarkdownLinkReference", extractedLink.getLinkType());
+    }
+
+    @Test
+    void testLinkOnlyComment() {
+        Comments comment = Comments.readFromCSV(pathToComments, 62304497);
+        comment.extractUrls();
+        List<CommentUrl> extractedUrls = comment.getExtractedUrls();
+        assertEquals(1, extractedUrls.size());
+        CommentUrl commentUrl = extractedUrls.get(0);
+        assertEquals("BareLink", commentUrl.getLinkType());
+        assertTrue(commentUrl.getLinkOnlyComment());
     }
 }

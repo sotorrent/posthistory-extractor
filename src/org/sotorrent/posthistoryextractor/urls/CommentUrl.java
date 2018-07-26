@@ -14,6 +14,7 @@ public class CommentUrl{
     private String rootDomain;
     private String path;
     private String url;
+    private Boolean linkOnlyComment;
 
     public CommentUrl(){
         this.commentId = null;
@@ -23,9 +24,10 @@ public class CommentUrl{
         this.rootDomain = null;
         this.path = null;
         this.url = null;
+        this.linkOnlyComment = null;
     }
 
-    public CommentUrl(int postId, int commentId, Link link){
+    public CommentUrl(int postId, int commentId, Link link, String markdownContent){
         this.postId = postId;
         this.commentId = commentId;
         this.linkType = link.getLinkType();
@@ -34,6 +36,7 @@ public class CommentUrl{
         this.rootDomain = link.getRootDomain();
         this.path = link.getPath();
         this.url = link.getUrl();
+        this.linkOnlyComment = link.getFullMatch().trim().equals(markdownContent.trim());
     }
 
     @Id
@@ -125,6 +128,16 @@ public class CommentUrl{
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    @Basic
+    @Column(name = "LinkOnlyComment")
+    public boolean getLinkOnlyComment() {
+        return linkOnlyComment;
+    }
+
+    public void setLinkOnlyComment(boolean linkOnlyComment) {
+        this.linkOnlyComment = linkOnlyComment;
     }
 
     @Override
