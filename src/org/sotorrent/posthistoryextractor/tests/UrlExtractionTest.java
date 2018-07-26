@@ -199,17 +199,11 @@ class UrlExtractionTest {
 
     @Test
     void testNormalizationOfPostVersionLists(){
-
         PostVersionList a_33 = PostVersionList.readFromCSV(pathToPostVersionLists, 33, Posts.ANSWER_ID);
-
         PostVersionList a_44 = PostVersionList.readFromCSV(pathToPostVersionLists, 44, Posts.ANSWER_ID);
-
         PostVersionList a_49 = PostVersionList.readFromCSV(pathToPostVersionLists, 49, Posts.ANSWER_ID);
-
         PostVersionList a_52 = PostVersionList.readFromCSV(pathToPostVersionLists, 52, Posts.ANSWER_ID);
-
         PostVersionList a_1629423 = PostVersionList.readFromCSV(pathToPostVersionLists, 1629423, Posts.ANSWER_ID);
-
 
         LinkedList<Link> extractedLinks = new LinkedList<>();
 
@@ -232,7 +226,6 @@ class UrlExtractionTest {
         a_1629423.normalizeLinks();
         PostVersion version_1_a1629423 = a_1629423.getFirst();
         extractedLinks.addAll(Link.extractTyped(version_1_a1629423.getContent()));
-
 
         for(Link link : extractedLinks){
             assertFalse(link instanceof MarkdownLinkReference);
@@ -338,5 +331,41 @@ class UrlExtractionTest {
         assertEquals("www.w3.org", completeDomain);
         assertEquals("w3.org", Patterns.extractRootDomainFromCompleteDomain(completeDomain));
         assertEquals("TR/xhtml11/DTD/xhtml11.dtd", Patterns.extractPathFromUrl(link.getUrl()));
+    }
+
+    @Test
+    void testLinkType() {
+        PostVersionList postVersionList;
+        Link extractedLink;
+
+        // AnchorLink
+        postVersionList = PostVersionList.readFromCSV(pathToPostVersionLists, 1629423, Posts.ANSWER_ID);
+        extractedLink = Link.extractTyped(postVersionList.getFirst().getContent()).get(0);
+        assertEquals("<a href=\"http://msdn.microsoft.com/en-us/library/system.windows.controls.textbox.selectionstart.aspx\">SelectionStart</a>", extractedLink.getFullMatch());
+        assertEquals("AnchorLink", extractedLink.getLinkType());
+
+        // BareLink
+        postVersionList = PostVersionList.readFromCSV(pathToPostVersionLists, 49, Posts.ANSWER_ID);
+        extractedLink = Link.extractTyped(postVersionList.getFirst().getContent()).get(0);
+        assertEquals("http://www.brokenbuild.com/blog/2006/08/15/mysql-triggers-how-do-you-abort-an-insert-update-or-delete-with-a-trigger/", extractedLink.getFullMatch());
+        assertEquals("BareLink", extractedLink.getLinkType());
+
+        // MarkdownLinkAngleBrackets
+        postVersionList = PostVersionList.readFromCSV(pathToPostVersionLists, 52, Posts.ANSWER_ID);
+        extractedLink = Link.extractTyped(postVersionList.getFirst().getContent()).get(0);
+        assertEquals("<http://www.gskinner.com/blog/archives/2006/06/as3_resource_ma.html>", extractedLink.getFullMatch());
+        assertEquals("MarkdownLinkAngleBrackets", extractedLink.getLinkType());
+
+        // MarkdownLinkInline
+        postVersionList = PostVersionList.readFromCSV(pathToPostVersionLists, 33, Posts.ANSWER_ID);
+        extractedLink = Link.extractTyped(postVersionList.getFirst().getContent()).get(0);
+        assertEquals("[reference](http://msdn.microsoft.com/en-us/library/system.math.truncate.aspx)",extractedLink.getFullMatch());
+        assertEquals("MarkdownLinkInline", extractedLink.getLinkType());
+
+        // MarkdownLinkReference
+        postVersionList = PostVersionList.readFromCSV(pathToPostVersionLists, 44, Posts.ANSWER_ID);
+        extractedLink = Link.extractTyped(postVersionList.getFirst().getContent()).get(0);
+        assertEquals("[ManualResetEvent][1]\n[1]: http://msdn.microsoft.com/en-us/library/system.threading.manualresetevent.aspx \"MSDN Reference\"", extractedLink.getFullMatch());
+        assertEquals("MarkdownLinkReference", extractedLink.getLinkType());
     }
 }

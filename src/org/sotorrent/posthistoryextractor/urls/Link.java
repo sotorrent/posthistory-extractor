@@ -39,6 +39,11 @@ public class Link {
         return title;
     }
 
+    public String getLinkType() {
+        String linkType = this.getClass().getSimpleName();
+        return linkType.equals("Link") ? "BareLink" : linkType;
+    }
+
     public String getProtocol() {
         return protocol;
     }

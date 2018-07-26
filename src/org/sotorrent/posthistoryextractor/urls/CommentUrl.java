@@ -8,6 +8,7 @@ public class CommentUrl{
     private int id;
     private Integer postId;
     private Integer commentId;
+    private String linkType;
     private String protocol;
     private String completeDomain;
     private String rootDomain;
@@ -16,6 +17,7 @@ public class CommentUrl{
 
     public CommentUrl(){
         this.commentId = null;
+        this.linkType = null;
         this.protocol = null;
         this.completeDomain = null;
         this.rootDomain = null;
@@ -26,6 +28,7 @@ public class CommentUrl{
     public CommentUrl(int postId, int commentId, Link link){
         this.postId = postId;
         this.commentId = commentId;
+        this.linkType = link.getLinkType();
         this.protocol = link.getProtocol();
         this.completeDomain = link.getCompleteDomain();
         this.rootDomain = link.getRootDomain();
@@ -62,6 +65,16 @@ public class CommentUrl{
 
     public void setCommentId(Integer commentId) {
         this.commentId = commentId;
+    }
+
+    @Basic
+    @Column(name = "LinkType")
+    public String getLinkType() {
+        return linkType;
+    }
+
+    public void setLinkType(String linkType) {
+        this.linkType = linkType;
     }
 
     @Basic

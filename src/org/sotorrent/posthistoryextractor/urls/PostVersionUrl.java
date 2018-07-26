@@ -9,6 +9,7 @@ public class PostVersionUrl{
     private Integer postId;
     private Integer postHistoryId;
     private Integer postBlockVersionId;
+    private String linkType;
     private String protocol;
     private String completeDomain;
     private String rootDomain;
@@ -17,6 +18,7 @@ public class PostVersionUrl{
 
     public PostVersionUrl(){
         this.postHistoryId = null;
+        this.linkType = null;
         this.protocol = null;
         this.completeDomain = null;
         this.rootDomain = null;
@@ -28,6 +30,7 @@ public class PostVersionUrl{
         this.postId = postId;
         this.postHistoryId = postHistoryId;
         this.postBlockVersionId = postBlockVersionId;
+        this.linkType = link.getLinkType();
         this.protocol = link.getProtocol();
         this.completeDomain = link.getCompleteDomain();
         this.rootDomain = link.getRootDomain();
@@ -74,6 +77,16 @@ public class PostVersionUrl{
 
     public void setPostBlockVersionId(Integer postBlockVersionId) {
         this.postBlockVersionId = postBlockVersionId;
+    }
+
+    @Basic
+    @Column(name = "LinkType")
+    public String getLinkType() {
+        return linkType;
+    }
+
+    public void setLinkType(String linkType) {
+        this.linkType = linkType;
     }
 
     @Basic
