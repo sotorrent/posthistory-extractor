@@ -243,7 +243,7 @@ public class PostVersion extends org.sotorrent.posthistoryextractor.version.Vers
             List<Link> extractedLinks = Link.extractTyped(currentTextBlock.getContent());
             for (Link currentLink : extractedLinks) {
                 urls.add(
-                        new PostVersionUrl(postId, postHistoryId, currentTextBlock.getId(), currentLink)
+                        new PostVersionUrl(postId, postHistoryId, currentTextBlock.getId(), currentLink, getContent())
                 );
             }
         }

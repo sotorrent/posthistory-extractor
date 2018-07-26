@@ -47,7 +47,7 @@ public class Link {
         return title;
     }
 
-    public String getLinkType() {
+    public String getType() {
         String linkType = this.getClass().getSimpleName();
         return linkType.equals("Link") ? "BareLink" : linkType;
     }
@@ -82,6 +82,31 @@ public class Link {
             fragmentIdentifier = fragmentIdentifier.replace("#", "");
         }
         this.fragmentIdentifier = fragmentIdentifier;
+    }
+
+    public String getPosition(String markdownContent) {
+        if (this.fullMatch.trim().equals(markdownContent.trim())) {
+            return "LinkOnly";
+        }
+
+        // for reference-style links use anchor text, for other links full match
+        String anchor = this.anchor == null ? this.fullMatch : this.anchor;
+        int pos = markdownContent.indexOf(anchor);
+        if (pos == -1) {
+            throw new IllegalArgumentException("Link not found in Markdown content");
+        }
+
+        int partitionSize = markdownContent.length()/3;
+
+        if (pos <= partitionSize) {
+            return "Begin";
+        }
+
+        if (pos <= 2*partitionSize) {
+            return "Middle";
+        }
+
+        return "End";
     }
 
     public static List<Link> extractBare(String markdownContent) {

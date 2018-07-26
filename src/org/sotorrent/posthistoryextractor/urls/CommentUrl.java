@@ -9,37 +9,37 @@ public class CommentUrl{
     private Integer postId;
     private Integer commentId;
     private String linkType;
+    private String linkPosition;
     private String protocol;
     private String completeDomain;
     private String rootDomain;
     private String path;
     private String fragmentIdentifier;
     private String url;
-    private Boolean linkOnlyComment;
 
     public CommentUrl(){
         this.commentId = null;
         this.linkType = null;
+        this.linkPosition = null;
         this.protocol = null;
         this.completeDomain = null;
         this.rootDomain = null;
         this.path = null;
         this.fragmentIdentifier = null;
         this.url = null;
-        this.linkOnlyComment = null;
     }
 
     public CommentUrl(int postId, int commentId, Link link, String markdownContent){
         this.postId = postId;
         this.commentId = commentId;
-        this.linkType = link.getLinkType();
+        this.linkType = link.getType();
+        this.linkPosition = link.getPosition(markdownContent);
         this.protocol = link.getProtocol();
         this.completeDomain = link.getCompleteDomain();
         this.rootDomain = link.getRootDomain();
         this.path = link.getPath();
         this.fragmentIdentifier = link.getFragmentIdentifier();
         this.url = link.getUrl();
-        this.linkOnlyComment = link.getFullMatch().trim().equals(markdownContent.trim());
     }
 
     @Id
@@ -81,6 +81,16 @@ public class CommentUrl{
 
     public void setLinkType(String linkType) {
         this.linkType = linkType;
+    }
+
+    @Basic
+    @Column(name = "LinkPosition")
+    public String getLinkPosition() {
+        return linkPosition;
+    }
+
+    public void setLinkPosition(String linkPosition) {
+        this.linkPosition = linkPosition;
     }
 
     @Basic
@@ -141,16 +151,6 @@ public class CommentUrl{
 
     public void setUrl(String url) {
         this.url = url;
-    }
-
-    @Basic
-    @Column(name = "LinkOnlyComment")
-    public boolean getLinkOnlyComment() {
-        return linkOnlyComment;
-    }
-
-    public void setLinkOnlyComment(boolean linkOnlyComment) {
-        this.linkOnlyComment = linkOnlyComment;
     }
 
     @Override

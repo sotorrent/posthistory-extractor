@@ -346,42 +346,31 @@ class UrlExtractionTest {
         postVersionList = PostVersionList.readFromCSV(pathToPostVersionLists, 1629423, Posts.ANSWER_ID);
         extractedLink = Link.extractTyped(postVersionList.getFirst().getContent()).get(0);
         assertEquals("<a href=\"http://msdn.microsoft.com/en-us/library/system.windows.controls.textbox.selectionstart.aspx\">SelectionStart</a>", extractedLink.getFullMatch());
-        assertEquals("AnchorLink", extractedLink.getLinkType());
+        assertEquals("AnchorLink", extractedLink.getType());
 
         // BareLink
         postVersionList = PostVersionList.readFromCSV(pathToPostVersionLists, 49, Posts.ANSWER_ID);
         extractedLink = Link.extractTyped(postVersionList.getFirst().getContent()).get(0);
         assertEquals("http://www.brokenbuild.com/blog/2006/08/15/mysql-triggers-how-do-you-abort-an-insert-update-or-delete-with-a-trigger/", extractedLink.getFullMatch());
-        assertEquals("BareLink", extractedLink.getLinkType());
+        assertEquals("BareLink", extractedLink.getType());
 
         // MarkdownLinkAngleBrackets
         postVersionList = PostVersionList.readFromCSV(pathToPostVersionLists, 52, Posts.ANSWER_ID);
         extractedLink = Link.extractTyped(postVersionList.getFirst().getContent()).get(0);
         assertEquals("<http://www.gskinner.com/blog/archives/2006/06/as3_resource_ma.html>", extractedLink.getFullMatch());
-        assertEquals("MarkdownLinkAngleBrackets", extractedLink.getLinkType());
+        assertEquals("MarkdownLinkAngleBrackets", extractedLink.getType());
 
         // MarkdownLinkInline
         postVersionList = PostVersionList.readFromCSV(pathToPostVersionLists, 33, Posts.ANSWER_ID);
         extractedLink = Link.extractTyped(postVersionList.getFirst().getContent()).get(0);
         assertEquals("[reference](http://msdn.microsoft.com/en-us/library/system.math.truncate.aspx)",extractedLink.getFullMatch());
-        assertEquals("MarkdownLinkInline", extractedLink.getLinkType());
+        assertEquals("MarkdownLinkInline", extractedLink.getType());
 
         // MarkdownLinkReference
         postVersionList = PostVersionList.readFromCSV(pathToPostVersionLists, 44, Posts.ANSWER_ID);
         extractedLink = Link.extractTyped(postVersionList.getFirst().getContent()).get(0);
         assertEquals("[ManualResetEvent][1]\n[1]: http://msdn.microsoft.com/en-us/library/system.threading.manualresetevent.aspx \"MSDN Reference\"", extractedLink.getFullMatch());
-        assertEquals("MarkdownLinkReference", extractedLink.getLinkType());
-    }
-
-    @Test
-    void testLinkOnlyComment() {
-        Comments comment = Comments.readFromCSV(pathToComments, 62304497);
-        comment.extractUrls();
-        List<CommentUrl> extractedUrls = comment.getExtractedUrls();
-        assertEquals(1, extractedUrls.size());
-        CommentUrl commentUrl = extractedUrls.get(0);
-        assertEquals("BareLink", commentUrl.getLinkType());
-        assertTrue(commentUrl.getLinkOnlyComment());
+        assertEquals("MarkdownLinkReference", extractedLink.getType());
     }
 
     @Test
@@ -403,5 +392,41 @@ class UrlExtractionTest {
         link = new Link("https://docs.oracle.com");
         assertNull(link.getPath());
         assertNull(link.getFragmentIdentifier());
+    }
+
+    @Test
+    void testLinkOnlyComment() {
+        Comments comment = Comments.readFromCSV(pathToComments, 62304497);
+        comment.extractUrls();
+        List<CommentUrl> extractedUrls = comment.getExtractedUrls();
+        assertEquals(1, extractedUrls.size());
+        CommentUrl commentUrl = extractedUrls.get(0);
+        assertEquals("BareLink", commentUrl.getLinkType());
+        assertEquals("LinkOnly", commentUrl.getLinkPosition());
+    }
+
+    @Test
+    void testLinkPosition() {
+        PostVersionList postVersionList;
+        PostVersion version;
+        Link extractedLink;
+
+        // link at the beginning of a post (pointing to duplicate post)
+        postVersionList = PostVersionList.readFromCSV(pathToPostVersionLists, 12954660, Posts.QUESTION_ID);
+        version = postVersionList.getLast();
+        extractedLink = Link.extractTyped(version.getContent()).get(0);
+        assertEquals("Begin", extractedLink.getPosition(version.getContent()));
+
+        // link at the end of a post
+        postVersionList = PostVersionList.readFromCSV(pathToPostVersionLists, 28153330, Posts.ANSWER_ID);
+        version = postVersionList.getLast();
+        extractedLink = Link.extractTyped(version.getContent()).get(0);
+        assertEquals("End", extractedLink.getPosition(version.getContent()));
+
+        // link in the middle of a post
+        postVersionList = PostVersionList.readFromCSV(pathToPostVersionLists, 14928352, Posts.ANSWER_ID);
+        version = postVersionList.getLast();
+        extractedLink = Link.extractTyped(version.getContent()).get(1);
+        assertEquals("Middle", extractedLink.getPosition(version.getContent()));
     }
 }
