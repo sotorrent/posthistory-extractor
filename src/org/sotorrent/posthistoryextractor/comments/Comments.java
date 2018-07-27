@@ -149,6 +149,7 @@ public class Comments {
         HibernateUtils.insertList(session, urls);
     }
 
+    @Transient
     public List<CommentUrl> getExtractedUrls() {
         return urls;
     }
