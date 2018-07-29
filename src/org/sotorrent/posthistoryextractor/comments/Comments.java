@@ -54,7 +54,7 @@ public class Comments {
     private String text;
     private Timestamp creationDate;
     private String userDisplayName;
-    private int userId;
+    private Integer userId;
 
     // internal
     private List<CommentUrl> urls;
