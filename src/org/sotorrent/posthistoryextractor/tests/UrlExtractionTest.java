@@ -20,7 +20,7 @@ import static org.hamcrest.junit.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class UrlExtractionTest {
-    static Path pathToComments = Paths.get("testdata", "comments");
+    private static Path pathToComments = Paths.get("testdata", "comments");
 
     @Test
     void testMarkdownLinkInline(){
@@ -338,7 +338,7 @@ class UrlExtractionTest {
     }
 
     @Test
-    void testLinkType() {
+    void testLinkTypeAndAnchorExtraction() {
         PostVersionList postVersionList;
         Link extractedLink;
 
@@ -347,30 +347,35 @@ class UrlExtractionTest {
         extractedLink = Link.extractTyped(postVersionList.getFirst().getContent()).get(0);
         assertEquals("<a href=\"http://msdn.microsoft.com/en-us/library/system.windows.controls.textbox.selectionstart.aspx\">SelectionStart</a>", extractedLink.getFullMatch());
         assertEquals("AnchorLink", extractedLink.getType());
+        assertEquals("SelectionStart", extractedLink.getAnchor());
 
         // BareLink
         postVersionList = PostVersionList.readFromCSV(pathToPostVersionLists, 49, Posts.ANSWER_ID);
         extractedLink = Link.extractTyped(postVersionList.getFirst().getContent()).get(0);
         assertEquals("http://www.brokenbuild.com/blog/2006/08/15/mysql-triggers-how-do-you-abort-an-insert-update-or-delete-with-a-trigger/", extractedLink.getFullMatch());
         assertEquals("BareLink", extractedLink.getType());
+        assertNull(extractedLink.getAnchor());
 
         // MarkdownLinkAngleBrackets
         postVersionList = PostVersionList.readFromCSV(pathToPostVersionLists, 52, Posts.ANSWER_ID);
         extractedLink = Link.extractTyped(postVersionList.getFirst().getContent()).get(0);
         assertEquals("<http://www.gskinner.com/blog/archives/2006/06/as3_resource_ma.html>", extractedLink.getFullMatch());
         assertEquals("MarkdownLinkAngleBrackets", extractedLink.getType());
+        assertNull(extractedLink.getAnchor());
 
         // MarkdownLinkInline
         postVersionList = PostVersionList.readFromCSV(pathToPostVersionLists, 33, Posts.ANSWER_ID);
         extractedLink = Link.extractTyped(postVersionList.getFirst().getContent()).get(0);
         assertEquals("[reference](http://msdn.microsoft.com/en-us/library/system.math.truncate.aspx)",extractedLink.getFullMatch());
         assertEquals("MarkdownLinkInline", extractedLink.getType());
+        assertEquals("reference", extractedLink.getAnchor());
 
         // MarkdownLinkReference
         postVersionList = PostVersionList.readFromCSV(pathToPostVersionLists, 44, Posts.ANSWER_ID);
         extractedLink = Link.extractTyped(postVersionList.getFirst().getContent()).get(0);
         assertEquals("[ManualResetEvent][1]\n[1]: http://msdn.microsoft.com/en-us/library/system.threading.manualresetevent.aspx \"MSDN Reference\"", extractedLink.getFullMatch());
         assertEquals("MarkdownLinkReference", extractedLink.getType());
+        assertEquals("ManualResetEvent", extractedLink.getAnchor());
     }
 
     @Test

@@ -11,9 +11,10 @@ public class PostVersionUrl{
     private Integer postBlockVersionId;
     private String linkType;
     private String linkPosition;
+    private String linkAnchor;
     private String protocol;
-    private String completeDomain;
     private String rootDomain;
+    private String completeDomain;
     private String path;
     private String fragmentIdentifier;
     private String url;
@@ -22,9 +23,10 @@ public class PostVersionUrl{
         this.postHistoryId = null;
         this.linkType = null;
         this.linkPosition = null;
+        this.linkAnchor = null;
         this.protocol = null;
-        this.completeDomain = null;
         this.rootDomain = null;
+        this.completeDomain = null;
         this.path = null;
         this.fragmentIdentifier = null;
         this.url = null;
@@ -36,9 +38,10 @@ public class PostVersionUrl{
         this.postBlockVersionId = postBlockVersionId;
         this.linkType = link.getType();
         this.linkPosition = link.getPosition(markdownContent);
+        this.linkAnchor = link.getAnchor();
         this.protocol = link.getProtocol();
-        this.completeDomain = link.getCompleteDomain();
         this.rootDomain = link.getRootDomain();
+        this.completeDomain = link.getCompleteDomain();
         this.path = link.getPath();
         this.fragmentIdentifier = link.getFragmentIdentifier();
         this.url = link.getUrl();
@@ -106,6 +109,16 @@ public class PostVersionUrl{
     }
 
     @Basic
+    @Column(name = "LinkAnchor")
+    public String getLinkAnchor() {
+        return linkAnchor;
+    }
+
+    public void setLinkAnchor(String linkAnchor) {
+        this.linkAnchor = linkAnchor;
+    }
+
+    @Basic
     @Column(name = "Protocol")
     public String getProtocol() {
         return protocol;
@@ -116,16 +129,6 @@ public class PostVersionUrl{
     }
 
     @Basic
-    @Column(name = "CompleteDomain")
-    public String getCompleteDomain() {
-        return completeDomain;
-    }
-
-    public void setCompleteDomain(String completeDomain) {
-        this.completeDomain = completeDomain;
-    }
-
-    @Basic
     @Column(name = "RootDomain")
     public String getRootDomain() {
         return rootDomain;
@@ -133,6 +136,16 @@ public class PostVersionUrl{
 
     public void setRootDomain(String rootDomain) {
         this.rootDomain = rootDomain;
+    }
+
+    @Basic
+    @Column(name = "CompleteDomain")
+    public String getCompleteDomain() {
+        return completeDomain;
+    }
+
+    public void setCompleteDomain(String completeDomain) {
+        this.completeDomain = completeDomain;
     }
 
     @Basic
