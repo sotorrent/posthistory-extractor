@@ -18,19 +18,9 @@ public class PostVersionUrl{
     private String path;
     private String fragmentIdentifier;
     private String url;
+    private String fullMatch;
 
-    public PostVersionUrl(){
-        this.postHistoryId = null;
-        this.linkType = null;
-        this.linkPosition = null;
-        this.linkAnchor = null;
-        this.protocol = null;
-        this.rootDomain = null;
-        this.completeDomain = null;
-        this.path = null;
-        this.fragmentIdentifier = null;
-        this.url = null;
-    }
+    public PostVersionUrl(){}
 
     public PostVersionUrl(int postId, int postHistoryId, int postBlockVersionId, Link link, String markdownContent){
         this.postId = postId;
@@ -45,6 +35,7 @@ public class PostVersionUrl{
         this.path = link.getPath();
         this.fragmentIdentifier = link.getFragmentIdentifier();
         this.url = link.getUrl();
+        this.fullMatch = link.getFullMatch();
     }
 
     @Id
@@ -176,6 +167,16 @@ public class PostVersionUrl{
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    @Basic
+    @Column(name = "FullMatch")
+    public String getFullMatch() {
+        return fullMatch;
+    }
+
+    public void setFullMatch(String fullMatch) {
+        this.fullMatch = fullMatch;
     }
 
     @Override

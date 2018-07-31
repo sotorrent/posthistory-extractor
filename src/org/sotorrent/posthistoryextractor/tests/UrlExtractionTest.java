@@ -420,7 +420,7 @@ class UrlExtractionTest {
         postVersionList = PostVersionList.readFromCSV(pathToPostVersionLists, 12954660, Posts.QUESTION_ID);
         version = postVersionList.getLast();
         extractedLink = Link.extractTyped(version.getContent()).get(0);
-        assertEquals("Begin", extractedLink.getPosition(version.getContent()));
+        assertEquals("Beginning", extractedLink.getPosition(version.getContent()));
 
         // link at the end of a post
         postVersionList = PostVersionList.readFromCSV(pathToPostVersionLists, 28153330, Posts.ANSWER_ID);
@@ -433,5 +433,22 @@ class UrlExtractionTest {
         version = postVersionList.getLast();
         extractedLink = Link.extractTyped(version.getContent()).get(1);
         assertEquals("Middle", extractedLink.getPosition(version.getContent()));
+    }
+
+    @Test
+    void testPunctuationAndWhitespaceRemoval() {
+        Link link;
+
+        link = new Link("http://weblogs.sqlteam.com/.");
+        assertNull(link.getPath());
+
+        link = new Link("https://khaccounts.net//");
+        assertNull(link.getPath());
+
+        link = new Link("http://www.websitetest/&#xA");
+        assertNull(link.getPath());
+
+        link = new Link("http://jquery.com/:");
+        assertNull(link.getPath());
     }
 }

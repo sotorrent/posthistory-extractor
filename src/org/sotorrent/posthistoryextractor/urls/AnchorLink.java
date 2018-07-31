@@ -18,7 +18,7 @@ public class AnchorLink extends Link {
         while (matcher.find()) {
             AnchorLink extractedLink = new AnchorLink();
             extractedLink.fullMatch = matcher.group(0);
-            extractedLink.url = matcher.group(1);
+            extractedLink.setUrl(matcher.group(1));
             extractedLink.title = matcher.group(2);
             extractedLink.anchor = matcher.group(3);
             // e.g., <a href=""> </a>

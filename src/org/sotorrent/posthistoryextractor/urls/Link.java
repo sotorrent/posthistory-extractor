@@ -23,7 +23,7 @@ public class Link {
     public Link() {}
 
     public Link(String url) {
-        this.url = url;
+        setUrl(url);
         extractURLComponents();
     }
 
@@ -41,6 +41,10 @@ public class Link {
 
     public String getUrl() {
         return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = Patterns.cleanUrl(url);
     }
 
     public String getTitle() {
@@ -99,7 +103,7 @@ public class Link {
         int partitionSize = markdownContent.length()/3;
 
         if (pos <= partitionSize) {
-            return "Begin";
+            return "Beginning";
         }
 
         if (pos <= 2*partitionSize) {
@@ -114,9 +118,9 @@ public class Link {
         Matcher urlMatcher = Patterns.url.matcher(markdownContent);
 
         while (urlMatcher.find()) {
-            Link extractedLink = new Link();
-            extractedLink.fullMatch = urlMatcher.group(0).trim();
-            extractedLink.url = extractedLink.fullMatch;  // for bare links, the full match is equal to the url match
+            Link extractedLink = new Link(urlMatcher.group(0).trim());
+            // for bare links, the full match is equal to the url match
+            extractedLink.fullMatch = Patterns.cleanUrl(extractedLink.url);
             if (extractedLink.url.length() > 0) {
                 extractedLink.extractURLComponents();
                 extractedLinks.add(extractedLink);

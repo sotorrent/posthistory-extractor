@@ -43,7 +43,7 @@ public class MarkdownLinkReference extends Link {
             MarkdownLinkReference extractedLink = new MarkdownLinkReference();
             extractedLink.fullMatch = matcher.group(0);
             extractedLink.reference = matcher.group(1);
-            extractedLink.url = matcher.group(2);
+            extractedLink.setUrl(matcher.group(2));
             extractedLink.title = matcher.group(3);
             extractedLinks.add(extractedLink);
         }
@@ -64,7 +64,7 @@ public class MarkdownLinkReference extends Link {
                             mergedLink.reference = link1.reference;
                             mergedLink.anchor = link1.anchor;
                             mergedLink.title = link2.title;
-                            mergedLink.url = link2.url;
+                            mergedLink.setUrl(link2.url);
                             mergedLink.fullMatch = link1.fullMatch + "\n" + link2.fullMatch;
                             if (mergedLink.url != null && mergedLink.url.length() > 0) {
                                 mergedLinks.add(mergedLink);

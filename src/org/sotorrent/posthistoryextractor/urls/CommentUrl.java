@@ -17,19 +17,9 @@ public class CommentUrl{
     private String path;
     private String fragmentIdentifier;
     private String url;
+    private String fullMatch;
 
-    public CommentUrl(){
-        this.commentId = null;
-        this.linkType = null;
-        this.linkPosition = null;
-        this.linkAnchor = null;
-        this.protocol = null;
-        this.rootDomain = null;
-        this.completeDomain = null;
-        this.path = null;
-        this.fragmentIdentifier = null;
-        this.url = null;
-    }
+    public CommentUrl(){}
 
     public CommentUrl(int postId, int commentId, Link link, String markdownContent){
         this.postId = postId;
@@ -43,6 +33,7 @@ public class CommentUrl{
         this.path = link.getPath();
         this.fragmentIdentifier = link.getFragmentIdentifier();
         this.url = link.getUrl();
+        this.fullMatch = link.getFullMatch();
     }
 
     @Id
@@ -164,6 +155,16 @@ public class CommentUrl{
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    @Basic
+    @Column(name = "FullMatch")
+    public String getFullMatch() {
+        return fullMatch;
+    }
+
+    public void setFullMatch(String fullMatch) {
+        this.fullMatch = fullMatch;
     }
 
     @Override
