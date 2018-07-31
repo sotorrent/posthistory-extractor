@@ -450,5 +450,7 @@ class UrlExtractionTest {
 
         link = new Link("http://jquery.com/:");
         assertNull(link.getPath());
+
+        new Link(null); // show not throw a NullPointerException
     }
 }

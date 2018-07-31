@@ -77,6 +77,9 @@ public class Link {
     }
 
     private void extractURLComponents() {
+        if (url == null) {
+            return;
+        }
         this.protocol = Patterns.extractProtocolFromUrl(url);
         this.completeDomain = Patterns.extractCompleteDomainFromUrl(url);
         this.rootDomain = Patterns.extractRootDomainFromCompleteDomain(completeDomain);
