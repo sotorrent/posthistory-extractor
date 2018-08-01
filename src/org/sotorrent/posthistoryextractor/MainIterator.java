@@ -66,20 +66,15 @@ class MainIterator {
         PostHistoryIterator postHistoryIterator = new PostHistoryIterator(
                 dataDirPath, "all", partitionCount, tags
         );
-
         postHistoryIterator.extractSaveAndSplitPostIds(); // including split
-
         postHistoryIterator.extractDataFromPostHistory("questions");
         postHistoryIterator.extractDataFromPostHistory("answers");
-
         PostHistoryIterator.sessionFactory.close();
 
         // extract URLs from comments
         CommentsIterator.createSessionFactory(hibernateConfigFilePath);
         CommentsIterator commentsIterator = new CommentsIterator(partitionCount);
-
         commentsIterator.extractUrlsFromComments();
-
         CommentsIterator.sessionFactory.close();
     }
 }

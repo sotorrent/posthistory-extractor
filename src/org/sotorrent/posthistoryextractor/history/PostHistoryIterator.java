@@ -321,18 +321,18 @@ public class PostHistoryIterator {
                     logger.info("Thread " + partition + ": " + recordCount + " posts read.");
 
                     // iterate over records
-                    for (int i=0; i<recordCount; i++) {
+                    for (int i = 0; i < recordCount; i++) {
                         CSVRecord record = records.get(i);
                         int postId = Integer.parseInt(record.get("PostId"));
                         byte postTypeId = Byte.parseByte(record.get("PostTypeId"));
 
                         // log only every LOG_PACE record
-                        if (i == 0 || i == recordCount-1 || i % LOG_PACE == 0) {
+                        if (i == 0 || i == recordCount - 1 || i % LOG_PACE == 0) {
                             // Locale.ROOT -> force '.' as decimal separator
-                            String progress = String.format(Locale.ROOT, "%.2f%%", (((double)(i+1))/recordCount*100));
-                            logger.info( "Thread " + partition + ": Current PostId: " + postId
+                            String progress = String.format(Locale.ROOT, "%.2f%%", (((double) (i + 1)) / recordCount * 100));
+                            logger.info("Thread " + partition + ": Current PostId: " + postId
                                     + " (PostTypeId: " + postTypeId
-                                    + "; record " + (i+1) + " of " + recordCount + "; " + progress + ")");
+                                    + "; record " + (i + 1) + " of " + recordCount + "; " + progress + ")");
                         }
 
                         if (postTypeId == 1 || postTypeId == 2) { // question or answer
@@ -373,7 +373,7 @@ public class PostHistoryIterator {
                                     // ...convert them into a PostVersion (our schema)...
                                     PostVersion currentPostVersion = currentPostHistoryEntity.toPostVersion(postTypeId);
                                     // ...check if post blocks have been extracted...
-                                    if (currentPostVersion.getPostBlocks().size() ==  0) {
+                                    if (currentPostVersion.getPostBlocks().size() == 0) {
                                         logger.warning("Thread " + partition + ": " + "No post blocks extracted for PostId: " + postId + "; PostHistoryId: " + currentPostVersion.getPostHistoryId());
                                         postsVersionsWithoutBlocks.add(currentPostVersion);
                                     }
@@ -452,10 +452,8 @@ public class PostHistoryIterator {
                             + " post versions for which no post blocks have been extracted...");
                     writePostVersionsWithoutBlocksToCSV(postsVersionsWithoutBlocks);
 
-                } catch (IOException e) {
-                    logger.warning(ErrorUtils.exceptionStackTraceToString(e));
                 }
-            } catch (RuntimeException e) {
+            } catch (Exception e) {
                 logger.warning(ErrorUtils.exceptionStackTraceToString(e));
                 if (t != null) {
                     t.rollback();
