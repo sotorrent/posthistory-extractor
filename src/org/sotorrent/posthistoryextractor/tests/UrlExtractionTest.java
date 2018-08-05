@@ -453,4 +453,11 @@ class UrlExtractionTest {
 
         new Link(null); // show not throw a NullPointerException
     }
+
+    @Test
+    void testBracketsInUrl() {
+        Link link = Link.extractBare("https://en.wikipedia.org/wiki/Glob_(programming)").get(0);
+        assertEquals("BareLink", link.getType());
+        assertEquals("https://en.wikipedia.org/wiki/Glob_(programming)", link.getUrl());
+    }
 }
