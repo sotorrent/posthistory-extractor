@@ -18,6 +18,7 @@ public class Link {
     String completeDomain;
     String rootDomain;
     String path;
+    String query;
     String fragmentIdentifier;
 
     public Link() {}
@@ -72,6 +73,10 @@ public class Link {
         return path;
     }
 
+    public String getQuery() {
+        return query;
+    }
+
     public String getFragmentIdentifier() {
         return fragmentIdentifier;
     }
@@ -80,13 +85,31 @@ public class Link {
         if (url == null) {
             return;
         }
+
         this.protocol = Patterns.extractProtocolFromUrl(url);
         this.completeDomain = Patterns.extractCompleteDomainFromUrl(url);
         this.rootDomain = Patterns.extractRootDomainFromCompleteDomain(completeDomain);
         this.path = Patterns.extractPathFromUrl(url);
+
+        String query = Patterns.extractQueryFromUrl(this.url);
+        if (query != null) {
+            // remove '?'
+            query = query.substring(1, query.length());
+            if (query.length() == 0) {
+                // query only consisted of '?'
+                query = null;
+            }
+        }
+        this.query = query;
+
         String fragmentIdentifier = Patterns.extractFragmentIdentifierFromUrl(this.url);
         if (fragmentIdentifier != null) {
-            fragmentIdentifier = fragmentIdentifier.replace("#", "");
+            // remove '#'
+            fragmentIdentifier = fragmentIdentifier.substring(1, fragmentIdentifier.length());
+            if (fragmentIdentifier.length() == 0) {
+                // fragment identifier only consisted of '#'
+                fragmentIdentifier = null;
+            }
         }
         this.fragmentIdentifier = fragmentIdentifier;
     }

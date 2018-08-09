@@ -451,11 +451,29 @@ class UrlExtractionTest {
         link = new Link("http://jquery.com/:");
         assertNull(link.getPath());
 
-        new Link(null); // show not throw a NullPointerException
+        new Link(null); // should not throw a NullPointerException
+
+        link = new Link("http://stackoverflow.com/questions/31423480/memsql-leaf-down-on-single-server-cluster/35270224.");
+        assertEquals("http://stackoverflow.com/questions/31423480/memsql-leaf-down-on-single-server-cluster/35270224", link.getUrl());
+        assertEquals("questions/31423480/memsql-leaf-down-on-single-server-cluster/35270224", link.getPath());
+
+        link = new Link("http://stackoverflow.com/questions/31423480/memsql-leaf-down-on-single-server-cluster/35270224/.");
+        assertEquals("http://stackoverflow.com/questions/31423480/memsql-leaf-down-on-single-server-cluster/35270224/", link.getUrl());
+        assertEquals("questions/31423480/memsql-leaf-down-on-single-server-cluster/35270224", link.getPath());
+
+        link = new Link("http://www.mediawiki.org/wiki/Manual:");
+        assertEquals("http://www.mediawiki.org/wiki/Manual", link.getUrl());
+        assertEquals("wiki/Manual", link.getPath());
+
+        link = new Link("http://www.sybase.com/detail?id=1056497,");
+        assertEquals("http://www.sybase.com/detail?id=1056497", link.getUrl());
+        assertEquals("detail", link.getPath());
+
+
     }
 
     @Test
-    void testBracketsInUrl() {
+    void testSpecialUrls() {
         Link link;
 
         link = Link.extractBare("https://en.wikipedia.org/wiki/Glob_(programming)").get(0);
@@ -464,8 +482,34 @@ class UrlExtractionTest {
 
         link = Link.extractBare("https://groups.google.com/forum/?fromgroups=#!topic/android-platform/sR6I2ldCxwU").get(0);
         assertEquals("BareLink", link.getType());
-        assertEquals("https://groups.google.com/forum/?fromgroups=#!topic/android-platform/sR6I2ldCxwU", link.getUrl());
+        assertEquals("https://groups.google.com/forum/?fromgroups=", link.getUrl());
         assertEquals("forum", link.getPath());
-        assertEquals("!topic/android-platform/sR6I2ldCxwU", link.getFragmentIdentifier());
+        assertEquals("fromgroups=", link.getQuery());
+        assertNull(link.getFragmentIdentifier());
+
+        link = new Link("https://groups.google.com/forum/?fromgroups#");
+        assertEquals("https://groups.google.com/forum/?fromgroups#", link.getUrl());
+        assertEquals("forum", link.getPath());
+        assertEquals("fromgroups", link.getQuery());
+        assertNull(link.getFragmentIdentifier());
+
+        link = new Link("https://groups.google.com/forum/?");
+        assertEquals("https://groups.google.com/forum/?", link.getUrl());
+        assertEquals("forum", link.getPath());
+        assertNull(link.getQuery());
+        assertNull(link.getFragmentIdentifier());
+    }
+
+    @Test
+    void testQueryExtraction() {
+        Link link;
+
+        link = new Link("http://code.google.com/p/android/issues/detail?id=4611");
+        assertEquals("p/android/issues/detail", link.getPath());
+        assertEquals("id=4611", link.getQuery());
+
+        link = new Link("https://code.google.com/p/android/issues/detail?id=78471&colspec=id%20type%20status%20owner%20summary%20stars");
+        assertEquals("p/android/issues/detail", link.getPath());
+        assertEquals("id=78471&colspec=id%20type%20status%20owner%20summary%20stars", link.getQuery());
     }
 }

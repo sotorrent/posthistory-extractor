@@ -16,6 +16,7 @@ public class PostVersionUrl{
     private String rootDomain;
     private String completeDomain;
     private String path;
+    private String query;
     private String fragmentIdentifier;
     private String url;
     private String fullMatch;
@@ -33,6 +34,7 @@ public class PostVersionUrl{
         this.rootDomain = link.getRootDomain();
         this.completeDomain = link.getCompleteDomain();
         this.path = link.getPath();
+        this.query = link.getQuery();
         this.fragmentIdentifier = link.getFragmentIdentifier();
         this.url = link.getUrl();
         this.fullMatch = link.getFullMatch();
@@ -147,6 +149,16 @@ public class PostVersionUrl{
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    @Basic
+    @Column(name = "Query")
+    public String getQuery() {
+        return query;
+    }
+
+    public void setQuery(String query) {
+        this.query = query;
     }
 
     @Basic
