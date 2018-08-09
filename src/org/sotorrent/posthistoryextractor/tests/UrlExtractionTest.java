@@ -456,8 +456,16 @@ class UrlExtractionTest {
 
     @Test
     void testBracketsInUrl() {
-        Link link = Link.extractBare("https://en.wikipedia.org/wiki/Glob_(programming)").get(0);
+        Link link;
+
+        link = Link.extractBare("https://en.wikipedia.org/wiki/Glob_(programming)").get(0);
         assertEquals("BareLink", link.getType());
         assertEquals("https://en.wikipedia.org/wiki/Glob_(programming)", link.getUrl());
+
+        link = Link.extractBare("https://groups.google.com/forum/?fromgroups=#!topic/android-platform/sR6I2ldCxwU").get(0);
+        assertEquals("BareLink", link.getType());
+        assertEquals("https://groups.google.com/forum/?fromgroups=#!topic/android-platform/sR6I2ldCxwU", link.getUrl());
+        assertEquals("forum", link.getPath());
+        assertEquals("!topic/android-platform/sR6I2ldCxwU", link.getFragmentIdentifier());
     }
 }
