@@ -477,27 +477,31 @@ class UrlExtractionTest {
         Link link;
 
         link = Link.extractBare("https://en.wikipedia.org/wiki/Glob_(programming)").get(0);
-        assertEquals("BareLink", link.getType());
         assertEquals("https://en.wikipedia.org/wiki/Glob_(programming)", link.getUrl());
 
         link = Link.extractBare("https://groups.google.com/forum/?fromgroups=#!topic/android-platform/sR6I2ldCxwU").get(0);
-        assertEquals("BareLink", link.getType());
         assertEquals("https://groups.google.com/forum/?fromgroups=", link.getUrl());
         assertEquals("forum", link.getPath());
         assertEquals("fromgroups=", link.getQuery());
         assertNull(link.getFragmentIdentifier());
 
-        link = new Link("https://groups.google.com/forum/?fromgroups#");
-        assertEquals("https://groups.google.com/forum/?fromgroups#", link.getUrl());
+        link = Link.extractBare("https://groups.google.com/forum/?fromgroups#").get(0);
+        assertEquals("https://groups.google.com/forum/?fromgroups", link.getUrl());
         assertEquals("forum", link.getPath());
         assertEquals("fromgroups", link.getQuery());
         assertNull(link.getFragmentIdentifier());
 
-        link = new Link("https://groups.google.com/forum/?");
-        assertEquals("https://groups.google.com/forum/?", link.getUrl());
+        link = Link.extractBare("https://groups.google.com/forum/?").get(0);
+        assertEquals("https://groups.google.com/forum/", link.getUrl());
         assertEquals("forum", link.getPath());
         assertNull(link.getQuery());
         assertNull(link.getFragmentIdentifier());
+
+        link = Link.extractBare("https://developers.google.com/android/reference/com/google/android/gms/location/places/PlaceDetectionClient.html#reportDeviceAtPlace(com.google.android.gms.location.places.PlaceReport)").get(0);
+        assertEquals("https://developers.google.com/android/reference/com/google/android/gms/location/places/PlaceDetectionClient.html#reportDeviceAtPlace(com.google.android.gms.location.places.PlaceReport)", link.getUrl());
+        assertEquals("android/reference/com/google/android/gms/location/places/PlaceDetectionClient.html", link.getPath());
+        assertNull(link.getQuery());
+        assertEquals("reportDeviceAtPlace(com.google.android.gms.location.places.PlaceReport)", link.getFragmentIdentifier());
     }
 
     @Test
