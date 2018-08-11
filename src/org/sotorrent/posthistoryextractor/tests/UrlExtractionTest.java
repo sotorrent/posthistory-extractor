@@ -448,6 +448,9 @@ class UrlExtractionTest {
         link = new Link("http://www.websitetest/&#xA");
         assertNull(link.getPath());
 
+        link = new Link("http://www.websitetest/&#xD;");
+        assertNull(link.getPath());
+
         link = new Link("http://jquery.com/:");
         assertNull(link.getPath());
 
@@ -468,8 +471,6 @@ class UrlExtractionTest {
         link = new Link("http://www.sybase.com/detail?id=1056497,");
         assertEquals("http://www.sybase.com/detail?id=1056497", link.getUrl());
         assertEquals("detail", link.getPath());
-
-
     }
 
     @Test
@@ -502,6 +503,12 @@ class UrlExtractionTest {
         assertEquals("android/reference/com/google/android/gms/location/places/PlaceDetectionClient.html", link.getPath());
         assertNull(link.getQuery());
         assertEquals("reportDeviceAtPlace(com.google.android.gms.location.places.PlaceReport)", link.getFragmentIdentifier());
+
+        link = Link.extractBare("https://www.simplifiedcoding.net/android-volley-post-request-tutorial/......").get(0);
+        assertEquals("https://www.simplifiedcoding.net/android-volley-post-request-tutorial/", link.getUrl());
+        assertEquals("android-volley-post-request-tutorial", link.getPath());
+        assertNull(link.getQuery());
+        assertNull(link.getFragmentIdentifier());
     }
 
     @Test
