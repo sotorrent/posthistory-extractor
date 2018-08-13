@@ -176,7 +176,7 @@ class UrlExtractionTest {
     }
 
     @Test
-    void testLink(){
+    void testBareLink(){
         /*
         Here is one hack that might work. Isn't clean, but it looks like it might work:
 
@@ -199,6 +199,11 @@ class UrlExtractionTest {
         assertEquals("www.brokenbuild.com", extractedUrls.get(0).getCompleteDomain());
         assertNull(extractedUrls.get(0).getTitle());
         assertThat(extractedUrls.get(0), instanceOf(Link.class));
+
+        //-----------------------------------
+
+        Matcher urlMatcher = Patterns.url.matcher("http://regexpal.com/"); // see method Link.extractTyped
+        assertTrue(urlMatcher.matches());
     }
 
     @Test
@@ -408,6 +413,16 @@ class UrlExtractionTest {
         CommentUrl commentUrl = extractedUrls.get(0);
         assertEquals("BareLink", commentUrl.getLinkType());
         assertEquals("LinkOnly", commentUrl.getLinkPosition());
+    }
+
+    @Test
+    void testBareLinkInComment() {
+        Comments comment = Comments.readFromCSV(pathToComments, 16570458);
+        comment.extractUrls();
+        List<CommentUrl> extractedUrls = comment.getExtractedUrls();
+        assertEquals(1, extractedUrls.size());
+        CommentUrl commentUrl = extractedUrls.get(0);
+        assertEquals("BareLink", commentUrl.getLinkType());
     }
 
     @Test

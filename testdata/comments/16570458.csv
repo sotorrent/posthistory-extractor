@@ -1,0 +1,2 @@
+Id;PostId;Score;Text;CreationDate;UserDisplayName;UserId
+16570458;12338723;0;"The regex above also matches tags with attributes. It looks for an opening angle bracket, then for any character that is not a closing angle bracket (which includes equal, quotes, etc). It will finally stop after the first closing angle bracket. Try it at http://regexpal.com/&#xA;&#xA;Btw, that regex also matches comments. Use this one if you don't want to match them: <[^!>]+>";2012-09-09 20:06:20;;1590788
