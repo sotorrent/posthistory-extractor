@@ -202,8 +202,13 @@ class UrlExtractionTest {
 
         //-----------------------------------
 
-        Matcher urlMatcher = Patterns.url.matcher("http://regexpal.com/"); // see method Link.extractTyped
+        Matcher urlMatcher;
+
+        urlMatcher = Patterns.url.matcher("http://regexpal.com/"); // see method Link.extractTyped
         assertTrue(urlMatcher.matches());
+
+        urlMatcher = Patterns.url.matcher("http://blabla/"); // see method Link.extractTyped
+        assertFalse(urlMatcher.matches());
     }
 
     @Test
