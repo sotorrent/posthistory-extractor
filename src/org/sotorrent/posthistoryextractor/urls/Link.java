@@ -144,6 +144,9 @@ public class Link {
         Matcher urlMatcher = Patterns.url.matcher(markdownContent);
 
         while (urlMatcher.find()) {
+            if (Patterns.inInlineCode(urlMatcher, markdownContent)) {
+                continue;
+            }
             Link extractedLink = new Link(urlMatcher.group(0).trim());
             // for bare links, the full match is equal to the url match
             extractedLink.fullMatch = Patterns.cleanUrl(extractedLink.url);

@@ -543,4 +543,37 @@ class UrlExtractionTest {
         assertEquals("p/android/issues/detail", link.getPath());
         assertEquals("id=78471&colspec=id%20type%20status%20owner%20summary%20stars", link.getQuery());
     }
+
+    @Test
+    void testExcludeLinksInInlineCode() {
+        List<Link> extractedUrls;
+
+        // bare
+        extractedUrls = Link.extractTyped("`http://www.w3.org/2001/XMLSchema#float`");
+        assertEquals(0, extractedUrls.size());
+
+        // anchor link
+        extractedUrls = Link.extractTyped("`<a href=\"http://example.com\" title=\"example\">example</a>`");
+        assertEquals(0, extractedUrls.size());
+
+        // angle brackets
+        extractedUrls = Link.extractTyped("`<http://www.w3.org/2001/XMLSchema#float>`");
+        assertEquals(0, extractedUrls.size());
+
+        // inline link
+        extractedUrls = Link.extractTyped("`[Google](http://www.google.com/)`");
+        assertEquals(0, extractedUrls.size());
+
+        // reference-style links do not need to be considered here
+
+        /*  ...
+            `^^<http://www.w3.org/2001/XMLSchema#float>`
+            ...
+         */
+        PostVersionList a_38542344 = PostVersionList.readFromCSV(pathToPostVersionLists, 38542344, Posts.ANSWER_ID);
+
+        PostVersion version_1 = a_38542344.getFirst();
+        extractedUrls = Link.extractTyped(version_1.getContent());
+        assertEquals(0, extractedUrls.size());
+    }
 }

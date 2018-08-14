@@ -23,13 +23,13 @@ public class MarkdownLinkReference extends Link {
     // [1]: http://slashdot.org
     // [link text itself]: http://www.reddit.com
 
-    private static final Pattern regex_usages = Pattern.compile("\\[([^]]*)]\\[(\\s*.*?\\s*)]", Pattern.CASE_INSENSITIVE);
-    private static final Pattern regex_definitions = Pattern.compile("(?:\\[([^]]+)]:\\s*(" + Patterns.urlRegex + ")?)(?:\\s+\"(.*)\")?", Pattern.CASE_INSENSITIVE);
+    private static final Pattern patternUsages = Pattern.compile("\\[([^]]*)]\\[(\\s*.*?\\s*)]", Pattern.CASE_INSENSITIVE);
+    private static final Pattern patternDefinitions = Pattern.compile("(?:\\[([^]]+)]:\\s*(" + Patterns.urlRegex + ")?)(?:\\s+\"(.*)\")?", Pattern.CASE_INSENSITIVE);
 
     public static List<Link> extract(String markdownContent) {
         LinkedList<MarkdownLinkReference> extractedLinks = new LinkedList<>();
 
-        Matcher matcher = regex_usages.matcher(markdownContent);
+        Matcher matcher = patternUsages.matcher(markdownContent);
         while (matcher.find()) {
             MarkdownLinkReference extractedLink = new MarkdownLinkReference();
             extractedLink.fullMatch = matcher.group(0);
@@ -38,7 +38,7 @@ public class MarkdownLinkReference extends Link {
             extractedLinks.add(extractedLink);
         }
 
-        matcher = regex_definitions.matcher(markdownContent);
+        matcher = patternDefinitions.matcher(markdownContent);
         while (matcher.find()) {
             MarkdownLinkReference extractedLink = new MarkdownLinkReference();
             extractedLink.fullMatch = matcher.group(0);
