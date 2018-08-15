@@ -501,10 +501,10 @@ class UrlExtractionTest {
         assertEquals("https://en.wikipedia.org/wiki/Glob_(programming)", link.getUrl());
 
         link = Link.extractBare("https://groups.google.com/forum/?fromgroups=#!topic/android-platform/sR6I2ldCxwU").get(0);
-        assertEquals("https://groups.google.com/forum/?fromgroups=", link.getUrl());
+        assertEquals("https://groups.google.com/forum/?fromgroups=#!topic/android-platform/sR6I2ldCxwU", link.getUrl());
         assertEquals("forum", link.getPath());
         assertEquals("fromgroups=", link.getQuery());
-        assertNull(link.getFragmentIdentifier());
+        assertEquals("!topic/android-platform/sR6I2ldCxwU", link.getFragmentIdentifier());
 
         link = Link.extractBare("https://groups.google.com/forum/?fromgroups#").get(0);
         assertEquals("https://groups.google.com/forum/?fromgroups", link.getUrl());
