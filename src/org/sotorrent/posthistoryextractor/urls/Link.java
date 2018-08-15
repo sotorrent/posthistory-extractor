@@ -2,6 +2,8 @@ package org.sotorrent.posthistoryextractor.urls;
 
 import org.sotorrent.util.Patterns;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -86,32 +88,17 @@ public class Link {
             return;
         }
 
-        this.protocol = Patterns.extractProtocolFromUrl(url);
-        this.completeDomain = Patterns.extractCompleteDomainFromUrl(url);
-        this.rootDomain = Patterns.extractRootDomainFromCompleteDomain(completeDomain);
-        this.path = Patterns.extractPathFromUrl(url);
-
-        String query = Patterns.extractQueryFromUrl(this.url);
-        if (query != null) {
-            // remove '?'
-            query = query.substring(1, query.length());
-            if (query.length() == 0) {
-                // query only consisted of '?'
-                query = null;
-            }
+        try {
+            URL urlObject = new URL(this.url);
+            this.protocol = urlObject.getProtocol();
+            this.completeDomain = urlObject.getHost();
+            this.rootDomain = Patterns.getRootDomain(urlObject);
+            this.path = Patterns.getPath(urlObject);
+            this.query = Patterns.getQuery(urlObject);
+            this.fragmentIdentifier = Patterns.getFragmentIdentifier(urlObject);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
         }
-        this.query = query;
-
-        String fragmentIdentifier = Patterns.extractFragmentIdentifierFromUrl(this.url);
-        if (fragmentIdentifier != null) {
-            // remove '#'
-            fragmentIdentifier = fragmentIdentifier.substring(1, fragmentIdentifier.length());
-            if (fragmentIdentifier.length() == 0) {
-                // fragment identifier only consisted of '#'
-                fragmentIdentifier = null;
-            }
-        }
-        this.fragmentIdentifier = fragmentIdentifier;
     }
 
     public String getPosition(String markdownContent) {

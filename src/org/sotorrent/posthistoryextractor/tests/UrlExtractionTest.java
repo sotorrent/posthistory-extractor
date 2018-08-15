@@ -340,11 +340,10 @@ class UrlExtractionTest {
         assertEquals(urlMatcher.group(0), link.getUrl());
 
         assertEquals("http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd", link.getUrl());
-        assertEquals("http", Patterns.extractProtocolFromUrl(link.getUrl()));
-        String completeDomain = Patterns.extractCompleteDomainFromUrl(link.getUrl());
-        assertEquals("www.w3.org", completeDomain);
-        assertEquals("w3.org", Patterns.extractRootDomainFromCompleteDomain(completeDomain));
-        assertEquals("TR/xhtml11/DTD/xhtml11.dtd", Patterns.extractPathFromUrl(link.getUrl()));
+        assertEquals("http", link.getProtocol());
+        assertEquals("www.w3.org", link.getCompleteDomain());
+        assertEquals("w3.org", link.getRootDomain());
+        assertEquals("TR/xhtml11/DTD/xhtml11.dtd", link.getPath());
     }
 
     @Test
