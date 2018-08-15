@@ -1,9 +1,7 @@
 package org.sotorrent.posthistoryextractor.urls;
 
-import org.sotorrent.util.Patterns;
+import org.sotorrent.util.URL;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -14,20 +12,17 @@ public class Link {
     String fullMatch;
     String anchor; // the link anchor visible to the user
     String reference; // internal Markdown reference for the link
-    String url;
     String title;
-    String protocol;
-    String completeDomain;
-    String rootDomain;
-    String path;
-    String query;
-    String fragmentIdentifier;
+    URL urlObject;
 
     public Link() {}
 
     public Link(String url) {
         setUrl(url);
-        extractURLComponents();
+    }
+
+    public void setUrl(String url) {
+        this.urlObject = new URL(url);
     }
 
     public String getFullMatch() {
@@ -42,14 +37,6 @@ public class Link {
         return reference;
     }
 
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = Patterns.cleanUrl(url);
-    }
-
     public String getTitle() {
         return title;
     }
@@ -59,46 +46,12 @@ public class Link {
         return linkType.equals("Link") ? "BareLink" : linkType;
     }
 
-    public String getProtocol() {
-        return protocol;
+    public URL getUrlObject() {
+        return urlObject;
     }
 
-    public String getCompleteDomain() {
-        return completeDomain;
-    }
-
-    public String getRootDomain() {
-        return rootDomain;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public String getQuery() {
-        return query;
-    }
-
-    public String getFragmentIdentifier() {
-        return fragmentIdentifier;
-    }
-
-    private void extractURLComponents() {
-        if (url == null) {
-            return;
-        }
-
-        try {
-            URL urlObject = new URL(this.url);
-            this.protocol = urlObject.getProtocol();
-            this.completeDomain = urlObject.getHost();
-            this.rootDomain = Patterns.getRootDomain(urlObject);
-            this.path = Patterns.getPath(urlObject);
-            this.query = Patterns.getQuery(urlObject);
-            this.fragmentIdentifier = Patterns.getFragmentIdentifier(urlObject);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
+    public String getUrlString() {
+        return urlObject == null ? null : urlObject.getUrlString();
     }
 
     public String getPosition(String markdownContent) {
@@ -128,17 +81,16 @@ public class Link {
 
     public static List<Link> extractBare(String markdownContent) {
         LinkedList<Link> extractedLinks = new LinkedList<>();
-        Matcher urlMatcher = Patterns.url.matcher(markdownContent);
+        Matcher urlMatcher = URL.urlPattern.matcher(markdownContent);
 
         while (urlMatcher.find()) {
-            if (Patterns.inInlineCode(urlMatcher, markdownContent)) {
+            if (URL.inInlineCode(urlMatcher, markdownContent)) {
                 continue;
             }
             Link extractedLink = new Link(urlMatcher.group(0).trim());
-            // for bare links, the full match is equal to the url match
-            extractedLink.fullMatch = Patterns.cleanUrl(extractedLink.url);
-            if (extractedLink.url.length() > 0) {
-                extractedLink.extractURLComponents();
+            // for bare links, the full match is equal to the matched url
+            extractedLink.fullMatch = extractedLink.getUrlString();
+            if (extractedLink.fullMatch.trim().length() > 0) {
                 extractedLinks.add(extractedLink);
             }
         }
@@ -164,9 +116,9 @@ public class Link {
         // extract bare links: http://www.google.com/
         List<Link> extractedBareLinks = extractBare(markdownContent);
         // only add bare links that have not been matched before
-        Set<String> extractedUrls = extractedLinks.stream().map(Link::getUrl).collect(Collectors.toSet());
+        Set<String> extractedUrls = extractedLinks.stream().map(Link::getUrlString).collect(Collectors.toSet());
         for (Link bareLink : extractedBareLinks) {
-            if (!extractedUrls.contains(bareLink.getUrl())) {
+            if (!extractedUrls.contains(bareLink.getUrlString())) {
                 extractedLinks.add(bareLink);
             }
         }
@@ -174,16 +126,12 @@ public class Link {
         // validate the extracted links (possible issues include posts 36273118 and 37625877 with "double[][]" and anchor tags where href does not point to a valid URL)
         List<Link> validLinks = new LinkedList<>();
         for (Link currentLink : extractedLinks) {
-            if (currentLink.url != null) {
-                Matcher urlMatcher = Patterns.url.matcher(currentLink.url.trim());
+            if (currentLink.getUrlString() != null) {
+                Matcher urlMatcher = URL.urlPattern.matcher(currentLink.getUrlString().trim());
                 if (urlMatcher.matches()) {
                     validLinks.add(currentLink);
                 }
             }
-        }
-
-        for (Link link : validLinks) {
-            link.extractURLComponents();
         }
 
         return validLinks;
@@ -208,7 +156,7 @@ public class Link {
                     normalizedMarkdownContent = normalizedMarkdownContent.replace(usage, "");
                 } else {
                     normalizedMarkdownContent = normalizedMarkdownContent.replace(usage,
-                            "[" + currentLink.getAnchor() + "](" + currentLink.getUrl() +
+                            "[" + currentLink.getAnchor() + "](" + currentLink.getUrlObject() +
                                     ((currentLink.getTitle() != null) ? " \"" + currentLink.getTitle() + "\"" : "")
                                     + ")"
                     );
@@ -219,7 +167,7 @@ public class Link {
                 // bare link
                 normalizedMarkdownContent = normalizedMarkdownContent.replace(
                         currentLink.getFullMatch(),
-                        "<" + currentLink.getUrl() + ">"
+                        "<" + currentLink.getUrlObject() + ">"
                 );
             }
         }

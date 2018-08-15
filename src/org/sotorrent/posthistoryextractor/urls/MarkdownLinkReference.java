@@ -1,6 +1,6 @@
 package org.sotorrent.posthistoryextractor.urls;
 
-import org.sotorrent.util.Patterns;
+import org.sotorrent.util.URL;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -24,7 +24,7 @@ public class MarkdownLinkReference extends Link {
     // [link text itself]: http://www.reddit.com
 
     private static final Pattern patternUsages = Pattern.compile("\\[([^]]*)]\\[(\\s*.*?\\s*)]", Pattern.CASE_INSENSITIVE);
-    private static final Pattern patternDefinitions = Pattern.compile("(?:\\[([^]]+)]:\\s*(" + Patterns.urlRegex + ")?)(?:\\s+\"(.*)\")?", Pattern.CASE_INSENSITIVE);
+    private static final Pattern patternDefinitions = Pattern.compile("(?:\\[([^]]+)]:\\s*(" + URL.urlRegex + ")?)(?:\\s+\"(.*)\")?", Pattern.CASE_INSENSITIVE);
 
     public static List<Link> extract(String markdownContent) {
         LinkedList<MarkdownLinkReference> extractedLinks = new LinkedList<>();
@@ -55,18 +55,18 @@ public class MarkdownLinkReference extends Link {
         LinkedList<Link> mergedLinks = new LinkedList<>();
 
         for (Link link1 : extractedLinks) {
-            if (link1.anchor != null && link1.url == null && link1.reference != null) {
+            if (link1.anchor != null && link1.getUrlString() == null && link1.reference != null) {
                 // link is usage of link reference
                 for (Link link2 : extractedLinks) {
-                    if (link2.anchor == null && link2.url != null && link2.reference != null) {
+                    if (link2.anchor == null && link2.getUrlString() != null && link2.reference != null) {
                         if (link1.reference.equals(link2.reference)) {
                             MarkdownLinkReference mergedLink = new MarkdownLinkReference();
                             mergedLink.reference = link1.reference;
                             mergedLink.anchor = link1.anchor;
                             mergedLink.title = link2.title;
-                            mergedLink.setUrl(link2.url);
+                            mergedLink.setUrl(link2.getUrlString());
                             mergedLink.fullMatch = link1.fullMatch + "\n" + link2.fullMatch;
-                            if (mergedLink.url != null && mergedLink.url.length() > 0) {
+                            if (mergedLink.getUrlString() != null && mergedLink.getUrlString().length() > 0) {
                                 mergedLinks.add(mergedLink);
                             }
                         }

@@ -6,7 +6,7 @@ import org.sotorrent.posthistoryextractor.urls.*;
 import org.sotorrent.posthistoryextractor.version.PostVersion;
 import org.sotorrent.posthistoryextractor.version.PostVersionList;
 import org.junit.jupiter.api.Test;
-import org.sotorrent.util.Patterns;
+import org.sotorrent.util.URL;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -44,16 +44,16 @@ class UrlExtractionTest {
         assertEquals("[reference](http://msdn.microsoft.com/en-us/library/system.math.truncate.aspx)", extractedUrls.get(0).getFullMatch());
         assertEquals("reference", extractedUrls.get(0).getAnchor());
         assertNull(extractedUrls.get(0).getReference());
-        assertEquals("http://msdn.microsoft.com/en-us/library/system.math.truncate.aspx", extractedUrls.get(0).getUrl());
-        assertEquals("msdn.microsoft.com", extractedUrls.get(0).getCompleteDomain());
+        assertEquals("http://msdn.microsoft.com/en-us/library/system.math.truncate.aspx", extractedUrls.get(0).getUrlString());
+        assertEquals("msdn.microsoft.com", extractedUrls.get(0).getUrlObject().getCompleteDomain());
         assertNull(extractedUrls.get(0).getTitle());
         assertThat(extractedUrls.get(0), instanceOf(MarkdownLinkInline.class));
 
         assertEquals("[Reference.](http://msdn.microsoft.com/en-us/library/system.math.round.aspx)", extractedUrls.get(1).getFullMatch());
         assertEquals("Reference.", extractedUrls.get(1).getAnchor());
         assertNull(extractedUrls.get(1).getReference());
-        assertEquals("http://msdn.microsoft.com/en-us/library/system.math.round.aspx", extractedUrls.get(1).getUrl());
-        assertEquals("msdn.microsoft.com", extractedUrls.get(1).getCompleteDomain());
+        assertEquals("http://msdn.microsoft.com/en-us/library/system.math.round.aspx", extractedUrls.get(1).getUrlString());
+        assertEquals("msdn.microsoft.com", extractedUrls.get(1).getUrlObject().getCompleteDomain());
         assertNull(extractedUrls.get(1).getTitle());
         assertThat(extractedUrls.get(1), instanceOf(MarkdownLinkInline.class));
     }
@@ -76,8 +76,8 @@ class UrlExtractionTest {
         assertEquals("[ManualResetEvent][1]\n[1]: http://msdn.microsoft.com/en-us/library/system.threading.manualresetevent.aspx \"MSDN Reference\"", extractedUrls.get(0).getFullMatch());
         assertEquals("ManualResetEvent", extractedUrls.get(0).getAnchor());
         assertEquals("1", extractedUrls.get(0).getReference());
-        assertEquals("http://msdn.microsoft.com/en-us/library/system.threading.manualresetevent.aspx", extractedUrls.get(0).getUrl());
-        assertEquals("msdn.microsoft.com", extractedUrls.get(0).getCompleteDomain());
+        assertEquals("http://msdn.microsoft.com/en-us/library/system.threading.manualresetevent.aspx", extractedUrls.get(0).getUrlString());
+        assertEquals("msdn.microsoft.com", extractedUrls.get(0).getUrlObject().getCompleteDomain());
         assertEquals("MSDN Reference", extractedUrls.get(0).getTitle());
         assertThat(extractedUrls.get(0), instanceOf(MarkdownLinkReference.class));
     }
@@ -106,16 +106,16 @@ class UrlExtractionTest {
         assertEquals("<a href=\"http://msdn.microsoft.com/en-us/library/system.windows.controls.textbox.selectionstart.aspx\">SelectionStart</a>", extractedUrls.get(0).getFullMatch());
         assertEquals("SelectionStart", extractedUrls.get(0).getAnchor());
         assertNull(extractedUrls.get(0).getReference());
-        assertEquals("http://msdn.microsoft.com/en-us/library/system.windows.controls.textbox.selectionstart.aspx", extractedUrls.get(0).getUrl());
-        assertEquals("msdn.microsoft.com", extractedUrls.get(0).getCompleteDomain());
+        assertEquals("http://msdn.microsoft.com/en-us/library/system.windows.controls.textbox.selectionstart.aspx", extractedUrls.get(0).getUrlString());
+        assertEquals("msdn.microsoft.com", extractedUrls.get(0).getUrlObject().getCompleteDomain());
         assertNull(extractedUrls.get(0).getTitle());
         assertThat(extractedUrls.get(0), instanceOf(AnchorLink.class));
 
         assertEquals("<a href=\"http://msdn.microsoft.com/en-us/library/system.windows.controls.textbox.selectionlength.aspx\">SelectionLength</a>", extractedUrls.get(1).getFullMatch());
         assertEquals("SelectionLength", extractedUrls.get(1).getAnchor());
         assertNull(extractedUrls.get(1).getReference());
-        assertEquals("http://msdn.microsoft.com/en-us/library/system.windows.controls.textbox.selectionlength.aspx", extractedUrls.get(1).getUrl());
-        assertEquals("msdn.microsoft.com", extractedUrls.get(1).getCompleteDomain());
+        assertEquals("http://msdn.microsoft.com/en-us/library/system.windows.controls.textbox.selectionlength.aspx", extractedUrls.get(1).getUrlString());
+        assertEquals("msdn.microsoft.com", extractedUrls.get(1).getUrlObject().getCompleteDomain());
         assertNull(extractedUrls.get(1).getTitle());
         assertThat(extractedUrls.get(1), instanceOf(AnchorLink.class));
     }
@@ -161,16 +161,16 @@ class UrlExtractionTest {
         assertEquals("<http://www.gskinner.com/blog/archives/2006/06/as3_resource_ma.html>", extractedUrls.get(0).getFullMatch());
         assertNull(extractedUrls.get(0).getAnchor());
         assertNull(extractedUrls.get(0).getReference());
-        assertEquals("http://www.gskinner.com/blog/archives/2006/06/as3_resource_ma.html", extractedUrls.get(0).getUrl());
-        assertEquals("www.gskinner.com", extractedUrls.get(0).getCompleteDomain());
+        assertEquals("http://www.gskinner.com/blog/archives/2006/06/as3_resource_ma.html", extractedUrls.get(0).getUrlString());
+        assertEquals("www.gskinner.com", extractedUrls.get(0).getUrlObject().getCompleteDomain());
         assertNull(extractedUrls.get(0).getTitle());
         assertThat(extractedUrls.get(0), instanceOf(MarkdownLinkAngleBrackets.class));
 
         assertEquals("<http://www.craftymind.com/2008/04/09/kick-starting-the-garbage-collector-in-actionscript-3-with-air/>", extractedUrls.get(1).getFullMatch());
         assertNull(extractedUrls.get(1).getAnchor());
         assertNull(extractedUrls.get(1).getReference());
-        assertEquals("http://www.craftymind.com/2008/04/09/kick-starting-the-garbage-collector-in-actionscript-3-with-air/", extractedUrls.get(1).getUrl());
-        assertEquals("www.craftymind.com", extractedUrls.get(1).getCompleteDomain());
+        assertEquals("http://www.craftymind.com/2008/04/09/kick-starting-the-garbage-collector-in-actionscript-3-with-air/", extractedUrls.get(1).getUrlString());
+        assertEquals("www.craftymind.com", extractedUrls.get(1).getUrlObject().getCompleteDomain());
         assertNull(extractedUrls.get(1).getTitle());
         assertThat(extractedUrls.get(1), instanceOf(MarkdownLinkAngleBrackets.class));
     }
@@ -195,8 +195,8 @@ class UrlExtractionTest {
         assertEquals("http://www.brokenbuild.com/blog/2006/08/15/mysql-triggers-how-do-you-abort-an-insert-update-or-delete-with-a-trigger/", extractedUrls.get(0).getFullMatch());
         assertNull(extractedUrls.get(0).getAnchor());
         assertNull(extractedUrls.get(0).getReference());
-        assertEquals("http://www.brokenbuild.com/blog/2006/08/15/mysql-triggers-how-do-you-abort-an-insert-update-or-delete-with-a-trigger/", extractedUrls.get(0).getUrl());
-        assertEquals("www.brokenbuild.com", extractedUrls.get(0).getCompleteDomain());
+        assertEquals("http://www.brokenbuild.com/blog/2006/08/15/mysql-triggers-how-do-you-abort-an-insert-update-or-delete-with-a-trigger/", extractedUrls.get(0).getUrlString());
+        assertEquals("www.brokenbuild.com", extractedUrls.get(0).getUrlObject().getCompleteDomain());
         assertNull(extractedUrls.get(0).getTitle());
         assertThat(extractedUrls.get(0), instanceOf(Link.class));
 
@@ -204,10 +204,10 @@ class UrlExtractionTest {
 
         Matcher urlMatcher;
 
-        urlMatcher = Patterns.url.matcher("http://regexpal.com/"); // see method Link.extractTyped
+        urlMatcher = URL.urlPattern.matcher("http://regexpal.com/"); // see method Link.extractTyped
         assertTrue(urlMatcher.matches());
 
-        urlMatcher = Patterns.url.matcher("http://blabla/"); // see method Link.extractTyped
+        urlMatcher = URL.urlPattern.matcher("http://blabla/"); // see method Link.extractTyped
         assertFalse(urlMatcher.matches());
     }
 
@@ -255,7 +255,7 @@ class UrlExtractionTest {
         assertEquals("[I'm an inline-style link with title](https://www.google.com \"Google's Homepage\")", extractedUrls.get(0).getFullMatch());
         assertEquals("I'm an inline-style link with title", extractedUrls.get(0).getAnchor());
         assertNull(extractedUrls.get(0).getReference());
-        assertEquals("https://www.google.com", extractedUrls.get(0).getUrl());
+        assertEquals("https://www.google.com", extractedUrls.get(0).getUrlString());
         assertEquals("Google's Homepage", extractedUrls.get(0).getTitle());
         assertThat(extractedUrls.get(0), instanceOf(MarkdownLinkInline.class));
 
@@ -266,8 +266,8 @@ class UrlExtractionTest {
         assertEquals("[I'm an inline-style link without title](https://www.google.com)", extractedUrls.get(0).getFullMatch());
         assertEquals("I'm an inline-style link without title", extractedUrls.get(0).getAnchor());
         assertNull(extractedUrls.get(0).getReference());
-        assertEquals("https://www.google.com", extractedUrls.get(0).getUrl());
-        assertEquals("www.google.com", extractedUrls.get(0).getCompleteDomain());
+        assertEquals("https://www.google.com", extractedUrls.get(0).getUrlString());
+        assertEquals("www.google.com", extractedUrls.get(0).getUrlObject().getCompleteDomain());
         assertNull(extractedUrls.get(0).getTitle());
         assertThat(extractedUrls.get(0), instanceOf(MarkdownLinkInline.class));
     }
@@ -324,26 +324,26 @@ class UrlExtractionTest {
                          String expectedCompleteDomain, String expectedRootDomain,
                          String expectedPath) {
         Link link = Link.extractBare(url).get(0);
-        assertEquals(expectedProtocol, link.getProtocol());
-        assertEquals(expectedCompleteDomain, link.getCompleteDomain());
-        assertEquals(expectedRootDomain, link.getRootDomain());
-        assertEquals(expectedPath, link.getPath());
+        assertEquals(expectedProtocol, link.getUrlObject().getProtocol());
+        assertEquals(expectedCompleteDomain, link.getUrlObject().getCompleteDomain());
+        assertEquals(expectedRootDomain, link.getUrlObject().getRootDomain());
+        assertEquals(expectedPath, link.getUrlObject().getPath());
     }
 
     @Test
     void testDoctypeUrl() {
         String inputString = "DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd";
 
-        Matcher urlMatcher = Patterns.url.matcher(inputString);
+        Matcher urlMatcher = URL.urlPattern.matcher(inputString);
         assertTrue(urlMatcher.find());
         Link link = Link.extractBare(inputString).get(0);
-        assertEquals(urlMatcher.group(0), link.getUrl());
+        assertEquals(urlMatcher.group(0), link.getUrlString());
 
-        assertEquals("http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd", link.getUrl());
-        assertEquals("http", link.getProtocol());
-        assertEquals("www.w3.org", link.getCompleteDomain());
-        assertEquals("w3.org", link.getRootDomain());
-        assertEquals("TR/xhtml11/DTD/xhtml11.dtd", link.getPath());
+        assertEquals("http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd", link.getUrlString());
+        assertEquals("http", link.getUrlObject().getProtocol());
+        assertEquals("www.w3.org", link.getUrlObject().getCompleteDomain());
+        assertEquals("w3.org", link.getUrlObject().getRootDomain());
+        assertEquals("TR/xhtml11/DTD/xhtml11.dtd", link.getUrlObject().getPath());
     }
 
     @Test
@@ -392,20 +392,20 @@ class UrlExtractionTest {
         Link link;
 
         link = new Link("http://en.wikipedia.org/wiki/regular_expression#syntax");
-        assertEquals("wiki/regular_expression", link.getPath());
-        assertEquals("syntax", link.getFragmentIdentifier());
+        assertEquals("wiki/regular_expression", link.getUrlObject().getPath());
+        assertEquals("syntax", link.getUrlObject().getFragmentIdentifier());
 
         link = new Link("http://www.regular-expressions.info/lookaround.html");
-        assertEquals("lookaround.html", link.getPath());
-        assertNull(link.getFragmentIdentifier());
+        assertEquals("lookaround.html", link.getUrlObject().getPath());
+        assertNull(link.getUrlObject().getFragmentIdentifier());
 
         link = new Link("https://docs.oracle.com/");
-        assertNull(link.getPath());
-        assertNull(link.getFragmentIdentifier());
+        assertNull(link.getUrlObject().getPath());
+        assertNull(link.getUrlObject().getFragmentIdentifier());
 
         link = new Link("https://docs.oracle.com");
-        assertNull(link.getPath());
-        assertNull(link.getFragmentIdentifier());
+        assertNull(link.getUrlObject().getPath());
+        assertNull(link.getUrlObject().getFragmentIdentifier());
     }
 
     @Test
@@ -459,37 +459,37 @@ class UrlExtractionTest {
         Link link;
 
         link = new Link("http://weblogs.sqlteam.com/.");
-        assertNull(link.getPath());
+        assertNull(link.getUrlObject().getPath());
 
         link = new Link("https://khaccounts.net//");
-        assertNull(link.getPath());
+        assertNull(link.getUrlObject().getPath());
 
         link = new Link("http://www.websitetest/&#xA");
-        assertNull(link.getPath());
+        assertNull(link.getUrlObject().getPath());
 
         link = new Link("http://www.websitetest/&#xD;");
-        assertNull(link.getPath());
+        assertNull(link.getUrlObject().getPath());
 
         link = new Link("http://jquery.com/:");
-        assertNull(link.getPath());
+        assertNull(link.getUrlObject().getPath());
 
         new Link(null); // should not throw a NullPointerException
 
         link = new Link("http://stackoverflow.com/questions/31423480/memsql-leaf-down-on-single-server-cluster/35270224.");
-        assertEquals("http://stackoverflow.com/questions/31423480/memsql-leaf-down-on-single-server-cluster/35270224", link.getUrl());
-        assertEquals("questions/31423480/memsql-leaf-down-on-single-server-cluster/35270224", link.getPath());
+        assertEquals("http://stackoverflow.com/questions/31423480/memsql-leaf-down-on-single-server-cluster/35270224", link.getUrlString());
+        assertEquals("questions/31423480/memsql-leaf-down-on-single-server-cluster/35270224", link.getUrlObject().getPath());
 
         link = new Link("http://stackoverflow.com/questions/31423480/memsql-leaf-down-on-single-server-cluster/35270224/.");
-        assertEquals("http://stackoverflow.com/questions/31423480/memsql-leaf-down-on-single-server-cluster/35270224/", link.getUrl());
-        assertEquals("questions/31423480/memsql-leaf-down-on-single-server-cluster/35270224", link.getPath());
+        assertEquals("http://stackoverflow.com/questions/31423480/memsql-leaf-down-on-single-server-cluster/35270224/", link.getUrlString());
+        assertEquals("questions/31423480/memsql-leaf-down-on-single-server-cluster/35270224", link.getUrlObject().getPath());
 
         link = new Link("http://www.mediawiki.org/wiki/Manual:");
-        assertEquals("http://www.mediawiki.org/wiki/Manual", link.getUrl());
-        assertEquals("wiki/Manual", link.getPath());
+        assertEquals("http://www.mediawiki.org/wiki/Manual", link.getUrlString());
+        assertEquals("wiki/Manual", link.getUrlObject().getPath());
 
         link = new Link("http://www.sybase.com/detail?id=1056497,");
-        assertEquals("http://www.sybase.com/detail?id=1056497", link.getUrl());
-        assertEquals("detail", link.getPath());
+        assertEquals("http://www.sybase.com/detail?id=1056497", link.getUrlString());
+        assertEquals("detail", link.getUrlObject().getPath());
     }
 
     @Test
@@ -497,70 +497,70 @@ class UrlExtractionTest {
         Link link;
 
         link = Link.extractBare("https://en.wikipedia.org/wiki/Glob_(programming)").get(0);
-        assertEquals("https://en.wikipedia.org/wiki/Glob_(programming)", link.getUrl());
-        assertEquals("wiki/Glob_(programming)", link.getPath());
-        assertNull(link.getQuery());
-        assertNull(link.getFragmentIdentifier());
+        assertEquals("https://en.wikipedia.org/wiki/Glob_(programming)", link.getUrlString());
+        assertEquals("wiki/Glob_(programming)", link.getUrlObject().getPath());
+        assertNull(link.getUrlObject().getQuery());
+        assertNull(link.getUrlObject().getFragmentIdentifier());
 
         link = Link.extractBare("http://en.wikipedia.org/wiki/Magic_number_%28programming%29").get(0);
-        assertEquals("http://en.wikipedia.org/wiki/Magic_number_%28programming%29", link.getUrl());
-        assertEquals("wiki/Magic_number_%28programming%29", link.getPath());
-        assertNull(link.getQuery());
-        assertNull(link.getFragmentIdentifier());
+        assertEquals("http://en.wikipedia.org/wiki/Magic_number_%28programming%29", link.getUrlString());
+        assertEquals("wiki/Magic_number_%28programming%29", link.getUrlObject().getPath());
+        assertNull(link.getUrlObject().getQuery());
+        assertNull(link.getUrlObject().getFragmentIdentifier());
 
         link = Link.extractBare("https://groups.google.com/forum/?fromgroups=#!topic/android-platform/sR6I2ldCxwU").get(0);
-        assertEquals("https://groups.google.com/forum/?fromgroups=#!topic/android-platform/sR6I2ldCxwU", link.getUrl());
-        assertEquals("forum", link.getPath());
-        assertEquals("fromgroups=", link.getQuery());
-        assertEquals("!topic/android-platform/sR6I2ldCxwU", link.getFragmentIdentifier());
+        assertEquals("https://groups.google.com/forum/?fromgroups=#!topic/android-platform/sR6I2ldCxwU", link.getUrlString());
+        assertEquals("forum", link.getUrlObject().getPath());
+        assertEquals("fromgroups=", link.getUrlObject().getQuery());
+        assertEquals("!topic/android-platform/sR6I2ldCxwU", link.getUrlObject().getFragmentIdentifier());
 
         link = Link.extractBare("https://groups.google.com/forum/?fromgroups#").get(0);
-        assertEquals("https://groups.google.com/forum/?fromgroups", link.getUrl());
-        assertEquals("forum", link.getPath());
-        assertEquals("fromgroups", link.getQuery());
-        assertNull(link.getFragmentIdentifier());
+        assertEquals("https://groups.google.com/forum/?fromgroups", link.getUrlString());
+        assertEquals("forum", link.getUrlObject().getPath());
+        assertEquals("fromgroups", link.getUrlObject().getQuery());
+        assertNull(link.getUrlObject().getFragmentIdentifier());
 
         link = Link.extractBare("https://groups.google.com/forum/?").get(0);
-        assertEquals("https://groups.google.com/forum/?", link.getUrl());
-        assertEquals("forum", link.getPath());
-        assertNull(link.getQuery());
-        assertNull(link.getFragmentIdentifier());
+        assertEquals("https://groups.google.com/forum/?", link.getUrlString());
+        assertEquals("forum", link.getUrlObject().getPath());
+        assertNull(link.getUrlObject().getQuery());
+        assertNull(link.getUrlObject().getFragmentIdentifier());
 
         link = Link.extractBare("https://developers.google.com/android/reference/com/google/android/gms/location/places/PlaceDetectionClient.html#reportDeviceAtPlace(com.google.android.gms.location.places.PlaceReport)").get(0);
-        assertEquals("https://developers.google.com/android/reference/com/google/android/gms/location/places/PlaceDetectionClient.html#reportDeviceAtPlace(com.google.android.gms.location.places.PlaceReport)", link.getUrl());
-        assertEquals("android/reference/com/google/android/gms/location/places/PlaceDetectionClient.html", link.getPath());
-        assertNull(link.getQuery());
-        assertEquals("reportDeviceAtPlace(com.google.android.gms.location.places.PlaceReport)", link.getFragmentIdentifier());
+        assertEquals("https://developers.google.com/android/reference/com/google/android/gms/location/places/PlaceDetectionClient.html#reportDeviceAtPlace(com.google.android.gms.location.places.PlaceReport)", link.getUrlString());
+        assertEquals("android/reference/com/google/android/gms/location/places/PlaceDetectionClient.html", link.getUrlObject().getPath());
+        assertNull(link.getUrlObject().getQuery());
+        assertEquals("reportDeviceAtPlace(com.google.android.gms.location.places.PlaceReport)", link.getUrlObject().getFragmentIdentifier());
 
         link = Link.extractBare("https://www.simplifiedcoding.net/android-volley-post-request-tutorial/......").get(0);
-        assertEquals("https://www.simplifiedcoding.net/android-volley-post-request-tutorial/", link.getUrl());
-        assertEquals("android-volley-post-request-tutorial", link.getPath());
-        assertNull(link.getQuery());
-        assertNull(link.getFragmentIdentifier());
+        assertEquals("https://www.simplifiedcoding.net/android-volley-post-request-tutorial/", link.getUrlString());
+        assertEquals("android-volley-post-request-tutorial", link.getUrlObject().getPath());
+        assertNull(link.getUrlObject().getQuery());
+        assertNull(link.getUrlObject().getFragmentIdentifier());
 
         link = Link.extractBare("https://www.google.com/webhp?#q=firebase+role+based+security").get(0);
-        assertEquals("https://www.google.com/webhp?#q=firebase+role+based+security", link.getUrl());
-        assertEquals("webhp", link.getPath());
-        assertNull(link.getQuery());
-        assertEquals("q=firebase+role+based+security", link.getFragmentIdentifier());
+        assertEquals("https://www.google.com/webhp?#q=firebase+role+based+security", link.getUrlString());
+        assertEquals("webhp", link.getUrlObject().getPath());
+        assertNull(link.getUrlObject().getQuery());
+        assertEquals("q=firebase+role+based+security", link.getUrlObject().getFragmentIdentifier());
 
         link = Link.extractBare("http://wiki.eclipse.org/FAQ_How_do_I_run_Eclipse?#Find_the_JVM").get(0);
-        assertEquals("http://wiki.eclipse.org/FAQ_How_do_I_run_Eclipse?#Find_the_JVM", link.getUrl());
-        assertEquals("FAQ_How_do_I_run_Eclipse", link.getPath());
-        assertNull(link.getQuery());
-        assertEquals("Find_the_JVM", link.getFragmentIdentifier());
+        assertEquals("http://wiki.eclipse.org/FAQ_How_do_I_run_Eclipse?#Find_the_JVM", link.getUrlString());
+        assertEquals("FAQ_How_do_I_run_Eclipse", link.getUrlObject().getPath());
+        assertNull(link.getUrlObject().getQuery());
+        assertEquals("Find_the_JVM", link.getUrlObject().getFragmentIdentifier());
 
         link = Link.extractBare("https://developers.google.com/appengine/docs/java/datastore/entities?#Java_Properties_and_value_types").get(0);
-        assertEquals("https://developers.google.com/appengine/docs/java/datastore/entities?#Java_Properties_and_value_types", link.getUrl());
-        assertEquals("appengine/docs/java/datastore/entities", link.getPath());
-        assertNull(link.getQuery());
-        assertEquals("Java_Properties_and_value_types", link.getFragmentIdentifier());
+        assertEquals("https://developers.google.com/appengine/docs/java/datastore/entities?#Java_Properties_and_value_types", link.getUrlString());
+        assertEquals("appengine/docs/java/datastore/entities", link.getUrlObject().getPath());
+        assertNull(link.getUrlObject().getQuery());
+        assertEquals("Java_Properties_and_value_types", link.getUrlObject().getFragmentIdentifier());
 
         link = Link.extractBare("https://developer.android.com/reference/android/provider/CalendarContract.EventsColumns.html?#DURATION").get(0);
-        assertEquals("https://developer.android.com/reference/android/provider/CalendarContract.EventsColumns.html?#DURATION", link.getUrl());
-        assertEquals("reference/android/provider/CalendarContract.EventsColumns.html", link.getPath());
-        assertNull(link.getQuery());
-        assertEquals("DURATION", link.getFragmentIdentifier());
+        assertEquals("https://developer.android.com/reference/android/provider/CalendarContract.EventsColumns.html?#DURATION", link.getUrlString());
+        assertEquals("reference/android/provider/CalendarContract.EventsColumns.html", link.getUrlObject().getPath());
+        assertNull(link.getUrlObject().getQuery());
+        assertEquals("DURATION", link.getUrlObject().getFragmentIdentifier());
     }
 
     @Test
@@ -568,12 +568,12 @@ class UrlExtractionTest {
         Link link;
 
         link = new Link("http://code.google.com/p/android/issues/detail?id=4611");
-        assertEquals("p/android/issues/detail", link.getPath());
-        assertEquals("id=4611", link.getQuery());
+        assertEquals("p/android/issues/detail", link.getUrlObject().getPath());
+        assertEquals("id=4611", link.getUrlObject().getQuery());
 
         link = new Link("https://code.google.com/p/android/issues/detail?id=78471&colspec=id%20type%20status%20owner%20summary%20stars");
-        assertEquals("p/android/issues/detail", link.getPath());
-        assertEquals("id=78471&colspec=id%20type%20status%20owner%20summary%20stars", link.getQuery());
+        assertEquals("p/android/issues/detail", link.getUrlObject().getPath());
+        assertEquals("id=78471&colspec=id%20type%20status%20owner%20summary%20stars", link.getUrlObject().getQuery());
     }
 
     @Test

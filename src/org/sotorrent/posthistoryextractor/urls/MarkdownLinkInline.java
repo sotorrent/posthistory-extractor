@@ -1,6 +1,6 @@
 package org.sotorrent.posthistoryextractor.urls;
 
-import org.sotorrent.util.Patterns;
+import org.sotorrent.util.URL;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -17,14 +17,14 @@ public class MarkdownLinkInline extends Link {
     // Example 3: [I'm an inline-style link](https://www.google.com)
     // Example 4: [I'm an inline-style link with title](https://www.google.com "Google's Homepage")
 
-    private static final Pattern pattern = Pattern.compile("\\[([^]]+)]\\(\\s*(" + Patterns.urlRegex + ")?(?:\\s+\"([^\"]+)\")?\\s*\\)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern pattern = Pattern.compile("\\[([^]]+)]\\(\\s*(" + URL.urlRegex + ")?(?:\\s+\"([^\"]+)\")?\\s*\\)", Pattern.CASE_INSENSITIVE);
 
     public static List<Link> extract(String markdownContent) {
         LinkedList<Link> extractedLinks = new LinkedList<>();
         Matcher matcher = pattern.matcher(markdownContent);
 
         while (matcher.find()) {
-            if (Patterns.inInlineCode(matcher, markdownContent)) {
+            if (URL.inInlineCode(matcher, markdownContent)) {
                 continue;
             }
             MarkdownLinkInline extractedLink = new MarkdownLinkInline();
@@ -33,7 +33,7 @@ public class MarkdownLinkInline extends Link {
             extractedLink.setUrl(matcher.group(2));
             extractedLink.title = matcher.group(3);
             // e.g., [`tr///`]()
-            if (extractedLink.url != null && extractedLink.url.length() > 0) {
+            if (!extractedLink.getUrlObject().isEmpty()) {
                 extractedLinks.add(extractedLink);
             }
         }

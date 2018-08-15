@@ -30,13 +30,13 @@ public class PostVersionUrl{
         this.linkType = link.getType();
         this.linkPosition = link.getPosition(markdownContent);
         this.linkAnchor = link.getAnchor();
-        this.protocol = link.getProtocol();
-        this.rootDomain = link.getRootDomain();
-        this.completeDomain = link.getCompleteDomain();
-        this.path = link.getPath();
-        this.query = link.getQuery();
-        this.fragmentIdentifier = link.getFragmentIdentifier();
-        this.url = link.getUrl();
+        this.protocol = link.getUrlObject().getProtocol();
+        this.rootDomain = link.getUrlObject().getRootDomain();
+        this.completeDomain = link.getUrlObject().getCompleteDomain();
+        this.path = link.getUrlObject().getPath();
+        this.query = link.getUrlObject().getQuery();
+        this.fragmentIdentifier = link.getUrlObject().getFragmentIdentifier();
+        this.url = link.getUrlString();
         this.fullMatch = link.getFullMatch();
     }
 
