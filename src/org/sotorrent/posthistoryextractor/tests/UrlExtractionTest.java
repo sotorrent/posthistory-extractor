@@ -499,6 +499,15 @@ class UrlExtractionTest {
 
         link = Link.extractBare("https://en.wikipedia.org/wiki/Glob_(programming)").get(0);
         assertEquals("https://en.wikipedia.org/wiki/Glob_(programming)", link.getUrl());
+        assertEquals("wiki/Glob_(programming)", link.getPath());
+        assertNull(link.getQuery());
+        assertNull(link.getFragmentIdentifier());
+
+        link = Link.extractBare("http://en.wikipedia.org/wiki/Magic_number_%28programming%29").get(0);
+        assertEquals("http://en.wikipedia.org/wiki/Magic_number_%28programming%29", link.getUrl());
+        assertEquals("wiki/Magic_number_%28programming%29", link.getPath());
+        assertNull(link.getQuery());
+        assertNull(link.getFragmentIdentifier());
 
         link = Link.extractBare("https://groups.google.com/forum/?fromgroups=#!topic/android-platform/sR6I2ldCxwU").get(0);
         assertEquals("https://groups.google.com/forum/?fromgroups=#!topic/android-platform/sR6I2ldCxwU", link.getUrl());
@@ -513,7 +522,7 @@ class UrlExtractionTest {
         assertNull(link.getFragmentIdentifier());
 
         link = Link.extractBare("https://groups.google.com/forum/?").get(0);
-        assertEquals("https://groups.google.com/forum/", link.getUrl());
+        assertEquals("https://groups.google.com/forum/?", link.getUrl());
         assertEquals("forum", link.getPath());
         assertNull(link.getQuery());
         assertNull(link.getFragmentIdentifier());
@@ -529,6 +538,30 @@ class UrlExtractionTest {
         assertEquals("android-volley-post-request-tutorial", link.getPath());
         assertNull(link.getQuery());
         assertNull(link.getFragmentIdentifier());
+
+        link = Link.extractBare("https://www.google.com/webhp?#q=firebase+role+based+security").get(0);
+        assertEquals("https://www.google.com/webhp?#q=firebase+role+based+security", link.getUrl());
+        assertEquals("webhp", link.getPath());
+        assertNull(link.getQuery());
+        assertEquals("q=firebase+role+based+security", link.getFragmentIdentifier());
+
+        link = Link.extractBare("http://wiki.eclipse.org/FAQ_How_do_I_run_Eclipse?#Find_the_JVM").get(0);
+        assertEquals("http://wiki.eclipse.org/FAQ_How_do_I_run_Eclipse?#Find_the_JVM", link.getUrl());
+        assertEquals("FAQ_How_do_I_run_Eclipse", link.getPath());
+        assertNull(link.getQuery());
+        assertEquals("Find_the_JVM", link.getFragmentIdentifier());
+
+        link = Link.extractBare("https://developers.google.com/appengine/docs/java/datastore/entities?#Java_Properties_and_value_types").get(0);
+        assertEquals("https://developers.google.com/appengine/docs/java/datastore/entities?#Java_Properties_and_value_types", link.getUrl());
+        assertEquals("appengine/docs/java/datastore/entities", link.getPath());
+        assertNull(link.getQuery());
+        assertEquals("Java_Properties_and_value_types", link.getFragmentIdentifier());
+
+        link = Link.extractBare("https://developer.android.com/reference/android/provider/CalendarContract.EventsColumns.html?#DURATION").get(0);
+        assertEquals("https://developer.android.com/reference/android/provider/CalendarContract.EventsColumns.html?#DURATION", link.getUrl());
+        assertEquals("reference/android/provider/CalendarContract.EventsColumns.html", link.getPath());
+        assertNull(link.getQuery());
+        assertEquals("DURATION", link.getFragmentIdentifier());
     }
 
     @Test
