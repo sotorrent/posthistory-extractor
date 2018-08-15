@@ -561,6 +561,12 @@ class UrlExtractionTest {
         assertEquals("reference/android/provider/CalendarContract.EventsColumns.html", link.getUrlObject().getPath());
         assertNull(link.getUrlObject().getQuery());
         assertEquals("DURATION", link.getUrlObject().getFragmentIdentifier());
+
+        link = Link.extractBare("https://example.com%").get(0);
+        assertEquals("https://example.com", link.getUrlString());
+        assertNull(link.getUrlObject().getPath());
+        assertNull(link.getUrlObject().getQuery());
+        assertNull(link.getUrlObject().getFragmentIdentifier());
     }
 
     @Test
