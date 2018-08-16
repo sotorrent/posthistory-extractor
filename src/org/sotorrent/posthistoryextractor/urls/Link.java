@@ -4,7 +4,6 @@ import org.sotorrent.util.LogUtils;
 import org.sotorrent.util.URL;
 
 import java.io.IOException;
-import java.lang.invoke.MethodHandles;
 import java.net.MalformedURLException;
 import java.util.LinkedList;
 import java.util.List;
@@ -112,7 +111,7 @@ public class Link {
                     extractedLinks.add(extractedLink);
                 }
             } catch (MalformedURLException e) {
-                logger.warning("Malformed " + MethodHandles.lookup().lookupClass() + " URL: " + url);
+                logger.warning("Malformed URL: " + url);
             }
         }
 
