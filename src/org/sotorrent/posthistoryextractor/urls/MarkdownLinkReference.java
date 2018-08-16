@@ -52,7 +52,7 @@ public class MarkdownLinkReference extends Link {
                 extractedLinks.add(extractedLink);
                 mergedLinks = mergeUsagesAndDefinitions(extractedLinks);
             } catch (MalformedURLException e) {
-                logger.warning("Malformed URL: " + url);
+                logger.info("Malformed URL: " + url);
             }
         }
 

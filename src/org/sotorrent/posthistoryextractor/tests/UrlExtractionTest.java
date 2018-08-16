@@ -486,10 +486,10 @@ class UrlExtractionTest {
             link = new Link("https://khaccounts.net//");
             assertNull(link.getUrlObject().getPath());
 
-            link = new Link("http://www.websitetest/&#xA");
+            link = new Link("http://www.websitetest.com/&#xA");
             assertNull(link.getUrlObject().getPath());
 
-            link = new Link("http://www.websitetest/&#xD;");
+            link = new Link("http://www.websitetest.com/&#xD;");
             assertNull(link.getUrlObject().getPath());
 
             link = new Link("http://jquery.com/:");
@@ -513,7 +513,7 @@ class UrlExtractionTest {
             assertEquals("http://www.sybase.com/detail?id=1056497", link.getUrlString());
             assertEquals("detail", link.getUrlObject().getPath());
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            Link.logger.warning(e.getMessage());
         }
     }
 
@@ -588,22 +588,6 @@ class UrlExtractionTest {
         assertEquals("reference/android/provider/CalendarContract.EventsColumns.html", link.getUrlObject().getPath());
         assertNull(link.getUrlObject().getQuery());
         assertEquals("DURATION", link.getUrlObject().getFragmentIdentifier());
-
-        link = Link.extractBare("https://example.com%").get(0);
-        assertEquals("https://example.com", link.getUrlString());
-        assertEquals("example.com", link.getUrlObject().getRootDomain());
-        assertEquals("example.com", link.getUrlObject().getCompleteDomain());
-        assertNull(link.getUrlObject().getPath());
-        assertNull(link.getUrlObject().getQuery());
-        assertNull(link.getUrlObject().getFragmentIdentifier());
-
-        link = Link.extractBare("http://mywebaddress.com%2ftransid=123").get(0);
-        assertEquals("http://mywebaddress.com%2ftransid=123", link.getUrlString());
-        assertEquals("mywebaddress.com", link.getUrlObject().getRootDomain());
-        assertEquals("mywebaddress.com", link.getUrlObject().getCompleteDomain());
-        assertNull(link.getUrlObject().getPath());
-        assertNull(link.getUrlObject().getQuery());
-        assertNull(link.getUrlObject().getFragmentIdentifier());
     }
 
     @Test
@@ -654,5 +638,31 @@ class UrlExtractionTest {
         PostVersion version_1 = a_38542344.getFirst();
         extractedUrls = Link.extractTyped(version_1.getContent());
         assertEquals(0, extractedUrls.size());
+    }
+
+    @Test
+    void testMalformedURLs() {
+        Link link;
+
+        link = Link.extractBare("https://example.com%").get(0);
+        assertEquals("https://example.com", link.getUrlString());
+        assertEquals("example.com", link.getUrlObject().getRootDomain());
+        assertEquals("example.com", link.getUrlObject().getCompleteDomain());
+        assertNull(link.getUrlObject().getPath());
+        assertNull(link.getUrlObject().getQuery());
+        assertNull(link.getUrlObject().getFragmentIdentifier());
+
+        link = Link.extractBare("http://mywebaddress.com%2ftransid=123").get(0);
+        assertEquals("http://mywebaddress.com", link.getUrlString());
+        assertEquals("mywebaddress.com", link.getUrlObject().getRootDomain());
+        assertEquals("mywebaddress.com", link.getUrlObject().getCompleteDomain());
+        assertNull(link.getUrlObject().getPath());
+        assertNull(link.getUrlObject().getQuery());
+        assertNull(link.getUrlObject().getFragmentIdentifier());
+
+        List<Link> extractedLinks;
+
+        extractedLinks = Link.extractTyped("http://www.rolfje..com/2008/11/04/transporting-oracle-chars-over-a-dblink/");
+        assertEquals(0, extractedLinks.size());
     }
 }

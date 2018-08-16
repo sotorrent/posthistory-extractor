@@ -32,7 +32,7 @@ public class AnchorLink extends Link {
                     extractedLinks.add(extractedLink);
                 }
             } catch (MalformedURLException e) {
-                logger.warning("Malformed URL: " + url);
+                logger.info("Malformed URL: " + url);
             }
         }
 

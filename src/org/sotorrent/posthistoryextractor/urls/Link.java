@@ -13,7 +13,7 @@ import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
 public class Link {
-    static Logger logger = null;
+    public static Logger logger = null;
 
     String fullMatch;
     String anchor; // the link anchor visible to the user
@@ -111,7 +111,7 @@ public class Link {
                     extractedLinks.add(extractedLink);
                 }
             } catch (MalformedURLException e) {
-                logger.warning("Malformed URL: " + url);
+                logger.info("Malformed URL: " + url);
             }
         }
 
