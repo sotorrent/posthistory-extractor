@@ -602,6 +602,12 @@ class UrlExtractionTest {
             link = new Link("https://code.google.com/p/android/issues/detail?id=78471&colspec=id%20type%20status%20owner%20summary%20stars");
             assertEquals("p/android/issues/detail", link.getUrlObject().getPath());
             assertEquals("id=78471&colspec=id%20type%20status%20owner%20summary%20stars", link.getUrlObject().getQuery());
+
+            link = new Link("https://developer.android.com/reference/android/location/LocationManager.html#requestLocationUpdates(java.lang.String,%20long,%20float,%20android.app.PendingIntent)");
+            assertEquals("https://developer.android.com/reference/android/location/LocationManager.html#requestLocationUpdates(java.lang.String,%20long,%20float,%20android.app.PendingIntent)", link.getUrlObject().getUrlString());
+            assertEquals("reference/android/location/LocationManager.html", link.getUrlObject().getPath());
+            assertNull(link.getUrlObject().getQuery());
+            assertEquals("requestLocationUpdates(java.lang.String,%20long,%20float,%20android.app.PendingIntent)", link.getUrlObject().getFragmentIdentifier());
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
