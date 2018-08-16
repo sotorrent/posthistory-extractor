@@ -608,6 +608,12 @@ class UrlExtractionTest {
             assertEquals("reference/android/location/LocationManager.html", link.getUrlObject().getPath());
             assertNull(link.getUrlObject().getQuery());
             assertEquals("requestLocationUpdates(java.lang.String,%20long,%20float,%20android.app.PendingIntent)", link.getUrlObject().getFragmentIdentifier());
+
+            link = new Link("http://hc.apache.org/httpcomponents-client-ga/httpclient/apidocs/org/apache/http/client/methods/HttpGet.html#HttpGet(java.net.URI)");
+            assertEquals("http://hc.apache.org/httpcomponents-client-ga/httpclient/apidocs/org/apache/http/client/methods/HttpGet.html#HttpGet(java.net.URI)", link.getUrlObject().getUrlString());
+            assertEquals("httpcomponents-client-ga/httpclient/apidocs/org/apache/http/client/methods/HttpGet.html", link.getUrlObject().getPath());
+            assertNull(link.getUrlObject().getQuery());
+            assertEquals("HttpGet(java.net.URI)", link.getUrlObject().getFragmentIdentifier());
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
