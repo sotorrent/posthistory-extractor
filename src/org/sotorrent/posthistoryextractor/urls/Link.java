@@ -1,27 +1,43 @@
 package org.sotorrent.posthistoryextractor.urls;
 
+import org.sotorrent.util.LogUtils;
 import org.sotorrent.util.URL;
 
+import java.io.IOException;
+import java.lang.invoke.MethodHandles;
+import java.net.MalformedURLException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
 public class Link {
+    static Logger logger = null;
+
     String fullMatch;
     String anchor; // the link anchor visible to the user
     String reference; // internal Markdown reference for the link
     String title;
-    URL urlObject;
+    private URL urlObject;
+
+    static {
+        // configure logger
+        try {
+            logger = LogUtils.getClassLogger(Link.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public Link() {}
 
-    public Link(String url) {
+    public Link(String url) throws MalformedURLException {
         setUrl(url);
     }
 
-    public void setUrl(String url) {
+    public void setUrl(String url) throws MalformedURLException {
         this.urlObject = new URL(url);
     }
 
@@ -87,11 +103,16 @@ public class Link {
             if (URL.inInlineCode(urlMatcher, markdownContent)) {
                 continue;
             }
-            Link extractedLink = new Link(urlMatcher.group(0).trim());
-            // for bare links, the full match is equal to the matched url
-            extractedLink.fullMatch = extractedLink.getUrlString();
-            if (extractedLink.fullMatch.trim().length() > 0) {
-                extractedLinks.add(extractedLink);
+            String url = urlMatcher.group(0);
+            try {
+                Link extractedLink = new Link(url);
+                // for bare links, the full match is equal to the matched url
+                extractedLink.fullMatch = extractedLink.getUrlString();
+                if (extractedLink.fullMatch.trim().length() > 0) {
+                    extractedLinks.add(extractedLink);
+                }
+            } catch (MalformedURLException e) {
+                logger.warning("Malformed " + MethodHandles.lookup().lookupClass() + " URL: " + url);
             }
         }
 
@@ -123,18 +144,7 @@ public class Link {
             }
         }
 
-        // validate the extracted links (possible issues include posts 36273118 and 37625877 with "double[][]" and anchor tags where href does not point to a valid URL)
-        List<Link> validLinks = new LinkedList<>();
-        for (Link currentLink : extractedLinks) {
-            if (currentLink.getUrlString() != null) {
-                Matcher urlMatcher = URL.urlPattern.matcher(currentLink.getUrlString().trim());
-                if (urlMatcher.matches()) {
-                    validLinks.add(currentLink);
-                }
-            }
-        }
-
-        return validLinks;
+        return extractedLinks;
     }
 
     public static String normalizeLinks(String markdownContent, List<Link> extractedLinks) {

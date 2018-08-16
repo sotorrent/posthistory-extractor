@@ -2,6 +2,8 @@ package org.sotorrent.posthistoryextractor.urls;
 
 import org.sotorrent.util.URL;
 
+import java.lang.invoke.MethodHandles;
+import java.net.MalformedURLException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -19,7 +21,7 @@ public class MarkdownLinkInline extends Link {
 
     private static final Pattern pattern = Pattern.compile("\\[([^]]+)]\\(\\s*(" + URL.urlRegex + ")?(?:\\s+\"([^\"]+)\")?\\s*\\)", Pattern.CASE_INSENSITIVE);
 
-    public static List<Link> extract(String markdownContent) {
+    static List<Link> extract(String markdownContent) {
         LinkedList<Link> extractedLinks = new LinkedList<>();
         Matcher matcher = pattern.matcher(markdownContent);
 
@@ -28,13 +30,18 @@ public class MarkdownLinkInline extends Link {
                 continue;
             }
             MarkdownLinkInline extractedLink = new MarkdownLinkInline();
-            extractedLink.fullMatch = matcher.group(0);
-            extractedLink.anchor = matcher.group(1);
-            extractedLink.setUrl(matcher.group(2));
-            extractedLink.title = matcher.group(3);
-            // e.g., [`tr///`]()
-            if (!extractedLink.getUrlObject().isEmpty()) {
-                extractedLinks.add(extractedLink);
+            String url = matcher.group(2);
+            try {
+                extractedLink.setUrl(url);
+                extractedLink.fullMatch = matcher.group(0);
+                extractedLink.anchor = matcher.group(1);
+                extractedLink.title = matcher.group(3);
+                // e.g., [`tr///`]()
+                if (!extractedLink.getUrlObject().isEmpty()) {
+                    extractedLinks.add(extractedLink);
+                }
+            } catch (MalformedURLException e) {
+                logger.warning("Malformed " + MethodHandles.lookup().lookupClass() + " URL: " + url);
             }
         }
 

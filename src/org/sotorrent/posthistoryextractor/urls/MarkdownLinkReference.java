@@ -2,6 +2,8 @@ package org.sotorrent.posthistoryextractor.urls;
 
 import org.sotorrent.util.URL;
 
+import java.lang.invoke.MethodHandles;
+import java.net.MalformedURLException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -26,7 +28,7 @@ public class MarkdownLinkReference extends Link {
     private static final Pattern patternUsages = Pattern.compile("\\[([^]]*)]\\[(\\s*.*?\\s*)]", Pattern.CASE_INSENSITIVE);
     private static final Pattern patternDefinitions = Pattern.compile("(?:\\[([^]]+)]:\\s*(" + URL.urlRegex + ")?)(?:\\s+\"(.*)\")?", Pattern.CASE_INSENSITIVE);
 
-    public static List<Link> extract(String markdownContent) {
+    static List<Link> extract(String markdownContent) {
         LinkedList<MarkdownLinkReference> extractedLinks = new LinkedList<>();
 
         Matcher matcher = patternUsages.matcher(markdownContent);
@@ -38,21 +40,28 @@ public class MarkdownLinkReference extends Link {
             extractedLinks.add(extractedLink);
         }
 
+        List<Link> mergedLinks = new LinkedList<>();
         matcher = patternDefinitions.matcher(markdownContent);
         while (matcher.find()) {
             MarkdownLinkReference extractedLink = new MarkdownLinkReference();
-            extractedLink.fullMatch = matcher.group(0);
-            extractedLink.reference = matcher.group(1);
-            extractedLink.setUrl(matcher.group(2));
-            extractedLink.title = matcher.group(3);
-            extractedLinks.add(extractedLink);
+            String url = matcher.group(2);
+            try {
+                extractedLink.setUrl(url);
+                extractedLink.fullMatch = matcher.group(0);
+                extractedLink.reference = matcher.group(1);
+                extractedLink.title = matcher.group(3);
+                extractedLinks.add(extractedLink);
+                mergedLinks = mergeUsagesAndDefinitions(extractedLinks);
+            } catch (MalformedURLException e) {
+                logger.warning("Malformed " + MethodHandles.lookup().lookupClass() + " URL: " + url);
+            }
         }
 
-        return mergeUsagesAndDefinitions(extractedLinks);
+        return mergedLinks;
     }
 
-    private static List<Link> mergeUsagesAndDefinitions(List<MarkdownLinkReference> extractedLinks) {
-        LinkedList<Link> mergedLinks = new LinkedList<>();
+    private static List<Link> mergeUsagesAndDefinitions(List<MarkdownLinkReference> extractedLinks) throws MalformedURLException {
+        List<Link> mergedLinks = new LinkedList<>();
 
         for (Link link1 : extractedLinks) {
             if (link1.anchor != null && link1.getUrlString() == null && link1.reference != null) {

@@ -8,12 +8,14 @@ import org.sotorrent.posthistoryextractor.version.PostVersionList;
 import org.junit.jupiter.api.Test;
 import org.sotorrent.util.URL;
 
+import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.sotorrent.posthistoryextractor.tests.PostVersionHistoryTest.pathToPostVersionLists;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.junit.MatcherAssert.assertThat;
@@ -37,25 +39,36 @@ class UrlExtractionTest {
         PostVersionList a_33 = PostVersionList.readFromCSV(pathToPostVersionLists, 33, Posts.ANSWER_ID);
 
         PostVersion version_1 = a_33.getFirst();
-        List<Link> extractedUrls = Link.extractTyped(version_1.getContent());
+        List<Link> extractedLinks = Link.extractTyped(version_1.getContent());
 
-        assertEquals(2, extractedUrls.size());
+        assertEquals(2, extractedLinks.size());
 
-        assertEquals("[reference](http://msdn.microsoft.com/en-us/library/system.math.truncate.aspx)", extractedUrls.get(0).getFullMatch());
-        assertEquals("reference", extractedUrls.get(0).getAnchor());
-        assertNull(extractedUrls.get(0).getReference());
-        assertEquals("http://msdn.microsoft.com/en-us/library/system.math.truncate.aspx", extractedUrls.get(0).getUrlString());
-        assertEquals("msdn.microsoft.com", extractedUrls.get(0).getUrlObject().getCompleteDomain());
-        assertNull(extractedUrls.get(0).getTitle());
-        assertThat(extractedUrls.get(0), instanceOf(MarkdownLinkInline.class));
+        assertEquals("[reference](http://msdn.microsoft.com/en-us/library/system.math.truncate.aspx)", extractedLinks.get(0).getFullMatch());
+        assertEquals("reference", extractedLinks.get(0).getAnchor());
+        assertNull(extractedLinks.get(0).getReference());
+        assertEquals("http://msdn.microsoft.com/en-us/library/system.math.truncate.aspx", extractedLinks.get(0).getUrlString());
+        assertEquals("msdn.microsoft.com", extractedLinks.get(0).getUrlObject().getCompleteDomain());
+        assertNull(extractedLinks.get(0).getTitle());
+        assertThat(extractedLinks.get(0), instanceOf(MarkdownLinkInline.class));
 
-        assertEquals("[Reference.](http://msdn.microsoft.com/en-us/library/system.math.round.aspx)", extractedUrls.get(1).getFullMatch());
-        assertEquals("Reference.", extractedUrls.get(1).getAnchor());
-        assertNull(extractedUrls.get(1).getReference());
-        assertEquals("http://msdn.microsoft.com/en-us/library/system.math.round.aspx", extractedUrls.get(1).getUrlString());
-        assertEquals("msdn.microsoft.com", extractedUrls.get(1).getUrlObject().getCompleteDomain());
-        assertNull(extractedUrls.get(1).getTitle());
-        assertThat(extractedUrls.get(1), instanceOf(MarkdownLinkInline.class));
+        assertEquals("[Reference.](http://msdn.microsoft.com/en-us/library/system.math.round.aspx)", extractedLinks.get(1).getFullMatch());
+        assertEquals("Reference.", extractedLinks.get(1).getAnchor());
+        assertNull(extractedLinks.get(1).getReference());
+        assertEquals("http://msdn.microsoft.com/en-us/library/system.math.round.aspx", extractedLinks.get(1).getUrlString());
+        assertEquals("msdn.microsoft.com", extractedLinks.get(1).getUrlObject().getCompleteDomain());
+        assertNull(extractedLinks.get(1).getTitle());
+        assertThat(extractedLinks.get(1), instanceOf(MarkdownLinkInline.class));
+
+        // malformed URL
+        extractedLinks = Link.extractTyped("double[][] double[]() [anchor](http///msdn.microsoft.com/en-us/library/system.math.round.aspx)");
+        assertEquals(0, extractedLinks.size());
+
+        // post that could lead to issues (contains, e.g., double[][])
+        PostVersionList q_37625877 = PostVersionList.readFromCSV(pathToPostVersionLists, 37625877, Posts.QUESTION_ID);
+        assertEquals(2, q_37625877.size());
+        PostVersion version_2 = q_37625877.get(1);
+        extractedLinks = Link.extractTyped(version_2.getContent());
+        assertEquals(0, extractedLinks.size());
     }
 
     @Test
@@ -118,6 +131,10 @@ class UrlExtractionTest {
         assertEquals("msdn.microsoft.com", extractedUrls.get(1).getUrlObject().getCompleteDomain());
         assertNull(extractedUrls.get(1).getTitle());
         assertThat(extractedUrls.get(1), instanceOf(AnchorLink.class));
+
+        // malformed URL
+        List<Link> extractedLinks = Link.extractTyped("<a href=\"http///msdn.microsoft.com/en-us/library/system.windows.controls.textbox.selectionlength.aspx\">SelectionLength</a>");
+        assertEquals(0, extractedLinks.size());
     }
 
     @Test
@@ -391,21 +408,25 @@ class UrlExtractionTest {
     void testFragmentsAndPathDomain() {
         Link link;
 
-        link = new Link("http://en.wikipedia.org/wiki/regular_expression#syntax");
-        assertEquals("wiki/regular_expression", link.getUrlObject().getPath());
-        assertEquals("syntax", link.getUrlObject().getFragmentIdentifier());
+        try {
+            link = new Link("http://en.wikipedia.org/wiki/regular_expression#syntax");
+            assertEquals("wiki/regular_expression", link.getUrlObject().getPath());
+            assertEquals("syntax", link.getUrlObject().getFragmentIdentifier());
 
-        link = new Link("http://www.regular-expressions.info/lookaround.html");
-        assertEquals("lookaround.html", link.getUrlObject().getPath());
-        assertNull(link.getUrlObject().getFragmentIdentifier());
+            link = new Link("http://www.regular-expressions.info/lookaround.html");
+            assertEquals("lookaround.html", link.getUrlObject().getPath());
+            assertNull(link.getUrlObject().getFragmentIdentifier());
 
-        link = new Link("https://docs.oracle.com/");
-        assertNull(link.getUrlObject().getPath());
-        assertNull(link.getUrlObject().getFragmentIdentifier());
+            link = new Link("https://docs.oracle.com/");
+            assertNull(link.getUrlObject().getPath());
+            assertNull(link.getUrlObject().getFragmentIdentifier());
 
-        link = new Link("https://docs.oracle.com");
-        assertNull(link.getUrlObject().getPath());
-        assertNull(link.getUrlObject().getFragmentIdentifier());
+            link = new Link("https://docs.oracle.com");
+            assertNull(link.getUrlObject().getPath());
+            assertNull(link.getUrlObject().getFragmentIdentifier());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
@@ -458,38 +479,42 @@ class UrlExtractionTest {
     void testPunctuationAndWhitespaceRemoval() {
         Link link;
 
-        link = new Link("http://weblogs.sqlteam.com/.");
-        assertNull(link.getUrlObject().getPath());
+        try {
+            link = new Link("http://weblogs.sqlteam.com/.");
+            assertNull(link.getUrlObject().getPath());
 
-        link = new Link("https://khaccounts.net//");
-        assertNull(link.getUrlObject().getPath());
+            link = new Link("https://khaccounts.net//");
+            assertNull(link.getUrlObject().getPath());
 
-        link = new Link("http://www.websitetest/&#xA");
-        assertNull(link.getUrlObject().getPath());
+            link = new Link("http://www.websitetest/&#xA");
+            assertNull(link.getUrlObject().getPath());
 
-        link = new Link("http://www.websitetest/&#xD;");
-        assertNull(link.getUrlObject().getPath());
+            link = new Link("http://www.websitetest/&#xD;");
+            assertNull(link.getUrlObject().getPath());
 
-        link = new Link("http://jquery.com/:");
-        assertNull(link.getUrlObject().getPath());
+            link = new Link("http://jquery.com/:");
+            assertNull(link.getUrlObject().getPath());
 
-        new Link(null); // should not throw a NullPointerException
+            new Link(null); // should not throw a NullPointerException
 
-        link = new Link("http://stackoverflow.com/questions/31423480/memsql-leaf-down-on-single-server-cluster/35270224.");
-        assertEquals("http://stackoverflow.com/questions/31423480/memsql-leaf-down-on-single-server-cluster/35270224", link.getUrlString());
-        assertEquals("questions/31423480/memsql-leaf-down-on-single-server-cluster/35270224", link.getUrlObject().getPath());
+            link = new Link("http://stackoverflow.com/questions/31423480/memsql-leaf-down-on-single-server-cluster/35270224.");
+            assertEquals("http://stackoverflow.com/questions/31423480/memsql-leaf-down-on-single-server-cluster/35270224", link.getUrlString());
+            assertEquals("questions/31423480/memsql-leaf-down-on-single-server-cluster/35270224", link.getUrlObject().getPath());
 
-        link = new Link("http://stackoverflow.com/questions/31423480/memsql-leaf-down-on-single-server-cluster/35270224/.");
-        assertEquals("http://stackoverflow.com/questions/31423480/memsql-leaf-down-on-single-server-cluster/35270224/", link.getUrlString());
-        assertEquals("questions/31423480/memsql-leaf-down-on-single-server-cluster/35270224", link.getUrlObject().getPath());
+            link = new Link("http://stackoverflow.com/questions/31423480/memsql-leaf-down-on-single-server-cluster/35270224/.");
+            assertEquals("http://stackoverflow.com/questions/31423480/memsql-leaf-down-on-single-server-cluster/35270224/", link.getUrlString());
+            assertEquals("questions/31423480/memsql-leaf-down-on-single-server-cluster/35270224", link.getUrlObject().getPath());
 
-        link = new Link("http://www.mediawiki.org/wiki/Manual:");
-        assertEquals("http://www.mediawiki.org/wiki/Manual", link.getUrlString());
-        assertEquals("wiki/Manual", link.getUrlObject().getPath());
+            link = new Link("http://www.mediawiki.org/wiki/Manual:");
+            assertEquals("http://www.mediawiki.org/wiki/Manual", link.getUrlString());
+            assertEquals("wiki/Manual", link.getUrlObject().getPath());
 
-        link = new Link("http://www.sybase.com/detail?id=1056497,");
-        assertEquals("http://www.sybase.com/detail?id=1056497", link.getUrlString());
-        assertEquals("detail", link.getUrlObject().getPath());
+            link = new Link("http://www.sybase.com/detail?id=1056497,");
+            assertEquals("http://www.sybase.com/detail?id=1056497", link.getUrlString());
+            assertEquals("detail", link.getUrlObject().getPath());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
@@ -558,12 +583,24 @@ class UrlExtractionTest {
 
         link = Link.extractBare("https://developer.android.com/reference/android/provider/CalendarContract.EventsColumns.html?#DURATION").get(0);
         assertEquals("https://developer.android.com/reference/android/provider/CalendarContract.EventsColumns.html?#DURATION", link.getUrlString());
+        assertEquals("android.com", link.getUrlObject().getRootDomain());
+        assertEquals("developer.android.com", link.getUrlObject().getCompleteDomain());
         assertEquals("reference/android/provider/CalendarContract.EventsColumns.html", link.getUrlObject().getPath());
         assertNull(link.getUrlObject().getQuery());
         assertEquals("DURATION", link.getUrlObject().getFragmentIdentifier());
 
         link = Link.extractBare("https://example.com%").get(0);
         assertEquals("https://example.com", link.getUrlString());
+        assertEquals("example.com", link.getUrlObject().getRootDomain());
+        assertEquals("example.com", link.getUrlObject().getCompleteDomain());
+        assertNull(link.getUrlObject().getPath());
+        assertNull(link.getUrlObject().getQuery());
+        assertNull(link.getUrlObject().getFragmentIdentifier());
+
+        link = Link.extractBare("http://mywebaddress.com%2ftransid=123").get(0);
+        assertEquals("http://mywebaddress.com%2ftransid=123", link.getUrlString());
+        assertEquals("mywebaddress.com", link.getUrlObject().getRootDomain());
+        assertEquals("mywebaddress.com", link.getUrlObject().getCompleteDomain());
         assertNull(link.getUrlObject().getPath());
         assertNull(link.getUrlObject().getQuery());
         assertNull(link.getUrlObject().getFragmentIdentifier());
@@ -573,13 +610,17 @@ class UrlExtractionTest {
     void testQueryExtraction() {
         Link link;
 
-        link = new Link("http://code.google.com/p/android/issues/detail?id=4611");
-        assertEquals("p/android/issues/detail", link.getUrlObject().getPath());
-        assertEquals("id=4611", link.getUrlObject().getQuery());
+        try {
+            link = new Link("http://code.google.com/p/android/issues/detail?id=4611");
+            assertEquals("p/android/issues/detail", link.getUrlObject().getPath());
+            assertEquals("id=4611", link.getUrlObject().getQuery());
 
-        link = new Link("https://code.google.com/p/android/issues/detail?id=78471&colspec=id%20type%20status%20owner%20summary%20stars");
-        assertEquals("p/android/issues/detail", link.getUrlObject().getPath());
-        assertEquals("id=78471&colspec=id%20type%20status%20owner%20summary%20stars", link.getUrlObject().getQuery());
+            link = new Link("https://code.google.com/p/android/issues/detail?id=78471&colspec=id%20type%20status%20owner%20summary%20stars");
+            assertEquals("p/android/issues/detail", link.getUrlObject().getPath());
+            assertEquals("id=78471&colspec=id%20type%20status%20owner%20summary%20stars", link.getUrlObject().getQuery());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
