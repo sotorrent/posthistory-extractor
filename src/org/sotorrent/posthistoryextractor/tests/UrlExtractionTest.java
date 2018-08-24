@@ -672,8 +672,24 @@ class UrlExtractionTest {
         assertNull(link.getUrlObject().getQuery());
         assertNull(link.getUrlObject().getFragmentIdentifier());
 
-        List<Link> extractedLinks;
+        // this URL should not be treated as malformed
+        link = Link.extractBare("http://stackoverflow.com/questions/43810934/android-killing-background-acitivities/43811128?noredirect=1#").get(0);
+        assertEquals("http://stackoverflow.com/questions/43810934/android-killing-background-acitivities/43811128?noredirect=1", link.getUrlString());
+        assertEquals("stackoverflow.com", link.getUrlObject().getRootDomain());
+        assertEquals("stackoverflow.com", link.getUrlObject().getCompleteDomain());
+        assertEquals("questions/43810934/android-killing-background-acitivities/43811128", link.getUrlObject().getPath());
+        assertEquals("noredirect=1", link.getUrlObject().getQuery());
+        assertNull(link.getUrlObject().getFragmentIdentifier());
+        boolean exceptionThrown = false;
+        try {
+            link = new Link("http://stackoverflow.com/questions/43810934/android-killing-background-acitivities/43811128?noredirect=1#");
+            assertEquals("http://stackoverflow.com/questions/43810934/android-killing-background-acitivities/43811128?noredirect=1", link.getUrlString());
+        } catch (MalformedURLException e) {
+            exceptionThrown = true;
+        }
+        assertFalse(exceptionThrown);
 
+        List<Link> extractedLinks;
         extractedLinks = Link.extractTyped("http://www.rolfje..com/2008/11/04/transporting-oracle-chars-over-a-dblink/");
         assertEquals(0, extractedLinks.size());
     }
