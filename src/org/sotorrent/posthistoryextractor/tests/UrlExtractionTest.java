@@ -512,6 +512,10 @@ class UrlExtractionTest {
             link = new Link("http://www.sybase.com/detail?id=1056497,");
             assertEquals("http://www.sybase.com/detail?id=1056497", link.getUrlString());
             assertEquals("detail", link.getUrlObject().getPath());
+
+            link = new Link("http://stackoverflow.com/questions/7341017/spritesheet-programmatically-cutting-best-practices..,&#xA.&#xD,");
+            assertEquals("http://stackoverflow.com/questions/7341017/spritesheet-programmatically-cutting-best-practices", link.getUrlString());
+            assertEquals("questions/7341017/spritesheet-programmatically-cutting-best-practices", link.getUrlObject().getPath());
         } catch (MalformedURLException e) {
             Link.logger.warning(e.getMessage());
         }
