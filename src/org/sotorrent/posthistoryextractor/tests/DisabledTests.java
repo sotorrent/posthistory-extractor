@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 class DisabledTests {
     private static Logger logger;
     private static Path pathToHibernateConfig = Paths.get("hibernate", "hibernate.cfg.xml");
-    private static final String SOTORRENT_VERSION = "sotorrent_2018-08-17";
+    private static final String SOTORRENT_VERSION = "sotorrent_2018-08-28";
     // these posts are ignored below because they have a separate test case in PostVersionHistoryTest.java
     private static final Set<Integer> POSTS_WITH_TEST_CASE = Sets.newHashSet(5864258, 9875710);
     // posts without post blocks
@@ -222,11 +222,11 @@ class DisabledTests {
 
             String postVersionUrlsQuery = "select count(*) from PostVersionUrl";
             long postVersionUrls = (long) session.createQuery(postVersionUrlsQuery).list().get(0);
-            assertEquals(31627885, postVersionUrls);
+            assertEquals(31628361, postVersionUrls);
 
             String postReferenceGHQuery = "select count(*) from PostReferenceGH";
             long postReferenceGH = (long) session.createQuery(postReferenceGHQuery).list().get(0);
-            assertEquals(6034277, postReferenceGH);
+            assertEquals(6035737, postReferenceGH);
 
             String titleVersionQuery = "select count(*) from TitleVersion";
             long titleVersions = (long) session.createQuery(titleVersionQuery).list().get(0);
@@ -236,7 +236,7 @@ class DisabledTests {
         try (StatelessSession session = CommentsIterator.sessionFactory.openStatelessSession()) {
             String commentUrlQuery = "select count(*) from CommentUrl";
             long commentUrls = (long) session.createQuery(commentUrlQuery).list().get(0);
-            assertEquals(6856477, commentUrls);
+            assertEquals(6856777, commentUrls);
         }
     }
 }
