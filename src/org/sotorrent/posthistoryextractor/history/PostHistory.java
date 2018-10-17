@@ -26,8 +26,6 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @Entity
 @Table(name="PostHistory")
 public class PostHistory {
@@ -594,7 +592,7 @@ public class PostHistory {
                     }
 
                     int id = Integer.parseInt(record.get("Id"));
-                    assertEquals(postId, Integer.parseInt(record.get("PostId")));
+                    assert postId == Integer.parseInt(record.get("PostId"));
                     String userId = record.get("UserId");
                     String revisionGuid = record.get("RevisionGUID");
                     Timestamp creationDate = Timestamp.valueOf(record.get("CreationDate"));

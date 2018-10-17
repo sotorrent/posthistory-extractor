@@ -1,5 +1,3 @@
-package org.sotorrent.posthistoryextractor.tests;
-
 import org.sotorrent.posthistoryextractor.comments.Comments;
 import org.sotorrent.posthistoryextractor.history.Posts;
 import org.sotorrent.posthistoryextractor.urls.*;
@@ -16,7 +14,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.sotorrent.posthistoryextractor.tests.PostVersionHistoryTest.pathToPostVersionLists;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.junit.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -36,7 +33,7 @@ class UrlExtractionTest {
         [Reference.](http://msdn.microsoft.com/en-us/library/system.math.round.aspx)
          */
 
-        PostVersionList a_33 = PostVersionList.readFromCSV(pathToPostVersionLists, 33, Posts.ANSWER_ID);
+        PostVersionList a_33 = PostVersionList.readFromCSV(PostVersionHistoryTest.pathToPostVersionLists, 33, Posts.ANSWER_ID);
 
         PostVersion version_1 = a_33.getFirst();
         List<Link> extractedLinks = Link.extractTyped(version_1.getContent());
@@ -64,7 +61,7 @@ class UrlExtractionTest {
         assertEquals(0, extractedLinks.size());
 
         // post that could lead to issues (contains, e.g., double[][])
-        PostVersionList q_37625877 = PostVersionList.readFromCSV(pathToPostVersionLists, 37625877, Posts.QUESTION_ID);
+        PostVersionList q_37625877 = PostVersionList.readFromCSV(PostVersionHistoryTest.pathToPostVersionLists, 37625877, Posts.QUESTION_ID);
         assertEquals(2, q_37625877.size());
         PostVersion version_2 = q_37625877.get(1);
         extractedLinks = Link.extractTyped(version_2.getContent());
@@ -79,7 +76,7 @@ class UrlExtractionTest {
 
         [1]: http://msdn.microsoft.com/en-us/library/system.threading.manualresetevent.aspx "MSDN Reference"
          */
-        PostVersionList a_44 = PostVersionList.readFromCSV(pathToPostVersionLists, 44, Posts.ANSWER_ID);
+        PostVersionList a_44 = PostVersionList.readFromCSV(PostVersionHistoryTest.pathToPostVersionLists, 44, Posts.ANSWER_ID);
 
         PostVersion version_1 = a_44.getFirst();
         List<Link> extractedUrls = Link.extractTyped(version_1.getContent());
@@ -109,7 +106,7 @@ class UrlExtractionTest {
         Disappointing answer - I bet you were hoping for some slick XAML code :-)
          */
 
-        PostVersionList a_1629423 = PostVersionList.readFromCSV(pathToPostVersionLists, 1629423, Posts.ANSWER_ID);
+        PostVersionList a_1629423 = PostVersionList.readFromCSV(PostVersionHistoryTest.pathToPostVersionLists, 1629423, Posts.ANSWER_ID);
 
         PostVersion version_1 = a_1629423.getFirst();
         List<Link> extractedUrls = Link.extractTyped(version_1.getContent());
@@ -168,7 +165,7 @@ class UrlExtractionTest {
             }
          */
 
-        PostVersionList a_52 = PostVersionList.readFromCSV(pathToPostVersionLists, 52, Posts.ANSWER_ID);
+        PostVersionList a_52 = PostVersionList.readFromCSV(PostVersionHistoryTest.pathToPostVersionLists, 52, Posts.ANSWER_ID);
 
         PostVersion version_1 = a_52.getFirst();
         List<Link> extractedUrls = Link.extractTyped(version_1.getContent());
@@ -202,7 +199,7 @@ class UrlExtractionTest {
         Essentially you just try to update a column that doesn't exist.
          */
 
-        PostVersionList a_49 = PostVersionList.readFromCSV(pathToPostVersionLists, 49, Posts.ANSWER_ID);
+        PostVersionList a_49 = PostVersionList.readFromCSV(PostVersionHistoryTest.pathToPostVersionLists, 49, Posts.ANSWER_ID);
 
         PostVersion version_1 = a_49.getFirst();
         List<Link> extractedUrls = Link.extractTyped(version_1.getContent());
@@ -230,11 +227,11 @@ class UrlExtractionTest {
 
     @Test
     void testNormalizationOfPostVersionLists(){
-        PostVersionList a_33 = PostVersionList.readFromCSV(pathToPostVersionLists, 33, Posts.ANSWER_ID);
-        PostVersionList a_44 = PostVersionList.readFromCSV(pathToPostVersionLists, 44, Posts.ANSWER_ID);
-        PostVersionList a_49 = PostVersionList.readFromCSV(pathToPostVersionLists, 49, Posts.ANSWER_ID);
-        PostVersionList a_52 = PostVersionList.readFromCSV(pathToPostVersionLists, 52, Posts.ANSWER_ID);
-        PostVersionList a_1629423 = PostVersionList.readFromCSV(pathToPostVersionLists, 1629423, Posts.ANSWER_ID);
+        PostVersionList a_33 = PostVersionList.readFromCSV(PostVersionHistoryTest.pathToPostVersionLists, 33, Posts.ANSWER_ID);
+        PostVersionList a_44 = PostVersionList.readFromCSV(PostVersionHistoryTest.pathToPostVersionLists, 44, Posts.ANSWER_ID);
+        PostVersionList a_49 = PostVersionList.readFromCSV(PostVersionHistoryTest.pathToPostVersionLists, 49, Posts.ANSWER_ID);
+        PostVersionList a_52 = PostVersionList.readFromCSV(PostVersionHistoryTest.pathToPostVersionLists, 52, Posts.ANSWER_ID);
+        PostVersionList a_1629423 = PostVersionList.readFromCSV(PostVersionHistoryTest.pathToPostVersionLists, 1629423, Posts.ANSWER_ID);
 
         LinkedList<Link> extractedLinks = new LinkedList<>();
 
@@ -293,7 +290,7 @@ class UrlExtractionTest {
     void testDeletionOfEmptyTextBlocksAfterNormalization () {
         // version 2 should have 4 text blocks and 2 code blocks
         // after normalization, the last block, which contains only a reference and a URL, should be deleted because it's empty
-        PostVersionList a_19049539 = PostVersionList.readFromCSV(pathToPostVersionLists, 19049539, Posts.ANSWER_ID);
+        PostVersionList a_19049539 = PostVersionList.readFromCSV(PostVersionHistoryTest.pathToPostVersionLists, 19049539, Posts.ANSWER_ID);
         a_19049539.normalizeLinks();
         PostVersion version_2_a_19049539 = a_19049539.get(1);
         assertEquals(version_2_a_19049539.getTextBlocks().size(), 3);
@@ -369,35 +366,35 @@ class UrlExtractionTest {
         Link extractedLink;
 
         // AnchorLink
-        postVersionList = PostVersionList.readFromCSV(pathToPostVersionLists, 1629423, Posts.ANSWER_ID);
+        postVersionList = PostVersionList.readFromCSV(PostVersionHistoryTest.pathToPostVersionLists, 1629423, Posts.ANSWER_ID);
         extractedLink = Link.extractTyped(postVersionList.getFirst().getContent()).get(0);
         assertEquals("<a href=\"http://msdn.microsoft.com/en-us/library/system.windows.controls.textbox.selectionstart.aspx\">SelectionStart</a>", extractedLink.getFullMatch());
         assertEquals("AnchorLink", extractedLink.getType());
         assertEquals("SelectionStart", extractedLink.getAnchor());
 
         // BareLink
-        postVersionList = PostVersionList.readFromCSV(pathToPostVersionLists, 49, Posts.ANSWER_ID);
+        postVersionList = PostVersionList.readFromCSV(PostVersionHistoryTest.pathToPostVersionLists, 49, Posts.ANSWER_ID);
         extractedLink = Link.extractTyped(postVersionList.getFirst().getContent()).get(0);
         assertEquals("http://www.brokenbuild.com/blog/2006/08/15/mysql-triggers-how-do-you-abort-an-insert-update-or-delete-with-a-trigger/", extractedLink.getFullMatch());
         assertEquals("BareLink", extractedLink.getType());
         assertNull(extractedLink.getAnchor());
 
         // MarkdownLinkAngleBrackets
-        postVersionList = PostVersionList.readFromCSV(pathToPostVersionLists, 52, Posts.ANSWER_ID);
+        postVersionList = PostVersionList.readFromCSV(PostVersionHistoryTest.pathToPostVersionLists, 52, Posts.ANSWER_ID);
         extractedLink = Link.extractTyped(postVersionList.getFirst().getContent()).get(0);
         assertEquals("<http://www.gskinner.com/blog/archives/2006/06/as3_resource_ma.html>", extractedLink.getFullMatch());
         assertEquals("MarkdownLinkAngleBrackets", extractedLink.getType());
         assertNull(extractedLink.getAnchor());
 
         // MarkdownLinkInline
-        postVersionList = PostVersionList.readFromCSV(pathToPostVersionLists, 33, Posts.ANSWER_ID);
+        postVersionList = PostVersionList.readFromCSV(PostVersionHistoryTest.pathToPostVersionLists, 33, Posts.ANSWER_ID);
         extractedLink = Link.extractTyped(postVersionList.getFirst().getContent()).get(0);
         assertEquals("[reference](http://msdn.microsoft.com/en-us/library/system.math.truncate.aspx)",extractedLink.getFullMatch());
         assertEquals("MarkdownLinkInline", extractedLink.getType());
         assertEquals("reference", extractedLink.getAnchor());
 
         // MarkdownLinkReference
-        postVersionList = PostVersionList.readFromCSV(pathToPostVersionLists, 44, Posts.ANSWER_ID);
+        postVersionList = PostVersionList.readFromCSV(PostVersionHistoryTest.pathToPostVersionLists, 44, Posts.ANSWER_ID);
         extractedLink = Link.extractTyped(postVersionList.getFirst().getContent()).get(0);
         assertEquals("[ManualResetEvent][1]\n[1]: http://msdn.microsoft.com/en-us/library/system.threading.manualresetevent.aspx \"MSDN Reference\"", extractedLink.getFullMatch());
         assertEquals("MarkdownLinkReference", extractedLink.getType());
@@ -457,19 +454,19 @@ class UrlExtractionTest {
         Link extractedLink;
 
         // link at the beginning of a post (pointing to duplicate post)
-        postVersionList = PostVersionList.readFromCSV(pathToPostVersionLists, 12954660, Posts.QUESTION_ID);
+        postVersionList = PostVersionList.readFromCSV(PostVersionHistoryTest.pathToPostVersionLists, 12954660, Posts.QUESTION_ID);
         version = postVersionList.getLast();
         extractedLink = Link.extractTyped(version.getContent()).get(0);
         assertEquals("Beginning", extractedLink.getPosition(version.getContent()));
 
         // link at the end of a post
-        postVersionList = PostVersionList.readFromCSV(pathToPostVersionLists, 28153330, Posts.ANSWER_ID);
+        postVersionList = PostVersionList.readFromCSV(PostVersionHistoryTest.pathToPostVersionLists, 28153330, Posts.ANSWER_ID);
         version = postVersionList.getLast();
         extractedLink = Link.extractTyped(version.getContent()).get(0);
         assertEquals("End", extractedLink.getPosition(version.getContent()));
 
         // link in the middle of a post
-        postVersionList = PostVersionList.readFromCSV(pathToPostVersionLists, 14928352, Posts.ANSWER_ID);
+        postVersionList = PostVersionList.readFromCSV(PostVersionHistoryTest.pathToPostVersionLists, 14928352, Posts.ANSWER_ID);
         version = postVersionList.getLast();
         extractedLink = Link.extractTyped(version.getContent()).get(1);
         assertEquals("Middle", extractedLink.getPosition(version.getContent()));
@@ -649,7 +646,7 @@ class UrlExtractionTest {
             `^^<http://www.w3.org/2001/XMLSchema#float>`
             ...
          */
-        PostVersionList a_38542344 = PostVersionList.readFromCSV(pathToPostVersionLists, 38542344, Posts.ANSWER_ID);
+        PostVersionList a_38542344 = PostVersionList.readFromCSV(PostVersionHistoryTest.pathToPostVersionLists, 38542344, Posts.ANSWER_ID);
 
         PostVersion version_1 = a_38542344.getFirst();
         extractedUrls = Link.extractTyped(version_1.getContent());

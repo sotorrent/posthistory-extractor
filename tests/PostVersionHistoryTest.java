@@ -1,5 +1,3 @@
-package org.sotorrent.posthistoryextractor.tests;
-
 import org.sotorrent.posthistoryextractor.Config;
 import org.sotorrent.posthistoryextractor.blocks.CodeBlockVersion;
 import org.sotorrent.posthistoryextractor.blocks.PostBlockSimilarity;
