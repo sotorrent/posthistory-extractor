@@ -29,7 +29,7 @@ import java.util.logging.Logger;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-class DisabledTests {
+class DisabledTest {
     private static Logger logger;
     private static Path pathToHibernateConfig = Paths.get("hibernate", "hibernate.cfg.xml");
     private static final String SOTORRENT_VERSION = "sotorrent_2018-09-23";
@@ -45,7 +45,7 @@ class DisabledTests {
     static {
         // configure logger
         try {
-            logger = LogUtils.getClassLogger(DisabledTests.class);
+            logger = LogUtils.getClassLogger(DisabledTest.class);
         } catch (IOException e) {
             e.printStackTrace();
         }

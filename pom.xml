@@ -5,7 +5,7 @@
     <name>PostHistoryExtractor</name>
     <groupId>org.sotorrent</groupId>
     <artifactId>posthistory-extractor</artifactId>
-    <version>3.1.1</version>
+    <version>3.1.2</version>
     <url>https://github.com/sotorrent/posthistory-extractor</url>
 
     <properties>
@@ -29,13 +29,13 @@
         <junit.jupiter.version>LATEST</junit.jupiter.version>
         <hamcrest.junit.version>LATEST</hamcrest.junit.version>
         <!-- Other dependencies -->
-        <string-similarity.version>2.0.0</string-similarity.version>
-        <util.version>3.2.8</util.version>
-        <commons-cli.version>1.4</commons-cli.version>
-        <commons-io.version>2.6</commons-io.version>
-        <commons-csv.version>1.5</commons-csv.version>
-        <hibernate.version>5.2.16.Final</hibernate.version>
-        <mysql-connector-java.version>5.1.46</mysql-connector-java.version>
+        <string-similarity.version>LATEST</string-similarity.version>
+        <util.version>LATEST</util.version>
+        <commons-cli.version>LATEST</commons-cli.version>
+        <commons-io.version>LATEST</commons-io.version>
+        <commons-csv.version>LATEST</commons-csv.version>
+        <hibernate.version>LATEST</hibernate.version>
+        <mysql-connector-java.version>5.1.47</mysql-connector-java.version>
     </properties>
 
     <distributionManagement>

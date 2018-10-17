@@ -10,13 +10,13 @@ import org.sotorrent.posthistoryextractor.urls.PostVersionUrl;
 import org.apache.commons.csv.*;
 import org.hibernate.*;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.query.Query;
 import org.sotorrent.posthistoryextractor.version.*;
 import org.sotorrent.util.HibernateUtils;
 import org.sotorrent.util.LogUtils;
 import org.sotorrent.util.collections.CollectionUtils;
 import org.sotorrent.util.exceptions.ErrorUtils;
 
+import javax.persistence.TypedQuery;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -133,9 +133,8 @@ public class PostHistoryIterator {
             }
 
             t = session.beginTransaction();
-            Query questionsPostIdQuery = session.createQuery(questionsPostIdQueryString);
-            @SuppressWarnings("unchecked") // see https://stackoverflow.com/a/509115
-                    List<Integer> questionPostIds = questionsPostIdQuery.list();
+            TypedQuery<Integer> questionsPostIdQuery = session.createQuery(questionsPostIdQueryString, Integer.class);
+            List<Integer> questionPostIds = questionsPostIdQuery.getResultList();
             logger.info(questionPostIds.size() + " questions retrieved.");
             t.commit();
             // write question post ids to CSV file
@@ -157,9 +156,8 @@ public class PostHistoryIterator {
             }
 
             t = session.beginTransaction();
-            Query answerPostIdQuery = session.createQuery(answerPostIdQueryString);
-            @SuppressWarnings("unchecked") // see https://stackoverflow.com/a/509115
-                    List<Integer> answerPostIds = answerPostIdQuery.list();
+            TypedQuery<Integer> answerPostIdQuery = session.createQuery(answerPostIdQueryString, Integer.class);
+            List<Integer> answerPostIds = answerPostIdQuery.getResultList();
             logger.info(answerPostIds.size() + " answers retrieved.");
             t.commit();
             // write answer post ids to CSV file
