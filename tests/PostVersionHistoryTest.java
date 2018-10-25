@@ -973,6 +973,9 @@ class PostVersionHistoryTest {
         assertNotNull(postBlocks_version_2.get(1).getPred()); // localId 2
         assertEquals(Integer.valueOf(1), postBlocks_version_2.get(1).getPred().getLocalId()); // localId 1
 
+        assertNotNull(postBlocks_version_2.get(2).getPred()); // localId 3
+        assertEquals(Integer.valueOf(3), postBlocks_version_2.get(2).getPred().getLocalId()); // localId 3
+
         assertNull(postBlocks_version_2.get(3).getPred());
     }
 
