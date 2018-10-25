@@ -476,16 +476,16 @@ class PostVersionHistoryTest {
         assertNull(postBlocks.get(3).getPred()); // localId 4
 
         assertNotNull(postBlocks.get(4).getPred()); // localId 5
-        assertEquals(new Integer(3), postBlocks.get(4).getPred().getLocalId()); // localId 5
+        assertEquals(Integer.valueOf(3), postBlocks.get(4).getPred().getLocalId()); // localId 5
 
         assertNotNull(postBlocks.get(5).getPred()); // localId 6
-        assertEquals(new Integer(4), postBlocks.get(5).getPred().getLocalId()); // localId 6
+        assertEquals(Integer.valueOf(4), postBlocks.get(5).getPred().getLocalId()); // localId 6
 
         assertNotNull(postBlocks.get(6).getPred()); // localId 7
-        assertEquals(new Integer(5), postBlocks.get(6).getPred().getLocalId()); // localId 7
+        assertEquals(Integer.valueOf(5), postBlocks.get(6).getPred().getLocalId()); // localId 7
 
         assertNotNull(postBlocks.get(7).getPred()); // localId 8
-        assertEquals(new Integer(6), postBlocks.get(7).getPred().getLocalId()); // localId 8
+        assertEquals(Integer.valueOf(6), postBlocks.get(7).getPred().getLocalId()); // localId 8
     }
 
 
@@ -514,19 +514,19 @@ class PostVersionHistoryTest {
         // version 2: code block with localId 2 and content "glaucon@polo..."
         // block 2 is "correct" predecessor
         assertNotNull(version_2_postBlocks.get(1).getPred()); // localId 2
-        assertEquals(new Integer(2), version_2_postBlocks.get(1).getPred().getLocalId()); // localId 2
+        assertEquals(Integer.valueOf(2), version_2_postBlocks.get(1).getPred().getLocalId()); // localId 2
 
         // version 1: text block with localId 3 and content "If I do then run..." + same content in code block with localId 7
         // version 2: code block with localId 3 and content "If I do then run..."
         // block 3 is "correct" predecessor
         assertNotNull(version_2_postBlocks.get(2).getPred()); // localId 3
-        assertEquals(new Integer(3), version_2_postBlocks.get(2).getPred().getLocalId()); // localId 3
+        assertEquals(Integer.valueOf(3), version_2_postBlocks.get(2).getPred().getLocalId()); // localId 3
 
         // version 1: text block with localId 4 and content "glaucon@polo..." + same content in code block with localId 8
         // version 2: code block with localId 4 and content "glaucon@polo..."
         // block 4 is "correct" predecessor
         assertNotNull(version_2_postBlocks.get(3).getPred()); // localId 4
-        assertEquals(new Integer(4), version_2_postBlocks.get(3).getPred().getLocalId()); // localId 4
+        assertEquals(Integer.valueOf(4), version_2_postBlocks.get(3).getPred().getLocalId()); // localId 4
     }
 
 
@@ -563,13 +563,13 @@ class PostVersionHistoryTest {
         assertNull(postBlocks.get(2).getPred()); // localId 3
 
         assertNotNull(postBlocks.get(5).getPred()); // localId 6
-        assertEquals(new Integer(2), postBlocks.get(5).getPred().getLocalId()); // localId 6
+        assertEquals(Integer.valueOf(2), postBlocks.get(5).getPred().getLocalId()); // localId 6
 
         assertNotNull(postBlocks.get(6).getPred()); // localId 7
-        assertEquals(new Integer(3), postBlocks.get(6).getPred().getLocalId()); // localId 7
+        assertEquals(Integer.valueOf(3), postBlocks.get(6).getPred().getLocalId()); // localId 7
 
         assertNotNull(postBlocks.get(7).getPred()); // localId 8
-        assertEquals(new Integer(4), postBlocks.get(7).getPred().getLocalId()); // localId 8
+        assertEquals(Integer.valueOf(4), postBlocks.get(7).getPred().getLocalId()); // localId 8
     }
 
     @Test
@@ -995,7 +995,7 @@ class PostVersionHistoryTest {
     }
 
     @Test
-    void testSnipppetDivider() {
+    void testSnippetDivider() {
         // in this post, an empty XML comment ("<!-- -->") is used to divide code blocks
         int postId = 33058542;
         PostVersionList a_33058542 = PostVersionList.readFromCSV(pathToPostVersionLists, postId, Posts.ANSWER_ID);
