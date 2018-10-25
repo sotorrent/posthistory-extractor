@@ -1436,4 +1436,16 @@ class PostVersionHistoryTest {
         CodeBlockVersion code_block_3 = version_1.getCodeBlocks().get(2);
         assertTrue(code_block_3.getContent().startsWith("> package "));
     }
+
+    @Test
+    void testEmptyBlockExtraction () {
+        PostVersionList q_41480290 = PostVersionList.readFromCSV(pathToPostVersionLists, 41480290, Posts.QUESTION_ID, true);
+
+        PostVersion version_2 = q_41480290.get(1);
+        testPredecessorSimilarities(version_2);
+        testPostBlockCount(version_2, 2, 1, 1);
+        List<PostBlockVersion> postBlocks_version_2 = version_2.getPostBlocks();
+        assertTrue(postBlocks_version_2.get(0) instanceof TextBlockVersion);
+        assertTrue(postBlocks_version_2.get(1) instanceof CodeBlockVersion);
+    }
 }
