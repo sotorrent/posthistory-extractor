@@ -104,6 +104,8 @@ public class PostHistory {
     // see, e.g., source of question 3381751 version 1 (<script type="text/javascript"> ... </script> instead of correct indention)
     private static final Pattern scriptTagBeginPattern = Pattern.compile("^\\s*<script[^>]+>", Pattern.CASE_INSENSITIVE);
     private static final Pattern scriptTagEndPattern = Pattern.compile("</script>\\s*$", Pattern.CASE_INSENSITIVE);
+    // see, e.g., source of question 17158055, version six (line containing only `mydomain.com/bn/products/1`)
+    private static final Pattern inlineCodeLinePattern = Pattern.compile("\\s*`[^`]+`\\s*", Pattern.CASE_INSENSITIVE);
 
     // database
     private int id;
@@ -272,6 +274,8 @@ public class PostHistory {
             boolean isSnippetLanguage = snippetLanguageMatcher.matches(); // match whole line
             // in some posts an empty XML comment ("<!-- -->") is used to divide code blocks (see, e.g., post 33058542)
             boolean isSnippetDivider = snippetDividerPattern.matcher(line).matches();
+            // in some cases, there are inline code blocks in a single line (`...`)
+            boolean inlineCodeLine = inlineCodeLinePattern.matcher(line).matches();
 
             // if line is not part of a regular Stack Overflow code block, try to detect alternative code block styles
             if (!isCodeLine && !isWhitespaceLine && !isSnippetLanguage) {
@@ -386,7 +390,7 @@ public class PostHistory {
 
             // decide if the current line is part of a code block
             boolean inCodeBlock = isCodeLine || (isSnippetLanguage && line.trim().length() == 0) || inStackSnippetCodeBlock || inAlternativeCodeBlock
-                    || inCodeTagCodeBlock || inScriptTagCodeBlock;
+                    || inCodeTagCodeBlock || inScriptTagCodeBlock || inlineCodeLine;
 
             if (currentPostBlock == null) {
                 // first block in post
