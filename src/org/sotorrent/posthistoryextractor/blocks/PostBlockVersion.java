@@ -365,12 +365,12 @@ public abstract class PostBlockVersion {
                 }
             } else {
                 // unique matching predecessor existed, but was not available
-                // check if another unique match below the threshold exists
+                // check if another available match above the threshold exists
                 List<PostBlockVersion> availablePredecessorsAboveThreshold = new LinkedList<>();
                 double newMaxSimilarity = -1.0;
                 for (PostBlockVersion predecessorAboveThreshold : predecessorsAboveThreshold) {
                     double sim = predecessorSimilarities.get(predecessorAboveThreshold).getMetricResult();
-                    if (MathUtils.lessThan(sim, maxSimilarity.getMetricResult())) {
+                    if (predecessorAboveThreshold.isAvailable && MathUtils.lessThan(sim, maxSimilarity.getMetricResult())) {
                         availablePredecessorsAboveThreshold.add(predecessorAboveThreshold);
                         newMaxSimilarity = Math.max(newMaxSimilarity, sim);
                     }
@@ -384,8 +384,7 @@ public abstract class PostBlockVersion {
                 if (availablePredecessorsAboveThreshold.size() == 1) {
                     // only one possible predecessor, that is above the threshold, but below maxSimilarity, is available
                     PostBlockVersion alternativeMatchingPredecessor = availablePredecessorsAboveThreshold.get(0);
-                    if (alternativeMatchingPredecessor.isAvailable()
-                            && alternativeMatchingPredecessor.getMatchingSuccessors().size() == 0) {
+                    if (alternativeMatchingPredecessor.getMatchingSuccessors().size() == 0) {
                         // update successor information, because this post block is not recognized as a matching successor yet
                         alternativeMatchingPredecessor.incrementSuccCount();
                         alternativeMatchingPredecessor.getMatchingSuccessors().add(this);
