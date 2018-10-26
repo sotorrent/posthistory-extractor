@@ -165,7 +165,7 @@ public class Link {
                     normalizedMarkdownContent = normalizedMarkdownContent.replace(usage, "");
                 } else {
                     normalizedMarkdownContent = normalizedMarkdownContent.replace(usage,
-                            "[" + currentLink.getAnchor() + "](" + currentLink.getUrlObject() +
+                            "[" + currentLink.getAnchor() + "](" + currentLink.getUrlString() +
                                     ((currentLink.getTitle() != null) ? " \"" + currentLink.getTitle() + "\"" : "")
                                     + ")"
                     );
@@ -173,11 +173,16 @@ public class Link {
 
                 normalizedMarkdownContent = normalizedMarkdownContent.replace(definition, "");
             } else {
-                // bare link
-                normalizedMarkdownContent = normalizedMarkdownContent.replace(
-                        currentLink.getFullMatch(),
-                        "<" + currentLink.getUrlObject() + ">"
-                );
+                if (MarkdownLinkReference.patternDefinitions.matcher(normalizedMarkdownContent.trim()).matches()) {
+                    // MarkdownLinkReference definition without usage (e.g., post 41480290, version 2)
+                    normalizedMarkdownContent = "";
+                } else {
+                    // bare link
+                    normalizedMarkdownContent = normalizedMarkdownContent.replace(
+                            currentLink.getFullMatch(),
+                            "<" + currentLink.getUrlString() + ">"
+                    );
+                }
             }
         }
 

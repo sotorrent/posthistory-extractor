@@ -694,4 +694,13 @@ class UrlExtractionTest {
         extractedLinks = Link.extractTyped("http://www.rolfje..com/2008/11/04/transporting-oracle-chars-over-a-dblink/");
         assertEquals(0, extractedLinks.size());
     }
+
+    @Test
+    void testTextBlockDefinitionWithoutUsage() {
+        // taken from post 41480290, version 2
+        String content = "   [1]: http://androidbash.com/firebase-push-notification-android/   ";
+        List<Link> extractedLinks = Link.extractTyped(content);
+        String normalizedContent = Link.normalizeLinks(content, extractedLinks);
+        assertEquals(0, normalizedContent.trim().length());
+    }
 }

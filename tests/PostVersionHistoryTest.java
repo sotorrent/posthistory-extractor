@@ -1259,14 +1259,20 @@ class PostVersionHistoryTest {
     }
 
     @Test
-    void testEmptyBlockExtraction () {
+    void testLastTextBlockReferenceLink() {
         PostVersionList q_41480290 = PostVersionList.readFromCSV(pathToPostVersionLists, 41480290, Posts.QUESTION_ID, true);
 
+        // last text block in that version only contains a reference link
         PostVersion version_2 = q_41480290.get(1);
         testPredecessorSimilarities(version_2);
+        testPostBlockCount(version_2, 3, 2, 1);
+        testPostBlockTypes(version_2, TextBlockVersion.class);
+
+        // after link normalization, that text block is gone
+        q_41480290.normalizeLinks();
+        version_2 = q_41480290.get(1);
+        testPredecessorSimilarities(version_2);
         testPostBlockCount(version_2, 2, 1, 1);
-        List<PostBlockVersion> postBlocks_version_2 = version_2.getPostBlocks();
-        assertTrue(postBlocks_version_2.get(0) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_2.get(1) instanceof CodeBlockVersion);
+        testPostBlockTypes(version_2, TextBlockVersion.class);
     }
 }
