@@ -620,7 +620,7 @@ class PostVersionHistoryTest {
     }
 
     @Test
-    void testPredecessorAssignmentQuestionAnswer() {
+    void testPredecessorAssignmentQuestion33137697() {
         PostVersionList q_33137697 = PostVersionList.readFromCSV(pathToPostVersionLists, 33137697, Posts.QUESTION_ID, true);
 
         PostVersion version_2 = q_33137697.get(1);
