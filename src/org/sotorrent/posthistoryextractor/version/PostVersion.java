@@ -280,12 +280,12 @@ public class PostVersion extends org.sotorrent.posthistoryextractor.version.Vers
                     previousVersionPostBlocks, config, postBlockTypeFilter
             );
 
-            // add all matched predecessors to the map, along with the matched successors for those predecessors
-            for (PostBlockVersion matchedPredecessor : currentPostBlockMatchingSuccessorsPreviousVersion) {
-                if (!matchingSuccessorsPreviousVersion.containsKey(matchedPredecessor)) {
-                    matchingSuccessorsPreviousVersion.put(matchedPredecessor, new LinkedList<>());
+            // add all matching predecessors to the map, along with the matched successors for those predecessors
+            for (PostBlockVersion matchingPredecessor : currentPostBlockMatchingSuccessorsPreviousVersion) {
+                if (!matchingSuccessorsPreviousVersion.containsKey(matchingPredecessor)) {
+                    matchingSuccessorsPreviousVersion.put(matchingPredecessor, new LinkedList<>());
                 }
-                matchingSuccessorsPreviousVersion.get(matchedPredecessor).add(currentVersionPostBlock);
+                matchingSuccessorsPreviousVersion.get(matchingPredecessor).add(currentVersionPostBlock);
             }
         }
 

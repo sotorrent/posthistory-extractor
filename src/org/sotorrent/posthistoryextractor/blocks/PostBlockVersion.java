@@ -340,34 +340,21 @@ public abstract class PostBlockVersion {
     }
 
     public void setUniqueMatchingPred(Map<PostBlockVersion, List<PostBlockVersion>> matchingSuccessorsPreviousVersion) {
-        final PostBlockVersion matchingPredecessor;
-
         // check of only one matching predecessor exists
         if (matchingPredecessors.size() == 1) {
-            matchingPredecessor = matchingPredecessors.get(0);
-        } else {
-            // check if only one of several matching predecessors is equal
-            List<PostBlockVersion> equalPredecessors = matchingPredecessors.stream()
-                    .filter(predecessor -> predecessorSimilarities.get(predecessor).getMetricResult() == EQUALITY_SIMILARITY)
-                    .collect(Collectors.toList());
-            if (equalPredecessors.size() == 1) {
-                matchingPredecessor = equalPredecessors.get(0);
-            } else {
-                matchingPredecessor = null;
+            PostBlockVersion matchingPredecessor = matchingPredecessors.get(0);
+            // the unique matching predecessor must be available
+            if (!matchingPredecessor.isAvailable()) {
+                return;
             }
-        }
-
-        // unique candidate found
-        if (matchingPredecessor != null) {
+            // check if the matching predecessor has only one possible equal successor
             List<PostBlockVersion> matchingPredecessorMatchingSuccessors = matchingSuccessorsPreviousVersion.get(matchingPredecessor);
             List<Double> matchingPredecessorMatchingSuccessorsSimilarities = matchingPredecessorMatchingSuccessors.stream()
                     .map(successor -> successor.predecessorSimilarities.get(matchingPredecessor).getMetricResult())
                     .collect(Collectors.toList());
-
-            if (matchingPredecessor.isAvailable() && matchingPredecessorMatchingSuccessorsSimilarities.stream()
+            if (matchingPredecessorMatchingSuccessorsSimilarities.stream()
                     .filter(similarity -> similarity == EQUALITY_SIMILARITY)
                     .count() == 1) {
-                // the matched predecessor is only matched for currentPostBlock and is available
                 setPred(matchingPredecessor);
                 matchingPredecessor.setSucc(this);
             }
