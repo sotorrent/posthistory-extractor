@@ -260,15 +260,11 @@ public class PostVersion extends org.sotorrent.posthistoryextractor.version.Vers
      * @param previousVersionPostBlocks Text or code blocks from previous post version
      * @param config Configuration with similarity metrics and thresholds
      * @param postBlockTypeFilter IDs of selected post block types
-     * @return Map with matched predecessor post blocks and their successors
      */
-    public Map<PostBlockVersion, List<PostBlockVersion>> findMatchingPredecessors(
-                                                List<PostBlockVersion> currentVersionPostBlocks,
-                                                List<PostBlockVersion> previousVersionPostBlocks,
-                                                Config config,
-                                                Set<Byte> postBlockTypeFilter) {
-
-        Map<PostBlockVersion, List<PostBlockVersion>> matchingSuccessorsPreviousVersion = new HashMap<>();
+    public void findMatchingPredecessors(List<PostBlockVersion> currentVersionPostBlocks,
+                                         List<PostBlockVersion> previousVersionPostBlocks,
+                                         Config config,
+                                         Set<Byte> postBlockTypeFilter) {
 
         for (PostBlockVersion currentVersionPostBlock : currentVersionPostBlocks) {
             // apply post block type filter
@@ -276,20 +272,19 @@ public class PostVersion extends org.sotorrent.posthistoryextractor.version.Vers
                 continue;
             }
 
-            List<PostBlockVersion> currentPostBlockMatchingSuccessorsPreviousVersion = currentVersionPostBlock.findMatchingPredecessors(
-                    previousVersionPostBlocks, config, postBlockTypeFilter
-            );
+            List<PostBlockVersion> currentPostBlockMatchingSuccessorsPreviousVersion =
+                    currentVersionPostBlock.findMatchingPredecessors(
+                            previousVersionPostBlocks, config, postBlockTypeFilter);
 
-            // add all matching predecessors to the map, along with the matched successors for those predecessors
+            // add this post block as matching successor for all matching predecessors and add corresponding similarity
             for (PostBlockVersion matchingPredecessor : currentPostBlockMatchingSuccessorsPreviousVersion) {
-                if (!matchingSuccessorsPreviousVersion.containsKey(matchingPredecessor)) {
-                    matchingSuccessorsPreviousVersion.put(matchingPredecessor, new LinkedList<>());
-                }
-                matchingSuccessorsPreviousVersion.get(matchingPredecessor).add(currentVersionPostBlock);
+                matchingPredecessor.getMatchingSuccessors().add(currentVersionPostBlock);
+                matchingPredecessor.getSuccessorSimilarities().put(
+                        currentVersionPostBlock,
+                        currentVersionPostBlock.getPredecessorSimilarities().get(matchingPredecessor)
+                );
             }
         }
-
-        return matchingSuccessorsPreviousVersion;
     }
 
     // reset data set in PostVersionList.processVersionHistory (needed for metrics comparison)

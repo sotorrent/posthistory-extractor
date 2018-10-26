@@ -180,20 +180,20 @@ public class PostVersionList extends LinkedList<PostVersion> implements VersionL
                 }
 
                 // find matching predecessors for text and code blocks by (1) equality of content and (2) similarity metric
-                Map<PostBlockVersion, List<PostBlockVersion>> matchingSuccessorsPreviousVersion = // list of successors in previous version
-                        currentVersion.findMatchingPredecessors(
-                            currentVersion.getPostBlocks(),
-                            previousVersion.getPostBlocks(),
-                            config,
-                            postBlockTypeFilter
-                        );
+                // and set list of successors in previous version
+                currentVersion.findMatchingPredecessors(
+                    currentVersion.getPostBlocks(),
+                    previousVersion.getPostBlocks(),
+                    config,
+                    postBlockTypeFilter
+                );
 
                 // set predecessors of text and code blocks if
                 //   (1) only one matching predecessor exists or
                 //   (2) multiple matching predecessors exist, but only one of them is equal,
                 // and that candidate is only matched by one block in the current version
                 for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks(postBlockTypeFilter)) {
-                    currentPostBlock.setUniqueMatchingPred(matchingSuccessorsPreviousVersion);
+                    currentPostBlock.setUniqueMatchingPred();
                 }
 
                 // next, try to set remaining predecessors using context (neighboring blocks of post block and matching predecessor)
@@ -218,6 +218,16 @@ public class PostVersionList extends LinkedList<PostVersion> implements VersionL
                 }
 
                 // finally, set the remaining predecessors using the order in the post (localId)
+
+                // retrieve all post blocks from this version which are a possible successor of a post block in
+                // the previous version
+                Map<PostBlockVersion, List<PostBlockVersion>> matchingSuccessorsPreviousVersion = new HashMap<>();
+                previousVersion.getPostBlocks()
+                        .forEach(postBlock -> matchingSuccessorsPreviousVersion.put(
+                                postBlock,
+                                postBlock.getMatchingSuccessors())
+                        );
+
                 for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks(postBlockTypeFilter)) {
                     // predecessor for this post block not set yet and at least one matching predecessor found
                     if (currentPostBlock.getPred() == null && currentPostBlock.getMatchingPredecessors().size() > 0) {

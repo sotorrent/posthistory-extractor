@@ -73,7 +73,10 @@ public abstract class PostBlockVersion {
     private PostBlockVersion rootPostBlock;
     private boolean isAvailable; // false if this post block is set as a predecessor of a block in the next version
     private List<PostBlockVersion> matchingPredecessors;
+    private List<PostBlockVersion> matchingSuccessors;
+    private List<PostBlockVersion> predecessorsAboveThreshold;
     private Map<PostBlockVersion, PostBlockSimilarity> predecessorSimilarities;
+    private Map<PostBlockVersion, PostBlockSimilarity> successorsSimilarities;
     protected PostBlockSimilarity maxSimilarity;
     private boolean lifeSpanExtracted; // for extraction of PostBlockLifeSpan
     private Set<PostBlockVersion> failedPredecessorsComparisons; // needed for metrics comparison
@@ -119,7 +122,10 @@ public abstract class PostBlockVersion {
         this.predDiff = null;
         this.isAvailable = true;
         this.matchingPredecessors = new LinkedList<>();
+        this.matchingSuccessors = new LinkedList<>();
+        this.predecessorsAboveThreshold = new LinkedList<>();
         this.predecessorSimilarities = new HashMap<>();
+        this.successorsSimilarities = new HashMap<>();
         this.maxSimilarity = new PostBlockSimilarity();
         this.lifeSpanExtracted = false;
         this.failedPredecessorsComparisons = new HashSet<>();
@@ -339,24 +345,55 @@ public abstract class PostBlockVersion {
         }
     }
 
-    public void setUniqueMatchingPred(Map<PostBlockVersion, List<PostBlockVersion>> matchingSuccessorsPreviousVersion) {
+    public void setUniqueMatchingPred() {
         // check of only one matching predecessor exists
         if (matchingPredecessors.size() == 1) {
             PostBlockVersion matchingPredecessor = matchingPredecessors.get(0);
             // the unique matching predecessor must be available
-            if (!matchingPredecessor.isAvailable()) {
-                return;
-            }
-            // check if the matching predecessor has only one possible equal successor
-            List<PostBlockVersion> matchingPredecessorMatchingSuccessors = matchingSuccessorsPreviousVersion.get(matchingPredecessor);
-            List<Double> matchingPredecessorMatchingSuccessorsSimilarities = matchingPredecessorMatchingSuccessors.stream()
-                    .map(successor -> successor.predecessorSimilarities.get(matchingPredecessor).getMetricResult())
-                    .collect(Collectors.toList());
-            if (matchingPredecessorMatchingSuccessorsSimilarities.stream()
-                    .filter(similarity -> similarity == EQUALITY_SIMILARITY)
-                    .count() == 1) {
-                setPred(matchingPredecessor);
-                matchingPredecessor.setSucc(this);
+            if (matchingPredecessor.isAvailable()) {
+                // check if the matching predecessor has only one possible equal successor
+                List<Double> matchingPredecessorSuccessorsSimilarities = matchingPredecessor
+                        .getSuccessorSimilarities()
+                        .values()
+                        .stream()
+                        .map(PostBlockSimilarity::getMetricResult)
+                        .filter(similarity -> similarity == EQUALITY_SIMILARITY)
+                        .collect(Collectors.toList());
+                if (matchingPredecessorSuccessorsSimilarities.size() == 1) {
+                    setPred(matchingPredecessor);
+                    matchingPredecessor.setSucc(this);
+                }
+            } else {
+                // unique matching predecessor existed, but was not available
+                // check if another unique match below the threshold exists
+                List<PostBlockVersion> availablePredecessorsAboveThreshold = new LinkedList<>();
+                double newMaxSimilarity = -1.0;
+                for (PostBlockVersion predecessorAboveThreshold : predecessorsAboveThreshold) {
+                    double sim = predecessorSimilarities.get(predecessorAboveThreshold).getMetricResult();
+                    if (MathUtils.lessThan(sim, maxSimilarity.getMetricResult())) {
+                        availablePredecessorsAboveThreshold.add(predecessorAboveThreshold);
+                        newMaxSimilarity = Math.max(newMaxSimilarity, sim);
+                    }
+                }
+                final double finalNewMaxSimilarity = newMaxSimilarity;
+                availablePredecessorsAboveThreshold = availablePredecessorsAboveThreshold.stream()
+                        .filter(predecessor -> MathUtils.equals(
+                                predecessorSimilarities.get(predecessor).getMetricResult(), finalNewMaxSimilarity))
+                        .collect(Collectors.toList());
+
+                if (availablePredecessorsAboveThreshold.size() == 1) {
+                    // only one possible predecessor, that is above the threshold, but below maxSimilarity, is available
+                    PostBlockVersion alternativeMatchingPredecessor = availablePredecessorsAboveThreshold.get(0);
+                    if (alternativeMatchingPredecessor.isAvailable()
+                            && alternativeMatchingPredecessor.getMatchingSuccessors().size() == 0) {
+                        // update successor information, because this post block is not recognized as a matching successor yet
+                        alternativeMatchingPredecessor.incrementSuccCount();
+                        alternativeMatchingPredecessor.getMatchingSuccessors().add(this);
+                        // update pred and succ pointers
+                        setPred(alternativeMatchingPredecessor);
+                        alternativeMatchingPredecessor.setSucc(this);
+                    }
+                }
             }
         }
     }
@@ -646,6 +683,16 @@ public abstract class PostBlockVersion {
     }
 
     @Transient
+    public List<PostBlockVersion> getMatchingSuccessors() {
+        return matchingSuccessors;
+    }
+
+    @Transient
+    public Map<PostBlockVersion, PostBlockSimilarity> getSuccessorSimilarities() {
+        return successorsSimilarities;
+    }
+
+    @Transient
     public <T extends PostBlockVersion> List<PostBlockVersion> findMatchingPredecessors(List<T> previousVersionPostBlocks,
                                                                                         Config config,
                                                                                         Set<Byte> postBlockTypeFilter) {
@@ -700,12 +747,25 @@ public abstract class PostBlockVersion {
         }
     }
 
+    private Comparator<Map.Entry<PostBlockVersion, PostBlockSimilarity>> getSimilarityComparator() {
+        return (v1, v2) -> {
+            // sort descending according to similarity in descending order
+            int result = Double.compare(v2.getValue().getMetricResult(), v1.getValue().getMetricResult());
+            if (result == 0) {
+                // in case of same similarity, sort ascending according to local id
+                return Integer.compare(v1.getKey().getLocalId(), v2.getKey().getLocalId());
+            } else {
+                return result;
+            }
+        };
+    }
+
     abstract void retrieveMatchingPredecessors(Config config);
 
     void retrieveMatchingPredecessors(double similarityThreshold, double backupSimilarityThreshold) {
         // retrieve predecessors with maximal similarity
 
-        // threshold check already conducted in subclasses (TextBlockVersion, CodeBlockVersion)
+        // check if max similarity is below threshold has already been conducted in the subclasses (TextBlockVersion, CodeBlockVersion)
 
         // get max similarity, final value needed for lambda expression
         final double finalMaxSimilarity = maxSimilarity.getMetricResult();
@@ -714,16 +774,7 @@ public abstract class PostBlockVersion {
         matchingPredecessors = predecessorSimilarities.entrySet()
                 .stream()
                 .filter(e -> MathUtils.equals(e.getValue().getMetricResult(), finalMaxSimilarity))
-                .sorted((v1, v2) -> {
-                    // sort descending according to similarity
-                    int result = Double.compare(v2.getValue().getMetricResult(), v1.getValue().getMetricResult());
-                    if (result == 0) {
-                        // in case of same similarity, sort ascending according to local id
-                        return Integer.compare(v1.getKey().getLocalId(), v2.getKey().getLocalId());
-                    } else {
-                        return result;
-                    }
-                }) // descending order
+                .sorted(getSimilarityComparator())
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
 
@@ -732,6 +783,19 @@ public abstract class PostBlockVersion {
             incrementPredCount();
             matchingPredecessor.incrementSuccCount();
         }
+
+        predecessorsAboveThreshold = predecessorSimilarities.entrySet()
+                .stream()
+                .filter(e -> {
+                    if (maxSimilarity.isBackupSimilarity()) {
+                        return e.getValue().getMetricResult() >= backupSimilarityThreshold;
+                    } else {
+                        return e.getValue().getMetricResult() >= similarityThreshold;
+                    }
+                })
+                .sorted(getSimilarityComparator())
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
     }
 
     @Transient

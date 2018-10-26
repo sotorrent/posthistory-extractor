@@ -50,13 +50,13 @@ public class CodeBlockVersion extends PostBlockVersion {
         // retrieve predecessors with maximal similarity
 
         // return if maximum similarity is below the configured similarity thresholds
-        boolean similarityBelowThreshold;
+        boolean maxSimilarityBelowThreshold;
         if (maxSimilarity.isBackupSimilarity()) {
-            similarityBelowThreshold = maxSimilarity.getMetricResult() < config.getCodeBackupSimilarityThreshold();
+            maxSimilarityBelowThreshold = maxSimilarity.getMetricResult() < config.getCodeBackupSimilarityThreshold();
         } else {
-            similarityBelowThreshold = maxSimilarity.getMetricResult() < config.getCodeSimilarityThreshold();
+            maxSimilarityBelowThreshold = maxSimilarity.getMetricResult() < config.getCodeSimilarityThreshold();
         }
-        if (similarityBelowThreshold) {
+        if (maxSimilarityBelowThreshold) {
             return;
         }
 
