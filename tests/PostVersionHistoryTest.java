@@ -304,7 +304,13 @@ class PostVersionHistoryTest {
         PostVersion version_4 = a_32143330.get(3);
         testPredecessorSimilarities(version_4);
         testPostBlockCount(version_4, 6, 3, 3);
-        testPostBlockTypes(version_4, TextBlockVersion.class);
+        testPostBlockTypes(version_4, new Class[]{
+                TextBlockVersion.class,
+                CodeBlockVersion.class,
+                TextBlockVersion.class,
+                CodeBlockVersion.class,
+                CodeBlockVersion.class,
+                TextBlockVersion.class});
     }
 
     @Test
