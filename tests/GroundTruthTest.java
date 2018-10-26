@@ -305,14 +305,14 @@ class GroundTruthTest {
                 TextBlockVersion.getPostBlockTypeIdFilter());
 
         List<TextBlockVersion> textBlocks = a_3758880.getLast().getTextBlocks();
-        assertEquals(new Integer(1), textBlocks.get(0).getPred().getLocalId());
-        assertEquals(new Integer(1), textBlocks.get(0).getLocalId());
+        assertEquals(Integer.valueOf(1), textBlocks.get(0).getPred().getLocalId());
+        assertEquals(Integer.valueOf(1), textBlocks.get(0).getLocalId());
 
-        assertEquals(new Integer(3), textBlocks.get(1).getPred().getLocalId());
-        assertEquals(new Integer(3), textBlocks.get(1).getLocalId());
+        assertEquals(Integer.valueOf(3), textBlocks.get(1).getPred().getLocalId());
+        assertEquals(Integer.valueOf(3), textBlocks.get(1).getLocalId());
 
         assertNull(textBlocks.get(2).getPred());
-        assertEquals(new Integer(5), textBlocks.get(2).getLocalId());
+        assertEquals(Integer.valueOf(5), textBlocks.get(2).getLocalId());
     }
 
 
