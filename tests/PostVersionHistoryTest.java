@@ -58,6 +58,38 @@ class PostVersionHistoryTest {
         assertEquals(expectedCodeBlockCount, postVersion.getCodeBlocks().size());
     }
 
+    /**
+     * Test order of post block types using fixed array.
+     * @param postVersion Post version to test.
+     * @param expectedPostBlockTypes Array with expected post block types.
+     */
+    private void testPostBlockTypes(PostVersion postVersion, Class[] expectedPostBlockTypes) {
+        List<PostBlockVersion> postBlocks = postVersion.getPostBlocks();
+        // there has to be an expected type for each post block in this version
+        assertEquals(postBlocks.size(), expectedPostBlockTypes.length);
+        // test order of post block types
+        for (int i=0; i<postBlocks.size(); i++) {
+            assertEquals(postBlocks.get(i).getClass(), expectedPostBlockTypes[i]);
+        }
+    }
+
+    /**
+     * Test order of post block types using alternating order.
+     * @param postVersion Post version to test.
+     * @param firstPostBlockType Type to start with.
+     */
+    private void testPostBlockTypes(PostVersion postVersion, Class firstPostBlockType) {
+        List<PostBlockVersion> postBlocks = postVersion.getPostBlocks();
+        Class secondPostBlockType = firstPostBlockType == TextBlockVersion.class ? CodeBlockVersion.class : TextBlockVersion.class;
+        for (int i=0; i<postBlocks.size(); i++) {
+            if (i % 2 == 0) {
+                assertEquals(postBlocks.get(i).getClass(), firstPostBlockType);
+            } else {
+                assertEquals(postBlocks.get(i).getClass(), secondPostBlockType);
+            }
+        }
+    }
+
     @Test
     void testReadPostHistoryAnswer1109108() {
         PostVersionList a_1109108 = PostVersionList.readFromCSV(pathToPostVersionLists, 1109108, Posts.ANSWER_ID);
@@ -189,13 +221,7 @@ class PostVersionHistoryTest {
         // the first and only version of this post should consist of three text blocks and two code blocks
         PostVersion version_1 = a_10734905.get(0);
         testPostBlockCount(version_1, 5, 3, 2);
-        List<PostBlockVersion> postBlocks = version_1.getPostBlocks();
-
-        assertTrue(postBlocks.get(0) instanceof TextBlockVersion);
-        assertTrue(postBlocks.get(1) instanceof CodeBlockVersion);
-        assertTrue(postBlocks.get(2) instanceof TextBlockVersion);
-        assertTrue(postBlocks.get(3) instanceof CodeBlockVersion);
-        assertTrue(postBlocks.get(4) instanceof TextBlockVersion);
+        testPostBlockTypes(version_1, TextBlockVersion.class);
     }
 
     @Test
@@ -207,12 +233,7 @@ class PostVersionHistoryTest {
         // the first and only version of this post should consist of two text blocks and two code blocks
         PostVersion version_1 = a_31965641.get(0);
         testPostBlockCount(version_1, 4, 2, 2);
-        List<PostBlockVersion> postBlocks = version_1.getPostBlocks();
-
-        assertTrue(postBlocks.get(0) instanceof TextBlockVersion);
-        assertTrue(postBlocks.get(1) instanceof CodeBlockVersion);
-        assertTrue(postBlocks.get(2) instanceof TextBlockVersion);
-        assertTrue(postBlocks.get(3) instanceof CodeBlockVersion);
+        testPostBlockTypes(version_1,TextBlockVersion.class);
     }
 
     @Test
@@ -263,21 +284,12 @@ class PostVersionHistoryTest {
 
         PostVersion version_1 = q_22360443.get(0);
         testPostBlockCount(version_1, 4, 2, 2);
-        List<PostBlockVersion> postBlocks = version_1.getPostBlocks();
-        assertTrue(postBlocks.get(0) instanceof CodeBlockVersion);
-        assertTrue(postBlocks.get(1) instanceof TextBlockVersion);
-        assertTrue(postBlocks.get(2) instanceof CodeBlockVersion);
-        assertTrue(postBlocks.get(3) instanceof TextBlockVersion);
+        testPostBlockTypes(version_1, CodeBlockVersion.class);
 
         PostVersion version_2 = q_22360443.get(1);
         testPredecessorSimilarities(version_2);
         testPostBlockCount(version_2, 5, 3, 2);
-        postBlocks = version_2.getPostBlocks();
-        assertTrue(postBlocks.get(0) instanceof TextBlockVersion);
-        assertTrue(postBlocks.get(1) instanceof CodeBlockVersion);
-        assertTrue(postBlocks.get(2) instanceof TextBlockVersion);
-        assertTrue(postBlocks.get(3) instanceof CodeBlockVersion);
-        assertTrue(postBlocks.get(4) instanceof TextBlockVersion);
+        testPostBlockTypes(version_2, TextBlockVersion.class);
     }
 
     @Test
@@ -292,13 +304,7 @@ class PostVersionHistoryTest {
         PostVersion version_4 = a_32143330.get(3);
         testPredecessorSimilarities(version_4);
         testPostBlockCount(version_4, 6, 3, 3);
-        List<PostBlockVersion> postBlocks = version_4.getPostBlocks();
-        assertTrue(postBlocks.get(0) instanceof TextBlockVersion);
-        assertTrue(postBlocks.get(1) instanceof CodeBlockVersion);
-        assertTrue(postBlocks.get(2) instanceof TextBlockVersion);
-        assertTrue(postBlocks.get(3) instanceof CodeBlockVersion);
-        assertTrue(postBlocks.get(4) instanceof CodeBlockVersion);
-        assertTrue(postBlocks.get(5) instanceof TextBlockVersion);
+        testPostBlockTypes(version_4, TextBlockVersion.class);
     }
 
     @Test
@@ -310,15 +316,15 @@ class PostVersionHistoryTest {
         PostVersion version_12 = a_26044128.get(11);
         testPredecessorSimilarities(version_12);
         testPostBlockCount(version_12, 8, 4, 4);
-        List<PostBlockVersion> postBlocks = version_12.getPostBlocks();
-        assertTrue(postBlocks.get(0) instanceof TextBlockVersion);
-        assertTrue(postBlocks.get(1) instanceof CodeBlockVersion);
-        assertTrue(postBlocks.get(2) instanceof TextBlockVersion);
-        assertTrue(postBlocks.get(3) instanceof CodeBlockVersion);
-        assertTrue(postBlocks.get(4) instanceof CodeBlockVersion);
-        assertTrue(postBlocks.get(5) instanceof TextBlockVersion);
-        assertTrue(postBlocks.get(6) instanceof CodeBlockVersion);
-        assertTrue(postBlocks.get(7) instanceof TextBlockVersion); // Markdown links
+        testPostBlockTypes(version_12, new Class[]{
+                TextBlockVersion.class,
+                CodeBlockVersion.class,
+                TextBlockVersion.class,
+                CodeBlockVersion.class,
+                CodeBlockVersion.class,
+                TextBlockVersion.class,
+                CodeBlockVersion.class,
+                TextBlockVersion.class}); // Markdown links
     }
 
     @Test
@@ -331,12 +337,7 @@ class PostVersionHistoryTest {
         PostVersion version_5 = q_32342082.get(4);
         testPredecessorSimilarities(version_5);
         testPostBlockCount(version_5, 5, 3, 2);
-        List<PostBlockVersion> postBlocks = version_5.getPostBlocks();
-        assertTrue(postBlocks.get(0) instanceof TextBlockVersion);
-        assertTrue(postBlocks.get(1) instanceof CodeBlockVersion);
-        assertTrue(postBlocks.get(2) instanceof TextBlockVersion);
-        assertTrue(postBlocks.get(3) instanceof CodeBlockVersion);
-        assertTrue(postBlocks.get(4) instanceof TextBlockVersion);
+        testPostBlockTypes(version_5, TextBlockVersion.class);
     }
 
     @Test
@@ -349,9 +350,7 @@ class PostVersionHistoryTest {
         PostVersion version_2 = q_19175014.get(1);
         testPredecessorSimilarities(version_2);
         testPostBlockCount(version_2, 2, 1, 1);
-        List<PostBlockVersion> postBlocks = version_2.getPostBlocks();
-        assertTrue(postBlocks.get(0) instanceof TextBlockVersion);
-        assertTrue(postBlocks.get(1) instanceof CodeBlockVersion);
+        testPostBlockTypes(version_2, TextBlockVersion.class);
     }
 
     @Test
@@ -374,10 +373,7 @@ class PostVersionHistoryTest {
         // version 1 contains a code block marked by <script type="text/javascript"> ... </script> instead of correct indention (see https://stackoverflow.com/revisions/3381751/1)
         PostVersion version_1 = q_3381751.get(0);
         testPostBlockCount(version_1, 3, 2, 1);
-        List<PostBlockVersion> postBlocks = version_1.getPostBlocks();
-        assertTrue(postBlocks.get(0) instanceof TextBlockVersion);
-        assertTrue(postBlocks.get(1) instanceof CodeBlockVersion);
-        assertTrue(postBlocks.get(2) instanceof TextBlockVersion);
+        testPostBlockTypes(version_1, TextBlockVersion.class);
     }
 
     @Test
@@ -390,9 +386,7 @@ class PostVersionHistoryTest {
         PostVersion version_2 = q_28598648.get(1);
         testPredecessorSimilarities(version_2);
         testPostBlockCount(version_2, 2, 1, 1);
-        List<PostBlockVersion> postBlocks = version_2.getPostBlocks();
-        assertTrue(postBlocks.get(0) instanceof CodeBlockVersion);
-        assertTrue(postBlocks.get(1) instanceof TextBlockVersion);
+        testPostBlockTypes(version_2, CodeBlockVersion.class);
     }
 
     @Test
@@ -459,15 +453,9 @@ class PostVersionHistoryTest {
         PostVersion version_2 = q_23459881.get(1);
         testPredecessorSimilarities(version_2);
         testPostBlockCount(version_2, 8, 4, 4);
+        testPostBlockTypes(version_2, TextBlockVersion.class);
+
         List<PostBlockVersion> postBlocks = version_2.getPostBlocks();
-        assertTrue(postBlocks.get(0) instanceof TextBlockVersion);
-        assertTrue(postBlocks.get(1) instanceof CodeBlockVersion);
-        assertTrue(postBlocks.get(2) instanceof TextBlockVersion);
-        assertTrue(postBlocks.get(3) instanceof CodeBlockVersion);
-        assertTrue(postBlocks.get(4) instanceof TextBlockVersion);
-        assertTrue(postBlocks.get(5) instanceof CodeBlockVersion);
-        assertTrue(postBlocks.get(6) instanceof TextBlockVersion);
-        assertTrue(postBlocks.get(7) instanceof CodeBlockVersion);
 
         // version 1: text block with localId 3 and content "Code"
         // version 2: text block with localId 3 and content "Code" + same content in text block with localId 5
@@ -496,37 +484,27 @@ class PostVersionHistoryTest {
         PostVersion version_2 = q_36082771.get(1);
         testPredecessorSimilarities(version_2);
         testPostBlockCount(version_2, 12, 6, 6);
-        List<PostBlockVersion> version_2_postBlocks = version_2.getPostBlocks();
-        assertTrue(version_2_postBlocks.get(0) instanceof TextBlockVersion);
-        assertTrue(version_2_postBlocks.get(1) instanceof CodeBlockVersion);
-        assertTrue(version_2_postBlocks.get(2) instanceof TextBlockVersion);
-        assertTrue(version_2_postBlocks.get(3) instanceof CodeBlockVersion);
-        assertTrue(version_2_postBlocks.get(4) instanceof TextBlockVersion);
-        assertTrue(version_2_postBlocks.get(5) instanceof CodeBlockVersion);
-        assertTrue(version_2_postBlocks.get(6) instanceof TextBlockVersion);
-        assertTrue(version_2_postBlocks.get(7) instanceof CodeBlockVersion);
-        assertTrue(version_2_postBlocks.get(8) instanceof TextBlockVersion);
-        assertTrue(version_2_postBlocks.get(9) instanceof CodeBlockVersion);
-        assertTrue(version_2_postBlocks.get(10) instanceof TextBlockVersion);
-        assertTrue(version_2_postBlocks.get(11) instanceof CodeBlockVersion);
+        testPostBlockTypes(version_2, TextBlockVersion.class);
+
+        List<PostBlockVersion> postBlocks = version_2.getPostBlocks();
 
         // version 1: code block with localId 2 and content "glaucon@polo..." + same content in code block with localId 6
         // version 2: code block with localId 2 and content "glaucon@polo..."
         // block 2 is "correct" predecessor
-        assertNotNull(version_2_postBlocks.get(1).getPred()); // localId 2
-        assertEquals(Integer.valueOf(2), version_2_postBlocks.get(1).getPred().getLocalId()); // localId 2
+        assertNotNull(postBlocks.get(1).getPred()); // localId 2
+        assertEquals(Integer.valueOf(2), postBlocks.get(1).getPred().getLocalId()); // localId 2
 
         // version 1: text block with localId 3 and content "If I do then run..." + same content in code block with localId 7
         // version 2: code block with localId 3 and content "If I do then run..."
         // block 3 is "correct" predecessor
-        assertNotNull(version_2_postBlocks.get(2).getPred()); // localId 3
-        assertEquals(Integer.valueOf(3), version_2_postBlocks.get(2).getPred().getLocalId()); // localId 3
+        assertNotNull(postBlocks.get(2).getPred()); // localId 3
+        assertEquals(Integer.valueOf(3), postBlocks.get(2).getPred().getLocalId()); // localId 3
 
         // version 1: text block with localId 4 and content "glaucon@polo..." + same content in code block with localId 8
         // version 2: code block with localId 4 and content "glaucon@polo..."
         // block 4 is "correct" predecessor
-        assertNotNull(version_2_postBlocks.get(3).getPred()); // localId 4
-        assertEquals(Integer.valueOf(4), version_2_postBlocks.get(3).getPred().getLocalId()); // localId 4
+        assertNotNull(postBlocks.get(3).getPred()); // localId 4
+        assertEquals(Integer.valueOf(4), postBlocks.get(3).getPred().getLocalId()); // localId 4
     }
 
 
@@ -537,24 +515,9 @@ class PostVersionHistoryTest {
         PostVersion version_2 = q_18276636.get(1);
         testPredecessorSimilarities(version_2);
         testPostBlockCount(version_2, 17, 9, 8);
+        testPostBlockTypes(version_2, TextBlockVersion.class);
+
         List<PostBlockVersion> postBlocks = version_2.getPostBlocks();
-        assertTrue(postBlocks.get(0) instanceof TextBlockVersion);
-        assertTrue(postBlocks.get(1) instanceof CodeBlockVersion);
-        assertTrue(postBlocks.get(2) instanceof TextBlockVersion);
-        assertTrue(postBlocks.get(3) instanceof CodeBlockVersion);
-        assertTrue(postBlocks.get(4) instanceof TextBlockVersion);
-        assertTrue(postBlocks.get(5) instanceof CodeBlockVersion);
-        assertTrue(postBlocks.get(6) instanceof TextBlockVersion);
-        assertTrue(postBlocks.get(7) instanceof CodeBlockVersion);
-        assertTrue(postBlocks.get(8) instanceof TextBlockVersion);
-        assertTrue(postBlocks.get(9) instanceof CodeBlockVersion);
-        assertTrue(postBlocks.get(10) instanceof TextBlockVersion);
-        assertTrue(postBlocks.get(11) instanceof CodeBlockVersion);
-        assertTrue(postBlocks.get(12) instanceof TextBlockVersion);
-        assertTrue(postBlocks.get(13) instanceof CodeBlockVersion);
-        assertTrue(postBlocks.get(14) instanceof TextBlockVersion);
-        assertTrue(postBlocks.get(15) instanceof CodeBlockVersion);
-        assertTrue(postBlocks.get(16) instanceof TextBlockVersion);
 
         // version 1: text block with localId 3 and content "to"
         // version 2: text block with localId 3 and content "to" + same content in text block with localId 7
@@ -579,37 +542,19 @@ class PostVersionHistoryTest {
         PostVersion version_5 = q_1870600.get(4);
         testPredecessorSimilarities(version_5);
         testPostBlockCount(version_5, 9, 5, 4);
+        testPostBlockTypes(version_5, TextBlockVersion.class);
+
         List<PostBlockVersion> postBlocks_version_5 = version_5.getPostBlocks();
-        assertTrue(postBlocks_version_5.get(0) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_5.get(1) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_5.get(2) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_5.get(3) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_5.get(4) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_5.get(5) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_5.get(6) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_5.get(7) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_5.get(8) instanceof TextBlockVersion);
 
         assertNotNull(postBlocks_version_5.get(3).getPred()); // localId 4
         assertEquals(Integer.valueOf(3), postBlocks_version_5.get(3).getPred().getLocalId()); // localId 4
 
         assertNull(postBlocks_version_5.get(5).getPred()); // localId 6
 
-
-
         PostVersion version_6 = q_1870600.get(5);
+        testPostBlockTypes(version_5, TextBlockVersion.class);
+
         List<PostBlockVersion> postBlocks_version_6 = version_6.getPostBlocks();
-        assertTrue(postBlocks_version_6.get(0) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_6.get(1) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_6.get(2) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_6.get(3) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_6.get(4) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_6.get(5) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_6.get(6) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_6.get(7) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_6.get(8) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_6.get(9) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_6.get(10) instanceof TextBlockVersion);
 
         assertNotNull(postBlocks_version_5.get(5).getPred()); // localId 6
         assertEquals(Integer.valueOf(5), postBlocks_version_5.get(5).getPred().getLocalId()); // localId 6
@@ -624,16 +569,11 @@ class PostVersionHistoryTest {
         PostVersion version_4 = q_8432848.get(3);
         testPredecessorSimilarities(version_4);
         testPostBlockCount(version_4, 5, 3, 2);
-        List<PostBlockVersion> postBlocks_version_4 = version_4.getPostBlocks();
-        assertTrue(postBlocks_version_4.get(0) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_4.get(1) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_4.get(2) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_4.get(3) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_4.get(4) instanceof TextBlockVersion);
+        testPostBlockTypes(version_4, TextBlockVersion.class);
 
+        List<PostBlockVersion> postBlocks_version_4 = version_4.getPostBlocks();
         assertNotNull(postBlocks_version_4.get(1).getPred()); // localId 2
         assertEquals(Integer.valueOf(1), postBlocks_version_4.get(1).getPred().getLocalId()); // localId 2
-
         assertNull(postBlocks_version_4.get(3).getPred()); // localId 4
     }
 
@@ -644,25 +584,9 @@ class PostVersionHistoryTest {
         PostVersion version_7 = q_17158055.get(6);
         testPredecessorSimilarities(version_7);
         testPostBlockCount(version_7, 17, 9, 8);
-        List<PostBlockVersion> postBlocks_version_7 = version_7.getPostBlocks();
-        assertTrue(postBlocks_version_7.get(0) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_7.get(1) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_7.get(2) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_7.get(3) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_7.get(4) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_7.get(5) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_7.get(6) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_7.get(7) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_7.get(8) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_7.get(9) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_7.get(10) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_7.get(11) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_7.get(12) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_7.get(13) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_7.get(14) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_7.get(15) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_7.get(16) instanceof TextBlockVersion);
+        testPostBlockTypes(version_7, TextBlockVersion.class);
 
+        List<PostBlockVersion> postBlocks_version_7 = version_7.getPostBlocks();
         assertNotNull(postBlocks_version_7.get(5).getPred()); // localId 6
         assertEquals(Integer.valueOf(1), postBlocks_version_7.get(3).getPred().getLocalId()); // localId 4
     }
@@ -674,14 +598,9 @@ class PostVersionHistoryTest {
         PostVersion version_3 = q_25488162.get(2);
         testPredecessorSimilarities(version_3);
         testPostBlockCount(version_3, 6, 3, 3);
-        List<PostBlockVersion> postBlocks_version_3 = version_3.getPostBlocks();
-        assertTrue(postBlocks_version_3.get(0) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_3.get(1) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_3.get(2) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_3.get(3) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_3.get(4) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_3.get(5) instanceof CodeBlockVersion);
+        testPostBlockTypes(version_3, TextBlockVersion.class);
 
+        List<PostBlockVersion> postBlocks_version_3 = version_3.getPostBlocks();
         assertNotNull(postBlocks_version_3.get(3).getPred()); // localId 4
         assertEquals(Integer.valueOf(1), postBlocks_version_3.get(3).getPred().getLocalId()); // localId 4
     }
@@ -693,12 +612,9 @@ class PostVersionHistoryTest {
         PostVersion version_5 = q_39313130.get(4);
         testPredecessorSimilarities(version_5);
         testPostBlockCount(version_5, 4, 2, 2);
-        List<PostBlockVersion> postBlocks_version_5 = version_5.getPostBlocks();
-        assertTrue(postBlocks_version_5.get(0) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_5.get(1) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_5.get(2) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_5.get(3) instanceof CodeBlockVersion);
+        testPostBlockTypes(version_5, TextBlockVersion.class);
 
+        List<PostBlockVersion> postBlocks_version_5 = version_5.getPostBlocks();
         assertNotNull(postBlocks_version_5.get(3).getPred()); // localId 4
         assertEquals(Integer.valueOf(2), postBlocks_version_5.get(3).getPred().getLocalId()); // localId 4
     }
@@ -710,23 +626,11 @@ class PostVersionHistoryTest {
         PostVersion version_2 = q_33137697.get(1);
         testPredecessorSimilarities(version_2);
         testPostBlockCount(version_2, 12, 6, 6);
-        List<PostBlockVersion> postBlocks_version_2 = version_2.getPostBlocks();
-        assertTrue(postBlocks_version_2.get(0) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_2.get(1) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_2.get(2) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_2.get(3) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_2.get(4) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_2.get(5) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_2.get(6) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_2.get(7) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_2.get(8) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_2.get(9) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_2.get(10) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_2.get(11) instanceof CodeBlockVersion);
+        testPostBlockTypes(version_2, TextBlockVersion.class);
 
+        List<PostBlockVersion> postBlocks_version_2 = version_2.getPostBlocks();
         assertNotNull(postBlocks_version_2.get(7).getPred()); // localId 8
         assertEquals(Integer.valueOf(8), postBlocks_version_2.get(7).getPred().getLocalId()); // localId 8
-
         assertNull(postBlocks_version_2.get(9).getPred()); // localId 10
     }
 
@@ -737,18 +641,11 @@ class PostVersionHistoryTest {
         PostVersion version_8 = q_33003217.get(7);
         testPredecessorSimilarities(version_8);
         testPostBlockCount(version_8, 6, 3, 3);
+        testPostBlockTypes(version_8, TextBlockVersion.class);
+
         List<PostBlockVersion> postBlocks_version_8 = version_8.getPostBlocks();
-        assertTrue(postBlocks_version_8.get(0) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_8.get(1) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_8.get(2) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_8.get(3) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_8.get(4) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_8.get(5) instanceof CodeBlockVersion);
-
-
         assertNotNull(postBlocks_version_8.get(1).getPred()); // localId 2
         assertEquals(Integer.valueOf(2), postBlocks_version_8.get(1).getPred().getLocalId()); // localId 2
-
         assertNull(postBlocks_version_8.get(3).getPred()); // localId 4
     }
 
@@ -759,18 +656,11 @@ class PostVersionHistoryTest {
         PostVersion version_2 = q_32801275.get(1);
         testPredecessorSimilarities(version_2);
         testPostBlockCount(version_2, 7, 4, 3);
-        List<PostBlockVersion> postBlocks_version_2 = version_2.getPostBlocks();
-        assertTrue(postBlocks_version_2.get(0) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_2.get(1) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_2.get(2) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_2.get(3) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_2.get(4) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_2.get(5) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_2.get(6) instanceof TextBlockVersion);
+        testPostBlockTypes(version_2, TextBlockVersion.class);
 
+        List<PostBlockVersion> postBlocks_version_2 = version_2.getPostBlocks();
         assertNotNull(postBlocks_version_2.get(1).getPred()); // localId 2
         assertEquals(Integer.valueOf(2), postBlocks_version_2.get(1).getPred().getLocalId()); // localId 2
-
         assertNull(postBlocks_version_2.get(3).getPred()); // localId 4
 
 
@@ -802,48 +692,27 @@ class PostVersionHistoryTest {
         PostVersion version_2 = q_29885702.get(1);
         testPredecessorSimilarities(version_2);
         testPostBlockCount(version_2, 6, 3, 3);
+        testPostBlockTypes(version_2, CodeBlockVersion.class);
         List<PostBlockVersion> postBlocks_version_2 = version_2.getPostBlocks();
-        assertTrue(postBlocks_version_2.get(0) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_2.get(1) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_2.get(2) instanceof CodeBlockVersion);
-
         assertNotNull(postBlocks_version_2.get(0).getPred()); // localId 1
         assertEquals(Integer.valueOf(1), postBlocks_version_2.get(0).getPred().getLocalId()); // localId 1
-
 
         PostVersion version_3 = q_29885702.get(2);
         testPredecessorSimilarities(version_3);
         testPostBlockCount(version_3, 6, 3, 3);
+        testPostBlockTypes(version_3, TextBlockVersion.class);
         List<PostBlockVersion> postBlocks_version_3 = version_3.getPostBlocks();
-        assertTrue(postBlocks_version_3.get(0) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_3.get(1) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_3.get(2) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_3.get(3) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_3.get(4) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_3.get(5) instanceof CodeBlockVersion);
-
         assertNotNull(postBlocks_version_3.get(1).getPred()); // localId 2
         assertEquals(Integer.valueOf(1), postBlocks_version_3.get(1).getPred().getLocalId()); // localId 1
-
         assertNull(postBlocks_version_3.get(3).getPred());
-
 
         PostVersion version_4 = q_29885702.get(3);
         testPredecessorSimilarities(version_4);
         testPostBlockCount(version_4, 8, 4, 4);
+        testPostBlockTypes(version_3, TextBlockVersion.class);
         List<PostBlockVersion> postBlocks_version_4 = version_4.getPostBlocks();
-        assertTrue(postBlocks_version_4.get(0) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_4.get(1) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_4.get(2) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_4.get(3) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_4.get(4) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_4.get(5) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_4.get(6) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_4.get(7) instanceof CodeBlockVersion);
-
         assertNotNull(postBlocks_version_4.get(5).getPred()); // localId 6
         assertEquals(Integer.valueOf(6), postBlocks_version_4.get(5).getPred().getLocalId()); // localId 6
-
         assertNull(postBlocks_version_4.get(7).getPred());
     }
 
@@ -854,19 +723,8 @@ class PostVersionHistoryTest {
         PostVersion version_3 = q_29113416.get(2);
         testPredecessorSimilarities(version_3);
         testPostBlockCount(version_3, 11, 6, 5);
+        testPostBlockTypes(version_3, TextBlockVersion.class);
         List<PostBlockVersion> postBlocks_version_3 = version_3.getPostBlocks();
-        assertTrue(postBlocks_version_3.get(0) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_3.get(1) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_3.get(2) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_3.get(3) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_3.get(4) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_3.get(5) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_3.get(6) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_3.get(7) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_3.get(8) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_3.get(9) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_3.get(10) instanceof TextBlockVersion);
-
         assertNotNull(postBlocks_version_3.get(9).getPred()); // localId 10
         assertEquals(Integer.valueOf(10), postBlocks_version_3.get(9).getPred().getLocalId()); // localId 10
     }
@@ -878,17 +736,10 @@ class PostVersionHistoryTest {
         PostVersion version_6 = q_28623462.get(5);
         testPredecessorSimilarities(version_6);
         testPostBlockCount(version_6, 6, 3, 3);
+        testPostBlockTypes(version_6, TextBlockVersion.class);
         List<PostBlockVersion> postBlocks_version_6 = version_6.getPostBlocks();
-        assertTrue(postBlocks_version_6.get(0) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_6.get(1) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_6.get(2) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_6.get(3) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_6.get(4) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_6.get(5) instanceof CodeBlockVersion);
-
         assertNotNull(postBlocks_version_6.get(1).getPred()); // localId 2
         assertEquals(Integer.valueOf(2), postBlocks_version_6.get(1).getPred().getLocalId()); // localId 2
-
         assertNull(postBlocks_version_6.get(3).getPred());
     }
 
@@ -899,14 +750,8 @@ class PostVersionHistoryTest {
         PostVersion version_5 = q_27488215.get(4);
         testPredecessorSimilarities(version_5);
         testPostBlockCount(version_5, 6, 3, 3);
+        testPostBlockTypes(version_5, TextBlockVersion.class);
         List<PostBlockVersion> postBlocks_version_5 = version_5.getPostBlocks();
-        assertTrue(postBlocks_version_5.get(0) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_5.get(1) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_5.get(2) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_5.get(3) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_5.get(4) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_5.get(5) instanceof CodeBlockVersion);
-
         assertNotNull(postBlocks_version_5.get(1).getPred()); // localId 2
         assertEquals(Integer.valueOf(2), postBlocks_version_5.get(1).getPred().getLocalId()); // localId 2
     }
@@ -918,15 +763,8 @@ class PostVersionHistoryTest {
         PostVersion version_7 = q_26050416.get(6);
         testPredecessorSimilarities(version_7);
         testPostBlockCount(version_7, 7, 4, 3);
+        testPostBlockTypes(version_7, TextBlockVersion.class);
         List<PostBlockVersion> postBlocks_version_7 = version_7.getPostBlocks();
-        assertTrue(postBlocks_version_7.get(0) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_7.get(1) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_7.get(2) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_7.get(3) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_7.get(4) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_7.get(5) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_7.get(6) instanceof TextBlockVersion);
-
         assertNotNull(postBlocks_version_7.get(3).getPred()); // localId 4
         assertEquals(Integer.valueOf(4), postBlocks_version_7.get(3).getPred().getLocalId()); // localId 4
     }
@@ -938,20 +776,10 @@ class PostVersionHistoryTest {
         PostVersion version_6 = q_25871278.get(5);
         testPredecessorSimilarities(version_6);
         testPostBlockCount(version_6, 9, 5, 4);
+        testPostBlockTypes(version_6, TextBlockVersion.class);
         List<PostBlockVersion> postBlocks_version_6 = version_6.getPostBlocks();
-        assertTrue(postBlocks_version_6.get(0) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_6.get(1) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_6.get(2) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_6.get(3) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_6.get(4) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_6.get(5) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_6.get(6) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_6.get(7) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_6.get(8) instanceof TextBlockVersion);
-
         assertNotNull(postBlocks_version_6.get(1).getPred()); // localId 2
         assertEquals(Integer.valueOf(2), postBlocks_version_6.get(1).getPred().getLocalId()); // localId 2
-
         assertNull(postBlocks_version_6.get(3).getPred());
     }
 
@@ -962,20 +790,12 @@ class PostVersionHistoryTest {
         PostVersion version_2 = q_15119106.get(1);
         testPredecessorSimilarities(version_2);
         testPostBlockCount(version_2, 6, 3, 3);
+        testPostBlockTypes(version_2, TextBlockVersion.class);
         List<PostBlockVersion> postBlocks_version_2 = version_2.getPostBlocks();
-        assertTrue(postBlocks_version_2.get(0) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_2.get(1) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_2.get(2) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_2.get(3) instanceof CodeBlockVersion);
-        assertTrue(postBlocks_version_2.get(4) instanceof TextBlockVersion);
-        assertTrue(postBlocks_version_2.get(5) instanceof CodeBlockVersion);
-
         assertNotNull(postBlocks_version_2.get(1).getPred()); // localId 2
         assertEquals(Integer.valueOf(1), postBlocks_version_2.get(1).getPred().getLocalId()); // localId 1
-
         assertNotNull(postBlocks_version_2.get(2).getPred()); // localId 3
         assertEquals(Integer.valueOf(3), postBlocks_version_2.get(2).getPred().getLocalId()); // localId 3
-
         assertNull(postBlocks_version_2.get(3).getPred());
     }
 
@@ -984,7 +804,8 @@ class PostVersionHistoryTest {
     void testBrokenTextBlockQuestion15372744() {
         PostVersionList q_15372744 = PostVersionList.readFromCSV(pathToPostVersionLists, 15372744, Posts.QUESTION_ID);
 
-        // version 1 contains a broken text block, which has an indented line. Stack Overflow displays this correctly  (see https://stackoverflow.com/revisions/15372744/1)
+        // version 1 contains a broken text block, which has an indented line.
+        // Stack Overflow displays this correctly (see https://stackoverflow.com/revisions/15372744/1)
         PostVersion version_1 = q_15372744.get(0);
         testPostBlockCount(version_1, 1, 1, 0);
         List<PostBlockVersion> postBlocks = version_1.getPostBlocks();
