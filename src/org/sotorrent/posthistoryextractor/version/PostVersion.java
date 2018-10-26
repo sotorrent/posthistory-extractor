@@ -268,7 +268,7 @@ public class PostVersion extends org.sotorrent.posthistoryextractor.version.Vers
                                                 Config config,
                                                 Set<Byte> postBlockTypeFilter) {
 
-        Map<PostBlockVersion, List<PostBlockVersion>> matchedPredecessors = new HashMap<>();
+        Map<PostBlockVersion, List<PostBlockVersion>> matchingSuccessorsPreviousVersion = new HashMap<>();
 
         for (PostBlockVersion currentVersionPostBlock : currentVersionPostBlocks) {
             // apply post block type filter
@@ -276,20 +276,20 @@ public class PostVersion extends org.sotorrent.posthistoryextractor.version.Vers
                 continue;
             }
 
-            List<PostBlockVersion> currentMatchedPredecessors = currentVersionPostBlock.findMatchingPredecessors(
+            List<PostBlockVersion> currentPostBlockMatchingSuccessorsPreviousVersion = currentVersionPostBlock.findMatchingPredecessors(
                     previousVersionPostBlocks, config, postBlockTypeFilter
             );
 
             // add all matched predecessors to the map, along with the matched successors for those predecessors
-            for (PostBlockVersion matchedPredecessor : currentMatchedPredecessors) {
-                if (!matchedPredecessors.containsKey(matchedPredecessor)) {
-                    matchedPredecessors.put(matchedPredecessor, new LinkedList<>());
+            for (PostBlockVersion matchedPredecessor : currentPostBlockMatchingSuccessorsPreviousVersion) {
+                if (!matchingSuccessorsPreviousVersion.containsKey(matchedPredecessor)) {
+                    matchingSuccessorsPreviousVersion.put(matchedPredecessor, new LinkedList<>());
                 }
-                matchedPredecessors.get(matchedPredecessor).add(currentVersionPostBlock);
+                matchingSuccessorsPreviousVersion.get(matchedPredecessor).add(currentVersionPostBlock);
             }
         }
 
-        return matchedPredecessors;
+        return matchingSuccessorsPreviousVersion;
     }
 
     // reset data set in PostVersionList.processVersionHistory (needed for metrics comparison)

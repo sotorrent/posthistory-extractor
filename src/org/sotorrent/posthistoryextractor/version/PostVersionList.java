@@ -180,7 +180,7 @@ public class PostVersionList extends LinkedList<PostVersion> implements VersionL
                 }
 
                 // find matching predecessors for text and code blocks by (1) equality of content and (2) similarity metric
-                Map<PostBlockVersion, List<PostBlockVersion>> matchedPredecessors = // matched predecessor -> list of successors
+                Map<PostBlockVersion, List<PostBlockVersion>> matchingSuccessorsPreviousVersion = // list of successors in previous version
                         currentVersion.findMatchingPredecessors(
                             currentVersion.getPostBlocks(),
                             previousVersion.getPostBlocks(),
@@ -188,10 +188,12 @@ public class PostVersionList extends LinkedList<PostVersion> implements VersionL
                             postBlockTypeFilter
                         );
 
-                // set predecessors of text and code blocks if only one predecessor matches and if this predecessor is
-                // only matched by one block in the current version
+                // set predecessors of text and code blocks if
+                //   (1) only one matching predecessor exists or
+                //   (2) multiple matching predecessors exist, but only one of them is equal,
+                // and that candidate is only matched by one block in the current version
                 for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks(postBlockTypeFilter)) {
-                    currentPostBlock.setUniqueMatchingPred(matchedPredecessors);
+                    currentPostBlock.setUniqueMatchingPred(matchingSuccessorsPreviousVersion);
                 }
 
                 // next, try to set remaining predecessors using context (neighboring blocks of post block and matching predecessor)
@@ -219,7 +221,7 @@ public class PostVersionList extends LinkedList<PostVersion> implements VersionL
                 for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks(postBlockTypeFilter)) {
                     // predecessor for this post block not set yet and at least one matching predecessor found
                     if (currentPostBlock.getPred() == null && currentPostBlock.getMatchingPredecessors().size() > 0) {
-                        currentPostBlock.setPredLocalId(matchedPredecessors);
+                        currentPostBlock.setPredLocalId(matchingSuccessorsPreviousVersion);
                     }
                 }
 
