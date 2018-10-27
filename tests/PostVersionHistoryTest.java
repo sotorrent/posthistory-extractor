@@ -584,14 +584,12 @@ class PostVersionHistoryTest {
         testPostBlockTypes(version_6, TextBlockVersion.class);
 
         List<PostBlockVersion> postBlocks_version_6 = version_6.getPostBlocks();
-        assertEquals("mydomain.com/bn/products/1", postBlocks_version_6.get(3).getContent().trim());
+        assertEquals("`mydomain.com/bn/products/1`", postBlocks_version_6.get(3).getContent().trim());
     }
 
     @Test
     @Disabled
     void testPredecessorAssignmentAnswer17158055() {
-        // TODO: activate this test case again after visualization in app is possible again
-
         PostVersionList q_17158055 = PostVersionList.readFromCSV(pathToPostVersionLists, 17158055, Posts.QUESTION_ID, true);
 
         PostVersion version_7 = q_17158055.get(6);
@@ -600,9 +598,10 @@ class PostVersionHistoryTest {
         testPostBlockTypes(version_7, TextBlockVersion.class);
 
         List<PostBlockVersion> postBlocks_version_7 = version_7.getPostBlocks();
-        assertNull(postBlocks_version_7.get(3).getPred()); // localId 4
+        assertNotNull(postBlocks_version_7.get(1).getPred()); // localId 2
+        assertEquals(Integer.valueOf(2), postBlocks_version_7.get(1).getPred().getLocalId()); // localId 2
         assertNotNull(postBlocks_version_7.get(5).getPred()); // localId 6
-        assertEquals(Integer.valueOf(4), postBlocks_version_7.get(5).getPred().getLocalId()); // localId 6
+        assertEquals(Integer.valueOf(6), postBlocks_version_7.get(5).getPred().getLocalId()); // localId 6
     }
 
     @Test

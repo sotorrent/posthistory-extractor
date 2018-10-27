@@ -275,16 +275,10 @@ public class PostHistory {
             // in some posts an empty XML comment ("<!-- -->") is used to divide code blocks (see, e.g., post 33058542)
             boolean isSnippetDivider = snippetDividerPattern.matcher(line).matches();
             // in some cases, there are inline code blocks in a single line (`...`)
-            Matcher inlineCodeLineMatcher = inlineCodeLinePattern.matcher(line);
-            boolean isInlineCodeLine = inlineCodeLineMatcher.matches();
+            boolean isInlineCodeLine = inlineCodeLinePattern.matcher(line).matches();
 
             // if line is not part of a regular Stack Overflow code block, try to detect alternative code block styles
             if (!isCodeLine && !isWhitespaceLine && !isSnippetLanguage) {
-
-                if (isInlineCodeLine) {
-                    // extract content between backticks (`...`)
-                    line = inlineCodeLineMatcher.group(1);
-                }
 
                 // see https://stackoverflow.blog/2014/09/16/introducing-runnable-javascript-css-and-html-code-snippets/
                 Matcher stackSnippetBeginMatcher = stackSnippetBeginPattern.matcher(line);

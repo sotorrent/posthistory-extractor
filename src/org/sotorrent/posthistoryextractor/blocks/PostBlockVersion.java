@@ -346,51 +346,57 @@ public abstract class PostBlockVersion {
     }
 
     public void setUniqueMatchingPred() {
-        // check of only one matching predecessor exists
+        // check if only one matching predecessor exists
         if (matchingPredecessors.size() == 1) {
             PostBlockVersion matchingPredecessor = matchingPredecessors.get(0);
+
+            // get max similarity of matchingPredecessor's possible successors
+            double maxSim = matchingPredecessor.getSuccessorSimilarities().values().stream()
+                    .map(PostBlockSimilarity::getMetricResult)
+                    .max(Double::compareTo)
+                    .orElseThrow(IllegalStateException::new);
+
             // the unique matching predecessor must be available
             if (matchingPredecessor.isAvailable()) {
-                // check if the matching predecessor has only one possible equal successor
-                List<Double> matchingPredecessorSuccessorsSimilarities = matchingPredecessor
-                        .getSuccessorSimilarities()
-                        .values()
-                        .stream()
-                        .map(PostBlockSimilarity::getMetricResult)
-                        .filter(similarity -> similarity == EQUALITY_SIMILARITY)
+                // check if the matching predecessor has this post block as successor with max similarity
+                List<PostBlockVersion> successorsWithMaxSimilarity = matchingPredecessor.getSuccessorSimilarities().entrySet().stream()
+                        .filter(entry -> MathUtils.equals(entry.getValue().getMetricResult(), maxSim))
+                        .map(Map.Entry::getKey)
                         .collect(Collectors.toList());
-                if (matchingPredecessorSuccessorsSimilarities.size() == 1) {
+                if (successorsWithMaxSimilarity.size() == 1 && successorsWithMaxSimilarity.get(0) == this) {
                     setPred(matchingPredecessor);
                     matchingPredecessor.setSucc(this);
                 }
             } else {
                 // unique matching predecessor existed, but was not available
-                // check if another available match above the threshold exists
-                List<PostBlockVersion> availablePredecessorsAboveThreshold = new LinkedList<>();
-                double newMaxSimilarity = -1.0;
-                for (PostBlockVersion predecessorAboveThreshold : predecessorsAboveThreshold) {
-                    double sim = predecessorSimilarities.get(predecessorAboveThreshold).getMetricResult();
-                    if (predecessorAboveThreshold.isAvailable && MathUtils.lessThan(sim, maxSimilarity.getMetricResult())) {
-                        availablePredecessorsAboveThreshold.add(predecessorAboveThreshold);
-                        newMaxSimilarity = Math.max(newMaxSimilarity, sim);
-                    }
-                }
-                final double finalNewMaxSimilarity = newMaxSimilarity;
-                availablePredecessorsAboveThreshold = availablePredecessorsAboveThreshold.stream()
-                        .filter(predecessor -> MathUtils.equals(
-                                predecessorSimilarities.get(predecessor).getMetricResult(), finalNewMaxSimilarity))
-                        .collect(Collectors.toList());
+                // check if the next available predecessor with the next-highest similarity is also a unique match
+                List<PostBlockVersion> filteredPredecessorsAboveThreshold = predecessorsAboveThreshold.stream()
+                        .filter(predecessor -> predecessor.isAvailable()
+                                & MathUtils.lessThan(predecessorSimilarities.get(predecessor).getMetricResult(), maxSim)
+                        )
+                        .sorted((pred1, pred2) -> Double.compare(
+                                predecessorSimilarities.get(pred2).getMetricResult(),
+                                predecessorSimilarities.get(pred1).getMetricResult()) // sort descending
+                        ).collect(Collectors.toList());
 
-                if (availablePredecessorsAboveThreshold.size() == 1) {
-                    // only one possible predecessor, that is above the threshold, but below maxSimilarity, is available
-                    PostBlockVersion alternativeMatchingPredecessor = availablePredecessorsAboveThreshold.get(0);
-                    if (alternativeMatchingPredecessor.getMatchingSuccessors().size() == 0) {
-                        // update successor information, because this post block is not recognized as a matching successor yet
-                        alternativeMatchingPredecessor.incrementSuccCount();
-                        alternativeMatchingPredecessor.getMatchingSuccessors().add(this);
-                        // update pred and succ pointers
-                        setPred(alternativeMatchingPredecessor);
-                        alternativeMatchingPredecessor.setSucc(this);
+                if (filteredPredecessorsAboveThreshold.size() > 0) {
+                    PostBlockVersion bestMatch = filteredPredecessorsAboveThreshold.get(0);
+
+                    // if best match is unique or has highest similarity
+                    if (filteredPredecessorsAboveThreshold.size() == 1 ||
+                            !MathUtils.greaterThan(
+                                    predecessorSimilarities.get(bestMatch).getMetricResult(),
+                                    predecessorSimilarities.get(filteredPredecessorsAboveThreshold.get(1)).getMetricResult()
+                            )) {
+
+                        if (bestMatch.getMatchingSuccessors().size() == 0) {
+                            // update successor information, because this post block is not recognized as a matching successor yet
+                            bestMatch.incrementSuccCount();
+                            bestMatch.getMatchingSuccessors().add(this);
+                            // update pred and succ pointers
+                            setPred(bestMatch);
+                            bestMatch.setSucc(this);
+                        }
                     }
                 }
             }
