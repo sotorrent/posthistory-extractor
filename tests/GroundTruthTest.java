@@ -355,7 +355,7 @@ class GroundTruthTest {
     void testConsideringOfNeighbouringBlocks() {
         int postId = 33076987;
         PostVersionList q_33076987 = PostVersionList.readFromCSV(pathToPostHistory, postId, Posts.QUESTION_ID, false);
-        q_33076987.processVersionHistory(PostVersionHistoryTest.configEqual);
+        q_33076987.processVersionHistory(TestUtils.configEqual);
 
         PostVersion version_2 = q_33076987.get(1);
         List<PostBlockVersion> version_2_postBlocks =  version_2.getPostBlocks();

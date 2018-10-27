@@ -33,7 +33,7 @@ class DisabledTest {
     private static Logger logger;
     private static Path pathToHibernateConfig = Paths.get("hibernate", "hibernate.cfg.xml");
     private static final String SOTORRENT_VERSION = "sotorrent_2018-09-23";
-    // these posts are ignored below because they have a separate test case in PostVersionHistoryTest.java
+    // these posts are ignored below because they have a separate test case
     private static final Set<Integer> POSTS_WITH_TEST_CASE = Sets.newHashSet(5864258, 9875710);
     // posts without post blocks
     private static Path posts_no_blocks = Paths.get("testdata", SOTORRENT_VERSION, "all_posts_no_blocks.csv");
@@ -91,7 +91,7 @@ class DisabledTest {
                     int postId = Integer.parseInt(record.get(0));
                     byte postTypeId = Byte.parseByte(record.get(1));
 
-                    // for some posts, there is a separate test case in PostVersionHistoryTest.java
+                    // for some posts, there is a separate test case
                     if (POSTS_WITH_TEST_CASE.contains(postId)) {
                         continue;
                     }
