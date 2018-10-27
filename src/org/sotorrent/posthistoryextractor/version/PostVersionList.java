@@ -218,20 +218,10 @@ public class PostVersionList extends LinkedList<PostVersion> implements VersionL
                 }
 
                 // finally, set the remaining predecessors using the order in the post (localId)
-
-                // retrieve all post blocks from this version which are a possible successor of a post block in
-                // the previous version
-                Map<PostBlockVersion, List<PostBlockVersion>> matchingSuccessorsPreviousVersion = new HashMap<>();
-                previousVersion.getPostBlocks()
-                        .forEach(postBlock -> matchingSuccessorsPreviousVersion.put(
-                                postBlock,
-                                postBlock.getMatchingSuccessors())
-                        );
-
                 for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks(postBlockTypeFilter)) {
                     // predecessor for this post block not set yet and at least one matching predecessor found
                     if (currentPostBlock.getPred() == null && currentPostBlock.getMatchingPredecessors().size() > 0) {
-                        currentPostBlock.setPredLocalId(matchingSuccessorsPreviousVersion);
+                        currentPostBlock.setPredLocalId();
                     }
                 }
 

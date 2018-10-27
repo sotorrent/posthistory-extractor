@@ -588,7 +588,6 @@ class PostVersionHistoryTest {
     }
 
     @Test
-    @Disabled
     void testPredecessorAssignmentAnswer17158055() {
         PostVersionList q_17158055 = PostVersionList.readFromCSV(pathToPostVersionLists, 17158055, Posts.QUESTION_ID, true);
 

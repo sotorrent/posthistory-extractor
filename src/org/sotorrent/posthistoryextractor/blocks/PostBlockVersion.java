@@ -345,20 +345,20 @@ public abstract class PostBlockVersion {
         }
     }
 
+
     public void setUniqueMatchingPred() {
         // check if only one matching predecessor exists
         if (matchingPredecessors.size() == 1) {
             PostBlockVersion matchingPredecessor = matchingPredecessors.get(0);
 
-            // get max similarity of matchingPredecessor's possible successors
-            double maxSim = matchingPredecessor.getSuccessorSimilarities().values().stream()
-                    .map(PostBlockSimilarity::getMetricResult)
-                    .max(Double::compareTo)
-                    .orElseThrow(IllegalStateException::new);
-
             // the unique matching predecessor must be available
             if (matchingPredecessor.isAvailable()) {
                 // check if the matching predecessor has this post block as successor with max similarity
+                // get max similarity of matchingPredecessor's possible successors
+                final double maxSim = matchingPredecessor.getSuccessorSimilarities().values().stream()
+                        .map(PostBlockSimilarity::getMetricResult)
+                        .max(Double::compareTo)
+                        .orElseThrow(IllegalStateException::new);
                 List<PostBlockVersion> successorsWithMaxSimilarity = matchingPredecessor.getSuccessorSimilarities().entrySet().stream()
                         .filter(entry -> MathUtils.equals(entry.getValue().getMetricResult(), maxSim))
                         .map(Map.Entry::getKey)
@@ -369,76 +369,74 @@ public abstract class PostBlockVersion {
                 }
             } else {
                 // unique matching predecessor existed, but was not available
-                // check if the next available predecessor with the next-highest similarity is also a unique match
-                List<PostBlockVersion> filteredPredecessorsAboveThreshold = predecessorsAboveThreshold.stream()
-                        .filter(predecessor -> predecessor.isAvailable()
-                                & MathUtils.lessThan(predecessorSimilarities.get(predecessor).getMetricResult(), maxSim)
-                        )
-                        .sorted((pred1, pred2) -> Double.compare(
-                                predecessorSimilarities.get(pred2).getMetricResult(),
-                                predecessorSimilarities.get(pred1).getMetricResult()) // sort descending
-                        ).collect(Collectors.toList());
+                setPredRunnerUp();
+            }
+        }
+    }
 
-                if (filteredPredecessorsAboveThreshold.size() > 0) {
-                    PostBlockVersion bestMatch = filteredPredecessorsAboveThreshold.get(0);
+    /**
+     * Set predecessor that doesn't have highest similarity, but is available.
+     */
+    private void setPredRunnerUp() {
+        // check if the next available predecessor with the next-highest similarity is also a unique match
+        List<PostBlockVersion> runnerUpPredecessors = predecessorsAboveThreshold.stream()
+                .filter(predecessor -> predecessor.isAvailable() & MathUtils.lessThan(
+                        predecessorSimilarities.get(predecessor).getMetricResult(),
+                        maxSimilarity.getMetricResult())
+                )
+                .sorted((pred1, pred2) -> Double.compare(
+                        predecessorSimilarities.get(pred2).getMetricResult(),
+                        predecessorSimilarities.get(pred1).getMetricResult()) // sort descending
+                ).collect(Collectors.toList());
 
-                    // if best match is unique or has highest similarity
-                    if (filteredPredecessorsAboveThreshold.size() == 1 ||
-                            !MathUtils.greaterThan(
-                                    predecessorSimilarities.get(bestMatch).getMetricResult(),
-                                    predecessorSimilarities.get(filteredPredecessorsAboveThreshold.get(1)).getMetricResult()
-                            )) {
+        if (runnerUpPredecessors.size() > 0) {
+            PostBlockVersion bestMatch = runnerUpPredecessors.get(0);
 
-                        if (bestMatch.getMatchingSuccessors().size() == 0) {
-                            // update successor information, because this post block is not recognized as a matching successor yet
-                            bestMatch.incrementSuccCount();
-                            bestMatch.getMatchingSuccessors().add(this);
-                            // update pred and succ pointers
-                            setPred(bestMatch);
-                            bestMatch.setSucc(this);
-                        }
-                    }
+            // if best match is unique or has highest similarity
+            if (runnerUpPredecessors.size() == 1 ||
+                    !MathUtils.greaterThan(
+                            predecessorSimilarities.get(bestMatch).getMetricResult(),
+                            predecessorSimilarities.get(runnerUpPredecessors.get(1)).getMetricResult()
+                    )) {
+
+                if (bestMatch.getMatchingSuccessors().size() == 0) {
+                    // update successor information, because this post block is not recognized as a matching successor yet
+                    bestMatch.incrementSuccCount();
+                    bestMatch.getMatchingSuccessors().add(this);
+                    // update pred and succ pointers
+                    setPred(bestMatch);
+                    bestMatch.setSucc(this);
                 }
             }
         }
     }
 
-    public void setPredLocalId(Map<PostBlockVersion, List<PostBlockVersion>> matchingSuccessorsPreviousVersion) {
-        // matchingSuccessorsPreviousVersion : matched predecessor -> list of successors
+    public void setPredLocalId() {
         // set matching predecessor that has a local id most similar to this block (and is still available)
 
-        // only consider matched predecessors which are available and which are matching predecessors of this post block
-        List<PostBlockVersion> matchedPostBlocksPreviousVersion = matchingSuccessorsPreviousVersion.keySet().stream()
-                .filter(b -> b.isAvailable() && matchingPredecessors.contains(b))
-                .sorted(Comparator.comparingInt(PostBlockVersion::getLocalId))
+        // sort available matching predecessors by their local id difference to this post block
+        List<PostBlockVersion> matchingPredecessorsByLocalIdDiff = matchingPredecessors.stream()
+                .filter(PostBlockVersion::isAvailable)
+                .sorted(getPostBlockLocalIdComparator(localId))
                 .collect(Collectors.toList());
 
-        // get all post blocks from this version that may be successors of the post blocks retrieved above
-        List<PostBlockVersion> matchedPostBlocksCurrentVersion = matchingSuccessorsPreviousVersion.values().stream()
-                .flatMap(List::stream)
-                .filter(b -> b.getPred() == null)
-                .collect(Collectors.toSet()) // only consider unique post blocks
-                .stream()
-                .sorted(Comparator.comparingInt(PostBlockVersion::getLocalId))
-                .collect(Collectors.toList());
-
-        // check whether this post block is the successor of one of the matched predecessor according to the localId difference
-        for (PostBlockVersion matchedPostBlockPreviousVersion : matchedPostBlocksPreviousVersion) {
-            PostBlockVersion successorCandidate = matchedPostBlocksCurrentVersion.stream()
-                    .min(getPostBlockLocalIdComparator(matchedPostBlockPreviousVersion.getLocalId()))
-                    .orElse(null);
-            if (successorCandidate != this) {
-                continue;
-            }
-            PostBlockVersion predecessorCandidate = matchedPostBlocksPreviousVersion.stream()
-                    .min(getPostBlockLocalIdComparator(successorCandidate.getLocalId()))
+        // check whether this post block has the smallest local id difference of all successors of a matching predecessor
+        for (PostBlockVersion currentMatchingPredecessor : matchingPredecessorsByLocalIdDiff) {
+            PostBlockVersion successorCandidate = currentMatchingPredecessor.getMatchingSuccessors().stream()
+                    .filter(successor -> successor.getPred() == null)
+                    .min(getPostBlockLocalIdComparator(currentMatchingPredecessor.getLocalId()))
                     .orElse(null);
 
-            if (predecessorCandidate == matchedPostBlockPreviousVersion) {
-                setPred(matchedPostBlockPreviousVersion);
+            if (successorCandidate == this) {
+                // this post block has the smallest local id difference of all possible successors
+                setPred(currentMatchingPredecessor);
+                currentMatchingPredecessor.setSucc(this);
                 return;
             }
         }
+
+        // no matching predecessor found, try predecessors with next-highest similarity
+        setPredRunnerUp();
     }
 
     private Comparator<PostBlockVersion> getPostBlockLocalIdComparator(int localId) {
