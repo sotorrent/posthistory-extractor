@@ -161,7 +161,7 @@ class PredecessorAssignmentTest {
     }
 
     @Test
-    void testPredecessorAssignmentAnswer1870600() {
+    void testPredecessorAssignmentQuestion1870600() {
         PostVersionList q_1870600 = PostVersionList.readFromCSV(TestUtils.pathToPostVersionLists, 1870600, Posts.QUESTION_ID, true);
 
         PostVersion version_5 = q_1870600.get(4);
@@ -175,18 +175,24 @@ class PredecessorAssignmentTest {
         assertNull(postBlocks_version_5.get(5).getPred()); // localId 6
 
         PostVersion version_6 = q_1870600.get(5);
-        TestUtils.testPostBlockTypes(version_5, TextBlockVersion.class);
+        TestUtils.testPostBlockTypes(version_6, TextBlockVersion.class);
         List<PostBlockVersion> postBlocks_version_6 = version_6.getPostBlocks();
         assertNotNull(postBlocks_version_6.get(5).getPred()); // localId 6
         assertEquals(Integer.valueOf(6), postBlocks_version_6.get(5).getPred().getLocalId()); // localId 6
         assertNull(postBlocks_version_6.get(7).getPred()); // localId 8
+
+        PostVersion version_7 = q_1870600.get(6);
+        TestUtils.testPostBlockTypes(version_7, TextBlockVersion.class);
+        List<PostBlockVersion> postBlocks_version_7 = version_7.getPostBlocks();
+        assertNotNull(postBlocks_version_7.get(5).getPred()); // localId 6
+        assertEquals(Integer.valueOf(6), postBlocks_version_7.get(5).getPred().getLocalId()); // localId 6
     }
 
     @Test
     void testPredecessorAssignmentAnswer8432848() {
-        PostVersionList q_8432848 = PostVersionList.readFromCSV(TestUtils.pathToPostVersionLists, 8432848, Posts.QUESTION_ID, true);
+        PostVersionList a_8432848 = PostVersionList.readFromCSV(TestUtils.pathToPostVersionLists, 8432848, Posts.ANSWER_ID, true);
 
-        PostVersion version_4 = q_8432848.get(3);
+        PostVersion version_4 = a_8432848.get(3);
         TestUtils.testPredecessorSimilarities(version_4);
         TestUtils.testPostBlockCount(version_4, 5, 3, 2);
         TestUtils.testPostBlockTypes(version_4, TextBlockVersion.class);
@@ -198,7 +204,7 @@ class PredecessorAssignmentTest {
     }
 
     @Test
-    void testPostBlockExtractionAnswer17158055() {
+    void testPostBlockExtractionQuestion17158055() {
         PostVersionList q_17158055 = PostVersionList.readFromCSV(TestUtils.pathToPostVersionLists, 17158055, Posts.QUESTION_ID, true);
 
         PostVersion version_6 = q_17158055.get(5);
@@ -211,7 +217,7 @@ class PredecessorAssignmentTest {
     }
 
     @Test
-    void testPredecessorAssignmentAnswer17158055() {
+    void testPredecessorAssignmentQuestion17158055() {
         PostVersionList q_17158055 = PostVersionList.readFromCSV(TestUtils.pathToPostVersionLists, 17158055, Posts.QUESTION_ID, true);
 
         PostVersion version_7 = q_17158055.get(6);
@@ -227,7 +233,7 @@ class PredecessorAssignmentTest {
     }
 
     @Test
-    void testPredecessorAssignmentAnswer25488162() {
+    void testPredecessorAssignmentQuestion25488162() {
         PostVersionList q_25488162 = PostVersionList.readFromCSV(TestUtils.pathToPostVersionLists, 25488162, Posts.QUESTION_ID, true);
 
         PostVersion version_3 = q_25488162.get(2);
@@ -245,9 +251,9 @@ class PredecessorAssignmentTest {
 
     @Test
     void testPredecessorAssignmentAnswer39313130() {
-        PostVersionList q_39313130 = PostVersionList.readFromCSV(TestUtils.pathToPostVersionLists, 39313130, Posts.QUESTION_ID, true);
+        PostVersionList a_39313130 = PostVersionList.readFromCSV(TestUtils.pathToPostVersionLists, 39313130, Posts.ANSWER_ID, true);
 
-        PostVersion version_7 = q_39313130.get(6);
+        PostVersion version_7 = a_39313130.get(6);
         TestUtils.testPredecessorSimilarities(version_7);
         TestUtils.testPostBlockCount(version_7, 2, 1, 1);
         TestUtils.testPostBlockTypes(version_7, TextBlockVersion.class);
@@ -274,9 +280,9 @@ class PredecessorAssignmentTest {
 
     @Test
     void testPredecessorAssignmentAnswer33003217() {
-        PostVersionList q_33003217 = PostVersionList.readFromCSV(TestUtils.pathToPostVersionLists, 33003217, Posts.QUESTION_ID, true);
+        PostVersionList a_33003217 = PostVersionList.readFromCSV(TestUtils.pathToPostVersionLists, 33003217, Posts.ANSWER_ID, true);
 
-        PostVersion version_8 = q_33003217.get(7);
+        PostVersion version_8 = a_33003217.get(7);
         TestUtils.testPredecessorSimilarities(version_8);
         TestUtils.testPostBlockCount(version_8, 6, 3, 3);
         TestUtils.testPostBlockTypes(version_8, TextBlockVersion.class);
@@ -289,9 +295,9 @@ class PredecessorAssignmentTest {
 
     @Test
     void testPredecessorAssignmentAnswer32801275() {
-        PostVersionList q_32801275 = PostVersionList.readFromCSV(TestUtils.pathToPostVersionLists, 32801275, Posts.QUESTION_ID, true);
+        PostVersionList a_32801275 = PostVersionList.readFromCSV(TestUtils.pathToPostVersionLists, 32801275, Posts.ANSWER_ID, true);
 
-        PostVersion version_2 = q_32801275.get(1);
+        PostVersion version_2 = a_32801275.get(1);
         TestUtils.testPredecessorSimilarities(version_2);
         TestUtils.testPostBlockCount(version_2, 7, 4, 3);
         TestUtils.testPostBlockTypes(version_2, TextBlockVersion.class);
@@ -301,7 +307,7 @@ class PredecessorAssignmentTest {
         assertEquals(Integer.valueOf(2), postBlocks_version_2.get(1).getPred().getLocalId()); // localId 2
         assertNull(postBlocks_version_2.get(3).getPred()); // localId 4
 
-        PostVersion version_9 = q_32801275.get(8);
+        PostVersion version_9 = a_32801275.get(8);
         TestUtils.testPredecessorSimilarities(version_9);
         TestUtils.testPostBlockCount(version_9, 7, 3, 4);
         TestUtils.testPostBlockTypes(version_9, new Class[]{
@@ -314,7 +320,6 @@ class PredecessorAssignmentTest {
                 TextBlockVersion.class
         });
 
-        // TODO: Update GT according to this mapping
         List<PostBlockVersion> postBlocks_version_9 = version_9.getPostBlocks();
         assertNotNull(postBlocks_version_9.get(0).getPred()); // localId 1
         assertEquals(Integer.valueOf(1), postBlocks_version_9.get(0).getPred().getLocalId()); // localId 1
@@ -331,9 +336,9 @@ class PredecessorAssignmentTest {
 
     @Test
     void testPredecessorAssignmentAnswer29113416() {
-        PostVersionList q_29113416 = PostVersionList.readFromCSV(TestUtils.pathToPostVersionLists, 29113416, Posts.QUESTION_ID, true);
+        PostVersionList a_29113416 = PostVersionList.readFromCSV(TestUtils.pathToPostVersionLists, 29113416, Posts.ANSWER_ID, true);
 
-        PostVersion version_3 = q_29113416.get(2);
+        PostVersion version_3 = a_29113416.get(2);
         TestUtils.testPredecessorSimilarities(version_3);
         TestUtils.testPostBlockCount(version_3, 11, 6, 5);
         TestUtils.testPostBlockTypes(version_3, TextBlockVersion.class);
@@ -344,9 +349,9 @@ class PredecessorAssignmentTest {
 
     @Test
     void testPredecessorAssignmentAnswer28623462() {
-        PostVersionList q_28623462 = PostVersionList.readFromCSV(TestUtils.pathToPostVersionLists, 28623462, Posts.QUESTION_ID, true);
+        PostVersionList a_28623462 = PostVersionList.readFromCSV(TestUtils.pathToPostVersionLists, 28623462, Posts.ANSWER_ID, true);
 
-        PostVersion version_6 = q_28623462.get(5);
+        PostVersion version_6 = a_28623462.get(5);
         TestUtils.testPredecessorSimilarities(version_6);
         TestUtils.testPostBlockCount(version_6, 6, 3, 3);
         TestUtils.testPostBlockTypes(version_6, TextBlockVersion.class);
@@ -360,9 +365,9 @@ class PredecessorAssignmentTest {
     @Disabled
         // see comment below
     void testPredecessorAssignmentAnswer26050416() {
-        PostVersionList q_26050416 = PostVersionList.readFromCSV(TestUtils.pathToPostVersionLists, 26050416, Posts.QUESTION_ID, true);
+        PostVersionList a_26050416 = PostVersionList.readFromCSV(TestUtils.pathToPostVersionLists, 26050416, Posts.ANSWER_ID, true);
 
-        PostVersion version_7 = q_26050416.get(6);
+        PostVersion version_7 = a_26050416.get(6);
         TestUtils.testPredecessorSimilarities(version_7);
         TestUtils.testPostBlockCount(version_7, 7, 4, 3);
         TestUtils.testPostBlockTypes(version_7, TextBlockVersion.class);
@@ -377,7 +382,7 @@ class PredecessorAssignmentTest {
     }
 
     @Test
-    void testPredecessorAssignmentAnswer25871278() {
+    void testPredecessorAssignmentQuestion25871278() {
         PostVersionList q_25871278 = PostVersionList.readFromCSV(TestUtils.pathToPostVersionLists, 25871278, Posts.QUESTION_ID, true);
 
         PostVersion version_6 = q_25871278.get(5);
@@ -391,7 +396,7 @@ class PredecessorAssignmentTest {
     }
 
     @Test
-    void testPredecessorAssignmentAnswer15119106() {
+    void testPredecessorAssignmentQuestion15119106() {
         PostVersionList q_15119106 = PostVersionList.readFromCSV(TestUtils.pathToPostVersionLists, 15119106, Posts.QUESTION_ID, true);
 
         PostVersion version_2 = q_15119106.get(1);
@@ -409,5 +414,21 @@ class PredecessorAssignmentTest {
         assertNull(postBlocks_version_2.get(4).getPred()); // localId 5
         assertNotNull(postBlocks_version_2.get(5).getPred()); // localId 6
         assertEquals(Integer.valueOf(3), postBlocks_version_2.get(5).getPred().getLocalId()); // localId 6
+    }
+
+    @Test
+    void testPredecessorAssignmentQuestion21260674() {
+        PostVersionList q_21260674 = PostVersionList.readFromCSV(TestUtils.pathToPostVersionLists, 21260674, Posts.QUESTION_ID, true);
+
+        PostVersion version_6 = q_21260674.get(5);
+        TestUtils.testPredecessorSimilarities(version_6);
+        TestUtils.testPostBlockCount(version_6, 2, 1, 1);
+        TestUtils.testPostBlockTypes(version_6, CodeBlockVersion.class);
+
+        List<PostBlockVersion> postBlocks_version_6 = version_6.getPostBlocks();
+        assertNotNull(postBlocks_version_6.get(0).getPred()); // localId 1
+        assertEquals(Integer.valueOf(1), postBlocks_version_6.get(0).getPred().getLocalId()); // localId 1
+        assertNotNull(postBlocks_version_6.get(1).getPred()); // localId 2
+        assertEquals(Integer.valueOf(2), postBlocks_version_6.get(1).getPred().getLocalId()); // localId 2
     }
 }
