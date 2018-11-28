@@ -573,5 +573,9 @@ class PredecessorAssignmentTest {
         // text blocks with local id 8 in versions 1 and 2 should be matched
         assertNotNull(postBlocks_version_2.get(7).getPred()); // localId 8
         assertEquals(Integer.valueOf(8), postBlocks_version_2.get(7).getPred().getLocalId()); // localId 8
+
+        // text blocks with local id 14 in versions 1 and 2 should be matched (similar to code blocks with localId 8)
+        assertNotNull(postBlocks_version_2.get(13).getPred()); // localId 14
+        assertEquals(Integer.valueOf(8), postBlocks_version_2.get(13).getPred().getLocalId()); // localId 14
     }
 }
