@@ -562,4 +562,16 @@ class PredecessorAssignmentTest {
         assertNotNull(postBlocks_version_7.get(3).getPred()); // localId 4
         assertEquals(Integer.valueOf(4), postBlocks_version_7.get(3).getPred().getLocalId()); // localId 4
     }
+
+    @Test
+    void testPredecessorAssignmentQuestion10381975() {
+        PostVersionList a_10381975 = PostVersionList.readFromCSV(TestUtils.pathToPostVersionLists, 10381975, Posts.ANSWER_ID, true);
+
+        PostVersion version_2 = a_10381975.get(1);
+        List<PostBlockVersion> postBlocks_version_2 = version_2.getPostBlocks();
+
+        // text blocks with local id 8 in versions 1 and 2 should be matched
+        assertNotNull(postBlocks_version_2.get(7).getPred()); // localId 8
+        assertEquals(Integer.valueOf(8), postBlocks_version_2.get(7).getPred().getLocalId()); // localId 8
+    }
 }
