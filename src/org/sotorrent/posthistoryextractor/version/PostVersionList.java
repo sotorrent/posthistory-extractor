@@ -217,13 +217,11 @@ public class PostVersionList extends LinkedList<PostVersion> implements VersionL
                             PostBlockVersion.MatchingStrategy.ABOVE);
                 }
 
-                // finally, set the remaining predecessors using the order in the post (localId)
-                for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks(postBlockTypeFilter)) {
-                    // predecessor for this post block not set yet and at least one matching predecessor found
-                    if (currentPostBlock.getPred() == null && currentPostBlock.getMatchingPredecessors().size() > 0) {
-                        currentPostBlock.setPredLocalId();
-                    }
-                }
+                // set the remaining predecessors using the order in the post (localId)
+                setPostBlockPredPosition(currentVersion, postBlockTypeFilter);
+
+                // finally, try to set runner-up match in case position-based strategy failed
+                setPostBlockPredRunnerUp(currentVersion, postBlockTypeFilter);
 
                 // set root post block for all post blocks
                 for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks(postBlockTypeFilter)) {
@@ -261,7 +259,7 @@ public class PostVersionList extends LinkedList<PostVersion> implements VersionL
         }
     }
 
-    public boolean setPostBlockPredContext(PostVersion currentVersion,
+    private boolean setPostBlockPredContext(PostVersion currentVersion,
                                            PostVersion previousVersion,
                                            Set<Byte> postBlockTypeFilter,
                                            PostBlockVersion.MatchingStrategy matchingStrategy) {
@@ -273,6 +271,28 @@ public class PostVersionList extends LinkedList<PostVersion> implements VersionL
             }
         }
         return false;
+    }
+
+    private void setPostBlockPredPosition(PostVersion currentVersion,
+                                          Set<Byte> postBlockTypeFilter) {
+
+        for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks(postBlockTypeFilter)) {
+            if (currentPostBlock.getPred() == null) {
+                // no matching predecessor found, try setting predecessor using position information
+                currentPostBlock.setPredPosition();
+            }
+        }
+    }
+
+    private void setPostBlockPredRunnerUp(PostVersion currentVersion,
+                                          Set<Byte> postBlockTypeFilter) {
+
+        for (PostBlockVersion currentPostBlock : currentVersion.getPostBlocks(postBlockTypeFilter)) {
+            if (currentPostBlock.getPred() == null) {
+                // no matching predecessor found, try predecessors with next-highest similarity
+                currentPostBlock.setPredRunnerUp();
+            }
+        }
     }
 
     public PostBlockDiffList getDiffs() {

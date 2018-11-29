@@ -377,7 +377,7 @@ public abstract class PostBlockVersion {
     /**
      * Set predecessor that doesn't have highest similarity, but is available.
      */
-    private void setPredRunnerUp() {
+    public void setPredRunnerUp() {
         // check if the next available predecessor with the next-highest similarity is also a unique match
         List<PostBlockVersion> runnerUpPredecessors = predecessorsAboveThreshold.stream()
                 .filter(predecessor -> predecessor.isAvailable() & MathUtils.lessThan(
@@ -399,7 +399,10 @@ public abstract class PostBlockVersion {
                             predecessorSimilarities.get(runnerUpPredecessors.get(1)).getMetricResult()
                     )) {
 
-                if (bestMatch.getMatchingSuccessors().size() == 0) {
+                boolean matchingSuccessorsAvailable = bestMatch.getMatchingSuccessors().stream()
+                        .anyMatch(succ -> succ.getPred() == null);
+
+                if (bestMatch.getMatchingSuccessors().size() == 0 || !matchingSuccessorsAvailable) {
                     // update successor information, because this post block is not recognized as a matching successor yet
                     bestMatch.incrementSuccCount();
                     bestMatch.getMatchingSuccessors().add(this);
@@ -411,7 +414,7 @@ public abstract class PostBlockVersion {
         }
     }
 
-    public void setPredLocalId() {
+    public void setPredPosition() {
         // set matching predecessor that has a local id most similar to this block (and is still available)
 
         // sort available matching predecessors by their local id difference to this post block
@@ -434,9 +437,6 @@ public abstract class PostBlockVersion {
                 return;
             }
         }
-
-        // no matching predecessor found, try predecessors with next-highest similarity
-        setPredRunnerUp();
     }
 
     private Comparator<PostBlockVersion> getPostBlockLocalIdComparator(int localId) {
