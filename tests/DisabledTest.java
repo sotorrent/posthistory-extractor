@@ -29,6 +29,7 @@ import java.util.logging.Logger;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+@Disabled
 class DisabledTest {
     private static Logger logger;
     private static Path pathToHibernateConfig = Paths.get("hibernate", "hibernate.cfg.xml");
@@ -51,7 +52,6 @@ class DisabledTest {
         }
     }
 
-    @Disabled
     @Test
     void testPostVersionsWithoutContent() {
         // posts without post blocks
@@ -185,7 +185,6 @@ class DisabledTest {
         assertFalse(emptyTitleVersionListPresent);
     }
 
-    @Disabled
     @Test
     void testSOTorrent() {
         if (PostHistoryIterator.sessionFactory == null) {
