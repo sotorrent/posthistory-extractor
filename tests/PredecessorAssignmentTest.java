@@ -493,16 +493,16 @@ class PredecessorAssignmentTest {
 
         PostVersion version_1 = q_15403854.get(0);
         TestUtils.testPredecessorSimilarities(version_1);
-        TestUtils.testPostBlockCount(version_1, 1, 1, 1);
+        TestUtils.testPostBlockCount(version_1, 1, 1, 0);
 
         PostVersion version_2 = q_15403854.get(1);
         TestUtils.testPredecessorSimilarities(version_2);
         TestUtils.testPostBlockCount(version_2, 3, 2, 1);
 
         List<PostBlockVersion> postBlocks_version_2 = version_2.getPostBlocks();
-        assertNull(postBlocks_version_2.get(1).getPred()); // localId 1
-        assertNull(postBlocks_version_2.get(2).getPred()); // localId 2
-        assertNull(postBlocks_version_2.get(3).getPred()); // localId 3
+        assertNull(postBlocks_version_2.get(0).getPred()); // localId 1
+        assertNull(postBlocks_version_2.get(1).getPred()); // localId 2
+        assertNull(postBlocks_version_2.get(2).getPred()); // localId 3
     }
 
     @Test
