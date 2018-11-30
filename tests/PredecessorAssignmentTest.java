@@ -387,12 +387,15 @@ class PredecessorAssignmentTest {
 
         PostVersion version_6 = q_25871278.get(5);
         TestUtils.testPredecessorSimilarities(version_6);
-        TestUtils.testPostBlockCount(version_6, 9, 5, 4);
+        TestUtils.testPostBlockCount(version_6, 3, 2, 1);
         TestUtils.testPostBlockTypes(version_6, TextBlockVersion.class);
         List<PostBlockVersion> postBlocks_version_6 = version_6.getPostBlocks();
+        assertNotNull(postBlocks_version_6.get(0).getPred()); // localId 1
+        assertEquals(Integer.valueOf(1), postBlocks_version_6.get(0).getPred().getLocalId()); // localId 1
         assertNotNull(postBlocks_version_6.get(1).getPred()); // localId 2
         assertEquals(Integer.valueOf(2), postBlocks_version_6.get(1).getPred().getLocalId()); // localId 2
-        assertNull(postBlocks_version_6.get(3).getPred());
+        assertNotNull(postBlocks_version_6.get(2).getPred()); // localId 3
+        assertEquals(Integer.valueOf(3), postBlocks_version_6.get(2).getPred().getLocalId()); // localId 3
     }
 
     @Test
@@ -488,13 +491,18 @@ class PredecessorAssignmentTest {
     void testPredecessorAssignmentQuestion15403854() {
         PostVersionList q_15403854 = PostVersionList.readFromCSV(TestUtils.pathToPostVersionLists, 15403854, Posts.QUESTION_ID, true);
 
+        PostVersion version_1 = q_15403854.get(0);
+        TestUtils.testPredecessorSimilarities(version_1);
+        TestUtils.testPostBlockCount(version_1, 1, 1, 1);
+
         PostVersion version_2 = q_15403854.get(1);
         TestUtils.testPredecessorSimilarities(version_2);
         TestUtils.testPostBlockCount(version_2, 3, 2, 1);
 
         List<PostBlockVersion> postBlocks_version_2 = version_2.getPostBlocks();
-        assertNotNull(postBlocks_version_2.get(1).getPred()); // localId 2
-        assertEquals(Integer.valueOf(4), postBlocks_version_2.get(1).getPred().getLocalId()); // localId 2
+        assertNull(postBlocks_version_2.get(1).getPred()); // localId 1
+        assertNull(postBlocks_version_2.get(2).getPred()); // localId 2
+        assertNull(postBlocks_version_2.get(3).getPred()); // localId 3
     }
 
     @Test
