@@ -104,8 +104,9 @@ public class PostHistory {
     // see, e.g., source of question 3381751 version 1 (<script type="text/javascript"> ... </script> instead of correct indention)
     private static final Pattern scriptTagBeginPattern = Pattern.compile("^\\s*<script[^>]+>", Pattern.CASE_INSENSITIVE);
     private static final Pattern scriptTagEndPattern = Pattern.compile("</script>\\s*$", Pattern.CASE_INSENSITIVE);
-    // see, e.g., source of question 17158055, version six (line containing only `mydomain.com/bn/products/1`)
-    private static final Pattern inlineCodeLinePattern = Pattern.compile("\\s*`([^`]+)`\\s*", Pattern.CASE_INSENSITIVE);
+    // see, e.g., source of question 17158055, version 6 (line containing only `mydomain.com/bn/products/1`)
+    // also consider possible HTML newline character, as in question 49311849, version 4
+    private static final Pattern inlineCodeLinePattern = Pattern.compile("\\s*`([^`]+)`\\s*(?:<br\\s*/?\\s*>)?", Pattern.CASE_INSENSITIVE);
 
     // database
     private int id;
@@ -249,10 +250,12 @@ public class PostHistory {
         boolean inCodeTagCodeBlock = false;
         boolean inScriptTagCodeBlock = false;
         boolean codeBlockEndsWithNextLine = false;
+        String previousLine = "";
 
         for (String line : lines) {
             // ignore empty lines
             if (line.isEmpty()) {
+                previousLine = line;
                 continue;
             }
 
@@ -266,7 +269,7 @@ public class PostHistory {
             // even if tab is not listed here: http://stackoverflow.com/editing-help#code
             // we observed cases where it was important to check for the tab, sometimes preceded by spaces
             // (see test cases)
-            boolean isCodeLine = codeBlockPattern.matcher(line).find(); // only match beginning of line
+            boolean inMarkdownCodeBlock = codeBlockPattern.matcher(line).find(); // only match beginning of line
             // check if line only contains whitespaces (ignore whitespaces at the beginning of posts and not end blocks with whitespace lines)
             boolean isWhitespaceLine = whiteSpaceLinePattern.matcher(line).matches(); // match whole line
             // e.g. "<!-- language: lang-js -->" (see https://stackoverflow.com/editing-help#syntax-highlighting)
@@ -278,7 +281,7 @@ public class PostHistory {
             boolean isInlineCodeLine = inlineCodeLinePattern.matcher(line).matches();
 
             // if line is not part of a regular Stack Overflow code block, try to detect alternative code block styles
-            if (!isCodeLine && !isWhitespaceLine && !isSnippetLanguage) {
+            if (!inMarkdownCodeBlock && !isWhitespaceLine && !isSnippetLanguage) {
 
                 // see https://stackoverflow.blog/2014/09/16/introducing-runnable-javascript-css-and-html-code-snippets/
                 Matcher stackSnippetBeginMatcher = stackSnippetBeginPattern.matcher(line);
@@ -389,8 +392,8 @@ public class PostHistory {
             }
 
             // decide if the current line is part of a code block
-            boolean inCodeBlock = isCodeLine || (isSnippetLanguage && line.trim().length() == 0) || inStackSnippetCodeBlock || inAlternativeCodeBlock
-                    || inCodeTagCodeBlock || inScriptTagCodeBlock || isInlineCodeLine;
+            boolean inNonMarkdownCodeBlock = (isSnippetLanguage && line.trim().length() == 0) || inStackSnippetCodeBlock
+                    || inAlternativeCodeBlock || inCodeTagCodeBlock || inScriptTagCodeBlock || isInlineCodeLine;
 
             if (currentPostBlock == null) {
                 // first block in post
@@ -398,7 +401,7 @@ public class PostHistory {
                 // ignore whitespaces at the beginning of a post
                 if (!isWhitespaceLine) {
                     // first line, block element not created yet
-                    if (inCodeBlock) {
+                    if (inMarkdownCodeBlock || inNonMarkdownCodeBlock) {
                         currentPostBlock = new CodeBlockVersion(postId, id);
                     } else {
                         currentPostBlock = new TextBlockVersion(postId, id);
@@ -409,7 +412,7 @@ public class PostHistory {
                 // or if it is first line of next block
 
                 if (currentPostBlock instanceof TextBlockVersion) {
-                    if (inCodeBlock && !isWhitespaceLine) {
+                    if (((inMarkdownCodeBlock && previousLine.isEmpty()) || inNonMarkdownCodeBlock) && !isWhitespaceLine) {
                         // End of text block, beginning of code block.
                         // Do not end text block if next line is whitespace line
                         // see, e.g., second line of PostHistory, Id=97576027
@@ -423,7 +426,7 @@ public class PostHistory {
                     if (isSnippetLanguage || isSnippetDivider) {
                         addPostBlock(currentPostBlock);
                         currentPostBlock = new CodeBlockVersion(postId, id);
-                    } else if(!inCodeBlock && !isWhitespaceLine) {
+                    } else if ((!inMarkdownCodeBlock && !inNonMarkdownCodeBlock) && !isWhitespaceLine) {
                         // In a Stack Snippet, the lines do not have to be indented (see version 12 of answer
                         // 26044128 and corresponding test case).
                         // Do not close code postBlocks when whitespace line is reached
@@ -440,6 +443,8 @@ public class PostHistory {
             if (currentPostBlock != null && !isSnippetLanguage) {
                 currentPostBlock.append(line);
             }
+
+            previousLine = line;
         }
 
         if (currentPostBlock != null) {

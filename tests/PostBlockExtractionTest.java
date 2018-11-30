@@ -170,4 +170,28 @@ class PostBlockExtractionTest {
         CodeBlockVersion code_block_3 = version_1.getCodeBlocks().get(2);
         assertTrue(code_block_3.getContent().startsWith("> package "));
     }
+
+    @Test
+    void testQuestion49311839() {
+        // this post uses inline-style code blocks + HTML newlines
+        int postId = 49311839;
+        PostVersionList q_49311839 = PostVersionList.readFromCSV(TestUtils.pathToPostVersionLists, postId, Posts.QUESTION_ID);
+
+        PostVersion version_4 = q_49311839.get(3);
+        TestUtils.testPostBlockCount(version_4, 7, 4, 3);
+    }
+
+    @Test
+    void testQuestion46695379() {
+        // this post had 291 post blocks due to...
+        int postId = 46695379;
+        PostVersionList q_46695379 = PostVersionList.readFromCSV(TestUtils.pathToPostVersionLists, postId, Posts.QUESTION_ID);
+
+        PostVersion version_6 = q_46695379.get(5);
+        TestUtils.testPostBlockCount(version_6, 3, 2, 1);
+        List<PostBlockVersion> version_6_postblocks = version_6.getPostBlocks();
+        assertTrue(version_6_postblocks.get(0).getContent().trim().startsWith("I am working on a project in django with pycharm"));
+        assertTrue(version_6_postblocks.get(1).getContent().trim().startsWith("def all_songs(request, filter_by)"));
+        assertTrue(version_6_postblocks.get(2).getContent().trim().startsWith("Everything is working fine when I click on the page that run this method, but I get an error"));
+    }
 }
