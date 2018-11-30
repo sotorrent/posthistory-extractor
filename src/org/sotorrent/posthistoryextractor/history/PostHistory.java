@@ -412,7 +412,11 @@ public class PostHistory {
                 // or if it is first line of next block
 
                 if (currentPostBlock instanceof TextBlockVersion) {
-                    if (((inMarkdownCodeBlock && previousLine.isEmpty()) || inNonMarkdownCodeBlock) && !isWhitespaceLine) {
+                    // check if line contains letters or digits (heuristic for malformed post blocks)
+                    boolean previousLineContainsLettersOrDigits = containsLetterOrDigitPattern.matcher(previousLine).find();
+
+                    if (((inMarkdownCodeBlock && (previousLine.isEmpty() || !previousLineContainsLettersOrDigits))
+                            || inNonMarkdownCodeBlock) && !isWhitespaceLine) {
                         // End of text block, beginning of code block.
                         // Do not end text block if next line is whitespace line
                         // see, e.g., second line of PostHistory, Id=97576027
