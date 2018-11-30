@@ -183,7 +183,7 @@ class PostBlockExtractionTest {
 
     @Test
     void testQuestion46695379() {
-        // this post had 291 post blocks due to...
+        // this post had 291 post blocks due to indention in log files being treated as code blocks
         int postId = 46695379;
         PostVersionList q_46695379 = PostVersionList.readFromCSV(TestUtils.pathToPostVersionLists, postId, Posts.QUESTION_ID);
 
@@ -193,5 +193,17 @@ class PostBlockExtractionTest {
         assertTrue(version_6_postblocks.get(0).getContent().trim().startsWith("I am working on a project in django with pycharm"));
         assertTrue(version_6_postblocks.get(1).getContent().trim().startsWith("def all_songs(request, filter_by)"));
         assertTrue(version_6_postblocks.get(2).getContent().trim().startsWith("Everything is working fine when I click on the page that run this method, but I get an error"));
+    }
+
+    @Test
+    void testAnswer29443655() {
+        // this post has an "empty" code block only containing an HTMl iframe that is not rendered on the website.
+        int postId = 29443655;
+        PostVersionList q_29443655 = PostVersionList.readFromCSV(TestUtils.pathToPostVersionLists, postId, Posts.ANSWER_ID);
+
+        PostVersion version_6 = q_29443655.get(5);
+        TestUtils.testPostBlockCount(version_6, 15, 8, 7);
+        List<PostBlockVersion> version_6_postblocks = version_6.getPostBlocks();
+        assertEquals("<iframe width=\"100%\" height=\"300\" src=\"//jsfiddle.net/vyab4kcf/44/embedded/\" allowfullscreen=\"allowfullscreen\" frameborder=\"0\"></iframe>", version_6_postblocks.get(14).getContent().trim());
     }
 }
