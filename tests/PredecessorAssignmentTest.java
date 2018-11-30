@@ -175,11 +175,15 @@ class PredecessorAssignmentTest {
         assertNull(postBlocks_version_5.get(5).getPred()); // localId 6
 
         PostVersion version_6 = q_1870600.get(5);
+        TestUtils.testPredecessorSimilarities(version_6);
+        // text block with local id 7 contains code block that is not correctly indented
+        TestUtils.testPostBlockCount(version_6, 9, 5, 4);
         TestUtils.testPostBlockTypes(version_6, TextBlockVersion.class);
         List<PostBlockVersion> postBlocks_version_6 = version_6.getPostBlocks();
-        assertNotNull(postBlocks_version_6.get(5).getPred()); // localId 6
-        assertEquals(Integer.valueOf(6), postBlocks_version_6.get(5).getPred().getLocalId()); // localId 6
-        assertNull(postBlocks_version_6.get(7).getPred()); // localId 8
+        for (int i=0; i<9; i++) {
+            assertNotNull(postBlocks_version_6.get(i).getPred()); // localId i+1
+            assertEquals(Integer.valueOf(i+1), postBlocks_version_6.get(i).getPred().getLocalId()); // localId i+1
+        }
 
         PostVersion version_7 = q_1870600.get(6);
         TestUtils.testPostBlockTypes(version_7, TextBlockVersion.class);
