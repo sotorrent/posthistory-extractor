@@ -1,4 +1,5 @@
 import com.google.common.collect.Sets;
+import org.junit.jupiter.api.Test;
 import org.sotorrent.posthistoryextractor.Config;
 import org.sotorrent.posthistoryextractor.blocks.CodeBlockVersion;
 import org.sotorrent.posthistoryextractor.blocks.PostBlockVersion;
@@ -10,7 +11,6 @@ import org.sotorrent.posthistoryextractor.gt.PostGroundTruth;
 import org.sotorrent.posthistoryextractor.history.Posts;
 import org.sotorrent.posthistoryextractor.version.PostVersion;
 import org.sotorrent.posthistoryextractor.version.PostVersionList;
-import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -365,13 +365,13 @@ class GroundTruthTest {
         assertNull(version_2_postBlocks.get(1).getPred());
 
         assertNotNull(version_2_postBlocks.get(2).getPred());
-        assertEquals(Integer.valueOf(5), version_2_postBlocks.get(2).getPred().getLocalId());
+        assertEquals(Integer.valueOf(3), version_2_postBlocks.get(2).getPred().getLocalId());
 
         assertNotNull(version_2_postBlocks.get(3).getPred());
-        assertEquals(Integer.valueOf(6), version_2_postBlocks.get(3).getPred().getLocalId());
+        assertEquals(Integer.valueOf(4), version_2_postBlocks.get(3).getPred().getLocalId());
 
         assertNotNull(version_2_postBlocks.get(4).getPred());
-        assertEquals(Integer.valueOf(7), version_2_postBlocks.get(4).getPred().getLocalId());
+        assertEquals(Integer.valueOf(5), version_2_postBlocks.get(4).getPred().getLocalId());
 
         assertNull(version_2_postBlocks.get(5).getPred());
     }
