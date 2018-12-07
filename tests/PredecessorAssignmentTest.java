@@ -505,7 +505,8 @@ class PredecessorAssignmentTest {
         TestUtils.testPostBlockCount(version_2, 3, 2, 1);
 
         List<PostBlockVersion> postBlocks_version_2 = version_2.getPostBlocks();
-        assertNull(postBlocks_version_2.get(0).getPred()); // localId 1
+        assertNotNull(postBlocks_version_2.get(0).getPred()); // localId 1
+        assertEquals(Integer.valueOf(1), postBlocks_version_2.get(0).getPred().getLocalId()); // localId 1
         assertNull(postBlocks_version_2.get(1).getPred()); // localId 2
         assertNull(postBlocks_version_2.get(2).getPred()); // localId 3
     }
