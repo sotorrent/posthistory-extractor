@@ -114,9 +114,10 @@ class OtherPostHistoryTest {
         codeBlock2.setContent("bar");
 
         codeBlock1.compareTo(codeBlock2, Config.DEFAULT); // no exception
-        assertThrows(InputTooShortException.class, () -> codeBlock1.compareTo(codeBlock2,
-                Config.DEFAULT.withCodeBackupSimilarityMetric(null))
-        );
+        // commented out, because new default code metric "tokenDiceNormalized" doesn't need a backup metric
+        //assertThrows(InputTooShortException.class, () -> codeBlock1.compareTo(codeBlock2,
+        //        Config.DEFAULT.withCodeBackupSimilarityMetric(null))
+        //);
         similarity = codeBlock1.compareTo(codeBlock2, Config.EMPTY);
         assertEquals(0.0, similarity.getMetricResult());
     }
