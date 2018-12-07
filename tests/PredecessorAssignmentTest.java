@@ -217,7 +217,7 @@ class PredecessorAssignmentTest {
         TestUtils.testPostBlockTypes(version_6, TextBlockVersion.class);
 
         List<PostBlockVersion> postBlocks_version_6 = version_6.getPostBlocks();
-        assertEquals("`mydomain.com/bn/products/1`", postBlocks_version_6.get(3).getContent().trim());
+        assertEquals("mydomain.com/bn/products/1", postBlocks_version_6.get(3).getContent().trim());
     }
 
     @Test
