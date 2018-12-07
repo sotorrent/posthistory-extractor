@@ -521,7 +521,7 @@ class PredecessorAssignmentTest {
 
         List<PostBlockVersion> postBlocks_version_4 = version_4.getPostBlocks();
         assertNotNull(postBlocks_version_4.get(1).getPred()); // localId 2
-        assertEquals(Integer.valueOf(4), postBlocks_version_4.get(1).getPred().getLocalId()); // localId 2
+        assertEquals(Integer.valueOf(2), postBlocks_version_4.get(1).getPred().getLocalId()); // localId 2
     }
 
     @Test
