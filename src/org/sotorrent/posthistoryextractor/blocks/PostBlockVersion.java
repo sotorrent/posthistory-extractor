@@ -22,7 +22,10 @@ import java.util.stream.Collectors;
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name="PostBlockTypeId",discriminatorType=DiscriminatorType.INTEGER)
 public abstract class PostBlockVersion {
+    // eqal matches have this similarity
     public static final double EQUALITY_SIMILARITY = 10.0;
+    // matches with similarity difference <= delta are considered to be equal
+    private static final double UNIQUE_MATCH_DELTA = 0.05;
 
     public enum MatchingStrategy {BOTH, ABOVE, BELOW} // needed for method setPredContext
 
@@ -360,7 +363,7 @@ public abstract class PostBlockVersion {
                         .max(Double::compareTo)
                         .orElseThrow(IllegalStateException::new);
                 List<PostBlockVersion> successorsWithMaxSimilarity = matchingPredecessor.getSuccessorSimilarities().entrySet().stream()
-                        .filter(entry -> MathUtils.equals(entry.getValue().getMetricResult(), maxSim))
+                        .filter(entry -> MathUtils.lessThan(maxSim - entry.getValue().getMetricResult(), UNIQUE_MATCH_DELTA))
                         .map(Map.Entry::getKey)
                         .collect(Collectors.toList());
                 if (successorsWithMaxSimilarity.size() == 1 && successorsWithMaxSimilarity.get(0) == this) {

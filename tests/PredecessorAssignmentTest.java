@@ -331,7 +331,8 @@ class PredecessorAssignmentTest {
         assertNull(postBlocks_version_9.get(2).getPred()); // localId 3
         assertNotNull(postBlocks_version_9.get(3).getPred()); // localId 4
         assertEquals(Integer.valueOf(3), postBlocks_version_9.get(3).getPred().getLocalId()); // localId 4
-        assertNull(postBlocks_version_9.get(4).getPred()); // localId 5
+        assertNotNull(postBlocks_version_9.get(4).getPred()); // localId 5
+        assertEquals(Integer.valueOf(4), postBlocks_version_9.get(4).getPred().getLocalId()); // localId 5
         assertNotNull(postBlocks_version_9.get(5).getPred()); // localId 6
         assertEquals(Integer.valueOf(6), postBlocks_version_9.get(5).getPred().getLocalId()); // localId 6
         assertNotNull(postBlocks_version_9.get(6).getPred()); // localId 7
