@@ -755,6 +755,7 @@ public abstract class PostBlockVersion {
         }
     }
 
+    @Transient
     private Comparator<Map.Entry<PostBlockVersion, PostBlockSimilarity>> getSimilarityComparator() {
         return (v1, v2) -> {
             // sort descending according to similarity in descending order
