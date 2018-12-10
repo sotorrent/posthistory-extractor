@@ -52,6 +52,8 @@ public abstract class PostBlockVersion {
     // database
     protected int id;
     protected Integer postId;
+    // since table PostBlockVersion is derived from table PostHistory, property PostTypeId is missing here
+    // (but could be retrieved from table Posts if needed)
     protected Integer postHistoryId;
     protected Integer localId;
     protected Integer predPostBlockVersionId;
