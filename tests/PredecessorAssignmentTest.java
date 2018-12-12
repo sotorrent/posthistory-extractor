@@ -582,7 +582,7 @@ class PredecessorAssignmentTest {
     }
 
     @Test
-    void testPredecessorAssignmentQuestion10381975() {
+    void testPredecessorAssignmentAnswer10381975() {
         PostVersionList a_10381975 = PostVersionList.readFromCSV(TestUtils.pathToPostVersionLists, 10381975, Posts.ANSWER_ID, true);
 
         PostVersion version_2 = a_10381975.get(1);
@@ -595,5 +595,22 @@ class PredecessorAssignmentTest {
         // text blocks with local id 14 in versions 1 and 2 should be matched (similar to code blocks with localId 8)
         assertNotNull(postBlocks_version_2.get(13).getPred()); // localId 14
         assertEquals(Integer.valueOf(14), postBlocks_version_2.get(13).getPred().getLocalId()); // localId 14
+    }
+
+    @Test
+    void testPredecessorAssignmentAnswer34779037() {
+        PostVersionList a_34779037 = PostVersionList.readFromCSV(TestUtils.pathToPostVersionLists, 34779037, Posts.ANSWER_ID, true);
+
+        PostVersion version_3 = a_34779037.get(2);
+        TestUtils.testPredecessorSimilarities(version_3);
+        TestUtils.testPostBlockCount(version_3, 3, 2, 1);
+
+        List<PostBlockVersion> postBlocks_version_3 = version_3.getPostBlocks();
+        assertNotNull(postBlocks_version_3.get(0).getPred()); // localId 1
+        assertEquals(Integer.valueOf(1), postBlocks_version_3.get(0).getPred().getLocalId()); // localId 1
+        assertNotNull(postBlocks_version_3.get(1).getPred()); // localId 2
+        assertEquals(Integer.valueOf(2), postBlocks_version_3.get(1).getPred().getLocalId()); // localId 2
+        // due to the low threshold for text block similarity, the text blocks with local id 3 are being connected
+        //assertNull(postBlocks_version_3.get(2).getPred()); // localId 3
     }
 }
