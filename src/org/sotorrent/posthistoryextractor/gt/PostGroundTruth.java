@@ -286,16 +286,18 @@ public class PostGroundTruth extends LinkedList<PostBlockLifeSpanVersion> {
         PostBlockLifeSpanVersion predecessor = selectedPredecessorCandidates.get(0);
 
         if (!currentLifeSpanVersion.getPredLocalId().equals(predecessor.getLocalId())) {
-            String msg = "Predecessor LocalIds do not match"
-                    + "(expected: " + currentLifeSpanVersion.getPredLocalId() + "; actual: "
+            String msg = "Predecessor LocalIds do not match for post " + postId
+                    + ", postHistoryId " + currentLifeSpanVersion.getPostHistoryId()
+                    + " (expected: " + currentLifeSpanVersion.getPredLocalId() + "; actual: "
                     + predecessor.getLocalId() + ")";
             logger.warning(msg);
             throw new IllegalStateException(msg);
         }
 
         if (!predecessor.getSuccLocalId().equals(currentLifeSpanVersion.getLocalId())) {
-            String msg = "Successor LocalIds do not match"
-                    + "(expected: " + currentLifeSpanVersion.getLocalId() + "; actual: "
+            String msg = "Successor LocalIds do not match for post " + postId
+                    + ", postHistoryId " + currentLifeSpanVersion.getPostHistoryId()
+                    + " (expected: " + currentLifeSpanVersion.getLocalId() + "; actual: "
                     + predecessor.getSuccLocalId() + ")";
             logger.warning(msg);
             throw new IllegalStateException(msg);
