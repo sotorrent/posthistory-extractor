@@ -78,12 +78,12 @@ public class Config {
             false,
             org.sotorrent.stringsimilarity.set.Variants::fiveGramDice,
             0.04,
-            org.sotorrent.stringsimilarity.profile.Variants::cosineTokenNormalizedBool,
-            0.19,
+            org.sotorrent.stringsimilarity.profile.Variants::cosineTokenNormalizedNormalizedTermFrequency,
+            0.14,
             org.sotorrent.stringsimilarity.set.Variants::tokenDiceNormalized,
             0.1,
-            org.sotorrent.stringsimilarity.set.Variants::tokenDiceNormalized,
-            0.1
+            org.sotorrent.stringsimilarity.set.Variants::tokenJaccardNormalized,
+            0.06
     );
 
     public BiFunction<String, String, Double> getTextSimilarityMetric() {
