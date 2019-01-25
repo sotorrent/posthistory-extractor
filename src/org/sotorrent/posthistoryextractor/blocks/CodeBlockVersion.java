@@ -13,8 +13,6 @@ import java.util.Set;
 public class CodeBlockVersion extends PostBlockVersion {
     public static final byte postBlockTypeId = 2;
 
-    // TODO: Derive programming language from question tags and/or content of code block. Other option: HTML comments (see http://stackoverflow.com/editing-help#syntax-highlighting)
-
     public CodeBlockVersion() {
         super();
     }
