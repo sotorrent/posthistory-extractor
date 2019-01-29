@@ -5,16 +5,19 @@
     <name>PostHistoryExtractor</name>
     <groupId>org.sotorrent</groupId>
     <artifactId>posthistory-extractor</artifactId>
-    <version>3.4.2</version>
+    <version>3.5.0</version>
     <url>https://github.com/sotorrent/posthistory-extractor</url>
 
     <properties>
+        <java.version>11</java.version>
         <!-- Project -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <project.build.sourceDirectory>src</project.build.sourceDirectory>
         <project.build.testSourceDirectory>tests</project.build.testSourceDirectory>
         <!-- Maven -->
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.mainclass>org.sotorrent.posthistoryextractor.MainIterator</maven.mainclass>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -188,7 +191,12 @@
                 </executions>
             </plugin>
             <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-javadoc-plugin -->
-            <plugin>
+            <!-- Bug in OpenJDK (https://bugs.openjdk.java.net/browse/JDK-8217177):
+                [ERROR] Failed to execute goal org.apache.maven.plugins:maven-javadoc-plugin:3.0.1:jar (attach-javadocs) on project posthistory-extractor: MavenReportException: Error while generating Javadoc:
+                [ERROR] Exit code: 1 - Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding="UTF-8"
+                [ERROR] javadoc: error - The code being documented uses modules but the packages defined in https://docs.oracle.com/javase/8/docs/api/ are in the unnamed module.
+            -->
+            <!--plugin>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>${maven.javadoc.plugin.version}</version>
                 <executions>
@@ -200,7 +208,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin-->
             <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
