@@ -100,7 +100,7 @@ public class PostHistory {
     private static final Pattern alternativeCodeBlockEndPattern = Pattern.compile("(```)\\s*$");
     // see, e.g., source of question 19175014 (<pre><code> ... </pre></code> instead of correct indention)
     private static final Pattern codeTagBeginPattern = Pattern.compile("^\\s*<pre>(<code>)?", Pattern.CASE_INSENSITIVE);
-    private static final Pattern codeTagEndPattern = Pattern.compile("</pre>(</code>)?\\s*$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern codeTagEndPattern = Pattern.compile("(</code>)?</pre>\\s*$", Pattern.CASE_INSENSITIVE);
     // see, e.g., source of question 3381751 version 1 (<script type="text/javascript"> ... </script> instead of correct indention)
     private static final Pattern scriptTagBeginPattern = Pattern.compile("^\\s*<script[^>]+>", Pattern.CASE_INSENSITIVE);
     private static final Pattern scriptTagEndPattern = Pattern.compile("</script>\\s*$", Pattern.CASE_INSENSITIVE);
