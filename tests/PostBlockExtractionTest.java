@@ -199,11 +199,36 @@ class PostBlockExtractionTest {
     void testAnswer29443655() {
         // this post has an "empty" code block only containing an HTMl iframe that is not rendered on the website.
         int postId = 29443655;
-        PostVersionList q_29443655 = PostVersionList.readFromCSV(TestUtils.pathToPostVersionLists, postId, Posts.ANSWER_ID);
+        PostVersionList a_29443655 = PostVersionList.readFromCSV(TestUtils.pathToPostVersionLists, postId, Posts.ANSWER_ID);
 
-        PostVersion version_6 = q_29443655.get(5);
+        PostVersion version_6 = a_29443655.get(5);
         TestUtils.testPostBlockCount(version_6, 15, 8, 7);
         List<PostBlockVersion> version_6_postblocks = version_6.getPostBlocks();
         assertEquals("<iframe width=\"100%\" height=\"300\" src=\"//jsfiddle.net/vyab4kcf/44/embedded/\" allowfullscreen=\"allowfullscreen\" frameborder=\"0\"></iframe>", version_6_postblocks.get(14).getContent().trim());
     }
+
+    @Test
+    void testQuestion28402792() {
+        /* the first version of this post contains a <pre> tag with a class attribute, followed by a <code> tag
+         * in a new line:
+         * <pre class="lang-rb prettyprint prettyprinted">
+         * <code>
+         */
+        int postId = 28402792;
+        PostVersionList q_28402792 = PostVersionList.readFromCSV(TestUtils.pathToPostVersionLists, postId, Posts.QUESTION_ID);
+
+        PostVersion version_1 = q_28402792.get(0);
+        TestUtils.testPostBlockCount(version_1, 3, 2);
+
+        // first code block
+        assertEquals("[{\"sum\":{\"key1\":0,\"key2\":\"2014\",\"key3\":0,\"key4\":\"8\",\"key5\":0,\"key6\":\"0\",\"key7\":0}},{\"sum\":{\"key1\":0,\"key2\":\"2014\",\"key3\":0,\"key4\":\"12\",\"key5\":0,\"key6\":\"1\",\"key7\":0}}]",
+                version_1.getCodeBlocks().get(0).getContent().trim()
+        );
+
+        // second code block
+        assertEquals("[{\"key1\":0,\"key2\":\"2014\",\"key3\":0,\"key4\":\"8\",\"key5\":0,\"key6\":\"0\",\"key7\":0},{\"key1\":0,\"key2\":\"2014\",\"key3\":0,\"key4\":\"12\",\"key5\":0,\"key6\":\"1\",\"key7\":0}]",
+                version_1.getCodeBlocks().get(1).getContent().trim()
+        );
+    }
+
 }

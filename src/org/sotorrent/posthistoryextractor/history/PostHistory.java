@@ -99,8 +99,8 @@ public class PostHistory {
     private static final Pattern alternativeCodeBlockBeginPattern = Pattern.compile("^\\s*(```)");
     private static final Pattern alternativeCodeBlockEndPattern = Pattern.compile("(```)\\s*$");
     // see, e.g., source of question 19175014 (<pre><code> ... </pre></code> instead of correct indention)
-    private static final Pattern codeTagBeginPattern = Pattern.compile("^\\s*<pre>(<code>)?", Pattern.CASE_INSENSITIVE);
-    private static final Pattern codeTagEndPattern = Pattern.compile("(</code>)?</pre>\\s*$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern codeTagBeginPattern = Pattern.compile("^\\s*(<pre[^>]*>)|(<pre[^>]*>\\s*<code>)|(<code>)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern codeTagEndPattern = Pattern.compile("(</code>)|(</code>\\s*</pre>)|(</pre>)\\s*$", Pattern.CASE_INSENSITIVE);
     // see, e.g., source of question 3381751 version 1 (<script type="text/javascript"> ... </script> instead of correct indention)
     private static final Pattern scriptTagBeginPattern = Pattern.compile("^\\s*<script[^>]+>", Pattern.CASE_INSENSITIVE);
     private static final Pattern scriptTagEndPattern = Pattern.compile("</script>\\s*$", Pattern.CASE_INSENSITIVE);
@@ -312,8 +312,7 @@ public class PostHistory {
                 // code block that is marked by <pre><code> ... </pre></code> instead of correct indention
                 boolean isCodeTagBegin = codeTagBeginPattern.matcher(line).find(); // only match beginning of line
                 if (isCodeTagBegin) {
-                    line = line.replace("<pre>", "");
-                    line = line.replace("<code>", "");
+                    line = line.replaceAll(codeTagBeginPattern.pattern(), "");
                     inCodeTagCodeBlock = true;
                     if (line.trim().isEmpty()) {
                         // line only contained opening code tags -> skip
@@ -323,8 +322,7 @@ public class PostHistory {
 
                 boolean isCodeTagEnd = codeTagEndPattern.matcher(line).find(); // only match beginning of line
                 if (isCodeTagEnd) {
-                    line = line.replace("</pre>", "");
-                    line = line.replace("</code>", "");
+                    line = line.replaceAll(codeTagEndPattern.pattern(), "");
                     if (line.trim().isEmpty()) {
                         // line only contained closing code tags -> close code block and skip
                         inCodeTagCodeBlock = false;

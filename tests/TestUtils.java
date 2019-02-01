@@ -45,6 +45,12 @@ class TestUtils {
         assertEquals(expectedCodeBlockCount, postVersion.getCodeBlocks().size());
     }
 
+    static void testPostBlockCount(PostVersion postVersion, int expectedTextBlockCount, int expectedCodeBlockCount) {
+        assertEquals(expectedTextBlockCount+expectedCodeBlockCount, postVersion.getPostBlocks().size());
+        assertEquals(expectedTextBlockCount, postVersion.getTextBlocks().size());
+        assertEquals(expectedCodeBlockCount, postVersion.getCodeBlocks().size());
+    }
+
     /**
      * Test order of post block types using fixed array.
      * @param postVersion Post version to test.
