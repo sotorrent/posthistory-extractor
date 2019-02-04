@@ -29,15 +29,15 @@
         <maven.deploy.plugin.version>2.8.2</maven.deploy.plugin.version>
         <maven.surefire.plugin.version>2.22.1</maven.surefire.plugin.version>
         <!-- JUnit -->
-        <junit.jupiter.version>LATEST</junit.jupiter.version>
-        <hamcrest.junit.version>LATEST</hamcrest.junit.version>
+        <junit.jupiter.version>5.3.2</junit.jupiter.version>
+        <hamcrest.junit.version>2.0.0.0</hamcrest.junit.version>
         <!-- Other dependencies -->
-        <string-similarity.version>LATEST</string-similarity.version>
-        <util.version>LATEST</util.version>
-        <commons-cli.version>LATEST</commons-cli.version>
-        <commons-io.version>LATEST</commons-io.version>
-        <commons-csv.version>LATEST</commons-csv.version>
-        <hibernate.version>LATEST</hibernate.version>
+        <util.version>3.4.0</util.version>
+        <string-similarity.version>2.1.0</string-similarity.version>
+        <commons-cli.version>1.4</commons-cli.version>
+        <commons-io.version>2.6</commons-io.version>
+        <commons-csv.version>1.6</commons-csv.version>
+        <hibernate.version>5.4.1.Final</hibernate.version>
         <mysql-connector-java.version>5.1.47</mysql-connector-java.version>
     </properties>
 
