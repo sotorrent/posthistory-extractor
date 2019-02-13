@@ -1,5 +1,6 @@
 import org.junit.jupiter.api.Test;
 import org.sotorrent.posthistoryextractor.blocks.CodeBlockVersion;
+import org.sotorrent.posthistoryextractor.blocks.PostBlockVersion;
 import org.sotorrent.posthistoryextractor.blocks.TextBlockVersion;
 import org.sotorrent.posthistoryextractor.history.Posts;
 import org.sotorrent.posthistoryextractor.version.PostVersion;
@@ -301,5 +302,38 @@ class PostHistoryImportTest {
 
         PostVersion version_1 = a_28280446.get(0);
         TestUtils.testPostBlockCount(version_1, 1, 1, 0);
+    }
+
+    @Test
+    void testMostRecentPostVersion() {
+        // test if only last version in list is marked as most recent one
+        PostVersionList a_3145655 = PostVersionList.readFromCSV(TestUtils.pathToPostVersionLists, 3145655, Posts.ANSWER_ID);
+        assertEquals(7, a_3145655.size());
+        assertTrue(a_3145655.isSorted());
+        assertTrue(a_3145655.getLast().isMostRecentVersion());
+        for (int i=0; i<a_3145655.size()-1; i++) {
+            assertFalse(a_3145655.get(i).isMostRecentVersion());
+        }
+    }
+
+    @Test
+    void testMostRecentPostBlockVersion() {
+        // test if only last version in list is marked as most recent one
+        PostVersionList a_3145655 = PostVersionList.readFromCSV(TestUtils.pathToPostVersionLists, 3145655, Posts.ANSWER_ID);
+        assertEquals(7, a_3145655.size());
+
+        PostVersion version_7 = a_3145655.getLast();
+
+        // assert that only most recent post block versions are marked as such
+        version_7.getPostBlocks().forEach(
+                postBlock -> {
+                    assertTrue(postBlock.isMostRecentVersion());
+                    PostBlockVersion current = postBlock.getPred();
+                    while (current != null) {
+                        assertFalse(current.isMostRecentVersion());
+                        current = current.getPred();
+                    }
+                }
+        );
     }
 }

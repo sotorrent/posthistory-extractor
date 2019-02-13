@@ -120,6 +120,12 @@ public class PostVersionList extends LinkedList<PostVersion> implements VersionL
         }
 
         this.sorted = true;
+
+        // mark most recent post version and post block versions
+        this.getLast().setIsMostRecentVersion(true);
+        this.getLast().getPostBlocks().forEach(
+                postBlock -> postBlock.setIsMostRecentVersion(true)
+        );
     }
 
     public void processVersionHistory() {
