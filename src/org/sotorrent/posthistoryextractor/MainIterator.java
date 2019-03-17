@@ -6,6 +6,7 @@ import org.apache.commons.cli.*;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.TimeZone;
 
 class MainIterator {
 
@@ -59,6 +60,9 @@ class MainIterator {
         if (commandLine.hasOption("partition-count")) {
             partitionCount = Integer.parseInt(commandLine.getOptionValue("partition-count"));
         }
+
+        // explicitly set timezone to prevent "HOUR_OF_DAY: 2 -> 3" exceptions
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 
         // process version history
         PostHistoryIterator.createSessionFactory(hibernateConfigFilePath);

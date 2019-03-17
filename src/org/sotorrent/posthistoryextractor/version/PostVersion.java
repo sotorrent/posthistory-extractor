@@ -23,7 +23,7 @@ public class PostVersion extends org.sotorrent.posthistoryextractor.version.Vers
     // see superclass members
     private Integer predPostHistoryId;
     private Integer succPostHistoryId;
-    private boolean isMostRecentVersion;
+    private boolean mostRecentVersion;
     // internal
     private List<PostBlockVersion> postBlocks;
     private List<PostVersionUrl> urls;
@@ -39,7 +39,7 @@ public class PostVersion extends org.sotorrent.posthistoryextractor.version.Vers
         this.creationDate = null;
         this.predPostHistoryId = null;
         this.succPostHistoryId = null;
-        this.isMostRecentVersion = false;
+        this.mostRecentVersion = false;
         // internal
         this.pred = null;
         this.succ = null;
@@ -152,13 +152,13 @@ public class PostVersion extends org.sotorrent.posthistoryextractor.version.Vers
     }
 
     @Basic
-    @Column(name = "IsMostRecentVersion")
+    @Column(name = "MostRecentVersion")
     public boolean isMostRecentVersion() {
-        return isMostRecentVersion;
+        return mostRecentVersion;
     }
 
-    public void setIsMostRecentVersion(boolean isMostRecentVersion) {
-        this.isMostRecentVersion = isMostRecentVersion;
+    public void setMostRecentVersion(boolean mostRecentVersion) {
+        this.mostRecentVersion = mostRecentVersion;
     }
 
     public void addPostBlock(PostBlockVersion block) {

@@ -4,11 +4,12 @@
         "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
     <session-factory>
-        <property name="connection.url">jdbc:mysql://localhost:3306/sotorrent18_12</property>
+        <property name="connection.url">jdbc:mysql://localhost:3306/sotorrent19_03?useTimezone=true&amp;serverTimezone=UTC&amp;useLegacyDatetimeCode=false</property>
         <property name="connection.username">sotorrent</property>
         <property name="connection.password">4ar7JKS2mfgGHiDA</property>
         <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
         <property name="org.hibernate.flushMode">MANUAL</property>
         <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+        <property name="hibernate.jdbc.time_zone">UTC</property>
     </session-factory>
 </hibernate-configuration>

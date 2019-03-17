@@ -69,7 +69,7 @@ public abstract class PostBlockVersion {
     protected int length;
     protected int lineCount;
     protected String content;
-    protected boolean isMostRecentVersion;
+    protected boolean mostRecentVersion;
     // internal
     private StringBuilder contentBuilder;
     private LineDiff lineDiff;
@@ -95,7 +95,7 @@ public abstract class PostBlockVersion {
         this.content = null;
         this.length = 0;
         this.lineCount = 0;
-        this.isMostRecentVersion = false;
+        this.mostRecentVersion = false;
         // internal
         this.contentBuilder = new StringBuilder();
         this.lineDiff = new LineDiff();
@@ -318,13 +318,13 @@ public abstract class PostBlockVersion {
     }
 
     @Basic
-    @Column(name = "IsMostRecentVersion")
+    @Column(name = "MostRecentVersion")
     public boolean isMostRecentVersion() {
-        return isMostRecentVersion;
+        return mostRecentVersion;
     }
 
-    public void setIsMostRecentVersion(boolean isMostRecentVersion) {
-        this.isMostRecentVersion = isMostRecentVersion;
+    public void setMostRecentVersion(boolean mostRecentVersion) {
+        this.mostRecentVersion = mostRecentVersion;
     }
 
     @Transient
