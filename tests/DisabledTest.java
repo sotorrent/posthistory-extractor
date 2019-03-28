@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 class DisabledTest {
     private static Logger logger;
     private static Path pathToHibernateConfig = Paths.get("hibernate", "hibernate.cfg.xml");
-    private static final String SOTORRENT_VERSION = "sotorrent_2018-12-09";
+    private static final String SOTORRENT_VERSION = "sotorrent_2019-03-17";
     // these posts are ignored below because they have a separate test case
     private static final Set<Integer> POSTS_WITH_TEST_CASE = Sets.newHashSet(5864258, 9875710);
     // posts without post blocks
@@ -199,7 +199,7 @@ class DisabledTest {
         try (StatelessSession session = PostHistoryIterator.sessionFactory.openStatelessSession()) {
             String postVersionPostIdsQuery = "select count(*) from PostVersion";
             long postVersionPostIds = (long)session.createQuery(postVersionPostIdsQuery).list().get(0);
-            assertEquals(67466517, postVersionPostIds);
+            assertEquals(69174059, postVersionPostIds);
 
             String postVersionPostHistoryIdsQuery = "select count(distinct PostHistoryId) from PostVersion";
             long postVersionPostHistoryIds = (long)session.createQuery(postVersionPostHistoryIdsQuery).list().get(0);
@@ -207,33 +207,33 @@ class DisabledTest {
 
             String postVersionDistinctPostIdsQuery = "select count(distinct PostId) from PostVersion";
             long postVersionDistinctPostIds = (long)session.createQuery(postVersionDistinctPostIdsQuery).list().get(0);
-            assertEquals(42754110, postVersionDistinctPostIds);
+            assertEquals(43775292, postVersionDistinctPostIds);
 
             String postBlockVersionsQuery = "select count(*) from PostBlockVersion";
             long postBlockVersions = (long)session.createQuery(postBlockVersionsQuery).list().get(0);
-            assertEquals(212260401, postBlockVersions);
+            assertEquals(218283478, postBlockVersions);
 
             String postBlockVersionPostIdsQuery = "select count(distinct PostId) from PostBlockVersion";
             long postBlockVersionPostIds = (long)session.createQuery(postBlockVersionPostIdsQuery).list().get(0);
-            assertEquals(42754110, postBlockVersionPostIds);
+            assertEquals(43775292, postBlockVersionPostIds);
 
             String postVersionUrlsQuery = "select count(*) from PostVersionUrl";
             long postVersionUrls = (long) session.createQuery(postVersionUrlsQuery).list().get(0);
-            assertEquals(33580154, postVersionUrls);
+            assertEquals(34448374, postVersionUrls);
 
             String postReferenceGHQuery = "select count(*) from PostReferenceGH";
             long postReferenceGH = (long) session.createQuery(postReferenceGHQuery).list().get(0);
-            assertEquals(6111157, postReferenceGH);
+            assertEquals(6483494, postReferenceGH);
 
             String titleVersionQuery = "select count(*) from TitleVersion";
             long titleVersions = (long) session.createQuery(titleVersionQuery).list().get(0);
-            assertEquals(19419656, titleVersions);
+            assertEquals(19937250, titleVersions);
         }
 
         try (StatelessSession session = CommentsIterator.sessionFactory.openStatelessSession()) {
             String commentUrlQuery = "select count(*) from CommentUrl";
             long commentUrls = (long) session.createQuery(commentUrlQuery).list().get(0);
-            assertEquals(7313266, commentUrls);
+            assertEquals(7522634, commentUrls);
         }
     }
 }
