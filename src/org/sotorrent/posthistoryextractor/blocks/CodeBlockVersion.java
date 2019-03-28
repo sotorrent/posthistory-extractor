@@ -40,7 +40,7 @@ public class CodeBlockVersion extends PostBlockVersion {
     @Override
     @Transient
     public PostBlockSimilarity compareTo(PostBlockVersion otherBlock, Config config) {
-        return compareTo(otherBlock, config.getCodeSimilarityMetric(), config.getCodeBackupSimilarityMetric());
+        return compareTo(otherBlock, config.getCodeSimilarityMetric(), config.getCodeBackupSimilarityMetric(), config.getEditSimilarityMetric());
     }
 
     @Override
@@ -59,7 +59,7 @@ public class CodeBlockVersion extends PostBlockVersion {
         }
 
         // retrieve matching predecessors
-        retrieveMatchingPredecessors(config.getCodeSimilarityThreshold(), config.getCodeBackupSimilarityThreshold());
+        retrieveMatchingPredecessors(config.getCodeSimilarityThreshold(), config.getCodeBackupSimilarityThreshold(), config.getEditSimilarityThreshold());
     }
 
     @Override

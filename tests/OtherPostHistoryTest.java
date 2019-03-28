@@ -1,3 +1,5 @@
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.sotorrent.posthistoryextractor.Config;
 import org.sotorrent.posthistoryextractor.blocks.CodeBlockVersion;
 import org.sotorrent.posthistoryextractor.blocks.PostBlockSimilarity;
@@ -9,9 +11,6 @@ import org.sotorrent.posthistoryextractor.version.PostVersion;
 import org.sotorrent.posthistoryextractor.version.PostVersionList;
 import org.sotorrent.posthistoryextractor.version.TitleVersion;
 import org.sotorrent.posthistoryextractor.version.TitleVersionList;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.sotorrent.util.exceptions.InputTooShortException;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -101,9 +100,13 @@ class OtherPostHistoryTest {
         textBlock2.setContent("ac");
 
         textBlock1.compareTo(textBlock2, Config.DEFAULT); // no exception
-        assertThrows(InputTooShortException.class, () -> textBlock1.compareTo(textBlock2,
-                Config.DEFAULT.withTextBackupSimilarityMetric(null))
-        );
+        // assertThrows(InputTooShortException.class, () -> textBlock1.compareTo(textBlock2,
+        //        Config.DEFAULT.withTextBackupSimilarityMetric(null))
+        //);
+        // now applying Levenshtein in this case
+        PostBlockSimilarity sim = textBlock1.compareTo(textBlock2, Config.DEFAULT.withTextBackupSimilarityMetric(null));
+        assertTrue(sim.isEditSimilarity());
+        assertEquals(0.5, sim.getMetricResult());
         PostBlockSimilarity similarity = textBlock1.compareTo(textBlock2, Config.EMPTY);
         assertEquals(0.0, similarity.getMetricResult());
 

@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name="PostBlockTypeId",discriminatorType=DiscriminatorType.INTEGER)
 public abstract class PostBlockVersion {
-    // eqal matches have this similarity
+    // equal matches have this similarity
     public static final double EQUALITY_SIMILARITY = 10.0;
     // matches with similarity difference <= delta are considered to be equal
     private static final double UNIQUE_MATCH_DELTA = 0.05;
@@ -660,22 +660,32 @@ public abstract class PostBlockVersion {
 
     PostBlockSimilarity compareTo(PostBlockVersion otherBlock,
                      BiFunction<String, String, Double> similarityMetric,
-                     BiFunction<String, String, Double> backupSimilarityMetric) {
+                     BiFunction<String, String, Double> backupSimilarityMetric,
+                     BiFunction<String, String, Double> editSimilarityMetric) {
 
         PostBlockSimilarity similarity;
-        try {
+        if (containsOneToken(getContent()) && containsOneToken(otherBlock.getContent())) {
             similarity = new PostBlockSimilarity(
-                    similarityMetric.apply(getContent(), otherBlock.getContent()),
-                    false
+                    editSimilarityMetric.apply(getContent(), otherBlock.getContent()),
+                    false,
+                    true
             );
-        } catch (InputTooShortException e) {
-            if (backupSimilarityMetric != null) {
+        } else {
+            try {
+                // use Levenshtein distance for comparisons of one token
                 similarity = new PostBlockSimilarity(
-                        backupSimilarityMetric.apply(getContent(), otherBlock.getContent()),
-                        true
+                        similarityMetric.apply(getContent(), otherBlock.getContent()),
+                        false
                 );
-            } else {
-                throw e;
+            } catch (InputTooShortException e) {
+                if (backupSimilarityMetric != null) {
+                    similarity = new PostBlockSimilarity(
+                            backupSimilarityMetric.apply(getContent(), otherBlock.getContent()),
+                            true
+                    );
+                } else {
+                    throw e;
+                }
             }
         }
 
@@ -686,6 +696,11 @@ public abstract class PostBlockVersion {
         }
 
         return similarity;
+    }
+
+    @Transient
+    private boolean containsOneToken(String str) {
+        return str.trim().split("\\s+").length == 1;
     }
 
     private List<diff_match_patch.Diff> diff(PostBlockVersion block) {
@@ -783,7 +798,7 @@ public abstract class PostBlockVersion {
 
     abstract void retrieveMatchingPredecessors(Config config);
 
-    void retrieveMatchingPredecessors(double similarityThreshold, double backupSimilarityThreshold) {
+    void retrieveMatchingPredecessors(double similarityThreshold, double backupSimilarityThreshold, double editSimilarityThreshold) {
         // retrieve predecessors with maximal similarity
 
         // check if max similarity is below threshold has already been conducted in the subclasses (TextBlockVersion, CodeBlockVersion)
@@ -808,7 +823,9 @@ public abstract class PostBlockVersion {
         predecessorsAboveThreshold = predecessorSimilarities.entrySet()
                 .stream()
                 .filter(e -> {
-                    if (maxSimilarity.isBackupSimilarity()) {
+                    if (e.getValue().isEditSimilarity()) {
+                        return e.getValue().getMetricResult() >= editSimilarityThreshold;
+                    } else if (e.getValue().isBackupSimilarity()) {
                         return e.getValue().getMetricResult() >= backupSimilarityThreshold;
                     } else {
                         return e.getValue().getMetricResult() >= similarityThreshold;

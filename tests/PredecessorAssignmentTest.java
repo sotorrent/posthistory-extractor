@@ -613,4 +613,24 @@ class PredecessorAssignmentTest {
         // due to the low threshold for text block similarity, the text blocks with local id 3 are being connected
         //assertNull(postBlocks_version_3.get(2).getPred()); // localId 3
     }
+
+    @Test
+    void testPredecessorAssignmentAnswer14291690() {
+        PostVersionList a_14291690 = PostVersionList.readFromCSV(TestUtils.pathToPostVersionLists, 14291690, Posts.ANSWER_ID, true);
+
+        PostVersion version_2 = a_14291690.get(1);
+        TestUtils.testPredecessorSimilarities(version_2);
+        TestUtils.testPostBlockCount(version_2, 3, 2); // last text block only contains reference-style links
+
+        List<PostBlockVersion> postBlocks_version_2 = version_2.getPostBlocks();
+        assertNotNull(postBlocks_version_2.get(0).getPred()); // localId 1
+        assertEquals(Integer.valueOf(1), postBlocks_version_2.get(0).getPred().getLocalId()); // localId 1
+        assertNotNull(postBlocks_version_2.get(1).getPred()); // localId 2
+        assertEquals(Integer.valueOf(2), postBlocks_version_2.get(1).getPred().getLocalId()); // localId 2
+        assertNotNull(postBlocks_version_2.get(2).getPred()); // localId 3
+        assertEquals(Integer.valueOf(3), postBlocks_version_2.get(2).getPred().getLocalId()); // localId 3
+        // the last code block has only one token that is very similar -> not matched due to token-based metric
+        assertNotNull(postBlocks_version_2.get(3).getPred()); // localId 4
+        assertEquals(Integer.valueOf(4), postBlocks_version_2.get(3).getPred().getLocalId()); // localId 4
+    }
 }

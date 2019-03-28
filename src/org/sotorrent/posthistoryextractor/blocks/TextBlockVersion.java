@@ -40,7 +40,7 @@ public class TextBlockVersion extends PostBlockVersion {
     @Override
     @Transient
     public PostBlockSimilarity compareTo(PostBlockVersion otherBlock, Config config) {
-        return compareTo(otherBlock, config.getTextSimilarityMetric(), config.getTextBackupSimilarityMetric());
+        return compareTo(otherBlock, config.getTextSimilarityMetric(), config.getTextBackupSimilarityMetric(), config.getEditSimilarityMetric());
     }
 
     void retrieveMatchingPredecessors(Config config) {
@@ -58,7 +58,7 @@ public class TextBlockVersion extends PostBlockVersion {
         }
 
         // retrieve matching predecessors
-        retrieveMatchingPredecessors(config.getTextSimilarityThreshold(), config.getTextBackupSimilarityThreshold());
+        retrieveMatchingPredecessors(config.getTextSimilarityThreshold(), config.getTextBackupSimilarityThreshold(), config.getEditSimilarityThreshold());
     }
 
     @Override
