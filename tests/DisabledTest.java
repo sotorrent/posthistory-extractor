@@ -223,11 +223,15 @@ class DisabledTest {
 
             String postReferenceGHQuery = "select count(*) from PostReferenceGH";
             long postReferenceGH = (long) session.createQuery(postReferenceGHQuery).list().get(0);
-            assertEquals(6483494, postReferenceGH);
+            assertEquals(6489044, postReferenceGH);
 
             String titleVersionQuery = "select count(*) from TitleVersion";
             long titleVersions = (long) session.createQuery(titleVersionQuery).list().get(0);
             assertEquals(19937250, titleVersions);
+
+            String ghMatchesQuery = "select count(*) from GHMatches";
+            long ghMatches = (long) session.createQuery(ghMatchesQuery).list().get(0);
+            assertEquals(599807, ghMatches);
         }
 
         try (StatelessSession session = CommentsIterator.sessionFactory.openStatelessSession()) {
