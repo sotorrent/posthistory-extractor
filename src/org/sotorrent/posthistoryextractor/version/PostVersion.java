@@ -3,6 +3,7 @@ package org.sotorrent.posthistoryextractor.version;
 import org.sotorrent.posthistoryextractor.Config;
 import org.sotorrent.posthistoryextractor.blocks.CodeBlockVersion;
 import org.sotorrent.posthistoryextractor.blocks.PostBlockVersion;
+import org.sotorrent.posthistoryextractor.blocks.StackSnippetVersion;
 import org.sotorrent.posthistoryextractor.blocks.TextBlockVersion;
 import org.sotorrent.posthistoryextractor.gt.PostBlockConnection;
 import org.sotorrent.posthistoryextractor.gt.PostBlockLifeSpanVersion;
@@ -26,6 +27,7 @@ public class PostVersion extends org.sotorrent.posthistoryextractor.version.Vers
     private boolean mostRecentVersion;
     // internal
     private List<PostBlockVersion> postBlocks;
+    private List<StackSnippetVersion> stackSnippets;
     private List<PostVersionUrl> urls;
     private PostVersion pred;
     private PostVersion succ;
@@ -56,6 +58,7 @@ public class PostVersion extends org.sotorrent.posthistoryextractor.version.Vers
         this.postHistoryTypeId = postHistoryTypeId;
         this.creationDate = creationDate;
         this.postBlocks = new LinkedList<>();
+        this.stackSnippets = new LinkedList<>();
     }
 
     @Id
@@ -161,26 +164,32 @@ public class PostVersion extends org.sotorrent.posthistoryextractor.version.Vers
         this.mostRecentVersion = mostRecentVersion;
     }
 
-    public void addPostBlock(PostBlockVersion block) {
-        postBlocks.add(block);
+    public void addPostBlockList(List<PostBlockVersion> postBlockList) {
+        postBlocks.addAll(postBlockList);
     }
 
-    public void addPostBlockList(List<PostBlockVersion> blockList) {
-        for (PostBlockVersion block : blockList) {
-            addPostBlock(block);
+    public void addStackSnippetList(List<StackSnippetVersion> stackSnippetList) {
+        for (StackSnippetVersion stackSnippet : stackSnippetList) {
+            stackSnippet.setPostId(postId);
+            stackSnippet.setPostTypeId(postTypeId);
+            stackSnippet.setPostHistoryId(postHistoryId);
+            stackSnippets.add(stackSnippet);
         }
     }
 
     public List<PostBlockVersion> sortPostBlocks() {
-        postBlocks.sort((b1, b2) ->
-                b1.getLocalId() < b2.getLocalId() ? -1 : b1.getLocalId() > b2.getLocalId() ? 1 : 0
-        );
+        postBlocks.sort(Comparator.comparing(PostBlockVersion::getLocalId));
         return postBlocks;
     }
 
     @Transient
     public List<PostBlockVersion> getPostBlocks() {
         return postBlocks;
+    }
+
+    @Transient
+    public List<StackSnippetVersion> getStackSnippets() {
+        return stackSnippets;
     }
 
     @Transient
@@ -240,6 +249,10 @@ public class PostVersion extends org.sotorrent.posthistoryextractor.version.Vers
 
     public void setSucc(PostVersion succ) {
         this.succ = succ;
+    }
+
+    public void insertStackSnippets(StatelessSession session) {
+        HibernateUtils.insertList(session, stackSnippets);
     }
 
     public void insertPostBlocks(StatelessSession session) {

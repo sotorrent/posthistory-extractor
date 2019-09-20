@@ -2,6 +2,7 @@ package org.sotorrent.posthistoryextractor.history;
 
 import org.sotorrent.posthistoryextractor.blocks.CodeBlockVersion;
 import org.sotorrent.posthistoryextractor.blocks.PostBlockVersion;
+import org.sotorrent.posthistoryextractor.blocks.StackSnippetVersion;
 import org.sotorrent.posthistoryextractor.blocks.TextBlockVersion;
 import org.sotorrent.posthistoryextractor.version.PostVersion;
 import org.sotorrent.posthistoryextractor.version.TitleVersion;
@@ -120,6 +121,7 @@ public class PostHistory {
     private String comment;
     // internal
     private List<PostBlockVersion> postBlocks;
+    private List<StackSnippetVersion> stackSnippets;
     private int localIdCount;
 
     public PostHistory() {}
@@ -234,6 +236,7 @@ public class PostHistory {
 
     public void extractPostBlocks() {
         postBlocks = new LinkedList<>();
+        stackSnippets = new LinkedList<>();
         localIdCount = 0;
 
         // the text may be null, see, e.g., PostId 2967852, PostHistoryId 6127192
@@ -245,6 +248,7 @@ public class PostHistory {
         // http://stackoverflow.com/a/454913
         String[] lines = text.split(newLineRegex);
         PostBlockVersion currentPostBlock = null;
+        StackSnippetVersion currentStackSnippet = null;
         boolean inStackSnippetCodeBlock = false;
         boolean inAlternativeCodeBlock = false;
         boolean inCodeTagCodeBlock = false;
@@ -257,6 +261,11 @@ public class PostHistory {
             if (line.isEmpty()) {
                 previousLine = line;
                 continue;
+            }
+
+            // save stack snippet info
+            if (inStackSnippetCodeBlock) {
+                currentStackSnippet.append(line);
             }
 
             // end code block which contained a code tag in the previous line (see below)
@@ -287,9 +296,13 @@ public class PostHistory {
                 // see https://stackoverflow.blog/2014/09/16/introducing-runnable-javascript-css-and-html-code-snippets/
                 Matcher stackSnippetBeginMatcher = stackSnippetBeginPattern.matcher(line);
                 boolean isStackSnippetBegin = stackSnippetBeginMatcher.find(); // only match beginning of line
-                // ignore stack snippet begin
+                // ignore stack snippet begin in post block version
                 if (isStackSnippetBegin) {
                     inStackSnippetCodeBlock = true;
+                    // save stack snippet info
+                    currentStackSnippet = new StackSnippetVersion();
+                    currentStackSnippet.append(line);
+                    // remove stack snippet info from code block
                     line = stackSnippetBeginMatcher.replaceAll("");
                     if (line.trim().isEmpty()) {
                         // line only contained stack snippet begin
@@ -299,9 +312,14 @@ public class PostHistory {
 
                 Matcher stackSnippetEndMatcher = stackSnippetEndPattern.matcher(line);
                 boolean isStackSnippetEnd = stackSnippetEndMatcher.find(); // only match beginning of line
-                // ignore stack snippet end
+                // ignore stack snippet end in post block version
                 if (isStackSnippetEnd) {
                     inStackSnippetCodeBlock = false;
+                    if (currentStackSnippet != null) {
+                        stackSnippets.add(currentStackSnippet);
+                        currentStackSnippet = null;
+                    }
+                    // remove stack snippet info from code block
                     line = stackSnippetEndMatcher.replaceAll("");
                     if (line.trim().isEmpty()) {
                         // line only contained stack snippet begin
@@ -557,6 +575,8 @@ public class PostHistory {
         // convert PostHistory (SO database schema) to PostVersion (our schema)
         PostVersion postVersion = new PostVersion(postId, postTypeId, id, postHistoryTypeId, creationDate);
         postVersion.addPostBlockList(postBlocks);
+        postVersion.addStackSnippetList(stackSnippets);
+
         return postVersion;
     }
 

@@ -231,4 +231,27 @@ class PostBlockExtractionTest {
         );
     }
 
+    @Test
+    void testAnswer31386254() {
+        int postId = 31386254;
+        PostVersionList a_31386254 = PostVersionList.readFromCSV(TestUtils.pathToPostVersionLists, postId, Posts.ANSWER_ID);
+        PostVersion version_1 = a_31386254.get(0);
+
+        // post contains one JavaScript stack snippet
+        TestUtils.testPostBlockCount(version_1, 1, 1);
+        assertEquals(1, version_1.getStackSnippets().size());
+        TestUtils.testStackSnippets(version_1);
+    }
+
+    @Test
+    void testAnswer54092960() {
+        int postId = 54092960;
+        PostVersionList a_54092960 = PostVersionList.readFromCSV(TestUtils.pathToPostVersionLists, postId, Posts.ANSWER_ID);
+        PostVersion version_1 = a_54092960.get(0);
+
+        // post contains two CSV + HTML stack snippets plus text block after the last snippet
+        TestUtils.testPostBlockCount(version_1, 3, 4);
+        assertEquals(2, version_1.getStackSnippets().size());
+        TestUtils.testStackSnippets(version_1);
+    }
 }

@@ -1,8 +1,5 @@
 import org.sotorrent.posthistoryextractor.Config;
-import org.sotorrent.posthistoryextractor.blocks.CodeBlockVersion;
-import org.sotorrent.posthistoryextractor.blocks.PostBlockSimilarity;
-import org.sotorrent.posthistoryextractor.blocks.PostBlockVersion;
-import org.sotorrent.posthistoryextractor.blocks.TextBlockVersion;
+import org.sotorrent.posthistoryextractor.blocks.*;
 import org.sotorrent.posthistoryextractor.version.PostVersion;
 
 import java.nio.file.Path;
@@ -49,6 +46,14 @@ class TestUtils {
         assertEquals(expectedTextBlockCount+expectedCodeBlockCount, postVersion.getPostBlocks().size());
         assertEquals(expectedTextBlockCount, postVersion.getTextBlocks().size());
         assertEquals(expectedCodeBlockCount, postVersion.getCodeBlocks().size());
+    }
+
+    static void testStackSnippets(PostVersion postVersion) {
+        for (StackSnippetVersion stackSnippet : postVersion.getStackSnippets()) {
+            assertEquals(postVersion.getPostId(), stackSnippet.getPostId());
+            assertEquals(postVersion.getPostTypeId(), stackSnippet.getPostTypeId());
+            assertEquals(postVersion.getPostHistoryId(), stackSnippet.getPostHistoryId());
+        }
     }
 
     /**

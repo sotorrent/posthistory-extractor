@@ -377,6 +377,8 @@ public class PostHistoryIterator {
                                         logger.warning("Thread " + partition + ": " + "No post blocks extracted for PostId: " + postId + "; PostHistoryId: " + currentPostVersion.getPostHistoryId());
                                         postsVersionsWithoutBlocks.add(currentPostVersion);
                                     }
+                                    // ...write the extracted stack snippets to the database
+                                    currentPostVersion.insertStackSnippets(session);
                                     // ...and write the extracted post blocks to the database
                                     currentPostVersion.insertPostBlocks(session);
                                     // extract URLs from text blocks...
@@ -412,7 +414,7 @@ public class PostHistoryIterator {
                                 postVersionList.insert(session);
                             }
 
-                            if (postTypeId == Posts.QUESTION_ID && titleVersionList.size() == 0) {
+                            if (postTypeId == Posts.QUESTION_ID && titleVersionList != null && titleVersionList.size() == 0) {
                                 logger.warning("Thread " + partition + ": " + "No title versions extracted for PostId " + postId);
                                 postsWithoutTitleVersions.add(titleVersionList);
                             } else {
