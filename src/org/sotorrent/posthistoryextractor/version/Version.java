@@ -10,6 +10,7 @@ public class Version {
     protected Integer postHistoryId;
     protected Byte postHistoryTypeId;
     protected Timestamp creationDate;
+    protected boolean mostRecentVersion;
 
     public int getId() {
         return id;
@@ -57,5 +58,13 @@ public class Version {
 
     public void setCreationDate(Timestamp creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public boolean isMostRecentVersion() {
+        return mostRecentVersion;
+    }
+
+    public void setMostRecentVersion(boolean mostRecentVersion) {
+        this.mostRecentVersion = mostRecentVersion;
     }
 }

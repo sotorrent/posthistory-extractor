@@ -31,6 +31,7 @@ public class TitleVersion extends Version {
         this.title = null;
         this.predPostHistoryId = null;
         this.succPostHistoryId = null;
+        this.mostRecentVersion = false;
         // internal
         this.pred = null;
         this.succ = null;
@@ -172,6 +173,16 @@ public class TitleVersion extends Version {
 
     public void setSuccEditDistance(Integer succEditDistance) {
         this.succEditDistance = succEditDistance;
+    }
+
+    @Basic
+    @Column(name = "MostRecentVersion")
+    public boolean isMostRecentVersion() {
+        return mostRecentVersion;
+    }
+
+    public void setMostRecentVersion(boolean mostRecentVersion) {
+        this.mostRecentVersion = mostRecentVersion;
     }
 
     @Transient

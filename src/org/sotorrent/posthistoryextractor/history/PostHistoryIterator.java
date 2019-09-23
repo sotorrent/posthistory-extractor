@@ -3,6 +3,7 @@ package org.sotorrent.posthistoryextractor.history;
 import com.google.common.collect.Sets;
 import org.sotorrent.posthistoryextractor.blocks.CodeBlockVersion;
 import org.sotorrent.posthistoryextractor.blocks.PostBlockVersion;
+import org.sotorrent.posthistoryextractor.blocks.StackSnippetVersion;
 import org.sotorrent.posthistoryextractor.blocks.TextBlockVersion;
 import org.sotorrent.posthistoryextractor.diffs.PostBlockDiff;
 import org.sotorrent.posthistoryextractor.urls.GHMatches;
@@ -103,6 +104,7 @@ public class PostHistoryIterator {
                 .addAnnotatedClass(PostReferenceGH.class)
                 .addAnnotatedClass(TitleVersion.class)
                 .addAnnotatedClass(GHMatches.class)
+                .addAnnotatedClass(StackSnippetVersion.class)
                 .configure(hibernateConfigFilePath.toFile())
                 .buildSessionFactory();
     }

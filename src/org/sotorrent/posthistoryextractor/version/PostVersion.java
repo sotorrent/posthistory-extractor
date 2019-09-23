@@ -19,12 +19,11 @@ import java.util.stream.Collectors;
 
 @Entity
 @Table(name="PostVersion")
-public class PostVersion extends org.sotorrent.posthistoryextractor.version.Version {
+public class PostVersion extends Version {
     // database
     // see superclass members
     private Integer predPostHistoryId;
     private Integer succPostHistoryId;
-    private boolean mostRecentVersion;
     // internal
     private List<PostBlockVersion> postBlocks;
     private List<StackSnippetVersion> stackSnippets;

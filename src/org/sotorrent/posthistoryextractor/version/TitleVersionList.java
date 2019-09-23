@@ -59,6 +59,9 @@ public class TitleVersionList extends LinkedList<TitleVersion> implements Versio
         this.getLast().setEditDistance(); // this element exists, because of size check above
 
         this.sorted = true;
+
+        // mark most recent post version and post block versions
+        this.getLast().setMostRecentVersion(true);
     }
 
     public void insert(StatelessSession session) {
