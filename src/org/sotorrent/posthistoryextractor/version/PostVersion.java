@@ -15,15 +15,35 @@ import org.sotorrent.util.HibernateUtils;
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Entity
 @Table(name="PostVersion")
 public class PostVersion extends Version {
+    private static final Pattern nonWordPattern = Pattern.compile("[^\\w]+");
+    // patterns for generated comments
+    // (to build those pattern, we iteratively retrieved  edit comments from table PostHistory, looked for bot-edits,
+    // updated the regular expressions, and retrieved edit comments again)
+    private static final Pattern gracePeriodPattern = Pattern.compile("edit removed during grace period", Pattern.CASE_INSENSITIVE);
+    private static final Pattern editedTitleBodyTagsPattern = Pattern.compile("edited (title|body|tags)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern addedDeletedBodyPattern = Pattern.compile("(added|deleted) \\d+ character(s)? in body", Pattern.CASE_INSENSITIVE);
+    private static final Pattern replacedHttpPattern = Pattern.compile("replaced http://.+ with https://.+", Pattern.CASE_INSENSITIVE);
+    private static final Pattern deprecatedTagPattern = Pattern.compile("removed deprecated tag", Pattern.CASE_INSENSITIVE);
+    private static final Pattern nothingToDoPattern = Pattern.compile("\\[.+] has nothing to do with \\[.+]", Pattern.CASE_INSENSITIVE);
+    private static final Pattern readBeforePattern = Pattern.compile("please read this before (rolling back|rejecting)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern rollbackPattern = Pattern.compile("rollback to .+", Pattern.CASE_INSENSITIVE);
+
+    private static final Pattern[] generatedCommentPatterns = {
+            gracePeriodPattern, editedTitleBodyTagsPattern, addedDeletedBodyPattern, replacedHttpPattern,
+            deprecatedTagPattern, nothingToDoPattern, readBeforePattern, rollbackPattern
+    };
+
     // database
     // see superclass members
     private Integer predPostHistoryId;
     private Integer succPostHistoryId;
+    private String comment;
     // internal
     private List<PostBlockVersion> postBlocks;
     private List<StackSnippetVersion> stackSnippets;
@@ -41,6 +61,7 @@ public class PostVersion extends Version {
         this.predPostHistoryId = null;
         this.succPostHistoryId = null;
         this.mostRecentVersion = false;
+        this.comment = null;
         // internal
         this.pred = null;
         this.succ = null;
@@ -49,13 +70,14 @@ public class PostVersion extends Version {
 
     public PostVersion(Integer postId, Byte postTypeId,
                        Integer postHistoryId, Byte postHistoryTypeId,
-                       Timestamp creationDate) {
+                       Timestamp creationDate, String comment) {
         this();
         this.postId = postId;
         this.postTypeId = postTypeId;
         this.postHistoryId = postHistoryId;
         this.postHistoryTypeId = postHistoryTypeId;
         this.creationDate = creationDate;
+        setComment(comment);
         this.postBlocks = new LinkedList<>();
         this.stackSnippets = new LinkedList<>();
     }
@@ -161,6 +183,28 @@ public class PostVersion extends Version {
 
     public void setMostRecentVersion(boolean mostRecentVersion) {
         this.mostRecentVersion = mostRecentVersion;
+    }
+
+    @Basic
+    @Column(name = "Comment")
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        // exclude empty comments (no word characters)
+        if (nonWordPattern.matcher(comment).replaceAll("").length() == 0) {
+            return;
+        }
+
+        // ignore generated comments
+        for (Pattern pattern : generatedCommentPatterns) {
+            if (pattern.matcher(comment).find()) {
+                return;
+            }
+        }
+
+        this.comment = comment;
     }
 
     public void addPostBlockList(List<PostBlockVersion> postBlockList) {
