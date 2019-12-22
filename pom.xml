@@ -5,7 +5,7 @@
     <name>PostHistoryExtractor</name>
     <groupId>org.sotorrent</groupId>
     <artifactId>posthistory-extractor</artifactId>
-    <version>3.5.3</version>
+    <version>3.5.4</version>
     <url>https://github.com/sotorrent/posthistory-extractor</url>
 
     <properties>
@@ -19,24 +19,41 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.mainclass>org.sotorrent.posthistoryextractor.MainIterator</maven.mainclass>
-        <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
-        <maven.jar.plugin.version>3.1.2</maven.jar.plugin.version>
-        <maven.assembly.plugin.version>3.1.1</maven.assembly.plugin.version>
-        <maven.source.plugin.version>3.1.0</maven.source.plugin.version>
-        <maven.javadoc.plugin.version>3.1.1</maven.javadoc.plugin.version>
-        <maven.surefire.plugin.version>3.0.0-M3</maven.surefire.plugin.version>
-        <maven.deploy.plugin.version>3.0.0-M1</maven.deploy.plugin.version>
+        <!-- Maven Plugins -->
+            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
+            <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
+            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-jar-plugin -->
+            <maven.jar.plugin.version>3.2.0</maven.jar.plugin.version>
+            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-assembly-plugin -->
+            <maven.assembly.plugin.version>3.2.0</maven.assembly.plugin.version>
+            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-source-plugin -->
+            <maven.source.plugin.version>3.2.0</maven.source.plugin.version>
+            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-javadoc-plugin -->
+            <maven.javadoc.plugin.version>3.1.1</maven.javadoc.plugin.version>
+            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
+            <maven.surefire.plugin.version>3.0.0-M4</maven.surefire.plugin.version>
+            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-deploy-plugin -->
+            <maven.deploy.plugin.version>3.0.0-M1</maven.deploy.plugin.version>
         <!-- JUnit -->
-        <junit.jupiter.version>5.5.2</junit.jupiter.version>
-        <hamcrest.junit.version>2.0.0.0</hamcrest.junit.version>
+            <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
+            <junit.jupiter.version>5.5.2</junit.jupiter.version>
+            <!-- https://mvnrepository.com/artifact/org.hamcrest/hamcrest-junit -->
+            <hamcrest.junit.version>2.0.0.0</hamcrest.junit.version>
         <!-- Other dependencies -->
-        <util.version>3.4.0</util.version>
-        <string-similarity.version>2.1.1</string-similarity.version>
-        <commons-cli.version>1.4</commons-cli.version>
-        <commons-io.version>2.6</commons-io.version>
-        <commons-csv.version>1.7</commons-csv.version>
-        <hibernate.version>5.4.5.Final</hibernate.version>
-        <mysql-connector-java.version>8.0.17</mysql-connector-java.version>
+            <!-- https://github.com/sotorrent/util/ -->
+            <util.version>3.4.2</util.version>
+            <!-- https://github.com/sotorrent/string-similarity/ -->
+            <string-similarity.version>2.1.1</string-similarity.version>
+            <!-- https://mvnrepository.com/artifact/commons-cli/commons-cli -->
+            <commons-cli.version>1.4</commons-cli.version>
+            <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
+            <commons-io.version>2.6</commons-io.version>
+            <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-csv -->
+            <commons-csv.version>1.7</commons-csv.version>
+            <!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-core -->
+            <hibernate.version>5.4.10.Final</hibernate.version>
+            <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+            <mysql-connector-java.version>8.0.18</mysql-connector-java.version>
     </properties>
 
     <distributionManagement>
@@ -59,19 +76,16 @@
     </repositories>
 
     <dependencies>
-        <!-- https://github.com/sotorrent/string-similarity/ -->
-        <dependency>
-            <groupId>org.sotorrent</groupId>
-            <artifactId>string-similarity</artifactId>
-            <version>${string-similarity.version}</version>
-        </dependency>
-        <!-- https://github.com/sotorrent/util/ -->
         <dependency>
             <groupId>org.sotorrent</groupId>
             <artifactId>util</artifactId>
             <version>${util.version}</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
+        <dependency>
+            <groupId>org.sotorrent</groupId>
+            <artifactId>string-similarity</artifactId>
+            <version>${string-similarity.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
@@ -84,38 +98,32 @@
             <version>${junit.jupiter.version}</version>
             <scope>test</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.hamcrest/hamcrest-junit -->
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-junit</artifactId>
             <version>${hamcrest.junit.version}</version>
             <scope>test</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/commons-cli/commons-cli -->
         <dependency>
             <groupId>commons-cli</groupId>
             <artifactId>commons-cli</artifactId>
             <version>${commons-cli.version}</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>${commons-io.version}</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-csv -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-csv</artifactId>
             <version>${commons-csv.version}</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-core -->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
             <version>${hibernate.version}</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -129,7 +137,6 @@
         <testSourceDirectory>${project.build.testSourceDirectory}</testSourceDirectory>
 
         <plugins>
-            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven.compiler.plugin.version}</version>
@@ -138,7 +145,6 @@
                     <target>${maven.compiler.target}</target>
                 </configuration>
             </plugin>
-            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-jar-plugin -->
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>${maven.jar.plugin.version}</version>
@@ -150,7 +156,6 @@
                     </archive>
                 </configuration>
             </plugin>
-            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-assembly-plugin -->
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>${maven.assembly.plugin.version}</version>
@@ -174,7 +179,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-source-plugin -->
             <plugin>
                 <artifactId>maven-source-plugin</artifactId>
                 <version>${maven.source.plugin.version}</version>
@@ -188,7 +192,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-javadoc-plugin -->
             <plugin>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>${maven.javadoc.plugin.version}</version>
@@ -202,13 +205,11 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven.surefire.plugin.version}</version>
             </plugin>
-            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-deploy-plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>

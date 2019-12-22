@@ -18,7 +18,7 @@ public class MarkdownLinkInline extends Link {
     // Example 3: [I'm an inline-style link](https://www.google.com)
     // Example 4: [I'm an inline-style link with title](https://www.google.com "Google's Homepage")
 
-    private static final Pattern pattern = Pattern.compile("\\[([^]]+)]\\(\\s*(" + URL.urlRegex + ")?(?:\\s+\"([^\"]+)\")?\\s*\\)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern pattern = Pattern.compile("\\[([^]]+)]\\(\\s*(" + URL.getUrlRegex() + ")?(?:\\s+\"([^\"]+)\")?\\s*\\)", Pattern.CASE_INSENSITIVE);
 
     static List<Link> extract(String markdownContent) {
         LinkedList<Link> extractedLinks = new LinkedList<>();

@@ -218,10 +218,10 @@ class UrlExtractionTest {
 
         Matcher urlMatcher;
 
-        urlMatcher = URL.urlPattern.matcher("http://regexpal.com/"); // see method Link.extractTyped
+        urlMatcher = URL.getUrlPattern().matcher("http://regexpal.com/"); // see method Link.extractTyped
         assertTrue(urlMatcher.matches());
 
-        urlMatcher = URL.urlPattern.matcher("http://blabla/"); // see method Link.extractTyped
+        urlMatcher = URL.getUrlPattern().matcher("http://blabla/"); // see method Link.extractTyped
         assertFalse(urlMatcher.matches());
     }
 
@@ -348,7 +348,7 @@ class UrlExtractionTest {
     void testDoctypeUrl() {
         String inputString = "DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd";
 
-        Matcher urlMatcher = URL.urlPattern.matcher(inputString);
+        Matcher urlMatcher = URL.getUrlPattern().matcher(inputString);
         assertTrue(urlMatcher.find());
         Link link = Link.extractBare(inputString).get(0);
         assertEquals(urlMatcher.group(0), link.getUrlString());

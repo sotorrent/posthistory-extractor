@@ -96,7 +96,7 @@ public class Link {
 
     public static List<Link> extractBare(String markdownContent) {
         LinkedList<Link> extractedLinks = new LinkedList<>();
-        Matcher urlMatcher = URL.urlPattern.matcher(markdownContent);
+        Matcher urlMatcher = URL.getUrlPattern().matcher(markdownContent);
 
         while (urlMatcher.find()) {
             if (URL.inInlineCode(urlMatcher, markdownContent)) {

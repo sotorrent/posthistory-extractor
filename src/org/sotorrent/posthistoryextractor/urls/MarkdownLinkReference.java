@@ -25,7 +25,7 @@ public class MarkdownLinkReference extends Link {
     // [link text itself]: http://www.reddit.com
 
     private static final Pattern patternUsages = Pattern.compile("\\[([^]]*)]\\[(\\s*.*?\\s*)]", Pattern.CASE_INSENSITIVE);
-    static final Pattern patternDefinitions = Pattern.compile("(?:\\[([^]]+)]:\\s*(" + URL.urlRegex + ")?)(?:\\s+\"(.*)\")?", Pattern.CASE_INSENSITIVE);
+    static final Pattern patternDefinitions = Pattern.compile("(?:\\[([^]]+)]:\\s*(" + URL.getUrlRegex() + ")?)(?:\\s+\"(.*)\")?", Pattern.CASE_INSENSITIVE);
 
     static List<Link> extract(String markdownContent) {
         LinkedList<MarkdownLinkReference> extractedLinks = new LinkedList<>();

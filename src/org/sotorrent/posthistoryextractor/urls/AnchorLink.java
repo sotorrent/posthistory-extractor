@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 public class AnchorLink extends Link {
     // Example: <a href="http://example.com" title="example">example</a>
-    private static final Pattern pattern = Pattern.compile("<a\\s+href\\s*=\\s*\"(" + URL.urlRegex + ")?\"(?:\\s+(?:title=\"(.*?)\"))?>(.*?)</a>", Pattern.CASE_INSENSITIVE);
+    private static final Pattern pattern = Pattern.compile("<a\\s+href\\s*=\\s*\"(" + URL.getUrlRegex() + ")?\"(?:\\s+(?:title=\"(.*?)\"))?>(.*?)</a>", Pattern.CASE_INSENSITIVE);
 
     static List<Link> extract(String markdownContent) {
         LinkedList<Link> extractedLinks = new LinkedList<>();

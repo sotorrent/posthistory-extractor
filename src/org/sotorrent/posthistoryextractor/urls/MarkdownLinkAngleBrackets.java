@@ -19,7 +19,7 @@ public class MarkdownLinkAngleBrackets extends Link {
     // http://www.example.com or <http://www.example.com> and sometimes
     // example.com (but not on Github, for example).
 
-    private static final Pattern pattern = Pattern.compile("<(" + URL.urlRegex + ")>", Pattern.CASE_INSENSITIVE);
+    private static final Pattern pattern = Pattern.compile("<(" + URL.getUrlRegex() + ")>", Pattern.CASE_INSENSITIVE);
 
     static List<Link> extract(String markdownContent) {
         LinkedList<Link> extractedLinks = new LinkedList<>();
