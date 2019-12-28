@@ -193,7 +193,7 @@ public class PostVersion extends Version {
 
     public void setComment(String comment) {
         // exclude empty comments (no word characters)
-        if (nonWordPattern.matcher(comment).replaceAll("").length() == 0) {
+        if (comment == null || nonWordPattern.matcher(comment).replaceAll("").length() == 0) {
             return;
         }
 
