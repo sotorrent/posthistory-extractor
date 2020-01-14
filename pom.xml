@@ -41,7 +41,7 @@
             <hamcrest.junit.version>2.0.0.0</hamcrest.junit.version>
         <!-- Other dependencies -->
             <!-- https://github.com/sotorrent/util/ -->
-            <util.version>3.4.2</util.version>
+            <util.version>3.4.3</util.version>
             <!-- https://github.com/sotorrent/string-similarity/ -->
             <string-similarity.version>2.1.1</string-similarity.version>
             <!-- https://mvnrepository.com/artifact/commons-cli/commons-cli -->
