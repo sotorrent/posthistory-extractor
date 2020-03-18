@@ -46,10 +46,13 @@ public class PostHistory {
      *  => Frequency: 34,112,377 (2017-01-27)
      * 5: Edit Body - A post's body has been changed, the raw text is stored here as markdown.
      *  => rows with PostHistoryType 2 and 5 won't have same RevisionGUID (checked using:
-     *     select RevisionGUID, PostHistoryTypeId from PostHistoryEntry_ where PostHistoryTypeId=2 or PostHistoryTypeId=5 group by RevisionGUID, PostHistoryTypeId having count(RevisionGUID)>1;)
+     *     select RevisionGUID, PostHistoryTypeId from PostHistoryEntry_
+     *     where PostHistoryTypeId=2 or PostHistoryTypeId=5
+     *     group by RevisionGUID, PostHistoryTypeId having count(RevisionGUID)>1;)
      *  => Frequency: 17,673,423 (2017-01-27)
      * 8: Rollback Body - A post's body has reverted to a previous version - the raw text is stored here.
-     *  => Comment contains RevisionGUID of old version (e.g., "Rollback to [cca4acef-243d-4c7c-ad1d-5476c94323d2] - Cleaner formatting.")
+     *  => Comment contains RevisionGUID of old version (e.g., "Rollback to [cca4acef-243d-4c7c-ad1d-5476c94323d2]
+     *     - Cleaner formatting.")
      *     (see http://meta.stackexchange.com/a/2678)
      *  => Frequency: 77,957 (2017-01-27)
      */
