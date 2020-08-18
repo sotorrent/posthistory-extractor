@@ -1,10 +1,142 @@
 Id;PostHistoryTypeId;PostId;RevisionGUID;CreationDate;UserId;UserDisplayName;Comment;Text
-30654933;2;12954660;553842df-6cb9-4152-b161-64e7d5fefb86;2012-10-18 12:27:32;1756209;;;"I want to publish an app for android (wordpress blog). The app displays also some YouTube videos.&#xD;&#xA;I need a method to replace YouTube IFRAMES + EMBED-Codes (old embed method) with an a - tag:&#xD;&#xA;&#xD;&#xA;    <iframe ...&#xD;&#xA;    &#xD;&#xA;    &#xD;&#xA;    <a href=""http://www.youtube.com/watch?v=id""><img src=""http://i1.ytimg.com/vi/id/hqdefault.jpg"" /></a>&#xD;&#xA;&#xD;&#xA;The replacement: either via php (server) or via java (eclipse). I have only found some snippets...&#xD;&#xA;&#xD;&#xA;    /embed\/([a-zA-Z0-9_-]{11})/&#xD;&#xA;&#xD;&#xA;But how could I use it? Please help me!&#xD;&#xA;&#xD;&#xA;Thanks very much ;)"
+30654933;2;12954660;553842df-6cb9-4152-b161-64e7d5fefb86;2012-10-18 12:27:32;1756209;;;"I want to publish an app for android (wordpress blog). The app displays also some YouTube videos.
+I need a method to replace YouTube IFRAMES + EMBED-Codes (old embed method) with an a - tag:
+
+    <iframe ...
+    
+    
+    <a href=""http://www.youtube.com/watch?v=id""><img src=""http://i1.ytimg.com/vi/id/hqdefault.jpg"" /></a>
+
+The replacement: either via php (server) or via java (eclipse). I have only found some snippets...
+
+    /embed\/([a-zA-Z0-9_-]{11})/
+
+But how could I use it? Please help me!
+
+Thanks very much ;)"
 30654934;1;12954660;553842df-6cb9-4152-b161-64e7d5fefb86;2012-10-18 12:27:32;1756209;;;Regex YouTube IFRAME
 30654935;3;12954660;553842df-6cb9-4152-b161-64e7d5fefb86;2012-10-18 12:27:32;1756209;;;<java><php><android><regex><youtube>
-30655018;5;12954660;92ee7ee5-94c7-42af-9324-31e1dc4b93e6;2012-10-18 12:29:18;1427138;;deleted 21 characters in body;"I want to publish an app for android (wordpress blog). The app displays also some YouTube videos.&#xD;&#xA;I need a method to replace YouTube IFRAMES + EMBED-Codes (old embed method) with an a - tag:&#xD;&#xA;&#xD;&#xA;    <iframe ...&#xD;&#xA;    &#xD;&#xA;    &#xD;&#xA;    <a href=""http://www.youtube.com/watch?v=id""><img src=""http://i1.ytimg.com/vi/id/hqdefault.jpg"" /></a>&#xD;&#xA;&#xD;&#xA;The replacement: either via php (server) or via java (eclipse). I have only found some snippets...&#xD;&#xA;&#xD;&#xA;    /embed\/([a-zA-Z0-9_-]{11})/&#xD;&#xA;&#xD;&#xA;But how could I use it? Please help me!&#xD;&#xA;"
-30655479;5;12954660;8acba6b8-44eb-453f-923b-8571b481c5bc;2012-10-18 12:38:19;1756209;;added 174 characters in body;"I want to publish an app for android (wordpress blog). The app displays also some YouTube videos.&#xD;&#xA;I need a method to replace YouTube IFRAMES + EMBED-Codes (old embed method) with an a - tag:&#xD;&#xA;&#xD;&#xA;    <iframe ...&#xD;&#xA;    &#xD;&#xA;    &#xD;&#xA;    <a href=""http://www.youtube.com/watch?v=id""><img src=""http://i1.ytimg.com/vi/id/hqdefault.jpg"" /></a>&#xD;&#xA;&#xD;&#xA;The replacement: either via php (server) or via java (eclipse). I have only found some snippets...&#xD;&#xA;&#xD;&#xA;    /embed\/([a-zA-Z0-9_-]{11})/&#xD;&#xA;&#xD;&#xA;But how could I use it? Please help me!&#xD;&#xA;&#xD;&#xA;**EDIT:** I try to replace the following CODE:&#xD;&#xA;&#xD;&#xA;    <iframe width=""560"" height=""315"" src=""http://www.youtube.com/embed/**ID**"" frameborder=""0"" allowfullscreen></iframe>&#xD;&#xA;"
-30656521;5;12954660;7f699d8c-8fce-4685-93b1-af9aaeb5ca03;2012-10-18 12:58:03;1756209;;added 426 characters in body;"I want to publish an app for android (wordpress blog). The app displays also some YouTube videos.&#xD;&#xA;I need a method to replace YouTube IFRAMES + EMBED-Codes (old embed method) with an a - tag:&#xD;&#xA;&#xD;&#xA;    <iframe ...&#xD;&#xA;    &#xD;&#xA;    &#xD;&#xA;    <a href=""http://www.youtube.com/watch?v=id""><img src=""http://i1.ytimg.com/vi/id/hqdefault.jpg"" /></a>&#xD;&#xA;&#xD;&#xA;The replacement: either via php (server) or via java (eclipse). I have only found some snippets...&#xD;&#xA;&#xD;&#xA;    /embed\/([a-zA-Z0-9_-]{11})/&#xD;&#xA;&#xD;&#xA;But how could I use it? Please help me!&#xD;&#xA;&#xD;&#xA;**EDIT:** I try to replace the following CODE:&#xD;&#xA;&#xD;&#xA;    <iframe width=""560"" height=""315"" src=""http://www.youtube.com/embed/**ID**"" frameborder=""0"" allowfullscreen></iframe>&#xD;&#xA;&#xD;&#xA;@Stephan&#xD;&#xA;&#xD;&#xA;    $content = ""contains <iframe... and article""&#xD;&#xA;    $search = '/<iframe.+?src=""http://www.youtube.com/embed/([a-zA-Z0-9_-]{11})""[^>]+?></iframe>/i';&#xD;&#xA;    $replace = '<a href=""http://www.youtube.com/watch?v=$1""><img src=""http://i1.ytimg.com/vi/$1/hqdefault.jpg"" /></a>';&#xD;&#xA;    $content = preg_replace($search, $replace, $content);&#xD;&#xA;    echo $content;&#xD;&#xA;&#xD;&#xA;How could I used it? Error: Unknown modifier '/' (in PHP)."
-30676360;5;12954660;4b2ad892-a856-42a8-a75a-283de5379a65;2012-10-18 19:51:08;-1;;insert duplicate link;"> **Possible Duplicate:**  &#xA;> [How to parse and process HTML with PHP?](http://stackoverflow.com/questions/3577641/how-to-parse-and-process-html-with-php)  &#xA;&#xA;<!-- End of automatically inserted text -->&#xA;&#xA;I want to publish an app for android (wordpress blog). The app displays also some YouTube videos.&#xD;&#xA;I need a method to replace YouTube IFRAMES + EMBED-Codes (old embed method) with an a - tag:&#xD;&#xA;&#xD;&#xA;    <iframe ...&#xD;&#xA;    &#xD;&#xA;    &#xD;&#xA;    <a href=""http://www.youtube.com/watch?v=id""><img src=""http://i1.ytimg.com/vi/id/hqdefault.jpg"" /></a>&#xD;&#xA;&#xD;&#xA;The replacement: either via php (server) or via java (eclipse). I have only found some snippets...&#xD;&#xA;&#xD;&#xA;    /embed\/([a-zA-Z0-9_-]{11})/&#xD;&#xA;&#xD;&#xA;But how could I use it? Please help me!&#xD;&#xA;&#xD;&#xA;**EDIT:** I try to replace the following CODE:&#xD;&#xA;&#xD;&#xA;    <iframe width=""560"" height=""315"" src=""http://www.youtube.com/embed/**ID**"" frameborder=""0"" allowfullscreen></iframe>&#xD;&#xA;&#xD;&#xA;@Stephan&#xD;&#xA;&#xD;&#xA;    $content = ""contains <iframe... and article""&#xD;&#xA;    $search = '/<iframe.+?src=""http://www.youtube.com/embed/([a-zA-Z0-9_-]{11})""[^>]+?></iframe>/i';&#xD;&#xA;    $replace = '<a href=""http://www.youtube.com/watch?v=$1""><img src=""http://i1.ytimg.com/vi/$1/hqdefault.jpg"" /></a>';&#xD;&#xA;    $content = preg_replace($search, $replace, $content);&#xD;&#xA;    echo $content;&#xD;&#xA;&#xD;&#xA;How could I used it? Error: Unknown modifier '/' (in PHP)."
+30655018;5;12954660;92ee7ee5-94c7-42af-9324-31e1dc4b93e6;2012-10-18 12:29:18;1427138;;deleted 21 characters in body;"I want to publish an app for android (wordpress blog). The app displays also some YouTube videos.
+I need a method to replace YouTube IFRAMES + EMBED-Codes (old embed method) with an a - tag:
+
+    <iframe ...
+    
+    
+    <a href=""http://www.youtube.com/watch?v=id""><img src=""http://i1.ytimg.com/vi/id/hqdefault.jpg"" /></a>
+
+The replacement: either via php (server) or via java (eclipse). I have only found some snippets...
+
+    /embed\/([a-zA-Z0-9_-]{11})/
+
+But how could I use it? Please help me!
+"
+30655479;5;12954660;8acba6b8-44eb-453f-923b-8571b481c5bc;2012-10-18 12:38:19;1756209;;added 174 characters in body;"I want to publish an app for android (wordpress blog). The app displays also some YouTube videos.
+I need a method to replace YouTube IFRAMES + EMBED-Codes (old embed method) with an a - tag:
+
+    <iframe ...
+    
+    
+    <a href=""http://www.youtube.com/watch?v=id""><img src=""http://i1.ytimg.com/vi/id/hqdefault.jpg"" /></a>
+
+The replacement: either via php (server) or via java (eclipse). I have only found some snippets...
+
+    /embed\/([a-zA-Z0-9_-]{11})/
+
+But how could I use it? Please help me!
+
+**EDIT:** I try to replace the following CODE:
+
+    <iframe width=""560"" height=""315"" src=""http://www.youtube.com/embed/**ID**"" frameborder=""0"" allowfullscreen></iframe>
+"
+30656521;5;12954660;7f699d8c-8fce-4685-93b1-af9aaeb5ca03;2012-10-18 12:58:03;1756209;;added 426 characters in body;"I want to publish an app for android (wordpress blog). The app displays also some YouTube videos.
+I need a method to replace YouTube IFRAMES + EMBED-Codes (old embed method) with an a - tag:
+
+    <iframe ...
+    
+    
+    <a href=""http://www.youtube.com/watch?v=id""><img src=""http://i1.ytimg.com/vi/id/hqdefault.jpg"" /></a>
+
+The replacement: either via php (server) or via java (eclipse). I have only found some snippets...
+
+    /embed\/([a-zA-Z0-9_-]{11})/
+
+But how could I use it? Please help me!
+
+**EDIT:** I try to replace the following CODE:
+
+    <iframe width=""560"" height=""315"" src=""http://www.youtube.com/embed/**ID**"" frameborder=""0"" allowfullscreen></iframe>
+
+@Stephan
+
+    $content = ""contains <iframe... and article""
+    $search = '/<iframe.+?src=""http://www.youtube.com/embed/([a-zA-Z0-9_-]{11})""[^>]+?></iframe>/i';
+    $replace = '<a href=""http://www.youtube.com/watch?v=$1""><img src=""http://i1.ytimg.com/vi/$1/hqdefault.jpg"" /></a>';
+    $content = preg_replace($search, $replace, $content);
+    echo $content;
+
+How could I used it? Error: Unknown modifier '/' (in PHP)."
+30676360;5;12954660;4b2ad892-a856-42a8-a75a-283de5379a65;2012-10-18 19:51:08;-1;;insert duplicate link;"> **Possible Duplicate:**  
+> [How to parse and process HTML with PHP?](http://stackoverflow.com/questions/3577641/how-to-parse-and-process-html-with-php)  
+
+<!-- End of automatically inserted text -->
+
+I want to publish an app for android (wordpress blog). The app displays also some YouTube videos.
+I need a method to replace YouTube IFRAMES + EMBED-Codes (old embed method) with an a - tag:
+
+    <iframe ...
+    
+    
+    <a href=""http://www.youtube.com/watch?v=id""><img src=""http://i1.ytimg.com/vi/id/hqdefault.jpg"" /></a>
+
+The replacement: either via php (server) or via java (eclipse). I have only found some snippets...
+
+    /embed\/([a-zA-Z0-9_-]{11})/
+
+But how could I use it? Please help me!
+
+**EDIT:** I try to replace the following CODE:
+
+    <iframe width=""560"" height=""315"" src=""http://www.youtube.com/embed/**ID**"" frameborder=""0"" allowfullscreen></iframe>
+
+@Stephan
+
+    $content = ""contains <iframe... and article""
+    $search = '/<iframe.+?src=""http://www.youtube.com/embed/([a-zA-Z0-9_-]{11})""[^>]+?></iframe>/i';
+    $replace = '<a href=""http://www.youtube.com/watch?v=$1""><img src=""http://i1.ytimg.com/vi/$1/hqdefault.jpg"" /></a>';
+    $content = preg_replace($search, $replace, $content);
+    echo $content;
+
+How could I used it? Error: Unknown modifier '/' (in PHP)."
 30676361;10;12954660;f42a494f-87b1-4c89-81ef-66f6588ada52;2012-10-18 19:51:08;-1;;1;{"OriginalQuestionIds":[3577641],"Voters":[{"Id":19068,"DisplayName":"Quentin"},{"Id":1782,"DisplayName":"JQAn"},{"Id":1160198,"DisplayName":"jhonraymos"},{"Id":4794,"DisplayName":"Don Kirkby"},{"Id":1518087,"DisplayName":"newfurniturey"}]}
-147453169;5;12954660;b90194a0-e657-497c-a6fa-cea5626fc590;2017-05-23 12:24:45;-1;;replaced http://stackoverflow.com/ with https://stackoverflow.com/;"> **Possible Duplicate:**  &#xA;> [How to parse and process HTML with PHP?](https://stackoverflow.com/questions/3577641/how-to-parse-and-process-html-with-php)  &#xA;&#xA;<!-- End of automatically inserted text -->&#xA;&#xA;I want to publish an app for android (wordpress blog). The app displays also some YouTube videos.&#xD;&#xA;I need a method to replace YouTube IFRAMES + EMBED-Codes (old embed method) with an a - tag:&#xD;&#xA;&#xD;&#xA;    <iframe ...&#xD;&#xA;    &#xD;&#xA;    &#xD;&#xA;    <a href=""http://www.youtube.com/watch?v=id""><img src=""http://i1.ytimg.com/vi/id/hqdefault.jpg"" /></a>&#xD;&#xA;&#xD;&#xA;The replacement: either via php (server) or via java (eclipse). I have only found some snippets...&#xD;&#xA;&#xD;&#xA;    /embed\/([a-zA-Z0-9_-]{11})/&#xD;&#xA;&#xD;&#xA;But how could I use it? Please help me!&#xD;&#xA;&#xD;&#xA;**EDIT:** I try to replace the following CODE:&#xD;&#xA;&#xD;&#xA;    <iframe width=""560"" height=""315"" src=""http://www.youtube.com/embed/**ID**"" frameborder=""0"" allowfullscreen></iframe>&#xD;&#xA;&#xD;&#xA;@Stephan&#xD;&#xA;&#xD;&#xA;    $content = ""contains <iframe... and article""&#xD;&#xA;    $search = '/<iframe.+?src=""http://www.youtube.com/embed/([a-zA-Z0-9_-]{11})""[^>]+?></iframe>/i';&#xD;&#xA;    $replace = '<a href=""http://www.youtube.com/watch?v=$1""><img src=""http://i1.ytimg.com/vi/$1/hqdefault.jpg"" /></a>';&#xD;&#xA;    $content = preg_replace($search, $replace, $content);&#xD;&#xA;    echo $content;&#xD;&#xA;&#xD;&#xA;How could I used it? Error: Unknown modifier '/' (in PHP)."
+147453169;5;12954660;b90194a0-e657-497c-a6fa-cea5626fc590;2017-05-23 12:24:45;-1;;replaced http://stackoverflow.com/ with https://stackoverflow.com/;"> **Possible Duplicate:**  
+> [How to parse and process HTML with PHP?](https://stackoverflow.com/questions/3577641/how-to-parse-and-process-html-with-php)  
+
+<!-- End of automatically inserted text -->
+
+I want to publish an app for android (wordpress blog). The app displays also some YouTube videos.
+I need a method to replace YouTube IFRAMES + EMBED-Codes (old embed method) with an a - tag:
+
+    <iframe ...
+    
+    
+    <a href=""http://www.youtube.com/watch?v=id""><img src=""http://i1.ytimg.com/vi/id/hqdefault.jpg"" /></a>
+
+The replacement: either via php (server) or via java (eclipse). I have only found some snippets...
+
+    /embed\/([a-zA-Z0-9_-]{11})/
+
+But how could I use it? Please help me!
+
+**EDIT:** I try to replace the following CODE:
+
+    <iframe width=""560"" height=""315"" src=""http://www.youtube.com/embed/**ID**"" frameborder=""0"" allowfullscreen></iframe>
+
+@Stephan
+
+    $content = ""contains <iframe... and article""
+    $search = '/<iframe.+?src=""http://www.youtube.com/embed/([a-zA-Z0-9_-]{11})""[^>]+?></iframe>/i';
+    $replace = '<a href=""http://www.youtube.com/watch?v=$1""><img src=""http://i1.ytimg.com/vi/$1/hqdefault.jpg"" /></a>';
+    $content = preg_replace($search, $replace, $content);
+    echo $content;
+
+How could I used it? Error: Unknown modifier '/' (in PHP)."

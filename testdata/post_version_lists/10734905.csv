@@ -1,2 +1,22 @@
 Id;PostHistoryTypeId;PostId;RevisionGUID;CreationDate;UserId;UserDisplayName;Comment;Text
-24774386;2;10734905;bde1a8f8-7262-4dff-9533-04498cc37bc6;2012-05-24 09:40:33;1249744;;;"Got an answer. During initialization, fnServerData should be:&#xD;&#xA;&#xD;&#xA;    ""fnServerData"": function ( sSource, aoData, fnCallback ) {&#xD;&#xA;			  	    	aoData.push( { ""name"" : ""myTeamId"", ""value"" : myTeamId  } );&#xD;&#xA;                    	$.getJSON( sSource, aoData, function (json) { &#xD;&#xA;                        	fnCallback(json);&#xD;&#xA;                    	});&#xD;&#xA;			  	  }&#xD;&#xA;&#xD;&#xA;and the onChange function of the combobox on which I want to pass the parameter:&#xD;&#xA;&#xD;&#xA;      	$(""#projectTeams"").change(function () {&#xD;&#xA; 			onTeamSelect($(this).val());&#xD;&#xA;    	}); &#xD;&#xA;        function onTeamSelect(teamId){&#xD;&#xA; 			myTeamId = teamId;&#xD;&#xA; 			oTable.fnDraw();&#xD;&#xA;		}&#xD;&#xA;where myTeamId is a global variable.&#xD;&#xA;The `oTable.fnDraw()` redraws the datatable and assigns the value of `teamId` to the `myTeamId`, which I use in `fnServerData`.&#xD;&#xA;This code worked for me!"
+24774386;2;10734905;bde1a8f8-7262-4dff-9533-04498cc37bc6;2012-05-24 09:40:33;1249744;;;"Got an answer. During initialization, fnServerData should be:
+
+    ""fnServerData"": function ( sSource, aoData, fnCallback ) {
+			  	    	aoData.push( { ""name"" : ""myTeamId"", ""value"" : myTeamId  } );
+                    	$.getJSON( sSource, aoData, function (json) { 
+                        	fnCallback(json);
+                    	});
+			  	  }
+
+and the onChange function of the combobox on which I want to pass the parameter:
+
+      	$(""#projectTeams"").change(function () {
+ 			onTeamSelect($(this).val());
+    	}); 
+        function onTeamSelect(teamId){
+ 			myTeamId = teamId;
+ 			oTable.fnDraw();
+		}
+where myTeamId is a global variable.
+The `oTable.fnDraw()` redraws the datatable and assigns the value of `teamId` to the `myTeamId`, which I use in `fnServerData`.
+This code worked for me!"

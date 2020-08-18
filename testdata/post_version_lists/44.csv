@@ -1,3 +1,9 @@
 Id;PostId;UserId;PostHistoryTypeId;RevisionGUID;CreationDate;Text;UserDisplayName;Comment
-37;44;35;2;aabf9c4a-ebb4-4375-a0c6-93546452e145;2008-08-01 12:55:42;"Consider using a [ManualResetEvent][1] to block the main thread at the end of its processing, and call Reset() on it once the timer's processing has finished.  If this is something that needs to run constantly, consider moving this into a service process instead of a console app.&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;  [1]: http://msdn.microsoft.com/en-us/library/system.threading.manualresetevent.aspx ""MSDN Reference""";;
-30458639;44;967315;5;86efbddc-cdb8-4582-b890-719e4730e954;2012-10-14 12:20:15;"Consider using a [ManualResetEvent][1] to block the main thread at the end of its processing, and call `Reset()` on it once the timer's processing has finished.  If this is something that needs to run constantly, consider moving this into a service process instead of a console app.&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;  [1]: http://msdn.microsoft.com/en-us/library/system.threading.manualresetevent.aspx ""MSDN Reference""";;added 2 characters in body
+37;44;35;2;aabf9c4a-ebb4-4375-a0c6-93546452e145;2008-08-01 12:55:42;"Consider using a [ManualResetEvent][1] to block the main thread at the end of its processing, and call Reset() on it once the timer's processing has finished.  If this is something that needs to run constantly, consider moving this into a service process instead of a console app.
+
+
+  [1]: http://msdn.microsoft.com/en-us/library/system.threading.manualresetevent.aspx ""MSDN Reference""";;
+30458639;44;967315;5;86efbddc-cdb8-4582-b890-719e4730e954;2012-10-14 12:20:15;"Consider using a [ManualResetEvent][1] to block the main thread at the end of its processing, and call `Reset()` on it once the timer's processing has finished.  If this is something that needs to run constantly, consider moving this into a service process instead of a console app.
+
+
+  [1]: http://msdn.microsoft.com/en-us/library/system.threading.manualresetevent.aspx ""MSDN Reference""";;added 2 characters in body

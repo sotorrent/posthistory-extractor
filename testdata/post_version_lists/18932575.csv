@@ -1,11 +1,2047 @@
 Id;PostHistoryTypeId;PostId;RevisionGUID;CreationDate;UserId;UserDisplayName;Comment;Text
-47739175;2;18932575;01623378-2ee3-4c64-9fd1-a25a8e17d8f1;2013-09-21 12:24:52;2683051;;;"Regarding another thread here i try too, to get a json array form a json. I have the following files : &#xD;&#xA;&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;earthquake.json&#xD;&#xA;&#xD;&#xA;<pre>&#xD;&#xA;[{&#xD;&#xA;        ""eqid"": ""merge"",&#xD;&#xA;        ""magnitude"": 8.8,&#xD;&#xA;        ""lng"": 142.369,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2011-03-11 04:46:23"",&#xD;&#xA;        ""depth"": 24.4,&#xD;&#xA;        ""lat"": 38.322&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""merge2"",&#xD;&#xA;        ""magnitude"": 8.6,&#xD;&#xA;        ""lng"": 93.0632,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2012-04-11 06:38:37"",&#xD;&#xA;        ""depth"": 22.9,&#xD;&#xA;        ""lat"": 2.311&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""2007hear"",&#xD;&#xA;        ""magnitude"": 8.4,&#xD;&#xA;        ""lng"": 101.3815,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2007-09-12 09:10:26"",&#xD;&#xA;        ""depth"": 30,&#xD;&#xA;        ""lat"": -4.5172&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""c00090da"",&#xD;&#xA;        ""magnitude"": 8.2,&#xD;&#xA;        ""lng"": 92.4522,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2012-04-11 08:43:09"",&#xD;&#xA;        ""depth"": 16.4,&#xD;&#xA;        ""lat"": 0.7731&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""2007aqbk"",&#xD;&#xA;        ""magnitude"": 8,&#xD;&#xA;        ""lng"": 156.9567,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2007-04-01 18:39:56"",&#xD;&#xA;        ""depth"": 10,&#xD;&#xA;        ""lat"": -8.4528&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""2007hec6"",&#xD;&#xA;        ""magnitude"": 7.8,&#xD;&#xA;        ""lng"": 100.9638,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2007-09-12 21:49:01"",&#xD;&#xA;        ""depth"": 10,&#xD;&#xA;        ""lat"": -2.5265&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""b000g7x7"",&#xD;&#xA;        ""magnitude"": 7.8,&#xD;&#xA;        ""lng"": 62.0532,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2013-04-16 08:44:20"",&#xD;&#xA;        ""depth"": 82,&#xD;&#xA;        ""lat"": 28.1069&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""a00043nx"",&#xD;&#xA;        ""magnitude"": 7.7,&#xD;&#xA;        ""lng"": 100.1139,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2010-10-25 12:42:22"",&#xD;&#xA;        ""depth"": 20.6,&#xD;&#xA;        ""lat"": -3.4841&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""2010utc5"",&#xD;&#xA;        ""magnitude"": 7.7,&#xD;&#xA;        ""lng"": 97.1315,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2010-04-06 20:15:02"",&#xD;&#xA;        ""depth"": 31,&#xD;&#xA;        ""lat"": 2.3602&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""2009mebz"",&#xD;&#xA;        ""magnitude"": 7.6,&#xD;&#xA;        ""lng"": 99.9606,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2009-09-30 08:16:09"",&#xD;&#xA;        ""depth"": 80,&#xD;&#xA;        ""lat"": -0.7889&#xD;&#xA;    }]&#xD;&#xA;</pre>&#xD;&#xA;&#xD;&#xA;&#xD;&#xA; &#xD;&#xA;MainActivity.java&#xD;&#xA;<pre>&#xD;&#xA;> package ayub.khosa.json_parsing;&#xD;&#xA;    import java.io.IOException;&#xD;&#xA;    import java.util.ArrayList;&#xD;&#xA;    import java.util.Collection;&#xD;&#xA;    import java.util.HashMap;&#xD;&#xA;    import org.apache.http.client.ClientProtocolException;&#xD;&#xA;    import org.json.JSONArray;&#xD;&#xA;    import org.json.JSONException;&#xD;&#xA;    import org.json.JSONObject;&#xD;&#xA;    import android.app.ListActivity;&#xD;&#xA;    import android.os.Bundle;&#xD;&#xA;    import android.util.Log;&#xD;&#xA;    import android.view.Menu;&#xD;&#xA;    import android.view.View;&#xD;&#xA;    import android.view.Window;&#xD;&#xA;    import android.view.WindowManager;&#xD;&#xA;    import android.widget.AdapterView;&#xD;&#xA;    import android.widget.AdapterView.OnItemClickListener;&#xD;&#xA;    import android.widget.ListAdapter;&#xD;&#xA;    import android.widget.ListView;&#xD;&#xA;    import android.widget.SimpleAdapter;&#xD;&#xA;    import android.widget.Toast;&#xD;&#xA;    public class MainActivity extends ListActivity &#xD;&#xA;    {&#xD;&#xA;	String tag = ""AYUB"";&#xD;&#xA;    /** Called when the activity is first created. */&#xD;&#xA;    @Override&#xD;&#xA;    public void onCreate(Bundle savedInstanceState) &#xD;&#xA;    { super.onCreate(savedInstanceState);&#xD;&#xA;        requestWindowFeature(Window.FEATURE_NO_TITLE);&#xD;&#xA;		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);&#xD;&#xA;setContentView(R.layout.listplaceholder);&#xD;&#xA;        Log.d(tag, ""setContentView  "");&#xD;&#xA;        ArrayList<HashMap<String, String>> mylist = new ArrayList<HashMap<String, String>>();&#xD;&#xA;      &#xD;&#xA;       &#xD;&#xA;        JSONArray json = null;&#xD;&#xA;		try {&#xD;&#xA;			json = JSONfunctions.getJSONfromURL(""http://192.168.0.104/earthquakes.json"");&#xD;&#xA;		} catch (ClientProtocolException e1) {&#xD;&#xA;			// TODO Auto-generated catch block&#xD;&#xA;			e1.printStackTrace();&#xD;&#xA;		} catch (IOException e1) {&#xD;&#xA;			// TODO Auto-generated catch block&#xD;&#xA;			e1.printStackTrace();&#xD;&#xA;		} catch (JSONException e1) {&#xD;&#xA;			// TODO Auto-generated catch block&#xD;&#xA;			e1.printStackTrace();&#xD;&#xA;		}&#xD;&#xA;        Log.d(tag, ""json object  ""); &#xD;&#xA;        try{&#xD;&#xA;        	Collection<?> result = null;&#xD;&#xA;			JSONArray json1 = new JSONArray(result);&#xD;&#xA;//        	// ...&#xD;&#xA;&#xD;&#xA;        	for(int i=0;i<json.length();i++){                        &#xD;&#xA;        	    HashMap<String, String> map = new HashMap<String, String>();    &#xD;&#xA;        	    JSONObject e = json1.getJSONObject(i);&#xD;&#xA;&#xD;&#xA;        	    map.put(""id"",  String.valueOf(i));&#xD;&#xA;        	    map.put(""name"", ""Earthquake name:"" + e.getString(""eqid""));&#xD;&#xA;          	    map.put(""magnitude"", ""Magnitude: "" +  e.getString(""magnitude""));&#xD;&#xA;        	    mylist.add(map);            &#xD;&#xA;        	}&#xD;&#xA;        }catch(JSONException e)        {&#xD;&#xA;        	 Log.e(""log_tag"", ""Error parsing data ""+e.toString());&#xD;&#xA;        }&#xD;&#xA;        &#xD;&#xA;        ListAdapter adapter = new SimpleAdapter(this, mylist , R.layout.activity_main, &#xD;&#xA;                        new String[] { ""name"", ""magnitude"" }, &#xD;&#xA;                        new int[] { R.id.item_title, R.id.item_subtitle });&#xD;&#xA;        &#xD;&#xA;        setListAdapter(adapter);&#xD;&#xA;        &#xD;&#xA;        final ListView lv = getListView();&#xD;&#xA;        lv.setTextFilterEnabled(true);	&#xD;&#xA;        lv.setOnItemClickListener(new OnItemClickListener() {&#xD;&#xA;        	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {        		&#xD;&#xA;        		@SuppressWarnings(""unchecked"")&#xD;&#xA;				HashMap<String, String> o = (HashMap<String, String>) lv.getItemAtPosition(position);	&#xD;&#xA;        		Log.d(tag, ""json object  "" + lv.getItemAtPosition(position)); &#xD;&#xA;        		Toast.makeText(MainActivity.this, ""ID "" + o.get(""id"")+""	"" + o.get(""name"") + o.get(""magnitude"")+""."", Toast.LENGTH_SHORT).show(); &#xD;&#xA;&#xD;&#xA;			}&#xD;&#xA;		});&#xD;&#xA;    }&#xD;&#xA;&#xD;&#xA;    @Override&#xD;&#xA;    public boolean onCreateOptionsMenu(Menu menu) {&#xD;&#xA;        getMenuInflater().inflate(R.menu.activity_main, menu);&#xD;&#xA;        return true;&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;</pre>&#xD;&#xA;&#xD;&#xA;JSONFunctions.java&#xD;&#xA;&#xD;&#xA;<pre>&#xD;&#xA;> package ayub.khosa.json_parsing;&#xD;&#xA;    import java.io.BufferedReader;&#xD;&#xA;    import java.io.IOException;&#xD;&#xA;    import java.io.InputStream;&#xD;&#xA;    import java.io.InputStreamReader;&#xD;&#xA;    import org.apache.http.HttpEntity;&#xD;&#xA;    import org.apache.http.HttpResponse;&#xD;&#xA;    import org.apache.http.client.ClientProtocolException;&#xD;&#xA;    import org.apache.http.client.HttpClient;&#xD;&#xA;    import org.apache.http.client.methods.HttpGet;&#xD;&#xA;    import org.apache.http.impl.client.DefaultHttpClient;&#xD;&#xA;    import org.json.JSONArray;&#xD;&#xA;    import org.json.JSONException;&#xD;&#xA;    public class JSONfunctions {&#xD;&#xA;    public static JSONArray getJSONfromURL(String url) throws ClientProtocolException, IOException, JSONException{&#xD;&#xA;    InputStream is = null;&#xD;&#xA;    String result = """";&#xD;&#xA;    JSONArray jArray = null;&#xD;&#xA;&#xD;&#xA;            HttpClient httpclient = new DefaultHttpClient();&#xD;&#xA;            HttpGet httpget = new HttpGet(url);&#xD;&#xA;            HttpResponse response = httpclient.execute(httpget);&#xD;&#xA;            HttpEntity entity = response.getEntity();&#xD;&#xA;            is = entity.getContent();&#xD;&#xA;&#xD;&#xA;            BufferedReader reader = new BufferedReader(new InputStreamReader(is,""iso-8859-1""),8);&#xD;&#xA;            StringBuilder sb = new StringBuilder();&#xD;&#xA;            String line = null;&#xD;&#xA;            while ((line = reader.readLine()) != null) {&#xD;&#xA;                    sb.append(line + ""\n"");&#xD;&#xA;            }&#xD;&#xA;            is.close();&#xD;&#xA;            result=sb.toString();&#xD;&#xA;&#xD;&#xA;        jArray = new JSONArray(result);            &#xD;&#xA;    return jArray;&#xD;&#xA;    }&#xD;&#xA;    }&#xD;&#xA;</pre>&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;Problem is that appears no data on screen and i get only a warning: &#xD;&#xA;&#xD;&#xA;&#xD;&#xA;> 09-21 12:09:26.225: W/ActivityManager(59): Launch timeout has expired, giving up wake lock!&#xD;&#xA;&#xD;&#xA;> 09-21 12:09:26.500: W/ActivityManager(59): Activity idle timeout for HistoryRecord{43ee8ee8 ayub.khosa.json_parsing/.MainActivity}&#xD;&#xA;"
+47739175;2;18932575;01623378-2ee3-4c64-9fd1-a25a8e17d8f1;2013-09-21 12:24:52;2683051;;;"Regarding another thread here i try too, to get a json array form a json. I have the following files : 
+
+
+
+earthquake.json
+
+<pre>
+[{
+        ""eqid"": ""merge"",
+        ""magnitude"": 8.8,
+        ""lng"": 142.369,
+        ""src"": ""us"",
+        ""datetime"": ""2011-03-11 04:46:23"",
+        ""depth"": 24.4,
+        ""lat"": 38.322
+    }, {
+        ""eqid"": ""merge2"",
+        ""magnitude"": 8.6,
+        ""lng"": 93.0632,
+        ""src"": ""us"",
+        ""datetime"": ""2012-04-11 06:38:37"",
+        ""depth"": 22.9,
+        ""lat"": 2.311
+    }, {
+        ""eqid"": ""2007hear"",
+        ""magnitude"": 8.4,
+        ""lng"": 101.3815,
+        ""src"": ""us"",
+        ""datetime"": ""2007-09-12 09:10:26"",
+        ""depth"": 30,
+        ""lat"": -4.5172
+    }, {
+        ""eqid"": ""c00090da"",
+        ""magnitude"": 8.2,
+        ""lng"": 92.4522,
+        ""src"": ""us"",
+        ""datetime"": ""2012-04-11 08:43:09"",
+        ""depth"": 16.4,
+        ""lat"": 0.7731
+    }, {
+        ""eqid"": ""2007aqbk"",
+        ""magnitude"": 8,
+        ""lng"": 156.9567,
+        ""src"": ""us"",
+        ""datetime"": ""2007-04-01 18:39:56"",
+        ""depth"": 10,
+        ""lat"": -8.4528
+    }, {
+        ""eqid"": ""2007hec6"",
+        ""magnitude"": 7.8,
+        ""lng"": 100.9638,
+        ""src"": ""us"",
+        ""datetime"": ""2007-09-12 21:49:01"",
+        ""depth"": 10,
+        ""lat"": -2.5265
+    }, {
+        ""eqid"": ""b000g7x7"",
+        ""magnitude"": 7.8,
+        ""lng"": 62.0532,
+        ""src"": ""us"",
+        ""datetime"": ""2013-04-16 08:44:20"",
+        ""depth"": 82,
+        ""lat"": 28.1069
+    }, {
+        ""eqid"": ""a00043nx"",
+        ""magnitude"": 7.7,
+        ""lng"": 100.1139,
+        ""src"": ""us"",
+        ""datetime"": ""2010-10-25 12:42:22"",
+        ""depth"": 20.6,
+        ""lat"": -3.4841
+    }, {
+        ""eqid"": ""2010utc5"",
+        ""magnitude"": 7.7,
+        ""lng"": 97.1315,
+        ""src"": ""us"",
+        ""datetime"": ""2010-04-06 20:15:02"",
+        ""depth"": 31,
+        ""lat"": 2.3602
+    }, {
+        ""eqid"": ""2009mebz"",
+        ""magnitude"": 7.6,
+        ""lng"": 99.9606,
+        ""src"": ""us"",
+        ""datetime"": ""2009-09-30 08:16:09"",
+        ""depth"": 80,
+        ""lat"": -0.7889
+    }]
+</pre>
+
+
+ 
+MainActivity.java
+<pre>
+> package ayub.khosa.json_parsing;
+    import java.io.IOException;
+    import java.util.ArrayList;
+    import java.util.Collection;
+    import java.util.HashMap;
+    import org.apache.http.client.ClientProtocolException;
+    import org.json.JSONArray;
+    import org.json.JSONException;
+    import org.json.JSONObject;
+    import android.app.ListActivity;
+    import android.os.Bundle;
+    import android.util.Log;
+    import android.view.Menu;
+    import android.view.View;
+    import android.view.Window;
+    import android.view.WindowManager;
+    import android.widget.AdapterView;
+    import android.widget.AdapterView.OnItemClickListener;
+    import android.widget.ListAdapter;
+    import android.widget.ListView;
+    import android.widget.SimpleAdapter;
+    import android.widget.Toast;
+    public class MainActivity extends ListActivity 
+    {
+	String tag = ""AYUB"";
+    /** Called when the activity is first created. */
+    @Override
+    public void onCreate(Bundle savedInstanceState) 
+    { super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+setContentView(R.layout.listplaceholder);
+        Log.d(tag, ""setContentView  "");
+        ArrayList<HashMap<String, String>> mylist = new ArrayList<HashMap<String, String>>();
+      
+       
+        JSONArray json = null;
+		try {
+			json = JSONfunctions.getJSONfromURL(""http://192.168.0.104/earthquakes.json"");
+		} catch (ClientProtocolException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (JSONException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+        Log.d(tag, ""json object  ""); 
+        try{
+        	Collection<?> result = null;
+			JSONArray json1 = new JSONArray(result);
+//        	// ...
+
+        	for(int i=0;i<json.length();i++){                        
+        	    HashMap<String, String> map = new HashMap<String, String>();    
+        	    JSONObject e = json1.getJSONObject(i);
+
+        	    map.put(""id"",  String.valueOf(i));
+        	    map.put(""name"", ""Earthquake name:"" + e.getString(""eqid""));
+          	    map.put(""magnitude"", ""Magnitude: "" +  e.getString(""magnitude""));
+        	    mylist.add(map);            
+        	}
+        }catch(JSONException e)        {
+        	 Log.e(""log_tag"", ""Error parsing data ""+e.toString());
+        }
+        
+        ListAdapter adapter = new SimpleAdapter(this, mylist , R.layout.activity_main, 
+                        new String[] { ""name"", ""magnitude"" }, 
+                        new int[] { R.id.item_title, R.id.item_subtitle });
+        
+        setListAdapter(adapter);
+        
+        final ListView lv = getListView();
+        lv.setTextFilterEnabled(true);	
+        lv.setOnItemClickListener(new OnItemClickListener() {
+        	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {        		
+        		@SuppressWarnings(""unchecked"")
+				HashMap<String, String> o = (HashMap<String, String>) lv.getItemAtPosition(position);	
+        		Log.d(tag, ""json object  "" + lv.getItemAtPosition(position)); 
+        		Toast.makeText(MainActivity.this, ""ID "" + o.get(""id"")+""	"" + o.get(""name"") + o.get(""magnitude"")+""."", Toast.LENGTH_SHORT).show(); 
+
+			}
+		});
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_main, menu);
+        return true;
+    }
+}
+</pre>
+
+JSONFunctions.java
+
+<pre>
+> package ayub.khosa.json_parsing;
+    import java.io.BufferedReader;
+    import java.io.IOException;
+    import java.io.InputStream;
+    import java.io.InputStreamReader;
+    import org.apache.http.HttpEntity;
+    import org.apache.http.HttpResponse;
+    import org.apache.http.client.ClientProtocolException;
+    import org.apache.http.client.HttpClient;
+    import org.apache.http.client.methods.HttpGet;
+    import org.apache.http.impl.client.DefaultHttpClient;
+    import org.json.JSONArray;
+    import org.json.JSONException;
+    public class JSONfunctions {
+    public static JSONArray getJSONfromURL(String url) throws ClientProtocolException, IOException, JSONException{
+    InputStream is = null;
+    String result = """";
+    JSONArray jArray = null;
+
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpGet httpget = new HttpGet(url);
+            HttpResponse response = httpclient.execute(httpget);
+            HttpEntity entity = response.getEntity();
+            is = entity.getContent();
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is,""iso-8859-1""),8);
+            StringBuilder sb = new StringBuilder();
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                    sb.append(line + ""\n"");
+            }
+            is.close();
+            result=sb.toString();
+
+        jArray = new JSONArray(result);            
+    return jArray;
+    }
+    }
+</pre>
+
+
+
+Problem is that appears no data on screen and i get only a warning: 
+
+
+> 09-21 12:09:26.225: W/ActivityManager(59): Launch timeout has expired, giving up wake lock!
+
+> 09-21 12:09:26.500: W/ActivityManager(59): Activity idle timeout for HistoryRecord{43ee8ee8 ayub.khosa.json_parsing/.MainActivity}
+"
 47739176;1;18932575;01623378-2ee3-4c64-9fd1-a25a8e17d8f1;2013-09-21 12:24:52;2683051;;;JSONArray without array name (earthquake example)
 47739177;3;18932575;01623378-2ee3-4c64-9fd1-a25a8e17d8f1;2013-09-21 12:24:52;2683051;;;<java><android><arrays><json>
-47739272;5;18932575;c7eaf844-520a-4cd6-b0d1-18f6c24dfaab;2013-09-21 12:29:02;1631379;;added 6 characters in body;"Regarding another thread here i try too, to get a json array form a json. I have the following files : &#xD;&#xA;&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;earthquake.json&#xD;&#xA;&#xD;&#xA;<pre>&#xD;&#xA;[{&#xD;&#xA;        ""eqid"": ""merge"",&#xD;&#xA;        ""magnitude"": 8.8,&#xD;&#xA;        ""lng"": 142.369,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2011-03-11 04:46:23"",&#xD;&#xA;        ""depth"": 24.4,&#xD;&#xA;        ""lat"": 38.322&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""merge2"",&#xD;&#xA;        ""magnitude"": 8.6,&#xD;&#xA;        ""lng"": 93.0632,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2012-04-11 06:38:37"",&#xD;&#xA;        ""depth"": 22.9,&#xD;&#xA;        ""lat"": 2.311&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""2007hear"",&#xD;&#xA;        ""magnitude"": 8.4,&#xD;&#xA;        ""lng"": 101.3815,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2007-09-12 09:10:26"",&#xD;&#xA;        ""depth"": 30,&#xD;&#xA;        ""lat"": -4.5172&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""c00090da"",&#xD;&#xA;        ""magnitude"": 8.2,&#xD;&#xA;        ""lng"": 92.4522,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2012-04-11 08:43:09"",&#xD;&#xA;        ""depth"": 16.4,&#xD;&#xA;        ""lat"": 0.7731&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""2007aqbk"",&#xD;&#xA;        ""magnitude"": 8,&#xD;&#xA;        ""lng"": 156.9567,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2007-04-01 18:39:56"",&#xD;&#xA;        ""depth"": 10,&#xD;&#xA;        ""lat"": -8.4528&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""2007hec6"",&#xD;&#xA;        ""magnitude"": 7.8,&#xD;&#xA;        ""lng"": 100.9638,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2007-09-12 21:49:01"",&#xD;&#xA;        ""depth"": 10,&#xD;&#xA;        ""lat"": -2.5265&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""b000g7x7"",&#xD;&#xA;        ""magnitude"": 7.8,&#xD;&#xA;        ""lng"": 62.0532,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2013-04-16 08:44:20"",&#xD;&#xA;        ""depth"": 82,&#xD;&#xA;        ""lat"": 28.1069&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""a00043nx"",&#xD;&#xA;        ""magnitude"": 7.7,&#xD;&#xA;        ""lng"": 100.1139,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2010-10-25 12:42:22"",&#xD;&#xA;        ""depth"": 20.6,&#xD;&#xA;        ""lat"": -3.4841&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""2010utc5"",&#xD;&#xA;        ""magnitude"": 7.7,&#xD;&#xA;        ""lng"": 97.1315,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2010-04-06 20:15:02"",&#xD;&#xA;        ""depth"": 31,&#xD;&#xA;        ""lat"": 2.3602&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""2009mebz"",&#xD;&#xA;        ""magnitude"": 7.6,&#xD;&#xA;        ""lng"": 99.9606,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2009-09-30 08:16:09"",&#xD;&#xA;        ""depth"": 80,&#xD;&#xA;        ""lat"": -0.7889&#xD;&#xA;    }]&#xD;&#xA;</pre>&#xD;&#xA;&#xD;&#xA;&#xD;&#xA; &#xD;&#xA;**MainActivity.java**&#xD;&#xA;&#xD;&#xA; &#xD;&#xA;    package ayub.khosa.json_parsing;&#xD;&#xA;    import java.io.IOException;&#xD;&#xA;    import java.util.ArrayList;&#xD;&#xA;    import java.util.Collection;&#xD;&#xA;    import java.util.HashMap;&#xD;&#xA;    import org.apache.http.client.ClientProtocolException;&#xD;&#xA;    import org.json.JSONArray;&#xD;&#xA;    import org.json.JSONException;&#xD;&#xA;    import org.json.JSONObject;&#xD;&#xA;    import android.app.ListActivity;&#xD;&#xA;    import android.os.Bundle;&#xD;&#xA;    import android.util.Log;&#xD;&#xA;    import android.view.Menu;&#xD;&#xA;    import android.view.View;&#xD;&#xA;    import android.view.Window;&#xD;&#xA;    import android.view.WindowManager;&#xD;&#xA;    import android.widget.AdapterView;&#xD;&#xA;    import android.widget.AdapterView.OnItemClickListener;&#xD;&#xA;    import android.widget.ListAdapter;&#xD;&#xA;    import android.widget.ListView;&#xD;&#xA;    import android.widget.SimpleAdapter;&#xD;&#xA;    import android.widget.Toast;&#xD;&#xA;    public class MainActivity extends ListActivity &#xD;&#xA;    {&#xD;&#xA;	String tag = ""AYUB"";&#xD;&#xA;    /** Called when the activity is first created. */&#xD;&#xA;    @Override&#xD;&#xA;    public void onCreate(Bundle savedInstanceState) &#xD;&#xA;    { super.onCreate(savedInstanceState);&#xD;&#xA;        requestWindowFeature(Window.FEATURE_NO_TITLE);&#xD;&#xA;		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);&#xD;&#xA;    setContentView(R.layout.listplaceholder);&#xD;&#xA;        Log.d(tag, ""setContentView  "");&#xD;&#xA;        ArrayList<HashMap<String, String>> mylist = new ArrayList<HashMap<String, String>>();&#xD;&#xA;      &#xD;&#xA;       &#xD;&#xA;        JSONArray json = null;&#xD;&#xA;		try {&#xD;&#xA;			json = JSONfunctions.getJSONfromURL(""http://192.168.0.104/earthquakes.json"");&#xD;&#xA;		} catch (ClientProtocolException e1) {&#xD;&#xA;			// TODO Auto-generated catch block&#xD;&#xA;			e1.printStackTrace();&#xD;&#xA;		} catch (IOException e1) {&#xD;&#xA;			// TODO Auto-generated catch block&#xD;&#xA;			e1.printStackTrace();&#xD;&#xA;		} catch (JSONException e1) {&#xD;&#xA;			// TODO Auto-generated catch block&#xD;&#xA;			e1.printStackTrace();&#xD;&#xA;		}&#xD;&#xA;        Log.d(tag, ""json object  ""); &#xD;&#xA;        try{&#xD;&#xA;        	Collection<?> result = null;&#xD;&#xA;			JSONArray json1 = new JSONArray(result);&#xD;&#xA;     //        	// ...&#xD;&#xA;&#xD;&#xA;        	for(int i=0;i<json.length();i++){                        &#xD;&#xA;        	    HashMap<String, String> map = new HashMap<String, String>();    &#xD;&#xA;        	    JSONObject e = json1.getJSONObject(i);&#xD;&#xA;&#xD;&#xA;        	    map.put(""id"",  String.valueOf(i));&#xD;&#xA;        	    map.put(""name"", ""Earthquake name:"" + e.getString(""eqid""));&#xD;&#xA;          	    map.put(""magnitude"", ""Magnitude: "" +  e.getString(""magnitude""));&#xD;&#xA;        	    mylist.add(map);            &#xD;&#xA;        	}&#xD;&#xA;        }catch(JSONException e)        {&#xD;&#xA;        	 Log.e(""log_tag"", ""Error parsing data ""+e.toString());&#xD;&#xA;        }&#xD;&#xA;        &#xD;&#xA;        ListAdapter adapter = new SimpleAdapter(this, mylist , R.layout.activity_main, &#xD;&#xA;                        new String[] { ""name"", ""magnitude"" }, &#xD;&#xA;                        new int[] { R.id.item_title, R.id.item_subtitle });&#xD;&#xA;        &#xD;&#xA;        setListAdapter(adapter);&#xD;&#xA;        &#xD;&#xA;        final ListView lv = getListView();&#xD;&#xA;        lv.setTextFilterEnabled(true);	&#xD;&#xA;        lv.setOnItemClickListener(new OnItemClickListener() {&#xD;&#xA;        	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {        		&#xD;&#xA;        		@SuppressWarnings(""unchecked"")&#xD;&#xA;				HashMap<String, String> o = (HashMap<String, String>) lv.getItemAtPosition(position);	&#xD;&#xA;        		Log.d(tag, ""json object  "" + lv.getItemAtPosition(position)); &#xD;&#xA;        		Toast.makeText(MainActivity.this, ""ID "" + o.get(""id"")+""	"" + o.get(""name"") + o.get(""magnitude"")+""."", Toast.LENGTH_SHORT).show(); &#xD;&#xA;&#xD;&#xA;			}&#xD;&#xA;		});&#xD;&#xA;    }&#xD;&#xA;&#xD;&#xA;    @Override&#xD;&#xA;    public boolean onCreateOptionsMenu(Menu menu) {&#xD;&#xA;        getMenuInflater().inflate(R.menu.activity_main, menu);&#xD;&#xA;        return true;&#xD;&#xA;     } &#xD;&#xA;    }&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;**JSONFunctions.java**&#xD;&#xA;&#xD;&#xA;    package ayub.khosa.json_parsing;&#xD;&#xA;    import java.io.BufferedReader;&#xD;&#xA;    import java.io.IOException;&#xD;&#xA;    import java.io.InputStream;&#xD;&#xA;    import java.io.InputStreamReader;&#xD;&#xA;    import org.apache.http.HttpEntity;&#xD;&#xA;    import org.apache.http.HttpResponse;&#xD;&#xA;    import org.apache.http.client.ClientProtocolException;&#xD;&#xA;    import org.apache.http.client.HttpClient;&#xD;&#xA;    import org.apache.http.client.methods.HttpGet;&#xD;&#xA;    import org.apache.http.impl.client.DefaultHttpClient;&#xD;&#xA;    import org.json.JSONArray;&#xD;&#xA;    import org.json.JSONException;&#xD;&#xA;    public class JSONfunctions {&#xD;&#xA;    public static JSONArray getJSONfromURL(String url) throws ClientProtocolException, IOException, JSONException{&#xD;&#xA;    InputStream is = null;&#xD;&#xA;    String result = """";&#xD;&#xA;    JSONArray jArray = null;&#xD;&#xA;&#xD;&#xA;            HttpClient httpclient = new DefaultHttpClient();&#xD;&#xA;            HttpGet httpget = new HttpGet(url);&#xD;&#xA;            HttpResponse response = httpclient.execute(httpget);&#xD;&#xA;            HttpEntity entity = response.getEntity();&#xD;&#xA;            is = entity.getContent();&#xD;&#xA;&#xD;&#xA;            BufferedReader reader = new BufferedReader(new InputStreamReader(is,""iso-8859-1""),8);&#xD;&#xA;            StringBuilder sb = new StringBuilder();&#xD;&#xA;            String line = null;&#xD;&#xA;            while ((line = reader.readLine()) != null) {&#xD;&#xA;                    sb.append(line + ""\n"");&#xD;&#xA;            }&#xD;&#xA;            is.close();&#xD;&#xA;            result=sb.toString();&#xD;&#xA;&#xD;&#xA;        jArray = new JSONArray(result);            &#xD;&#xA;    return jArray;&#xD;&#xA;    }&#xD;&#xA;    }&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;Problem is that appears no data on screen and i get only a warning: &#xD;&#xA;&#xD;&#xA;&#xD;&#xA;> 09-21 12:09:26.225: W/ActivityManager(59): Launch timeout has expired, giving up wake lock!&#xD;&#xA;&#xD;&#xA;> 09-21 12:09:26.500: W/ActivityManager(59): Activity idle timeout for HistoryRecord{43ee8ee8 ayub.khosa.json_parsing/.MainActivity}&#xD;&#xA;"
-47739527;5;18932575;47f6c727-380d-4f61-84fa-260ee9aac8fd;2013-09-21 12:35:37;1631379;;added 2 characters in body;"Regarding another thread here i try too, to get a json array form a json. I have the following files : &#xD;&#xA;&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;earthquake.json&#xD;&#xA;&#xD;&#xA;<pre>&#xD;&#xA;[{&#xD;&#xA;        ""eqid"": ""merge"",&#xD;&#xA;        ""magnitude"": 8.8,&#xD;&#xA;        ""lng"": 142.369,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2011-03-11 04:46:23"",&#xD;&#xA;        ""depth"": 24.4,&#xD;&#xA;        ""lat"": 38.322&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""merge2"",&#xD;&#xA;        ""magnitude"": 8.6,&#xD;&#xA;        ""lng"": 93.0632,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2012-04-11 06:38:37"",&#xD;&#xA;        ""depth"": 22.9,&#xD;&#xA;        ""lat"": 2.311&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""2007hear"",&#xD;&#xA;        ""magnitude"": 8.4,&#xD;&#xA;        ""lng"": 101.3815,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2007-09-12 09:10:26"",&#xD;&#xA;        ""depth"": 30,&#xD;&#xA;        ""lat"": -4.5172&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""c00090da"",&#xD;&#xA;        ""magnitude"": 8.2,&#xD;&#xA;        ""lng"": 92.4522,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2012-04-11 08:43:09"",&#xD;&#xA;        ""depth"": 16.4,&#xD;&#xA;        ""lat"": 0.7731&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""2007aqbk"",&#xD;&#xA;        ""magnitude"": 8,&#xD;&#xA;        ""lng"": 156.9567,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2007-04-01 18:39:56"",&#xD;&#xA;        ""depth"": 10,&#xD;&#xA;        ""lat"": -8.4528&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""2007hec6"",&#xD;&#xA;        ""magnitude"": 7.8,&#xD;&#xA;        ""lng"": 100.9638,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2007-09-12 21:49:01"",&#xD;&#xA;        ""depth"": 10,&#xD;&#xA;        ""lat"": -2.5265&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""b000g7x7"",&#xD;&#xA;        ""magnitude"": 7.8,&#xD;&#xA;        ""lng"": 62.0532,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2013-04-16 08:44:20"",&#xD;&#xA;        ""depth"": 82,&#xD;&#xA;        ""lat"": 28.1069&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""a00043nx"",&#xD;&#xA;        ""magnitude"": 7.7,&#xD;&#xA;        ""lng"": 100.1139,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2010-10-25 12:42:22"",&#xD;&#xA;        ""depth"": 20.6,&#xD;&#xA;        ""lat"": -3.4841&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""2010utc5"",&#xD;&#xA;        ""magnitude"": 7.7,&#xD;&#xA;        ""lng"": 97.1315,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2010-04-06 20:15:02"",&#xD;&#xA;        ""depth"": 31,&#xD;&#xA;        ""lat"": 2.3602&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""2009mebz"",&#xD;&#xA;        ""magnitude"": 7.6,&#xD;&#xA;        ""lng"": 99.9606,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2009-09-30 08:16:09"",&#xD;&#xA;        ""depth"": 80,&#xD;&#xA;        ""lat"": -0.7889&#xD;&#xA;    }]&#xD;&#xA;</pre>&#xD;&#xA;&#xD;&#xA;&#xD;&#xA; &#xD;&#xA;**MainActivity.java**&#xD;&#xA;&#xD;&#xA; &#xD;&#xA;    package ayub.khosa.json_parsing;&#xD;&#xA;    import java.io.IOException;&#xD;&#xA;    import java.util.ArrayList;&#xD;&#xA;    import java.util.Collection;&#xD;&#xA;    import java.util.HashMap;&#xD;&#xA;    import org.apache.http.client.ClientProtocolException;&#xD;&#xA;    import org.json.JSONArray;&#xD;&#xA;    import org.json.JSONException;&#xD;&#xA;    import org.json.JSONObject;&#xD;&#xA;    import android.app.ListActivity;&#xD;&#xA;    import android.os.Bundle;&#xD;&#xA;    import android.util.Log;&#xD;&#xA;    import android.view.Menu;&#xD;&#xA;    import android.view.View;&#xD;&#xA;    import android.view.Window;&#xD;&#xA;    import android.view.WindowManager;&#xD;&#xA;    import android.widget.AdapterView;&#xD;&#xA;    import android.widget.AdapterView.OnItemClickListener;&#xD;&#xA;    import android.widget.ListAdapter;&#xD;&#xA;    import android.widget.ListView;&#xD;&#xA;    import android.widget.SimpleAdapter;&#xD;&#xA;    import android.widget.Toast;&#xD;&#xA;    public class MainActivity extends ListActivity &#xD;&#xA;    {&#xD;&#xA;	String tag = ""AYUB"";&#xD;&#xA;    /** Called when the activity is first created. */&#xD;&#xA;    @Override&#xD;&#xA;    public void onCreate(Bundle savedInstanceState) &#xD;&#xA;    { super.onCreate(savedInstanceState);&#xD;&#xA;        requestWindowFeature(Window.FEATURE_NO_TITLE);&#xD;&#xA;		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);&#xD;&#xA;    setContentView(R.layout.listplaceholder);&#xD;&#xA;        Log.d(tag, ""setContentView  "");&#xD;&#xA;        ArrayList<HashMap<String, String>> mylist = new ArrayList<HashMap<String, String>>();&#xD;&#xA;      &#xD;&#xA;       &#xD;&#xA;        JSONArray json = null;&#xD;&#xA;		try {&#xD;&#xA;			json = JSONfunctions.getJSONfromURL(""http://192.168.0.104/earthquakes.json"");&#xD;&#xA;		} catch (ClientProtocolException e1) {&#xD;&#xA;			// TODO Auto-generated catch block&#xD;&#xA;			e1.printStackTrace();&#xD;&#xA;		} catch (IOException e1) {&#xD;&#xA;			// TODO Auto-generated catch block&#xD;&#xA;			e1.printStackTrace();&#xD;&#xA;		} catch (JSONException e1) {&#xD;&#xA;			// TODO Auto-generated catch block&#xD;&#xA;			e1.printStackTrace();&#xD;&#xA;		}&#xD;&#xA;        Log.d(tag, ""json object  ""); &#xD;&#xA;        try{&#xD;&#xA;        	Collection<?> result = null;&#xD;&#xA;			JSONArray json1 = new JSONArray(result);&#xD;&#xA;     //        	// ...&#xD;&#xA;&#xD;&#xA;        	for(int i=0;i<json.length();i++){                        &#xD;&#xA;        	    HashMap<String, String> map = new HashMap<String, String>();    &#xD;&#xA;        	    JSONObject e = json1.getJSONObject(i);&#xD;&#xA;&#xD;&#xA;        	    map.put(""id"",  String.valueOf(i));&#xD;&#xA;        	    map.put(""name"", ""Earthquake name:"" + e.getString(""eqid""));&#xD;&#xA;          	    map.put(""magnitude"", ""Magnitude: "" +  e.getString(""magnitude""));&#xD;&#xA;        	    mylist.add(map);            &#xD;&#xA;        	}&#xD;&#xA;        }catch(JSONException e)        {&#xD;&#xA;        	 Log.e(""log_tag"", ""Error parsing data ""+e.toString());&#xD;&#xA;        }&#xD;&#xA;        &#xD;&#xA;        ListAdapter adapter = new SimpleAdapter(this, mylist , R.layout.activity_main, &#xD;&#xA;                        new String[] { ""name"", ""magnitude"" }, &#xD;&#xA;                        new int[] { R.id.item_title, R.id.item_subtitle });&#xD;&#xA;        &#xD;&#xA;        setListAdapter(adapter);&#xD;&#xA;        &#xD;&#xA;        final ListView lv = getListView();&#xD;&#xA;        lv.setTextFilterEnabled(true);	&#xD;&#xA;        lv.setOnItemClickListener(new OnItemClickListener() {&#xD;&#xA;        	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {        		&#xD;&#xA;        		@SuppressWarnings(""unchecked"")&#xD;&#xA;				HashMap<String, String> o = (HashMap<String, String>) lv.getItemAtPosition(position);	&#xD;&#xA;        		Log.d(tag, ""json object  "" + lv.getItemAtPosition(position)); &#xD;&#xA;        		Toast.makeText(MainActivity.this, ""ID "" + o.get(""id"")+""	"" + o.get(""name"") + o.get(""magnitude"")+""."", Toast.LENGTH_SHORT).show(); &#xD;&#xA;&#xD;&#xA;			}&#xD;&#xA;		});&#xD;&#xA;    }&#xD;&#xA;&#xD;&#xA;    @Override&#xD;&#xA;    public boolean onCreateOptionsMenu(Menu menu) {&#xD;&#xA;        getMenuInflater().inflate(R.menu.activity_main, menu);&#xD;&#xA;        return true;&#xD;&#xA;     } &#xD;&#xA;    }&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;**JSONFunctions.java**&#xD;&#xA;&#xD;&#xA;    package ayub.khosa.json_parsing;&#xD;&#xA;    import java.io.BufferedReader;&#xD;&#xA;    import java.io.IOException;&#xD;&#xA;    import java.io.InputStream;&#xD;&#xA;    import java.io.InputStreamReader;&#xD;&#xA;    import org.apache.http.HttpEntity;&#xD;&#xA;    import org.apache.http.HttpResponse;&#xD;&#xA;    import org.apache.http.client.ClientProtocolException;&#xD;&#xA;    import org.apache.http.client.HttpClient;&#xD;&#xA;    import org.apache.http.client.methods.HttpGet;&#xD;&#xA;    import org.apache.http.impl.client.DefaultHttpClient;&#xD;&#xA;    import org.json.JSONArray;&#xD;&#xA;    import org.json.JSONException;&#xD;&#xA;    public class JSONfunctions {&#xD;&#xA;    public static JSONArray getJSONfromURL(String url) throws ClientProtocolException, IOException, JSONException{&#xD;&#xA;    InputStream is = null;&#xD;&#xA;    String result = """";&#xD;&#xA;    JSONArray jArray = null;&#xD;&#xA;&#xD;&#xA;            HttpClient httpclient = new DefaultHttpClient();&#xD;&#xA;            HttpGet httpget = new HttpGet(url);&#xD;&#xA;            HttpResponse response = httpclient.execute(httpget);&#xD;&#xA;            HttpEntity entity = response.getEntity();&#xD;&#xA;            is = entity.getContent();&#xD;&#xA;&#xD;&#xA;            BufferedReader reader = new BufferedReader(new InputStreamReader(is,""iso-8859-1""),8);&#xD;&#xA;            StringBuilder sb = new StringBuilder();&#xD;&#xA;            String line = null;&#xD;&#xA;            while ((line = reader.readLine()) != null) {&#xD;&#xA;                    sb.append(line + ""\n"");&#xD;&#xA;            }&#xD;&#xA;            is.close();&#xD;&#xA;            result=sb.toString();&#xD;&#xA;&#xD;&#xA;        jArray = new JSONArray(result);            &#xD;&#xA;    return jArray;&#xD;&#xA;    }&#xD;&#xA;    }&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;Problem is that appears no data on screen and i get only a warning: &#xD;&#xA;&#xD;&#xA;&#xD;&#xA;    09-21 12:09:26.225: W/ActivityManager(59): Launch timeout has expired, giving up wake lock!&#xD;&#xA;    09-21 12:09:26.500: W/ActivityManager(59): Activity idle timeout for HistoryRecord{43ee8ee8 ayub.khosa.json_parsing/.MainActivity}&#xD;&#xA;"
-47739760;5;18932575;c513dabc-a5d3-4873-a2b8-838a7f1c328d;2013-09-21 12:40:54;2683051;;added 4040 characters in body;"Regarding another thread here i try too, to get a json array form a json. I have the following files : &#xD;&#xA;&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;earthquake.json&#xD;&#xA;&#xD;&#xA;<pre>&#xD;&#xA;[{&#xD;&#xA;        ""eqid"": ""merge"",&#xD;&#xA;        ""magnitude"": 8.8,&#xD;&#xA;        ""lng"": 142.369,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2011-03-11 04:46:23"",&#xD;&#xA;        ""depth"": 24.4,&#xD;&#xA;        ""lat"": 38.322&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""merge2"",&#xD;&#xA;        ""magnitude"": 8.6,&#xD;&#xA;        ""lng"": 93.0632,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2012-04-11 06:38:37"",&#xD;&#xA;        ""depth"": 22.9,&#xD;&#xA;        ""lat"": 2.311&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""2007hear"",&#xD;&#xA;        ""magnitude"": 8.4,&#xD;&#xA;        ""lng"": 101.3815,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2007-09-12 09:10:26"",&#xD;&#xA;        ""depth"": 30,&#xD;&#xA;        ""lat"": -4.5172&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""c00090da"",&#xD;&#xA;        ""magnitude"": 8.2,&#xD;&#xA;        ""lng"": 92.4522,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2012-04-11 08:43:09"",&#xD;&#xA;        ""depth"": 16.4,&#xD;&#xA;        ""lat"": 0.7731&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""2007aqbk"",&#xD;&#xA;        ""magnitude"": 8,&#xD;&#xA;        ""lng"": 156.9567,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2007-04-01 18:39:56"",&#xD;&#xA;        ""depth"": 10,&#xD;&#xA;        ""lat"": -8.4528&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""2007hec6"",&#xD;&#xA;        ""magnitude"": 7.8,&#xD;&#xA;        ""lng"": 100.9638,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2007-09-12 21:49:01"",&#xD;&#xA;        ""depth"": 10,&#xD;&#xA;        ""lat"": -2.5265&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""b000g7x7"",&#xD;&#xA;        ""magnitude"": 7.8,&#xD;&#xA;        ""lng"": 62.0532,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2013-04-16 08:44:20"",&#xD;&#xA;        ""depth"": 82,&#xD;&#xA;        ""lat"": 28.1069&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""a00043nx"",&#xD;&#xA;        ""magnitude"": 7.7,&#xD;&#xA;        ""lng"": 100.1139,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2010-10-25 12:42:22"",&#xD;&#xA;        ""depth"": 20.6,&#xD;&#xA;        ""lat"": -3.4841&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""2010utc5"",&#xD;&#xA;        ""magnitude"": 7.7,&#xD;&#xA;        ""lng"": 97.1315,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2010-04-06 20:15:02"",&#xD;&#xA;        ""depth"": 31,&#xD;&#xA;        ""lat"": 2.3602&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""2009mebz"",&#xD;&#xA;        ""magnitude"": 7.6,&#xD;&#xA;        ""lng"": 99.9606,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2009-09-30 08:16:09"",&#xD;&#xA;        ""depth"": 80,&#xD;&#xA;        ""lat"": -0.7889&#xD;&#xA;    }]&#xD;&#xA;</pre>&#xD;&#xA;&#xD;&#xA;&#xD;&#xA; &#xD;&#xA;**MainActivity.java**&#xD;&#xA;&#xD;&#xA; &#xD;&#xA;    package ayub.khosa.json_parsing;&#xD;&#xA;    import java.io.IOException;&#xD;&#xA;    import java.util.ArrayList;&#xD;&#xA;    import java.util.Collection;&#xD;&#xA;    import java.util.HashMap;&#xD;&#xA;    import org.apache.http.client.ClientProtocolException;&#xD;&#xA;    import org.json.JSONArray;&#xD;&#xA;    import org.json.JSONException;&#xD;&#xA;    import org.json.JSONObject;&#xD;&#xA;    import android.app.ListActivity;&#xD;&#xA;    import android.os.Bundle;&#xD;&#xA;    import android.util.Log;&#xD;&#xA;    import android.view.Menu;&#xD;&#xA;    import android.view.View;&#xD;&#xA;    import android.view.Window;&#xD;&#xA;    import android.view.WindowManager;&#xD;&#xA;    import android.widget.AdapterView;&#xD;&#xA;    import android.widget.AdapterView.OnItemClickListener;&#xD;&#xA;    import android.widget.ListAdapter;&#xD;&#xA;    import android.widget.ListView;&#xD;&#xA;    import android.widget.SimpleAdapter;&#xD;&#xA;    import android.widget.Toast;&#xD;&#xA;    public class MainActivity extends ListActivity &#xD;&#xA;    {&#xD;&#xA;	String tag = ""AYUB"";&#xD;&#xA;    /** Called when the activity is first created. */&#xD;&#xA;    @Override&#xD;&#xA;    public void onCreate(Bundle savedInstanceState) &#xD;&#xA;    { super.onCreate(savedInstanceState);&#xD;&#xA;        requestWindowFeature(Window.FEATURE_NO_TITLE);&#xD;&#xA;		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);&#xD;&#xA;    setContentView(R.layout.listplaceholder);&#xD;&#xA;        Log.d(tag, ""setContentView  "");&#xD;&#xA;        ArrayList<HashMap<String, String>> mylist = new ArrayList<HashMap<String, String>>();&#xD;&#xA;      &#xD;&#xA;       &#xD;&#xA;        JSONArray json = null;&#xD;&#xA;		try {&#xD;&#xA;			json = JSONfunctions.getJSONfromURL(""http://192.168.0.104/earthquakes.json"");&#xD;&#xA;		} catch (ClientProtocolException e1) {&#xD;&#xA;			// TODO Auto-generated catch block&#xD;&#xA;			e1.printStackTrace();&#xD;&#xA;		} catch (IOException e1) {&#xD;&#xA;			// TODO Auto-generated catch block&#xD;&#xA;			e1.printStackTrace();&#xD;&#xA;		} catch (JSONException e1) {&#xD;&#xA;			// TODO Auto-generated catch block&#xD;&#xA;			e1.printStackTrace();&#xD;&#xA;		}&#xD;&#xA;        Log.d(tag, ""json object  ""); &#xD;&#xA;        try{&#xD;&#xA;        	Collection<?> result = null;&#xD;&#xA;			JSONArray json1 = new JSONArray(result);&#xD;&#xA;     //        	// ...&#xD;&#xA;&#xD;&#xA;        	for(int i=0;i<json.length();i++){                        &#xD;&#xA;        	    HashMap<String, String> map = new HashMap<String, String>();    &#xD;&#xA;        	    JSONObject e = json1.getJSONObject(i);&#xD;&#xA;&#xD;&#xA;        	    map.put(""id"",  String.valueOf(i));&#xD;&#xA;        	    map.put(""name"", ""Earthquake name:"" + e.getString(""eqid""));&#xD;&#xA;          	    map.put(""magnitude"", ""Magnitude: "" +  e.getString(""magnitude""));&#xD;&#xA;        	    mylist.add(map);            &#xD;&#xA;        	}&#xD;&#xA;        }catch(JSONException e)        {&#xD;&#xA;        	 Log.e(""log_tag"", ""Error parsing data ""+e.toString());&#xD;&#xA;        }&#xD;&#xA;        &#xD;&#xA;        ListAdapter adapter = new SimpleAdapter(this, mylist , R.layout.activity_main, &#xD;&#xA;                        new String[] { ""name"", ""magnitude"" }, &#xD;&#xA;                        new int[] { R.id.item_title, R.id.item_subtitle });&#xD;&#xA;        &#xD;&#xA;        setListAdapter(adapter);&#xD;&#xA;        &#xD;&#xA;        final ListView lv = getListView();&#xD;&#xA;        lv.setTextFilterEnabled(true);	&#xD;&#xA;        lv.setOnItemClickListener(new OnItemClickListener() {&#xD;&#xA;        	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {        		&#xD;&#xA;        		@SuppressWarnings(""unchecked"")&#xD;&#xA;				HashMap<String, String> o = (HashMap<String, String>) lv.getItemAtPosition(position);	&#xD;&#xA;        		Log.d(tag, ""json object  "" + lv.getItemAtPosition(position)); &#xD;&#xA;        		Toast.makeText(MainActivity.this, ""ID "" + o.get(""id"")+""	"" + o.get(""name"") + o.get(""magnitude"")+""."", Toast.LENGTH_SHORT).show(); &#xD;&#xA;&#xD;&#xA;			}&#xD;&#xA;		});&#xD;&#xA;    }&#xD;&#xA;&#xD;&#xA;    @Override&#xD;&#xA;    public boolean onCreateOptionsMenu(Menu menu) {&#xD;&#xA;        getMenuInflater().inflate(R.menu.activity_main, menu);&#xD;&#xA;        return true;&#xD;&#xA;     } &#xD;&#xA;    }&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;**JSONFunctions.java**&#xD;&#xA;&#xD;&#xA;    package ayub.khosa.json_parsing;&#xD;&#xA;    import java.io.BufferedReader;&#xD;&#xA;    import java.io.IOException;&#xD;&#xA;    import java.io.InputStream;&#xD;&#xA;    import java.io.InputStreamReader;&#xD;&#xA;    import org.apache.http.HttpEntity;&#xD;&#xA;    import org.apache.http.HttpResponse;&#xD;&#xA;    import org.apache.http.client.ClientProtocolException;&#xD;&#xA;    import org.apache.http.client.HttpClient;&#xD;&#xA;    import org.apache.http.client.methods.HttpGet;&#xD;&#xA;    import org.apache.http.impl.client.DefaultHttpClient;&#xD;&#xA;    import org.json.JSONArray;&#xD;&#xA;    import org.json.JSONException;&#xD;&#xA;    public class JSONfunctions {&#xD;&#xA;    public static JSONArray getJSONfromURL(String url) throws ClientProtocolException, IOException, JSONException{&#xD;&#xA;    InputStream is = null;&#xD;&#xA;    String result = """";&#xD;&#xA;    JSONArray jArray = null;&#xD;&#xA;&#xD;&#xA;            HttpClient httpclient = new DefaultHttpClient();&#xD;&#xA;            HttpGet httpget = new HttpGet(url);&#xD;&#xA;            HttpResponse response = httpclient.execute(httpget);&#xD;&#xA;            HttpEntity entity = response.getEntity();&#xD;&#xA;            is = entity.getContent();&#xD;&#xA;&#xD;&#xA;            BufferedReader reader = new BufferedReader(new InputStreamReader(is,""iso-8859-1""),8);&#xD;&#xA;            StringBuilder sb = new StringBuilder();&#xD;&#xA;            String line = null;&#xD;&#xA;            while ((line = reader.readLine()) != null) {&#xD;&#xA;                    sb.append(line + ""\n"");&#xD;&#xA;            }&#xD;&#xA;            is.close();&#xD;&#xA;            result=sb.toString();&#xD;&#xA;&#xD;&#xA;        jArray = new JSONArray(result);            &#xD;&#xA;    return jArray;&#xD;&#xA;    }&#xD;&#xA;    }&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;Problem is that appears no data on screen and i get only a warning: &#xD;&#xA;&#xD;&#xA;&#xD;&#xA;    09-21 12:09:26.225: W/ActivityManager(59): Launch timeout has expired, giving up wake lock!&#xD;&#xA;    09-21 12:09:26.500: W/ActivityManager(59): Activity idle timeout for HistoryRecord{43ee8ee8 ayub.khosa.json_parsing/.MainActivity}&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;UPDATE :&#xD;&#xA;&#xD;&#xA;Indeed the webserver was down without i noticed. Now is up, i see in browser the json, but now i get the following errors: &#xD;&#xA;&#xD;&#xA;> 09-21 12:30:52.301: W/ActivityManager(59): Activity destroy timeout for HistoryRecord{43f44da0 ayub.khosa.json_parsing/.MainActivity}&#xD;&#xA;&#xD;&#xA;>09-21 12:30:57.449: I/ActivityManager(59): Starting activity: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 cmp=ayub.khosa.json_parsing/.MainActivity }&#xD;&#xA;&#xD;&#xA;> 09-21 12:30:57.609: I/ActivityManager(59): Start proc ayub.khosa.json_parsing for activity ayub.khosa.json_parsing/.MainActivity: pid=287 uid=10036 gids={3003}&#xD;&#xA;> 09-21 12:30:58.179: D/AYUB(287): setContentView  &#xD;&#xA;> 09-21 12:30:58.339: D/AYUB(287): json object  &#xD;&#xA;> 09-21 12:30:58.339: D/AndroidRuntime(287): Shutting down VM&#xD;&#xA;> 09-21 12:30:58.339: W/dalvikvm(287): threadid=1: thread exiting with uncaught exception (group=0x4001d800)&#xD;&#xA;> 09-21 12:30:58.349: E/AndroidRuntime(287): FATAL EXCEPTION: main&#xD;&#xA;> 09-21 12:30:58.349: E/AndroidRuntime(287): java.lang.RuntimeException: Unable to start activity ComponentInfo{ayub.khosa.json_parsing/ayub.khosa.json_parsing.MainActivity}: java.lang.NullPointerException&#xD;&#xA;> 09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2663)&#xD;&#xA;> 09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:2679)&#xD;&#xA;> 09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread.access$2300(ActivityThread.java:125)&#xD;&#xA;> 09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2033)&#xD;&#xA;> 09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.os.Handler.dispatchMessage(Handler.java:99)&#xD;&#xA;> 09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.os.Looper.loop(Looper.java:123)&#xD;&#xA;> 09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread.main(ActivityThread.java:4627)&#xD;&#xA;> 09-21 12:30:58.349: E/AndroidRuntime(287): 	at java.lang.reflect.Method.invokeNative(Native Method)&#xD;&#xA;> 09-21 12:30:58.349: E/AndroidRuntime(287): 	at java.lang.reflect.Method.invoke(Method.java:521)&#xD;&#xA;> 09-21 12:30:58.349: E/AndroidRuntime(287): 	at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:868)&#xD;&#xA;> 09-21 12:30:58.349: E/AndroidRuntime(287): 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:626)&#xD;&#xA;> 09-21 12:30:58.349: E/AndroidRuntime(287): 	at dalvik.system.NativeStart.main(Native Method)&#xD;&#xA;> 09-21 12:30:58.349: E/AndroidRuntime(287): Caused by: java.lang.NullPointerException&#xD;&#xA;> 09-21 12:30:58.349: E/AndroidRuntime(287): 	at java.util.ArrayList.addAll(ArrayList.java:193)&#xD;&#xA;> 09-21 12:30:58.349: E/AndroidRuntime(287): 	at org.json.JSONArray.<init>(JSONArray.java:70)&#xD;&#xA;> 09-21 12:30:58.349: E/AndroidRuntime(287): 	at ayub.khosa.json_parsing.MainActivity.onCreate(MainActivity.java:58)&#xD;&#xA;> 09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1047)&#xD;&#xA;> 09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2627)&#xD;&#xA;> 09-21 12:30:58.349: E/AndroidRuntime(287): 	... 11 more&#xD;&#xA;> 09-21 12:30:58.419: D/dalvikvm(287): GC_FOR_MALLOC freed 3711 objects / 261576 bytes in 67ms&#xD;&#xA;> 09-21 12:30:58.429: W/ActivityManager(59):   Force finishing activity ayub.khosa.json_parsing/.MainActivity&#xD;&#xA;> 09-21 12:30:58.958: W/ActivityManager(59): Activity pause timeout for HistoryRecord{440757b8 ayub.khosa.json_parsing/.MainActivity}&#xD;&#xA;> 09-21 12:31:02.689: I/Process(287): Sending signal. PID: 287 SIG: 9&#xD;&#xA;> 09-21 12:31:02.709: I/ActivityManager(59): Process ayub.khosa.json_parsing (pid 287) has died.&#xD;&#xA;> 09-21 12:31:02.729: W/InputManagerService(59): Window already focused, ignoring focus gain of: com.android.internal.view.IInputMethodClient$Stub$Proxy@43e4ec30&#xD;&#xA;> 09-21 12:31:09.089: W/ActivityManager(59): Activity destroy timeout for HistoryRecord{440757b8 ayub.khosa.json_parsing/.MainActivity}&#xD;&#xA;"
-47740229;5;18932575;0d67813b-fdca-40db-ba02-6e48748eae12;2013-09-21 12:54:57;1631379;;added 101 characters in body;"Regarding another thread here i try too, to get a json array form a json. I have the following files : &#xD;&#xA;&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;earthquake.json&#xD;&#xA;&#xD;&#xA;<pre>&#xD;&#xA;[{&#xD;&#xA;        ""eqid"": ""merge"",&#xD;&#xA;        ""magnitude"": 8.8,&#xD;&#xA;        ""lng"": 142.369,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2011-03-11 04:46:23"",&#xD;&#xA;        ""depth"": 24.4,&#xD;&#xA;        ""lat"": 38.322&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""merge2"",&#xD;&#xA;        ""magnitude"": 8.6,&#xD;&#xA;        ""lng"": 93.0632,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2012-04-11 06:38:37"",&#xD;&#xA;        ""depth"": 22.9,&#xD;&#xA;        ""lat"": 2.311&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""2007hear"",&#xD;&#xA;        ""magnitude"": 8.4,&#xD;&#xA;        ""lng"": 101.3815,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2007-09-12 09:10:26"",&#xD;&#xA;        ""depth"": 30,&#xD;&#xA;        ""lat"": -4.5172&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""c00090da"",&#xD;&#xA;        ""magnitude"": 8.2,&#xD;&#xA;        ""lng"": 92.4522,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2012-04-11 08:43:09"",&#xD;&#xA;        ""depth"": 16.4,&#xD;&#xA;        ""lat"": 0.7731&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""2007aqbk"",&#xD;&#xA;        ""magnitude"": 8,&#xD;&#xA;        ""lng"": 156.9567,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2007-04-01 18:39:56"",&#xD;&#xA;        ""depth"": 10,&#xD;&#xA;        ""lat"": -8.4528&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""2007hec6"",&#xD;&#xA;        ""magnitude"": 7.8,&#xD;&#xA;        ""lng"": 100.9638,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2007-09-12 21:49:01"",&#xD;&#xA;        ""depth"": 10,&#xD;&#xA;        ""lat"": -2.5265&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""b000g7x7"",&#xD;&#xA;        ""magnitude"": 7.8,&#xD;&#xA;        ""lng"": 62.0532,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2013-04-16 08:44:20"",&#xD;&#xA;        ""depth"": 82,&#xD;&#xA;        ""lat"": 28.1069&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""a00043nx"",&#xD;&#xA;        ""magnitude"": 7.7,&#xD;&#xA;        ""lng"": 100.1139,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2010-10-25 12:42:22"",&#xD;&#xA;        ""depth"": 20.6,&#xD;&#xA;        ""lat"": -3.4841&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""2010utc5"",&#xD;&#xA;        ""magnitude"": 7.7,&#xD;&#xA;        ""lng"": 97.1315,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2010-04-06 20:15:02"",&#xD;&#xA;        ""depth"": 31,&#xD;&#xA;        ""lat"": 2.3602&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""2009mebz"",&#xD;&#xA;        ""magnitude"": 7.6,&#xD;&#xA;        ""lng"": 99.9606,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2009-09-30 08:16:09"",&#xD;&#xA;        ""depth"": 80,&#xD;&#xA;        ""lat"": -0.7889&#xD;&#xA;    }]&#xD;&#xA;</pre>&#xD;&#xA;&#xD;&#xA;&#xD;&#xA; &#xD;&#xA;**MainActivity.java**&#xD;&#xA;&#xD;&#xA; &#xD;&#xA;    package ayub.khosa.json_parsing;&#xD;&#xA;    import java.io.IOException;&#xD;&#xA;    import java.util.ArrayList;&#xD;&#xA;    import java.util.Collection;&#xD;&#xA;    import java.util.HashMap;&#xD;&#xA;    import org.apache.http.client.ClientProtocolException;&#xD;&#xA;    import org.json.JSONArray;&#xD;&#xA;    import org.json.JSONException;&#xD;&#xA;    import org.json.JSONObject;&#xD;&#xA;    import android.app.ListActivity;&#xD;&#xA;    import android.os.Bundle;&#xD;&#xA;    import android.util.Log;&#xD;&#xA;    import android.view.Menu;&#xD;&#xA;    import android.view.View;&#xD;&#xA;    import android.view.Window;&#xD;&#xA;    import android.view.WindowManager;&#xD;&#xA;    import android.widget.AdapterView;&#xD;&#xA;    import android.widget.AdapterView.OnItemClickListener;&#xD;&#xA;    import android.widget.ListAdapter;&#xD;&#xA;    import android.widget.ListView;&#xD;&#xA;    import android.widget.SimpleAdapter;&#xD;&#xA;    import android.widget.Toast;&#xD;&#xA;    public class MainActivity extends ListActivity &#xD;&#xA;    {&#xD;&#xA;	String tag = ""AYUB"";&#xD;&#xA;    /** Called when the activity is first created. */&#xD;&#xA;    @Override&#xD;&#xA;    public void onCreate(Bundle savedInstanceState) &#xD;&#xA;    { super.onCreate(savedInstanceState);&#xD;&#xA;        requestWindowFeature(Window.FEATURE_NO_TITLE);&#xD;&#xA;		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);&#xD;&#xA;    setContentView(R.layout.listplaceholder);&#xD;&#xA;        Log.d(tag, ""setContentView  "");&#xD;&#xA;        ArrayList<HashMap<String, String>> mylist = new ArrayList<HashMap<String, String>>();&#xD;&#xA;      &#xD;&#xA;       &#xD;&#xA;        JSONArray json = null;&#xD;&#xA;		try {&#xD;&#xA;			json = JSONfunctions.getJSONfromURL(""http://192.168.0.104/earthquakes.json"");&#xD;&#xA;		} catch (ClientProtocolException e1) {&#xD;&#xA;			// TODO Auto-generated catch block&#xD;&#xA;			e1.printStackTrace();&#xD;&#xA;		} catch (IOException e1) {&#xD;&#xA;			// TODO Auto-generated catch block&#xD;&#xA;			e1.printStackTrace();&#xD;&#xA;		} catch (JSONException e1) {&#xD;&#xA;			// TODO Auto-generated catch block&#xD;&#xA;			e1.printStackTrace();&#xD;&#xA;		}&#xD;&#xA;        Log.d(tag, ""json object  ""); &#xD;&#xA;        try{&#xD;&#xA;        	Collection<?> result = null;&#xD;&#xA;			JSONArray json1 = new JSONArray(result);&#xD;&#xA;     //        	// ...&#xD;&#xA;&#xD;&#xA;        	for(int i=0;i<json.length();i++){                        &#xD;&#xA;        	    HashMap<String, String> map = new HashMap<String, String>();    &#xD;&#xA;        	    JSONObject e = json1.getJSONObject(i);&#xD;&#xA;&#xD;&#xA;        	    map.put(""id"",  String.valueOf(i));&#xD;&#xA;        	    map.put(""name"", ""Earthquake name:"" + e.getString(""eqid""));&#xD;&#xA;          	    map.put(""magnitude"", ""Magnitude: "" +  e.getString(""magnitude""));&#xD;&#xA;        	    mylist.add(map);            &#xD;&#xA;        	}&#xD;&#xA;        }catch(JSONException e)        {&#xD;&#xA;        	 Log.e(""log_tag"", ""Error parsing data ""+e.toString());&#xD;&#xA;        }&#xD;&#xA;        &#xD;&#xA;        ListAdapter adapter = new SimpleAdapter(this, mylist , R.layout.activity_main, &#xD;&#xA;                        new String[] { ""name"", ""magnitude"" }, &#xD;&#xA;                        new int[] { R.id.item_title, R.id.item_subtitle });&#xD;&#xA;        &#xD;&#xA;        setListAdapter(adapter);&#xD;&#xA;        &#xD;&#xA;        final ListView lv = getListView();&#xD;&#xA;        lv.setTextFilterEnabled(true);	&#xD;&#xA;        lv.setOnItemClickListener(new OnItemClickListener() {&#xD;&#xA;        	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {        		&#xD;&#xA;        		@SuppressWarnings(""unchecked"")&#xD;&#xA;				HashMap<String, String> o = (HashMap<String, String>) lv.getItemAtPosition(position);	&#xD;&#xA;        		Log.d(tag, ""json object  "" + lv.getItemAtPosition(position)); &#xD;&#xA;        		Toast.makeText(MainActivity.this, ""ID "" + o.get(""id"")+""	"" + o.get(""name"") + o.get(""magnitude"")+""."", Toast.LENGTH_SHORT).show(); &#xD;&#xA;&#xD;&#xA;			}&#xD;&#xA;		});&#xD;&#xA;    }&#xD;&#xA;&#xD;&#xA;    @Override&#xD;&#xA;    public boolean onCreateOptionsMenu(Menu menu) {&#xD;&#xA;        getMenuInflater().inflate(R.menu.activity_main, menu);&#xD;&#xA;        return true;&#xD;&#xA;     } &#xD;&#xA;    }&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;**JSONFunctions.java**&#xD;&#xA;&#xD;&#xA;    package ayub.khosa.json_parsing;&#xD;&#xA;    import java.io.BufferedReader;&#xD;&#xA;    import java.io.IOException;&#xD;&#xA;    import java.io.InputStream;&#xD;&#xA;    import java.io.InputStreamReader;&#xD;&#xA;    import org.apache.http.HttpEntity;&#xD;&#xA;    import org.apache.http.HttpResponse;&#xD;&#xA;    import org.apache.http.client.ClientProtocolException;&#xD;&#xA;    import org.apache.http.client.HttpClient;&#xD;&#xA;    import org.apache.http.client.methods.HttpGet;&#xD;&#xA;    import org.apache.http.impl.client.DefaultHttpClient;&#xD;&#xA;    import org.json.JSONArray;&#xD;&#xA;    import org.json.JSONException;&#xD;&#xA;    public class JSONfunctions {&#xD;&#xA;    public static JSONArray getJSONfromURL(String url) throws ClientProtocolException, IOException, JSONException{&#xD;&#xA;    InputStream is = null;&#xD;&#xA;    String result = """";&#xD;&#xA;    JSONArray jArray = null;&#xD;&#xA;&#xD;&#xA;            HttpClient httpclient = new DefaultHttpClient();&#xD;&#xA;            HttpGet httpget = new HttpGet(url);&#xD;&#xA;            HttpResponse response = httpclient.execute(httpget);&#xD;&#xA;            HttpEntity entity = response.getEntity();&#xD;&#xA;            is = entity.getContent();&#xD;&#xA;&#xD;&#xA;            BufferedReader reader = new BufferedReader(new InputStreamReader(is,""iso-8859-1""),8);&#xD;&#xA;            StringBuilder sb = new StringBuilder();&#xD;&#xA;            String line = null;&#xD;&#xA;            while ((line = reader.readLine()) != null) {&#xD;&#xA;                    sb.append(line + ""\n"");&#xD;&#xA;            }&#xD;&#xA;            is.close();&#xD;&#xA;            result=sb.toString();&#xD;&#xA;&#xD;&#xA;        jArray = new JSONArray(result);            &#xD;&#xA;    return jArray;&#xD;&#xA;    }&#xD;&#xA;    }&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;Problem is that appears no data on screen and i get only a warning: &#xD;&#xA;&#xD;&#xA;&#xD;&#xA;    09-21 12:09:26.225: W/ActivityManager(59): Launch timeout has expired, giving up wake lock!&#xD;&#xA;    09-21 12:09:26.500: W/ActivityManager(59): Activity idle timeout for HistoryRecord{43ee8ee8 ayub.khosa.json_parsing/.MainActivity}&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;UPDATE :&#xD;&#xA;&#xD;&#xA;Indeed the webserver was down without i noticed. Now is up, i see in browser the json, but now i get the following errors: &#xD;&#xA;&#xD;&#xA;     09-21 12:30:52.301: W/ActivityManager(59): Activity destroy timeout for HistoryRecord{43f44da0 ayub.khosa.json_parsing/.MainActivity}&#xD;&#xA;     09-21 12:30:57.449: I/ActivityManager(59): Starting activity: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 cmp=ayub.khosa.json_parsing/.MainActivity }&#xD;&#xA;     09-21 12:30:57.609: I/ActivityManager(59): Start proc ayub.khosa.json_parsing for activity ayub.khosa.json_parsing/.MainActivity: pid=287 uid=10036 gids={3003}&#xD;&#xA;     09-21 12:30:58.179: D/AYUB(287): setContentView  &#xD;&#xA;     09-21 12:30:58.339: D/AYUB(287): json object  &#xD;&#xA;     09-21 12:30:58.339: D/AndroidRuntime(287): Shutting down VM&#xD;&#xA;     09-21 12:30:58.339: W/dalvikvm(287): threadid=1: thread exiting with uncaught exception (group=0x4001d800)&#xD;&#xA;     09-21 12:30:58.349: E/AndroidRuntime(287): FATAL EXCEPTION: main&#xD;&#xA;     09-21 12:30:58.349: E/AndroidRuntime(287): java.lang.RuntimeException: Unable to start activity ComponentInfo{ayub.khosa.json_parsing/ayub.khosa.json_parsing.MainActivity}: java.lang.NullPointerException&#xD;&#xA;     09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2663)&#xD;&#xA;     09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:2679)&#xD;&#xA;     09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread.access$2300(ActivityThread.java:125)&#xD;&#xA;     09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2033)&#xD;&#xA;     09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.os.Handler.dispatchMessage(Handler.java:99)&#xD;&#xA;     09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.os.Looper.loop(Looper.java:123)&#xD;&#xA;     09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread.main(ActivityThread.java:4627)&#xD;&#xA;     09-21 12:30:58.349: E/AndroidRuntime(287): 	at java.lang.reflect.Method.invokeNative(Native Method)&#xD;&#xA;     09-21 12:30:58.349: E/AndroidRuntime(287): 	at java.lang.reflect.Method.invoke(Method.java:521)&#xD;&#xA;     09-21 12:30:58.349: E/AndroidRuntime(287): 	at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:868)&#xD;&#xA;     09-21 12:30:58.349: E/AndroidRuntime(287): 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:626)&#xD;&#xA;     09-21 12:30:58.349: E/AndroidRuntime(287): 	at dalvik.system.NativeStart.main(Native Method)&#xD;&#xA;     09-21 12:30:58.349: E/AndroidRuntime(287): Caused by: java.lang.NullPointerException&#xD;&#xA;     09-21 12:30:58.349: E/AndroidRuntime(287): 	at java.util.ArrayList.addAll(ArrayList.java:193)&#xD;&#xA;     09-21 12:30:58.349: E/AndroidRuntime(287): 	at org.json.JSONArray.<init(JSONArray.java:70)&#xD;&#xA;     09-21 12:30:58.349: E/AndroidRuntime(287): 	at ayub.khosa.json_parsing.MainActivity.onCreate(MainActivity.java:58)&#xD;&#xA;     09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1047)&#xD;&#xA;     09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2627)&#xD;&#xA;     09-21 12:30:58.349: E/AndroidRuntime(287): 	... 11 more&#xD;&#xA;     09-21 12:30:58.419: D/dalvikvm(287): GC_FOR_MALLOC freed 3711 objects / 261576 bytes in 67ms&#xD;&#xA;     09-21 12:30:58.429: W/ActivityManager(59):   Force finishing activity ayub.khosa.json_parsing/.MainActivity&#xD;&#xA;     09-21 12:30:58.958: W/ActivityManager(59): Activity pause timeout for HistoryRecord{440757b8 ayub.khosa.json_parsing/.MainActivity}&#xD;&#xA;     09-21 12:31:02.689: I/Process(287): Sending signal. PID: 287 SIG: 9&#xD;&#xA;     09-21 12:31:02.709: I/ActivityManager(59): Process ayub.khosa.json_parsing (pid 287) has died.&#xD;&#xA;     09-21 12:31:02.729: W/InputManagerService(59): Window already focused, ignoring focus gain of: com.android.internal.view.IInputMethodClient$Stub$Proxy@43e4ec30&#xD;&#xA;     09-21 12:31:09.089: W/ActivityManager(59): Activity destroy timeout for HistoryRecord{440757b8 ayub.khosa.json_parsing/.MainActivity}&#xD;&#xA;"
-47740824;5;18932575;eaeb1451-dd0a-49b8-98f5-8f9a8606e5af;2013-09-21 13:16:27;2683051;;added 5107 characters in body;"Regarding another thread here i try too, to get a json array form a json. I have the following files : &#xD;&#xA;&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;earthquake.json&#xD;&#xA;&#xD;&#xA;<pre>&#xD;&#xA;[{&#xD;&#xA;        ""eqid"": ""merge"",&#xD;&#xA;        ""magnitude"": 8.8,&#xD;&#xA;        ""lng"": 142.369,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2011-03-11 04:46:23"",&#xD;&#xA;        ""depth"": 24.4,&#xD;&#xA;        ""lat"": 38.322&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""merge2"",&#xD;&#xA;        ""magnitude"": 8.6,&#xD;&#xA;        ""lng"": 93.0632,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2012-04-11 06:38:37"",&#xD;&#xA;        ""depth"": 22.9,&#xD;&#xA;        ""lat"": 2.311&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""2007hear"",&#xD;&#xA;        ""magnitude"": 8.4,&#xD;&#xA;        ""lng"": 101.3815,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2007-09-12 09:10:26"",&#xD;&#xA;        ""depth"": 30,&#xD;&#xA;        ""lat"": -4.5172&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""c00090da"",&#xD;&#xA;        ""magnitude"": 8.2,&#xD;&#xA;        ""lng"": 92.4522,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2012-04-11 08:43:09"",&#xD;&#xA;        ""depth"": 16.4,&#xD;&#xA;        ""lat"": 0.7731&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""2007aqbk"",&#xD;&#xA;        ""magnitude"": 8,&#xD;&#xA;        ""lng"": 156.9567,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2007-04-01 18:39:56"",&#xD;&#xA;        ""depth"": 10,&#xD;&#xA;        ""lat"": -8.4528&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""2007hec6"",&#xD;&#xA;        ""magnitude"": 7.8,&#xD;&#xA;        ""lng"": 100.9638,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2007-09-12 21:49:01"",&#xD;&#xA;        ""depth"": 10,&#xD;&#xA;        ""lat"": -2.5265&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""b000g7x7"",&#xD;&#xA;        ""magnitude"": 7.8,&#xD;&#xA;        ""lng"": 62.0532,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2013-04-16 08:44:20"",&#xD;&#xA;        ""depth"": 82,&#xD;&#xA;        ""lat"": 28.1069&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""a00043nx"",&#xD;&#xA;        ""magnitude"": 7.7,&#xD;&#xA;        ""lng"": 100.1139,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2010-10-25 12:42:22"",&#xD;&#xA;        ""depth"": 20.6,&#xD;&#xA;        ""lat"": -3.4841&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""2010utc5"",&#xD;&#xA;        ""magnitude"": 7.7,&#xD;&#xA;        ""lng"": 97.1315,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2010-04-06 20:15:02"",&#xD;&#xA;        ""depth"": 31,&#xD;&#xA;        ""lat"": 2.3602&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""2009mebz"",&#xD;&#xA;        ""magnitude"": 7.6,&#xD;&#xA;        ""lng"": 99.9606,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2009-09-30 08:16:09"",&#xD;&#xA;        ""depth"": 80,&#xD;&#xA;        ""lat"": -0.7889&#xD;&#xA;    }]&#xD;&#xA;</pre>&#xD;&#xA;&#xD;&#xA;&#xD;&#xA; &#xD;&#xA;**MainActivity.java**&#xD;&#xA;&#xD;&#xA; &#xD;&#xA;    package ayub.khosa.json_parsing;&#xD;&#xA;    import java.io.IOException;&#xD;&#xA;    import java.util.ArrayList;&#xD;&#xA;    import java.util.Collection;&#xD;&#xA;    import java.util.HashMap;&#xD;&#xA;    import org.apache.http.client.ClientProtocolException;&#xD;&#xA;    import org.json.JSONArray;&#xD;&#xA;    import org.json.JSONException;&#xD;&#xA;    import org.json.JSONObject;&#xD;&#xA;    import android.app.ListActivity;&#xD;&#xA;    import android.os.Bundle;&#xD;&#xA;    import android.util.Log;&#xD;&#xA;    import android.view.Menu;&#xD;&#xA;    import android.view.View;&#xD;&#xA;    import android.view.Window;&#xD;&#xA;    import android.view.WindowManager;&#xD;&#xA;    import android.widget.AdapterView;&#xD;&#xA;    import android.widget.AdapterView.OnItemClickListener;&#xD;&#xA;    import android.widget.ListAdapter;&#xD;&#xA;    import android.widget.ListView;&#xD;&#xA;    import android.widget.SimpleAdapter;&#xD;&#xA;    import android.widget.Toast;&#xD;&#xA;    public class MainActivity extends ListActivity &#xD;&#xA;    {&#xD;&#xA;	String tag = ""AYUB"";&#xD;&#xA;    /** Called when the activity is first created. */&#xD;&#xA;    @Override&#xD;&#xA;    public void onCreate(Bundle savedInstanceState) &#xD;&#xA;    { super.onCreate(savedInstanceState);&#xD;&#xA;        requestWindowFeature(Window.FEATURE_NO_TITLE);&#xD;&#xA;		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);&#xD;&#xA;    setContentView(R.layout.listplaceholder);&#xD;&#xA;        Log.d(tag, ""setContentView  "");&#xD;&#xA;        ArrayList<HashMap<String, String>> mylist = new ArrayList<HashMap<String, String>>();&#xD;&#xA;      &#xD;&#xA;       &#xD;&#xA;        JSONArray json = null;&#xD;&#xA;		try {&#xD;&#xA;			json = JSONfunctions.getJSONfromURL(""http://192.168.0.104/earthquakes.json"");&#xD;&#xA;		} catch (ClientProtocolException e1) {&#xD;&#xA;			// TODO Auto-generated catch block&#xD;&#xA;			e1.printStackTrace();&#xD;&#xA;		} catch (IOException e1) {&#xD;&#xA;			// TODO Auto-generated catch block&#xD;&#xA;			e1.printStackTrace();&#xD;&#xA;		} catch (JSONException e1) {&#xD;&#xA;			// TODO Auto-generated catch block&#xD;&#xA;			e1.printStackTrace();&#xD;&#xA;		}&#xD;&#xA;        Log.d(tag, ""json object  ""); &#xD;&#xA;        try{&#xD;&#xA;        	Collection<?> result = null;&#xD;&#xA;			JSONArray json1 = new JSONArray(result);&#xD;&#xA;     //        	// ...&#xD;&#xA;&#xD;&#xA;        	for(int i=0;i<json.length();i++){                        &#xD;&#xA;        	    HashMap<String, String> map = new HashMap<String, String>();    &#xD;&#xA;        	    JSONObject e = json1.getJSONObject(i);&#xD;&#xA;&#xD;&#xA;        	    map.put(""id"",  String.valueOf(i));&#xD;&#xA;        	    map.put(""name"", ""Earthquake name:"" + e.getString(""eqid""));&#xD;&#xA;          	    map.put(""magnitude"", ""Magnitude: "" +  e.getString(""magnitude""));&#xD;&#xA;        	    mylist.add(map);            &#xD;&#xA;        	}&#xD;&#xA;        }catch(JSONException e)        {&#xD;&#xA;        	 Log.e(""log_tag"", ""Error parsing data ""+e.toString());&#xD;&#xA;        }&#xD;&#xA;        &#xD;&#xA;        ListAdapter adapter = new SimpleAdapter(this, mylist , R.layout.activity_main, &#xD;&#xA;                        new String[] { ""name"", ""magnitude"" }, &#xD;&#xA;                        new int[] { R.id.item_title, R.id.item_subtitle });&#xD;&#xA;        &#xD;&#xA;        setListAdapter(adapter);&#xD;&#xA;        &#xD;&#xA;        final ListView lv = getListView();&#xD;&#xA;        lv.setTextFilterEnabled(true);	&#xD;&#xA;        lv.setOnItemClickListener(new OnItemClickListener() {&#xD;&#xA;        	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {        		&#xD;&#xA;        		@SuppressWarnings(""unchecked"")&#xD;&#xA;				HashMap<String, String> o = (HashMap<String, String>) lv.getItemAtPosition(position);	&#xD;&#xA;        		Log.d(tag, ""json object  "" + lv.getItemAtPosition(position)); &#xD;&#xA;        		Toast.makeText(MainActivity.this, ""ID "" + o.get(""id"")+""	"" + o.get(""name"") + o.get(""magnitude"")+""."", Toast.LENGTH_SHORT).show(); &#xD;&#xA;&#xD;&#xA;			}&#xD;&#xA;		});&#xD;&#xA;    }&#xD;&#xA;&#xD;&#xA;    @Override&#xD;&#xA;    public boolean onCreateOptionsMenu(Menu menu) {&#xD;&#xA;        getMenuInflater().inflate(R.menu.activity_main, menu);&#xD;&#xA;        return true;&#xD;&#xA;     } &#xD;&#xA;    }&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;**JSONFunctions.java**&#xD;&#xA;&#xD;&#xA;    package ayub.khosa.json_parsing;&#xD;&#xA;    import java.io.BufferedReader;&#xD;&#xA;    import java.io.IOException;&#xD;&#xA;    import java.io.InputStream;&#xD;&#xA;    import java.io.InputStreamReader;&#xD;&#xA;    import org.apache.http.HttpEntity;&#xD;&#xA;    import org.apache.http.HttpResponse;&#xD;&#xA;    import org.apache.http.client.ClientProtocolException;&#xD;&#xA;    import org.apache.http.client.HttpClient;&#xD;&#xA;    import org.apache.http.client.methods.HttpGet;&#xD;&#xA;    import org.apache.http.impl.client.DefaultHttpClient;&#xD;&#xA;    import org.json.JSONArray;&#xD;&#xA;    import org.json.JSONException;&#xD;&#xA;    public class JSONfunctions {&#xD;&#xA;    public static JSONArray getJSONfromURL(String url) throws ClientProtocolException, IOException, JSONException{&#xD;&#xA;    InputStream is = null;&#xD;&#xA;    String result = """";&#xD;&#xA;    JSONArray jArray = null;&#xD;&#xA;&#xD;&#xA;            HttpClient httpclient = new DefaultHttpClient();&#xD;&#xA;            HttpGet httpget = new HttpGet(url);&#xD;&#xA;            HttpResponse response = httpclient.execute(httpget);&#xD;&#xA;            HttpEntity entity = response.getEntity();&#xD;&#xA;            is = entity.getContent();&#xD;&#xA;&#xD;&#xA;            BufferedReader reader = new BufferedReader(new InputStreamReader(is,""iso-8859-1""),8);&#xD;&#xA;            StringBuilder sb = new StringBuilder();&#xD;&#xA;            String line = null;&#xD;&#xA;            while ((line = reader.readLine()) != null) {&#xD;&#xA;                    sb.append(line + ""\n"");&#xD;&#xA;            }&#xD;&#xA;            is.close();&#xD;&#xA;            result=sb.toString();&#xD;&#xA;&#xD;&#xA;        jArray = new JSONArray(result);            &#xD;&#xA;    return jArray;&#xD;&#xA;    }&#xD;&#xA;    }&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;Problem is that appears no data on screen and i get only a warning: &#xD;&#xA;&#xD;&#xA;&#xD;&#xA;    09-21 12:09:26.225: W/ActivityManager(59): Launch timeout has expired, giving up wake lock!&#xD;&#xA;    09-21 12:09:26.500: W/ActivityManager(59): Activity idle timeout for HistoryRecord{43ee8ee8 ayub.khosa.json_parsing/.MainActivity}&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;UPDATE :&#xD;&#xA;&#xD;&#xA;Indeed the webserver was down without i noticed. Now is up, i see in browser the json, but now i get the following errors: &#xD;&#xA;&#xD;&#xA;     09-21 12:30:52.301: W/ActivityManager(59): Activity destroy timeout for HistoryRecord{43f44da0 ayub.khosa.json_parsing/.MainActivity}&#xD;&#xA;     09-21 12:30:57.449: I/ActivityManager(59): Starting activity: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 cmp=ayub.khosa.json_parsing/.MainActivity }&#xD;&#xA;     09-21 12:30:57.609: I/ActivityManager(59): Start proc ayub.khosa.json_parsing for activity ayub.khosa.json_parsing/.MainActivity: pid=287 uid=10036 gids={3003}&#xD;&#xA;     09-21 12:30:58.179: D/AYUB(287): setContentView  &#xD;&#xA;     09-21 12:30:58.339: D/AYUB(287): json object  &#xD;&#xA;     09-21 12:30:58.339: D/AndroidRuntime(287): Shutting down VM&#xD;&#xA;     09-21 12:30:58.339: W/dalvikvm(287): threadid=1: thread exiting with uncaught exception (group=0x4001d800)&#xD;&#xA;     09-21 12:30:58.349: E/AndroidRuntime(287): FATAL EXCEPTION: main&#xD;&#xA;     09-21 12:30:58.349: E/AndroidRuntime(287): java.lang.RuntimeException: Unable to start activity ComponentInfo{ayub.khosa.json_parsing/ayub.khosa.json_parsing.MainActivity}: java.lang.NullPointerException&#xD;&#xA;     09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2663)&#xD;&#xA;     09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:2679)&#xD;&#xA;     09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread.access$2300(ActivityThread.java:125)&#xD;&#xA;     09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2033)&#xD;&#xA;     09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.os.Handler.dispatchMessage(Handler.java:99)&#xD;&#xA;     09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.os.Looper.loop(Looper.java:123)&#xD;&#xA;     09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread.main(ActivityThread.java:4627)&#xD;&#xA;     09-21 12:30:58.349: E/AndroidRuntime(287): 	at java.lang.reflect.Method.invokeNative(Native Method)&#xD;&#xA;     09-21 12:30:58.349: E/AndroidRuntime(287): 	at java.lang.reflect.Method.invoke(Method.java:521)&#xD;&#xA;     09-21 12:30:58.349: E/AndroidRuntime(287): 	at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:868)&#xD;&#xA;     09-21 12:30:58.349: E/AndroidRuntime(287): 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:626)&#xD;&#xA;     09-21 12:30:58.349: E/AndroidRuntime(287): 	at dalvik.system.NativeStart.main(Native Method)&#xD;&#xA;     09-21 12:30:58.349: E/AndroidRuntime(287): Caused by: java.lang.NullPointerException&#xD;&#xA;     09-21 12:30:58.349: E/AndroidRuntime(287): 	at java.util.ArrayList.addAll(ArrayList.java:193)&#xD;&#xA;     09-21 12:30:58.349: E/AndroidRuntime(287): 	at org.json.JSONArray.<init(JSONArray.java:70)&#xD;&#xA;     09-21 12:30:58.349: E/AndroidRuntime(287): 	at ayub.khosa.json_parsing.MainActivity.onCreate(MainActivity.java:58)&#xD;&#xA;     09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1047)&#xD;&#xA;     09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2627)&#xD;&#xA;     09-21 12:30:58.349: E/AndroidRuntime(287): 	... 11 more&#xD;&#xA;     09-21 12:30:58.419: D/dalvikvm(287): GC_FOR_MALLOC freed 3711 objects / 261576 bytes in 67ms&#xD;&#xA;     09-21 12:30:58.429: W/ActivityManager(59):   Force finishing activity ayub.khosa.json_parsing/.MainActivity&#xD;&#xA;     09-21 12:30:58.958: W/ActivityManager(59): Activity pause timeout for HistoryRecord{440757b8 ayub.khosa.json_parsing/.MainActivity}&#xD;&#xA;     09-21 12:31:02.689: I/Process(287): Sending signal. PID: 287 SIG: 9&#xD;&#xA;     09-21 12:31:02.709: I/ActivityManager(59): Process ayub.khosa.json_parsing (pid 287) has died.&#xD;&#xA;     09-21 12:31:02.729: W/InputManagerService(59): Window already focused, ignoring focus gain of: com.android.internal.view.IInputMethodClient$Stub$Proxy@43e4ec30&#xD;&#xA;     09-21 12:31:09.089: W/ActivityManager(59): Activity destroy timeout for HistoryRecord{440757b8 ayub.khosa.json_parsing/.MainActivity}&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;UPDATE 2 - after Max edit suggestion&#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.395: D/AYUB(272): setContentView &#xD;&#xA; &#xD;&#xA;>  09-21 13:08:24.475: I/global(272): Default buffer size used in BufferedReader constructor. It would be better to be explicit if an 8k-char buffer is required.&#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.475: W/System.err(272): org.json.JSONException: End of input at character 0 of &#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.485: W/System.err(272): 	at org.json.JSONTokener.syntaxError(JSONTokener.java:446)&#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.485: W/System.err(272): 	at org.json.JSONTokener.nextValue(JSONTokener.java:93)&#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.495: W/System.err(272): 	at org.json.JSONArray.<init>(JSONArray.java:87)&#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.495: W/System.err(272): 	at org.json.JSONArray.<init>(JSONArray.java:103)&#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.495: W/System.err(272): 	at ayub.khosa.json_parsing.JSONfunctions.getJSONfromURL(JSONfunctions.java:41)&#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.495: W/System.err(272): 	at ayub.khosa.json_parsing.MainActivity.onCreate(MainActivity.java:44)&#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.495: W/System.err(272): 	at android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1047)&#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.495: W/System.err(272): 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2627)&#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.495: W/System.err(272): 	at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:2679)&#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.495: W/System.err(272): 	at android.app.ActivityThread.access$2300(ActivityThread.java:125)&#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.495: W/System.err(272): 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2033)&#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.495: W/System.err(272): 	at android.os.Handler.dispatchMessage(Handler.java:99)&#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.495: W/System.err(272): 	at android.os.Looper.loop(Looper.java:123)&#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.495: W/System.err(272): 	at android.app.ActivityThread.main(ActivityThread.java:4627)&#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.495: W/System.err(272): 	at java.lang.reflect.Method.invokeNative(Native Method)&#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.505: W/System.err(272): 	at java.lang.reflect.Method.invoke(Method.java:521)&#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.505: W/System.err(272): 	at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:868)&#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.505: W/System.err(272): 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:626)&#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.505: W/System.err(272): 	at dalvik.system.NativeStart.main(Native Method)&#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.505: D/AYUB(272): json object  &#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.505: D/AndroidRuntime(272): Shutting down VM&#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.505: W/dalvikvm(272): threadid=1: thread exiting with uncaught exception (group=0x4001d800)&#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.515: E/AndroidRuntime(272): FATAL EXCEPTION: main&#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.515: E/AndroidRuntime(272): java.lang.RuntimeException: Unable to start activity ComponentInfo{ayub.khosa.json_parsing/ayub.khosa.json_parsing.MainActivity}: java.lang.NullPointerException&#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.515: E/AndroidRuntime(272): 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2663)&#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.515: E/AndroidRuntime(272): 	at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:2679)&#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.515: E/AndroidRuntime(272): 	at android.app.ActivityThread.access$2300(ActivityThread.java:125)&#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.515: E/AndroidRuntime(272): 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2033)&#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.515: E/AndroidRuntime(272): 	at android.os.Handler.dispatchMessage(Handler.java:99)&#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.515: E/AndroidRuntime(272): 	at android.os.Looper.loop(Looper.java:123)&#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.515: E/AndroidRuntime(272): 	at android.app.ActivityThread.main(ActivityThread.java:4627)&#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.515: E/AndroidRuntime(272): 	at java.lang.reflect.Method.invokeNative(Native Method)&#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.515: E/AndroidRuntime(272): 	at java.lang.reflect.Method.invoke(Method.java:521)&#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.515: E/AndroidRuntime(272): 	at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:868)&#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.515: E/AndroidRuntime(272): 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:626)&#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.515: E/AndroidRuntime(272): 	at dalvik.system.NativeStart.main(Native Method)&#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.515: E/AndroidRuntime(272): Caused by: java.lang.NullPointerException&#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.515: E/AndroidRuntime(272): 	at java.util.ArrayList.addAll(ArrayList.java:193)&#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.515: E/AndroidRuntime(272): 	at org.json.JSONArray.<init>(JSONArray.java:70)&#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.515: E/AndroidRuntime(272): 	at ayub.khosa.json_parsing.MainActivity.onCreate(MainActivity.java:58)&#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.515: E/AndroidRuntime(272): 	at android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1047)&#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.515: E/AndroidRuntime(272): 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2627)&#xD;&#xA;&#xD;&#xA;>  09-21 13:08:24.515: E/AndroidRuntime(272): 	... 11 more&#xD;&#xA;&#xD;&#xA;>  09-21 13:08:27.035: I/Process(272): Sending signal. PID: 272 SIG: 9&#xD;&#xA;"
-77562455;5;18932575;3a4f562e-6ead-423c-b3de-d4d93f9a3de9;2014-11-13 06:22:21;3029904;;format stackstrace;"Regarding another thread here i try too, to get a json array form a json. I have the following files : &#xD;&#xA;&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;earthquake.json&#xD;&#xA;&#xD;&#xA;<pre>&#xD;&#xA;[{&#xD;&#xA;        ""eqid"": ""merge"",&#xD;&#xA;        ""magnitude"": 8.8,&#xD;&#xA;        ""lng"": 142.369,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2011-03-11 04:46:23"",&#xD;&#xA;        ""depth"": 24.4,&#xD;&#xA;        ""lat"": 38.322&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""merge2"",&#xD;&#xA;        ""magnitude"": 8.6,&#xD;&#xA;        ""lng"": 93.0632,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2012-04-11 06:38:37"",&#xD;&#xA;        ""depth"": 22.9,&#xD;&#xA;        ""lat"": 2.311&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""2007hear"",&#xD;&#xA;        ""magnitude"": 8.4,&#xD;&#xA;        ""lng"": 101.3815,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2007-09-12 09:10:26"",&#xD;&#xA;        ""depth"": 30,&#xD;&#xA;        ""lat"": -4.5172&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""c00090da"",&#xD;&#xA;        ""magnitude"": 8.2,&#xD;&#xA;        ""lng"": 92.4522,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2012-04-11 08:43:09"",&#xD;&#xA;        ""depth"": 16.4,&#xD;&#xA;        ""lat"": 0.7731&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""2007aqbk"",&#xD;&#xA;        ""magnitude"": 8,&#xD;&#xA;        ""lng"": 156.9567,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2007-04-01 18:39:56"",&#xD;&#xA;        ""depth"": 10,&#xD;&#xA;        ""lat"": -8.4528&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""2007hec6"",&#xD;&#xA;        ""magnitude"": 7.8,&#xD;&#xA;        ""lng"": 100.9638,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2007-09-12 21:49:01"",&#xD;&#xA;        ""depth"": 10,&#xD;&#xA;        ""lat"": -2.5265&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""b000g7x7"",&#xD;&#xA;        ""magnitude"": 7.8,&#xD;&#xA;        ""lng"": 62.0532,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2013-04-16 08:44:20"",&#xD;&#xA;        ""depth"": 82,&#xD;&#xA;        ""lat"": 28.1069&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""a00043nx"",&#xD;&#xA;        ""magnitude"": 7.7,&#xD;&#xA;        ""lng"": 100.1139,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2010-10-25 12:42:22"",&#xD;&#xA;        ""depth"": 20.6,&#xD;&#xA;        ""lat"": -3.4841&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""2010utc5"",&#xD;&#xA;        ""magnitude"": 7.7,&#xD;&#xA;        ""lng"": 97.1315,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2010-04-06 20:15:02"",&#xD;&#xA;        ""depth"": 31,&#xD;&#xA;        ""lat"": 2.3602&#xD;&#xA;    }, {&#xD;&#xA;        ""eqid"": ""2009mebz"",&#xD;&#xA;        ""magnitude"": 7.6,&#xD;&#xA;        ""lng"": 99.9606,&#xD;&#xA;        ""src"": ""us"",&#xD;&#xA;        ""datetime"": ""2009-09-30 08:16:09"",&#xD;&#xA;        ""depth"": 80,&#xD;&#xA;        ""lat"": -0.7889&#xD;&#xA;    }]&#xD;&#xA;</pre>&#xD;&#xA;&#xD;&#xA;&#xD;&#xA; &#xD;&#xA;**MainActivity.java**&#xD;&#xA;&#xD;&#xA; &#xD;&#xA;    package ayub.khosa.json_parsing;&#xD;&#xA;    import java.io.IOException;&#xD;&#xA;    import java.util.ArrayList;&#xD;&#xA;    import java.util.Collection;&#xD;&#xA;    import java.util.HashMap;&#xD;&#xA;    import org.apache.http.client.ClientProtocolException;&#xD;&#xA;    import org.json.JSONArray;&#xD;&#xA;    import org.json.JSONException;&#xD;&#xA;    import org.json.JSONObject;&#xD;&#xA;    import android.app.ListActivity;&#xD;&#xA;    import android.os.Bundle;&#xD;&#xA;    import android.util.Log;&#xD;&#xA;    import android.view.Menu;&#xD;&#xA;    import android.view.View;&#xD;&#xA;    import android.view.Window;&#xD;&#xA;    import android.view.WindowManager;&#xD;&#xA;    import android.widget.AdapterView;&#xD;&#xA;    import android.widget.AdapterView.OnItemClickListener;&#xD;&#xA;    import android.widget.ListAdapter;&#xD;&#xA;    import android.widget.ListView;&#xD;&#xA;    import android.widget.SimpleAdapter;&#xD;&#xA;    import android.widget.Toast;&#xD;&#xA;    public class MainActivity extends ListActivity &#xD;&#xA;    {&#xD;&#xA;	String tag = ""AYUB"";&#xD;&#xA;    /** Called when the activity is first created. */&#xD;&#xA;    @Override&#xD;&#xA;    public void onCreate(Bundle savedInstanceState) &#xD;&#xA;    { super.onCreate(savedInstanceState);&#xD;&#xA;        requestWindowFeature(Window.FEATURE_NO_TITLE);&#xD;&#xA;		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);&#xD;&#xA;    setContentView(R.layout.listplaceholder);&#xD;&#xA;        Log.d(tag, ""setContentView  "");&#xD;&#xA;        ArrayList<HashMap<String, String>> mylist = new ArrayList<HashMap<String, String>>();&#xD;&#xA;      &#xD;&#xA;       &#xD;&#xA;        JSONArray json = null;&#xD;&#xA;		try {&#xD;&#xA;			json = JSONfunctions.getJSONfromURL(""http://192.168.0.104/earthquakes.json"");&#xD;&#xA;		} catch (ClientProtocolException e1) {&#xD;&#xA;			// TODO Auto-generated catch block&#xD;&#xA;			e1.printStackTrace();&#xD;&#xA;		} catch (IOException e1) {&#xD;&#xA;			// TODO Auto-generated catch block&#xD;&#xA;			e1.printStackTrace();&#xD;&#xA;		} catch (JSONException e1) {&#xD;&#xA;			// TODO Auto-generated catch block&#xD;&#xA;			e1.printStackTrace();&#xD;&#xA;		}&#xD;&#xA;        Log.d(tag, ""json object  ""); &#xD;&#xA;        try{&#xD;&#xA;        	Collection<?> result = null;&#xD;&#xA;			JSONArray json1 = new JSONArray(result);&#xD;&#xA;     //        	// ...&#xD;&#xA;&#xD;&#xA;        	for(int i=0;i<json.length();i++){                        &#xD;&#xA;        	    HashMap<String, String> map = new HashMap<String, String>();    &#xD;&#xA;        	    JSONObject e = json1.getJSONObject(i);&#xD;&#xA;&#xD;&#xA;        	    map.put(""id"",  String.valueOf(i));&#xD;&#xA;        	    map.put(""name"", ""Earthquake name:"" + e.getString(""eqid""));&#xD;&#xA;          	    map.put(""magnitude"", ""Magnitude: "" +  e.getString(""magnitude""));&#xD;&#xA;        	    mylist.add(map);            &#xD;&#xA;        	}&#xD;&#xA;        }catch(JSONException e)        {&#xD;&#xA;        	 Log.e(""log_tag"", ""Error parsing data ""+e.toString());&#xD;&#xA;        }&#xD;&#xA;        &#xD;&#xA;        ListAdapter adapter = new SimpleAdapter(this, mylist , R.layout.activity_main, &#xD;&#xA;                        new String[] { ""name"", ""magnitude"" }, &#xD;&#xA;                        new int[] { R.id.item_title, R.id.item_subtitle });&#xD;&#xA;        &#xD;&#xA;        setListAdapter(adapter);&#xD;&#xA;        &#xD;&#xA;        final ListView lv = getListView();&#xD;&#xA;        lv.setTextFilterEnabled(true);	&#xD;&#xA;        lv.setOnItemClickListener(new OnItemClickListener() {&#xD;&#xA;        	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {        		&#xD;&#xA;        		@SuppressWarnings(""unchecked"")&#xD;&#xA;				HashMap<String, String> o = (HashMap<String, String>) lv.getItemAtPosition(position);	&#xD;&#xA;        		Log.d(tag, ""json object  "" + lv.getItemAtPosition(position)); &#xD;&#xA;        		Toast.makeText(MainActivity.this, ""ID "" + o.get(""id"")+""	"" + o.get(""name"") + o.get(""magnitude"")+""."", Toast.LENGTH_SHORT).show(); &#xD;&#xA;&#xD;&#xA;			}&#xD;&#xA;		});&#xD;&#xA;    }&#xD;&#xA;&#xD;&#xA;    @Override&#xD;&#xA;    public boolean onCreateOptionsMenu(Menu menu) {&#xD;&#xA;        getMenuInflater().inflate(R.menu.activity_main, menu);&#xD;&#xA;        return true;&#xD;&#xA;     } &#xD;&#xA;    }&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;**JSONFunctions.java**&#xD;&#xA;&#xD;&#xA;    package ayub.khosa.json_parsing;&#xD;&#xA;    import java.io.BufferedReader;&#xD;&#xA;    import java.io.IOException;&#xD;&#xA;    import java.io.InputStream;&#xD;&#xA;    import java.io.InputStreamReader;&#xD;&#xA;    import org.apache.http.HttpEntity;&#xD;&#xA;    import org.apache.http.HttpResponse;&#xD;&#xA;    import org.apache.http.client.ClientProtocolException;&#xD;&#xA;    import org.apache.http.client.HttpClient;&#xD;&#xA;    import org.apache.http.client.methods.HttpGet;&#xD;&#xA;    import org.apache.http.impl.client.DefaultHttpClient;&#xD;&#xA;    import org.json.JSONArray;&#xD;&#xA;    import org.json.JSONException;&#xD;&#xA;    public class JSONfunctions {&#xD;&#xA;    public static JSONArray getJSONfromURL(String url) throws ClientProtocolException, IOException, JSONException{&#xD;&#xA;    InputStream is = null;&#xD;&#xA;    String result = """";&#xD;&#xA;    JSONArray jArray = null;&#xD;&#xA;&#xD;&#xA;            HttpClient httpclient = new DefaultHttpClient();&#xD;&#xA;            HttpGet httpget = new HttpGet(url);&#xD;&#xA;            HttpResponse response = httpclient.execute(httpget);&#xD;&#xA;            HttpEntity entity = response.getEntity();&#xD;&#xA;            is = entity.getContent();&#xD;&#xA;&#xD;&#xA;            BufferedReader reader = new BufferedReader(new InputStreamReader(is,""iso-8859-1""),8);&#xD;&#xA;            StringBuilder sb = new StringBuilder();&#xD;&#xA;            String line = null;&#xD;&#xA;            while ((line = reader.readLine()) != null) {&#xD;&#xA;                    sb.append(line + ""\n"");&#xD;&#xA;            }&#xD;&#xA;            is.close();&#xD;&#xA;            result=sb.toString();&#xD;&#xA;&#xD;&#xA;        jArray = new JSONArray(result);            &#xD;&#xA;    return jArray;&#xD;&#xA;    }&#xD;&#xA;    }&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;Problem is that appears no data on screen and i get only a warning: &#xD;&#xA;&#xD;&#xA;&#xD;&#xA;    09-21 12:09:26.225: W/ActivityManager(59): Launch timeout has expired, giving up wake lock!&#xD;&#xA;    09-21 12:09:26.500: W/ActivityManager(59): Activity idle timeout for HistoryRecord{43ee8ee8 ayub.khosa.json_parsing/.MainActivity}&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;UPDATE :&#xD;&#xA;&#xD;&#xA;Indeed the webserver was down without i noticed. Now is up, i see in browser the json, but now i get the following errors: &#xD;&#xA;&#xD;&#xA;         09-21 12:30:52.301: W/ActivityManager(59): Activity destroy timeout for HistoryRecord{43f44da0 ayub.khosa.json_parsing/.MainActivity}&#xD;&#xA;         09-21 12:30:57.449: I/ActivityManager(59): Starting activity: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 cmp=ayub.khosa.json_parsing/.MainActivity }&#xD;&#xA;         09-21 12:30:57.609: I/ActivityManager(59): Start proc ayub.khosa.json_parsing for activity ayub.khosa.json_parsing/.MainActivity: pid=287 uid=10036 gids={3003}&#xD;&#xA;         09-21 12:30:58.179: D/AYUB(287): setContentView  &#xD;&#xA;         09-21 12:30:58.339: D/AYUB(287): json object  &#xD;&#xA;         09-21 12:30:58.339: D/AndroidRuntime(287): Shutting down VM&#xD;&#xA;         09-21 12:30:58.339: W/dalvikvm(287): threadid=1: thread exiting with uncaught exception (group=0x4001d800)&#xD;&#xA;         09-21 12:30:58.349: E/AndroidRuntime(287): FATAL EXCEPTION: main&#xD;&#xA;         09-21 12:30:58.349: E/AndroidRuntime(287): java.lang.RuntimeException: Unable to start activity ComponentInfo{ayub.khosa.json_parsing/ayub.khosa.json_parsing.MainActivity}: java.lang.NullPointerException&#xD;&#xA;         09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2663)&#xD;&#xA;         09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:2679)&#xD;&#xA;         09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread.access$2300(ActivityThread.java:125)&#xD;&#xA;         09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2033)&#xD;&#xA;         09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.os.Handler.dispatchMessage(Handler.java:99)&#xD;&#xA;         09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.os.Looper.loop(Looper.java:123)&#xD;&#xA;         09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread.main(ActivityThread.java:4627)&#xD;&#xA;         09-21 12:30:58.349: E/AndroidRuntime(287): 	at java.lang.reflect.Method.invokeNative(Native Method)&#xD;&#xA;         09-21 12:30:58.349: E/AndroidRuntime(287): 	at java.lang.reflect.Method.invoke(Method.java:521)&#xD;&#xA;         09-21 12:30:58.349: E/AndroidRuntime(287): 	at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:868)&#xD;&#xA;         09-21 12:30:58.349: E/AndroidRuntime(287): 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:626)&#xD;&#xA;         09-21 12:30:58.349: E/AndroidRuntime(287): 	at dalvik.system.NativeStart.main(Native Method)&#xD;&#xA;         09-21 12:30:58.349: E/AndroidRuntime(287): Caused by: java.lang.NullPointerException&#xD;&#xA;         09-21 12:30:58.349: E/AndroidRuntime(287): 	at java.util.ArrayList.addAll(ArrayList.java:193)&#xD;&#xA;         09-21 12:30:58.349: E/AndroidRuntime(287): 	at org.json.JSONArray.<init(JSONArray.java:70)&#xD;&#xA;         09-21 12:30:58.349: E/AndroidRuntime(287): 	at ayub.khosa.json_parsing.MainActivity.onCreate(MainActivity.java:58)&#xD;&#xA;         09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1047)&#xD;&#xA;         09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2627)&#xD;&#xA;         09-21 12:30:58.349: E/AndroidRuntime(287): 	... 11 more&#xD;&#xA;         09-21 12:30:58.419: D/dalvikvm(287): GC_FOR_MALLOC freed 3711 objects / 261576 bytes in 67ms&#xD;&#xA;         09-21 12:30:58.429: W/ActivityManager(59):   Force finishing activity ayub.khosa.json_parsing/.MainActivity&#xD;&#xA;         09-21 12:30:58.958: W/ActivityManager(59): Activity pause timeout for HistoryRecord{440757b8 ayub.khosa.json_parsing/.MainActivity}&#xD;&#xA;         09-21 12:31:02.689: I/Process(287): Sending signal. PID: 287 SIG: 9&#xD;&#xA;         09-21 12:31:02.709: I/ActivityManager(59): Process ayub.khosa.json_parsing (pid 287) has died.&#xD;&#xA;         09-21 12:31:02.729: W/InputManagerService(59): Window already focused, ignoring focus gain of: com.android.internal.view.IInputMethodClient$Stub$Proxy@43e4ec30&#xD;&#xA;         09-21 12:31:09.089: W/ActivityManager(59): Activity destroy timeout for HistoryRecord{440757b8 ayub.khosa.json_parsing/.MainActivity}&#xD;&#xA;    &#xD;&#xA;    &#xD;&#xA;    UPDATE 2 - after Max edit suggestion&#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.395: D/AYUB(272): setContentView &#xD;&#xA;     &#xD;&#xA;    >  09-21 13:08:24.475: I/global(272): Default buffer size used in BufferedReader constructor. It would be better to be explicit if an 8k-char buffer is required.&#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.475: W/System.err(272): org.json.JSONException: End of input at character 0 of &#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.485: W/System.err(272): 	at org.json.JSONTokener.syntaxError(JSONTokener.java:446)&#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.485: W/System.err(272): 	at org.json.JSONTokener.nextValue(JSONTokener.java:93)&#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.495: W/System.err(272): 	at org.json.JSONArray.<init>(JSONArray.java:87)&#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.495: W/System.err(272): 	at org.json.JSONArray.<init>(JSONArray.java:103)&#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.495: W/System.err(272): 	at ayub.khosa.json_parsing.JSONfunctions.getJSONfromURL(JSONfunctions.java:41)&#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.495: W/System.err(272): 	at ayub.khosa.json_parsing.MainActivity.onCreate(MainActivity.java:44)&#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.495: W/System.err(272): 	at android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1047)&#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.495: W/System.err(272): 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2627)&#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.495: W/System.err(272): 	at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:2679)&#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.495: W/System.err(272): 	at android.app.ActivityThread.access$2300(ActivityThread.java:125)&#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.495: W/System.err(272): 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2033)&#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.495: W/System.err(272): 	at android.os.Handler.dispatchMessage(Handler.java:99)&#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.495: W/System.err(272): 	at android.os.Looper.loop(Looper.java:123)&#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.495: W/System.err(272): 	at android.app.ActivityThread.main(ActivityThread.java:4627)&#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.495: W/System.err(272): 	at java.lang.reflect.Method.invokeNative(Native Method)&#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.505: W/System.err(272): 	at java.lang.reflect.Method.invoke(Method.java:521)&#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.505: W/System.err(272): 	at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:868)&#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.505: W/System.err(272): 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:626)&#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.505: W/System.err(272): 	at dalvik.system.NativeStart.main(Native Method)&#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.505: D/AYUB(272): json object  &#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.505: D/AndroidRuntime(272): Shutting down VM&#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.505: W/dalvikvm(272): threadid=1: thread exiting with uncaught exception (group=0x4001d800)&#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.515: E/AndroidRuntime(272): FATAL EXCEPTION: main&#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.515: E/AndroidRuntime(272): java.lang.RuntimeException: Unable to start activity ComponentInfo{ayub.khosa.json_parsing/ayub.khosa.json_parsing.MainActivity}: java.lang.NullPointerException&#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.515: E/AndroidRuntime(272): 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2663)&#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.515: E/AndroidRuntime(272): 	at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:2679)&#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.515: E/AndroidRuntime(272): 	at android.app.ActivityThread.access$2300(ActivityThread.java:125)&#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.515: E/AndroidRuntime(272): 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2033)&#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.515: E/AndroidRuntime(272): 	at android.os.Handler.dispatchMessage(Handler.java:99)&#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.515: E/AndroidRuntime(272): 	at android.os.Looper.loop(Looper.java:123)&#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.515: E/AndroidRuntime(272): 	at android.app.ActivityThread.main(ActivityThread.java:4627)&#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.515: E/AndroidRuntime(272): 	at java.lang.reflect.Method.invokeNative(Native Method)&#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.515: E/AndroidRuntime(272): 	at java.lang.reflect.Method.invoke(Method.java:521)&#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.515: E/AndroidRuntime(272): 	at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:868)&#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.515: E/AndroidRuntime(272): 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:626)&#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.515: E/AndroidRuntime(272): 	at dalvik.system.NativeStart.main(Native Method)&#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.515: E/AndroidRuntime(272): Caused by: java.lang.NullPointerException&#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.515: E/AndroidRuntime(272): 	at java.util.ArrayList.addAll(ArrayList.java:193)&#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.515: E/AndroidRuntime(272): 	at org.json.JSONArray.<init>(JSONArray.java:70)&#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.515: E/AndroidRuntime(272): 	at ayub.khosa.json_parsing.MainActivity.onCreate(MainActivity.java:58)&#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.515: E/AndroidRuntime(272): 	at android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1047)&#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.515: E/AndroidRuntime(272): 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2627)&#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:24.515: E/AndroidRuntime(272): 	... 11 more&#xD;&#xA;    &#xD;&#xA;    >  09-21 13:08:27.035: I/Process(272): Sending signal. PID: 272 SIG: 9&#xD;&#xA;&#xD;&#xA;"
+47739272;5;18932575;c7eaf844-520a-4cd6-b0d1-18f6c24dfaab;2013-09-21 12:29:02;1631379;;added 6 characters in body;"Regarding another thread here i try too, to get a json array form a json. I have the following files : 
+
+
+
+earthquake.json
+
+<pre>
+[{
+        ""eqid"": ""merge"",
+        ""magnitude"": 8.8,
+        ""lng"": 142.369,
+        ""src"": ""us"",
+        ""datetime"": ""2011-03-11 04:46:23"",
+        ""depth"": 24.4,
+        ""lat"": 38.322
+    }, {
+        ""eqid"": ""merge2"",
+        ""magnitude"": 8.6,
+        ""lng"": 93.0632,
+        ""src"": ""us"",
+        ""datetime"": ""2012-04-11 06:38:37"",
+        ""depth"": 22.9,
+        ""lat"": 2.311
+    }, {
+        ""eqid"": ""2007hear"",
+        ""magnitude"": 8.4,
+        ""lng"": 101.3815,
+        ""src"": ""us"",
+        ""datetime"": ""2007-09-12 09:10:26"",
+        ""depth"": 30,
+        ""lat"": -4.5172
+    }, {
+        ""eqid"": ""c00090da"",
+        ""magnitude"": 8.2,
+        ""lng"": 92.4522,
+        ""src"": ""us"",
+        ""datetime"": ""2012-04-11 08:43:09"",
+        ""depth"": 16.4,
+        ""lat"": 0.7731
+    }, {
+        ""eqid"": ""2007aqbk"",
+        ""magnitude"": 8,
+        ""lng"": 156.9567,
+        ""src"": ""us"",
+        ""datetime"": ""2007-04-01 18:39:56"",
+        ""depth"": 10,
+        ""lat"": -8.4528
+    }, {
+        ""eqid"": ""2007hec6"",
+        ""magnitude"": 7.8,
+        ""lng"": 100.9638,
+        ""src"": ""us"",
+        ""datetime"": ""2007-09-12 21:49:01"",
+        ""depth"": 10,
+        ""lat"": -2.5265
+    }, {
+        ""eqid"": ""b000g7x7"",
+        ""magnitude"": 7.8,
+        ""lng"": 62.0532,
+        ""src"": ""us"",
+        ""datetime"": ""2013-04-16 08:44:20"",
+        ""depth"": 82,
+        ""lat"": 28.1069
+    }, {
+        ""eqid"": ""a00043nx"",
+        ""magnitude"": 7.7,
+        ""lng"": 100.1139,
+        ""src"": ""us"",
+        ""datetime"": ""2010-10-25 12:42:22"",
+        ""depth"": 20.6,
+        ""lat"": -3.4841
+    }, {
+        ""eqid"": ""2010utc5"",
+        ""magnitude"": 7.7,
+        ""lng"": 97.1315,
+        ""src"": ""us"",
+        ""datetime"": ""2010-04-06 20:15:02"",
+        ""depth"": 31,
+        ""lat"": 2.3602
+    }, {
+        ""eqid"": ""2009mebz"",
+        ""magnitude"": 7.6,
+        ""lng"": 99.9606,
+        ""src"": ""us"",
+        ""datetime"": ""2009-09-30 08:16:09"",
+        ""depth"": 80,
+        ""lat"": -0.7889
+    }]
+</pre>
+
+
+ 
+**MainActivity.java**
+
+ 
+    package ayub.khosa.json_parsing;
+    import java.io.IOException;
+    import java.util.ArrayList;
+    import java.util.Collection;
+    import java.util.HashMap;
+    import org.apache.http.client.ClientProtocolException;
+    import org.json.JSONArray;
+    import org.json.JSONException;
+    import org.json.JSONObject;
+    import android.app.ListActivity;
+    import android.os.Bundle;
+    import android.util.Log;
+    import android.view.Menu;
+    import android.view.View;
+    import android.view.Window;
+    import android.view.WindowManager;
+    import android.widget.AdapterView;
+    import android.widget.AdapterView.OnItemClickListener;
+    import android.widget.ListAdapter;
+    import android.widget.ListView;
+    import android.widget.SimpleAdapter;
+    import android.widget.Toast;
+    public class MainActivity extends ListActivity 
+    {
+	String tag = ""AYUB"";
+    /** Called when the activity is first created. */
+    @Override
+    public void onCreate(Bundle savedInstanceState) 
+    { super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    setContentView(R.layout.listplaceholder);
+        Log.d(tag, ""setContentView  "");
+        ArrayList<HashMap<String, String>> mylist = new ArrayList<HashMap<String, String>>();
+      
+       
+        JSONArray json = null;
+		try {
+			json = JSONfunctions.getJSONfromURL(""http://192.168.0.104/earthquakes.json"");
+		} catch (ClientProtocolException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (JSONException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+        Log.d(tag, ""json object  ""); 
+        try{
+        	Collection<?> result = null;
+			JSONArray json1 = new JSONArray(result);
+     //        	// ...
+
+        	for(int i=0;i<json.length();i++){                        
+        	    HashMap<String, String> map = new HashMap<String, String>();    
+        	    JSONObject e = json1.getJSONObject(i);
+
+        	    map.put(""id"",  String.valueOf(i));
+        	    map.put(""name"", ""Earthquake name:"" + e.getString(""eqid""));
+          	    map.put(""magnitude"", ""Magnitude: "" +  e.getString(""magnitude""));
+        	    mylist.add(map);            
+        	}
+        }catch(JSONException e)        {
+        	 Log.e(""log_tag"", ""Error parsing data ""+e.toString());
+        }
+        
+        ListAdapter adapter = new SimpleAdapter(this, mylist , R.layout.activity_main, 
+                        new String[] { ""name"", ""magnitude"" }, 
+                        new int[] { R.id.item_title, R.id.item_subtitle });
+        
+        setListAdapter(adapter);
+        
+        final ListView lv = getListView();
+        lv.setTextFilterEnabled(true);	
+        lv.setOnItemClickListener(new OnItemClickListener() {
+        	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {        		
+        		@SuppressWarnings(""unchecked"")
+				HashMap<String, String> o = (HashMap<String, String>) lv.getItemAtPosition(position);	
+        		Log.d(tag, ""json object  "" + lv.getItemAtPosition(position)); 
+        		Toast.makeText(MainActivity.this, ""ID "" + o.get(""id"")+""	"" + o.get(""name"") + o.get(""magnitude"")+""."", Toast.LENGTH_SHORT).show(); 
+
+			}
+		});
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_main, menu);
+        return true;
+     } 
+    }
+
+
+**JSONFunctions.java**
+
+    package ayub.khosa.json_parsing;
+    import java.io.BufferedReader;
+    import java.io.IOException;
+    import java.io.InputStream;
+    import java.io.InputStreamReader;
+    import org.apache.http.HttpEntity;
+    import org.apache.http.HttpResponse;
+    import org.apache.http.client.ClientProtocolException;
+    import org.apache.http.client.HttpClient;
+    import org.apache.http.client.methods.HttpGet;
+    import org.apache.http.impl.client.DefaultHttpClient;
+    import org.json.JSONArray;
+    import org.json.JSONException;
+    public class JSONfunctions {
+    public static JSONArray getJSONfromURL(String url) throws ClientProtocolException, IOException, JSONException{
+    InputStream is = null;
+    String result = """";
+    JSONArray jArray = null;
+
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpGet httpget = new HttpGet(url);
+            HttpResponse response = httpclient.execute(httpget);
+            HttpEntity entity = response.getEntity();
+            is = entity.getContent();
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is,""iso-8859-1""),8);
+            StringBuilder sb = new StringBuilder();
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                    sb.append(line + ""\n"");
+            }
+            is.close();
+            result=sb.toString();
+
+        jArray = new JSONArray(result);            
+    return jArray;
+    }
+    }
+
+
+
+
+Problem is that appears no data on screen and i get only a warning: 
+
+
+> 09-21 12:09:26.225: W/ActivityManager(59): Launch timeout has expired, giving up wake lock!
+
+> 09-21 12:09:26.500: W/ActivityManager(59): Activity idle timeout for HistoryRecord{43ee8ee8 ayub.khosa.json_parsing/.MainActivity}
+"
+47739527;5;18932575;47f6c727-380d-4f61-84fa-260ee9aac8fd;2013-09-21 12:35:37;1631379;;added 2 characters in body;"Regarding another thread here i try too, to get a json array form a json. I have the following files : 
+
+
+
+earthquake.json
+
+<pre>
+[{
+        ""eqid"": ""merge"",
+        ""magnitude"": 8.8,
+        ""lng"": 142.369,
+        ""src"": ""us"",
+        ""datetime"": ""2011-03-11 04:46:23"",
+        ""depth"": 24.4,
+        ""lat"": 38.322
+    }, {
+        ""eqid"": ""merge2"",
+        ""magnitude"": 8.6,
+        ""lng"": 93.0632,
+        ""src"": ""us"",
+        ""datetime"": ""2012-04-11 06:38:37"",
+        ""depth"": 22.9,
+        ""lat"": 2.311
+    }, {
+        ""eqid"": ""2007hear"",
+        ""magnitude"": 8.4,
+        ""lng"": 101.3815,
+        ""src"": ""us"",
+        ""datetime"": ""2007-09-12 09:10:26"",
+        ""depth"": 30,
+        ""lat"": -4.5172
+    }, {
+        ""eqid"": ""c00090da"",
+        ""magnitude"": 8.2,
+        ""lng"": 92.4522,
+        ""src"": ""us"",
+        ""datetime"": ""2012-04-11 08:43:09"",
+        ""depth"": 16.4,
+        ""lat"": 0.7731
+    }, {
+        ""eqid"": ""2007aqbk"",
+        ""magnitude"": 8,
+        ""lng"": 156.9567,
+        ""src"": ""us"",
+        ""datetime"": ""2007-04-01 18:39:56"",
+        ""depth"": 10,
+        ""lat"": -8.4528
+    }, {
+        ""eqid"": ""2007hec6"",
+        ""magnitude"": 7.8,
+        ""lng"": 100.9638,
+        ""src"": ""us"",
+        ""datetime"": ""2007-09-12 21:49:01"",
+        ""depth"": 10,
+        ""lat"": -2.5265
+    }, {
+        ""eqid"": ""b000g7x7"",
+        ""magnitude"": 7.8,
+        ""lng"": 62.0532,
+        ""src"": ""us"",
+        ""datetime"": ""2013-04-16 08:44:20"",
+        ""depth"": 82,
+        ""lat"": 28.1069
+    }, {
+        ""eqid"": ""a00043nx"",
+        ""magnitude"": 7.7,
+        ""lng"": 100.1139,
+        ""src"": ""us"",
+        ""datetime"": ""2010-10-25 12:42:22"",
+        ""depth"": 20.6,
+        ""lat"": -3.4841
+    }, {
+        ""eqid"": ""2010utc5"",
+        ""magnitude"": 7.7,
+        ""lng"": 97.1315,
+        ""src"": ""us"",
+        ""datetime"": ""2010-04-06 20:15:02"",
+        ""depth"": 31,
+        ""lat"": 2.3602
+    }, {
+        ""eqid"": ""2009mebz"",
+        ""magnitude"": 7.6,
+        ""lng"": 99.9606,
+        ""src"": ""us"",
+        ""datetime"": ""2009-09-30 08:16:09"",
+        ""depth"": 80,
+        ""lat"": -0.7889
+    }]
+</pre>
+
+
+ 
+**MainActivity.java**
+
+ 
+    package ayub.khosa.json_parsing;
+    import java.io.IOException;
+    import java.util.ArrayList;
+    import java.util.Collection;
+    import java.util.HashMap;
+    import org.apache.http.client.ClientProtocolException;
+    import org.json.JSONArray;
+    import org.json.JSONException;
+    import org.json.JSONObject;
+    import android.app.ListActivity;
+    import android.os.Bundle;
+    import android.util.Log;
+    import android.view.Menu;
+    import android.view.View;
+    import android.view.Window;
+    import android.view.WindowManager;
+    import android.widget.AdapterView;
+    import android.widget.AdapterView.OnItemClickListener;
+    import android.widget.ListAdapter;
+    import android.widget.ListView;
+    import android.widget.SimpleAdapter;
+    import android.widget.Toast;
+    public class MainActivity extends ListActivity 
+    {
+	String tag = ""AYUB"";
+    /** Called when the activity is first created. */
+    @Override
+    public void onCreate(Bundle savedInstanceState) 
+    { super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    setContentView(R.layout.listplaceholder);
+        Log.d(tag, ""setContentView  "");
+        ArrayList<HashMap<String, String>> mylist = new ArrayList<HashMap<String, String>>();
+      
+       
+        JSONArray json = null;
+		try {
+			json = JSONfunctions.getJSONfromURL(""http://192.168.0.104/earthquakes.json"");
+		} catch (ClientProtocolException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (JSONException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+        Log.d(tag, ""json object  ""); 
+        try{
+        	Collection<?> result = null;
+			JSONArray json1 = new JSONArray(result);
+     //        	// ...
+
+        	for(int i=0;i<json.length();i++){                        
+        	    HashMap<String, String> map = new HashMap<String, String>();    
+        	    JSONObject e = json1.getJSONObject(i);
+
+        	    map.put(""id"",  String.valueOf(i));
+        	    map.put(""name"", ""Earthquake name:"" + e.getString(""eqid""));
+          	    map.put(""magnitude"", ""Magnitude: "" +  e.getString(""magnitude""));
+        	    mylist.add(map);            
+        	}
+        }catch(JSONException e)        {
+        	 Log.e(""log_tag"", ""Error parsing data ""+e.toString());
+        }
+        
+        ListAdapter adapter = new SimpleAdapter(this, mylist , R.layout.activity_main, 
+                        new String[] { ""name"", ""magnitude"" }, 
+                        new int[] { R.id.item_title, R.id.item_subtitle });
+        
+        setListAdapter(adapter);
+        
+        final ListView lv = getListView();
+        lv.setTextFilterEnabled(true);	
+        lv.setOnItemClickListener(new OnItemClickListener() {
+        	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {        		
+        		@SuppressWarnings(""unchecked"")
+				HashMap<String, String> o = (HashMap<String, String>) lv.getItemAtPosition(position);	
+        		Log.d(tag, ""json object  "" + lv.getItemAtPosition(position)); 
+        		Toast.makeText(MainActivity.this, ""ID "" + o.get(""id"")+""	"" + o.get(""name"") + o.get(""magnitude"")+""."", Toast.LENGTH_SHORT).show(); 
+
+			}
+		});
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_main, menu);
+        return true;
+     } 
+    }
+
+
+**JSONFunctions.java**
+
+    package ayub.khosa.json_parsing;
+    import java.io.BufferedReader;
+    import java.io.IOException;
+    import java.io.InputStream;
+    import java.io.InputStreamReader;
+    import org.apache.http.HttpEntity;
+    import org.apache.http.HttpResponse;
+    import org.apache.http.client.ClientProtocolException;
+    import org.apache.http.client.HttpClient;
+    import org.apache.http.client.methods.HttpGet;
+    import org.apache.http.impl.client.DefaultHttpClient;
+    import org.json.JSONArray;
+    import org.json.JSONException;
+    public class JSONfunctions {
+    public static JSONArray getJSONfromURL(String url) throws ClientProtocolException, IOException, JSONException{
+    InputStream is = null;
+    String result = """";
+    JSONArray jArray = null;
+
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpGet httpget = new HttpGet(url);
+            HttpResponse response = httpclient.execute(httpget);
+            HttpEntity entity = response.getEntity();
+            is = entity.getContent();
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is,""iso-8859-1""),8);
+            StringBuilder sb = new StringBuilder();
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                    sb.append(line + ""\n"");
+            }
+            is.close();
+            result=sb.toString();
+
+        jArray = new JSONArray(result);            
+    return jArray;
+    }
+    }
+
+
+
+
+Problem is that appears no data on screen and i get only a warning: 
+
+
+    09-21 12:09:26.225: W/ActivityManager(59): Launch timeout has expired, giving up wake lock!
+    09-21 12:09:26.500: W/ActivityManager(59): Activity idle timeout for HistoryRecord{43ee8ee8 ayub.khosa.json_parsing/.MainActivity}
+"
+47739760;5;18932575;c513dabc-a5d3-4873-a2b8-838a7f1c328d;2013-09-21 12:40:54;2683051;;added 4040 characters in body;"Regarding another thread here i try too, to get a json array form a json. I have the following files : 
+
+
+
+earthquake.json
+
+<pre>
+[{
+        ""eqid"": ""merge"",
+        ""magnitude"": 8.8,
+        ""lng"": 142.369,
+        ""src"": ""us"",
+        ""datetime"": ""2011-03-11 04:46:23"",
+        ""depth"": 24.4,
+        ""lat"": 38.322
+    }, {
+        ""eqid"": ""merge2"",
+        ""magnitude"": 8.6,
+        ""lng"": 93.0632,
+        ""src"": ""us"",
+        ""datetime"": ""2012-04-11 06:38:37"",
+        ""depth"": 22.9,
+        ""lat"": 2.311
+    }, {
+        ""eqid"": ""2007hear"",
+        ""magnitude"": 8.4,
+        ""lng"": 101.3815,
+        ""src"": ""us"",
+        ""datetime"": ""2007-09-12 09:10:26"",
+        ""depth"": 30,
+        ""lat"": -4.5172
+    }, {
+        ""eqid"": ""c00090da"",
+        ""magnitude"": 8.2,
+        ""lng"": 92.4522,
+        ""src"": ""us"",
+        ""datetime"": ""2012-04-11 08:43:09"",
+        ""depth"": 16.4,
+        ""lat"": 0.7731
+    }, {
+        ""eqid"": ""2007aqbk"",
+        ""magnitude"": 8,
+        ""lng"": 156.9567,
+        ""src"": ""us"",
+        ""datetime"": ""2007-04-01 18:39:56"",
+        ""depth"": 10,
+        ""lat"": -8.4528
+    }, {
+        ""eqid"": ""2007hec6"",
+        ""magnitude"": 7.8,
+        ""lng"": 100.9638,
+        ""src"": ""us"",
+        ""datetime"": ""2007-09-12 21:49:01"",
+        ""depth"": 10,
+        ""lat"": -2.5265
+    }, {
+        ""eqid"": ""b000g7x7"",
+        ""magnitude"": 7.8,
+        ""lng"": 62.0532,
+        ""src"": ""us"",
+        ""datetime"": ""2013-04-16 08:44:20"",
+        ""depth"": 82,
+        ""lat"": 28.1069
+    }, {
+        ""eqid"": ""a00043nx"",
+        ""magnitude"": 7.7,
+        ""lng"": 100.1139,
+        ""src"": ""us"",
+        ""datetime"": ""2010-10-25 12:42:22"",
+        ""depth"": 20.6,
+        ""lat"": -3.4841
+    }, {
+        ""eqid"": ""2010utc5"",
+        ""magnitude"": 7.7,
+        ""lng"": 97.1315,
+        ""src"": ""us"",
+        ""datetime"": ""2010-04-06 20:15:02"",
+        ""depth"": 31,
+        ""lat"": 2.3602
+    }, {
+        ""eqid"": ""2009mebz"",
+        ""magnitude"": 7.6,
+        ""lng"": 99.9606,
+        ""src"": ""us"",
+        ""datetime"": ""2009-09-30 08:16:09"",
+        ""depth"": 80,
+        ""lat"": -0.7889
+    }]
+</pre>
+
+
+ 
+**MainActivity.java**
+
+ 
+    package ayub.khosa.json_parsing;
+    import java.io.IOException;
+    import java.util.ArrayList;
+    import java.util.Collection;
+    import java.util.HashMap;
+    import org.apache.http.client.ClientProtocolException;
+    import org.json.JSONArray;
+    import org.json.JSONException;
+    import org.json.JSONObject;
+    import android.app.ListActivity;
+    import android.os.Bundle;
+    import android.util.Log;
+    import android.view.Menu;
+    import android.view.View;
+    import android.view.Window;
+    import android.view.WindowManager;
+    import android.widget.AdapterView;
+    import android.widget.AdapterView.OnItemClickListener;
+    import android.widget.ListAdapter;
+    import android.widget.ListView;
+    import android.widget.SimpleAdapter;
+    import android.widget.Toast;
+    public class MainActivity extends ListActivity 
+    {
+	String tag = ""AYUB"";
+    /** Called when the activity is first created. */
+    @Override
+    public void onCreate(Bundle savedInstanceState) 
+    { super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    setContentView(R.layout.listplaceholder);
+        Log.d(tag, ""setContentView  "");
+        ArrayList<HashMap<String, String>> mylist = new ArrayList<HashMap<String, String>>();
+      
+       
+        JSONArray json = null;
+		try {
+			json = JSONfunctions.getJSONfromURL(""http://192.168.0.104/earthquakes.json"");
+		} catch (ClientProtocolException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (JSONException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+        Log.d(tag, ""json object  ""); 
+        try{
+        	Collection<?> result = null;
+			JSONArray json1 = new JSONArray(result);
+     //        	// ...
+
+        	for(int i=0;i<json.length();i++){                        
+        	    HashMap<String, String> map = new HashMap<String, String>();    
+        	    JSONObject e = json1.getJSONObject(i);
+
+        	    map.put(""id"",  String.valueOf(i));
+        	    map.put(""name"", ""Earthquake name:"" + e.getString(""eqid""));
+          	    map.put(""magnitude"", ""Magnitude: "" +  e.getString(""magnitude""));
+        	    mylist.add(map);            
+        	}
+        }catch(JSONException e)        {
+        	 Log.e(""log_tag"", ""Error parsing data ""+e.toString());
+        }
+        
+        ListAdapter adapter = new SimpleAdapter(this, mylist , R.layout.activity_main, 
+                        new String[] { ""name"", ""magnitude"" }, 
+                        new int[] { R.id.item_title, R.id.item_subtitle });
+        
+        setListAdapter(adapter);
+        
+        final ListView lv = getListView();
+        lv.setTextFilterEnabled(true);	
+        lv.setOnItemClickListener(new OnItemClickListener() {
+        	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {        		
+        		@SuppressWarnings(""unchecked"")
+				HashMap<String, String> o = (HashMap<String, String>) lv.getItemAtPosition(position);	
+        		Log.d(tag, ""json object  "" + lv.getItemAtPosition(position)); 
+        		Toast.makeText(MainActivity.this, ""ID "" + o.get(""id"")+""	"" + o.get(""name"") + o.get(""magnitude"")+""."", Toast.LENGTH_SHORT).show(); 
+
+			}
+		});
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_main, menu);
+        return true;
+     } 
+    }
+
+
+**JSONFunctions.java**
+
+    package ayub.khosa.json_parsing;
+    import java.io.BufferedReader;
+    import java.io.IOException;
+    import java.io.InputStream;
+    import java.io.InputStreamReader;
+    import org.apache.http.HttpEntity;
+    import org.apache.http.HttpResponse;
+    import org.apache.http.client.ClientProtocolException;
+    import org.apache.http.client.HttpClient;
+    import org.apache.http.client.methods.HttpGet;
+    import org.apache.http.impl.client.DefaultHttpClient;
+    import org.json.JSONArray;
+    import org.json.JSONException;
+    public class JSONfunctions {
+    public static JSONArray getJSONfromURL(String url) throws ClientProtocolException, IOException, JSONException{
+    InputStream is = null;
+    String result = """";
+    JSONArray jArray = null;
+
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpGet httpget = new HttpGet(url);
+            HttpResponse response = httpclient.execute(httpget);
+            HttpEntity entity = response.getEntity();
+            is = entity.getContent();
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is,""iso-8859-1""),8);
+            StringBuilder sb = new StringBuilder();
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                    sb.append(line + ""\n"");
+            }
+            is.close();
+            result=sb.toString();
+
+        jArray = new JSONArray(result);            
+    return jArray;
+    }
+    }
+
+
+
+
+Problem is that appears no data on screen and i get only a warning: 
+
+
+    09-21 12:09:26.225: W/ActivityManager(59): Launch timeout has expired, giving up wake lock!
+    09-21 12:09:26.500: W/ActivityManager(59): Activity idle timeout for HistoryRecord{43ee8ee8 ayub.khosa.json_parsing/.MainActivity}
+
+
+UPDATE :
+
+Indeed the webserver was down without i noticed. Now is up, i see in browser the json, but now i get the following errors: 
+
+> 09-21 12:30:52.301: W/ActivityManager(59): Activity destroy timeout for HistoryRecord{43f44da0 ayub.khosa.json_parsing/.MainActivity}
+
+>09-21 12:30:57.449: I/ActivityManager(59): Starting activity: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 cmp=ayub.khosa.json_parsing/.MainActivity }
+
+> 09-21 12:30:57.609: I/ActivityManager(59): Start proc ayub.khosa.json_parsing for activity ayub.khosa.json_parsing/.MainActivity: pid=287 uid=10036 gids={3003}
+> 09-21 12:30:58.179: D/AYUB(287): setContentView  
+> 09-21 12:30:58.339: D/AYUB(287): json object  
+> 09-21 12:30:58.339: D/AndroidRuntime(287): Shutting down VM
+> 09-21 12:30:58.339: W/dalvikvm(287): threadid=1: thread exiting with uncaught exception (group=0x4001d800)
+> 09-21 12:30:58.349: E/AndroidRuntime(287): FATAL EXCEPTION: main
+> 09-21 12:30:58.349: E/AndroidRuntime(287): java.lang.RuntimeException: Unable to start activity ComponentInfo{ayub.khosa.json_parsing/ayub.khosa.json_parsing.MainActivity}: java.lang.NullPointerException
+> 09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2663)
+> 09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:2679)
+> 09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread.access$2300(ActivityThread.java:125)
+> 09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2033)
+> 09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.os.Handler.dispatchMessage(Handler.java:99)
+> 09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.os.Looper.loop(Looper.java:123)
+> 09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread.main(ActivityThread.java:4627)
+> 09-21 12:30:58.349: E/AndroidRuntime(287): 	at java.lang.reflect.Method.invokeNative(Native Method)
+> 09-21 12:30:58.349: E/AndroidRuntime(287): 	at java.lang.reflect.Method.invoke(Method.java:521)
+> 09-21 12:30:58.349: E/AndroidRuntime(287): 	at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:868)
+> 09-21 12:30:58.349: E/AndroidRuntime(287): 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:626)
+> 09-21 12:30:58.349: E/AndroidRuntime(287): 	at dalvik.system.NativeStart.main(Native Method)
+> 09-21 12:30:58.349: E/AndroidRuntime(287): Caused by: java.lang.NullPointerException
+> 09-21 12:30:58.349: E/AndroidRuntime(287): 	at java.util.ArrayList.addAll(ArrayList.java:193)
+> 09-21 12:30:58.349: E/AndroidRuntime(287): 	at org.json.JSONArray.<init>(JSONArray.java:70)
+> 09-21 12:30:58.349: E/AndroidRuntime(287): 	at ayub.khosa.json_parsing.MainActivity.onCreate(MainActivity.java:58)
+> 09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1047)
+> 09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2627)
+> 09-21 12:30:58.349: E/AndroidRuntime(287): 	... 11 more
+> 09-21 12:30:58.419: D/dalvikvm(287): GC_FOR_MALLOC freed 3711 objects / 261576 bytes in 67ms
+> 09-21 12:30:58.429: W/ActivityManager(59):   Force finishing activity ayub.khosa.json_parsing/.MainActivity
+> 09-21 12:30:58.958: W/ActivityManager(59): Activity pause timeout for HistoryRecord{440757b8 ayub.khosa.json_parsing/.MainActivity}
+> 09-21 12:31:02.689: I/Process(287): Sending signal. PID: 287 SIG: 9
+> 09-21 12:31:02.709: I/ActivityManager(59): Process ayub.khosa.json_parsing (pid 287) has died.
+> 09-21 12:31:02.729: W/InputManagerService(59): Window already focused, ignoring focus gain of: com.android.internal.view.IInputMethodClient$Stub$Proxy@43e4ec30
+> 09-21 12:31:09.089: W/ActivityManager(59): Activity destroy timeout for HistoryRecord{440757b8 ayub.khosa.json_parsing/.MainActivity}
+"
+47740229;5;18932575;0d67813b-fdca-40db-ba02-6e48748eae12;2013-09-21 12:54:57;1631379;;added 101 characters in body;"Regarding another thread here i try too, to get a json array form a json. I have the following files : 
+
+
+
+earthquake.json
+
+<pre>
+[{
+        ""eqid"": ""merge"",
+        ""magnitude"": 8.8,
+        ""lng"": 142.369,
+        ""src"": ""us"",
+        ""datetime"": ""2011-03-11 04:46:23"",
+        ""depth"": 24.4,
+        ""lat"": 38.322
+    }, {
+        ""eqid"": ""merge2"",
+        ""magnitude"": 8.6,
+        ""lng"": 93.0632,
+        ""src"": ""us"",
+        ""datetime"": ""2012-04-11 06:38:37"",
+        ""depth"": 22.9,
+        ""lat"": 2.311
+    }, {
+        ""eqid"": ""2007hear"",
+        ""magnitude"": 8.4,
+        ""lng"": 101.3815,
+        ""src"": ""us"",
+        ""datetime"": ""2007-09-12 09:10:26"",
+        ""depth"": 30,
+        ""lat"": -4.5172
+    }, {
+        ""eqid"": ""c00090da"",
+        ""magnitude"": 8.2,
+        ""lng"": 92.4522,
+        ""src"": ""us"",
+        ""datetime"": ""2012-04-11 08:43:09"",
+        ""depth"": 16.4,
+        ""lat"": 0.7731
+    }, {
+        ""eqid"": ""2007aqbk"",
+        ""magnitude"": 8,
+        ""lng"": 156.9567,
+        ""src"": ""us"",
+        ""datetime"": ""2007-04-01 18:39:56"",
+        ""depth"": 10,
+        ""lat"": -8.4528
+    }, {
+        ""eqid"": ""2007hec6"",
+        ""magnitude"": 7.8,
+        ""lng"": 100.9638,
+        ""src"": ""us"",
+        ""datetime"": ""2007-09-12 21:49:01"",
+        ""depth"": 10,
+        ""lat"": -2.5265
+    }, {
+        ""eqid"": ""b000g7x7"",
+        ""magnitude"": 7.8,
+        ""lng"": 62.0532,
+        ""src"": ""us"",
+        ""datetime"": ""2013-04-16 08:44:20"",
+        ""depth"": 82,
+        ""lat"": 28.1069
+    }, {
+        ""eqid"": ""a00043nx"",
+        ""magnitude"": 7.7,
+        ""lng"": 100.1139,
+        ""src"": ""us"",
+        ""datetime"": ""2010-10-25 12:42:22"",
+        ""depth"": 20.6,
+        ""lat"": -3.4841
+    }, {
+        ""eqid"": ""2010utc5"",
+        ""magnitude"": 7.7,
+        ""lng"": 97.1315,
+        ""src"": ""us"",
+        ""datetime"": ""2010-04-06 20:15:02"",
+        ""depth"": 31,
+        ""lat"": 2.3602
+    }, {
+        ""eqid"": ""2009mebz"",
+        ""magnitude"": 7.6,
+        ""lng"": 99.9606,
+        ""src"": ""us"",
+        ""datetime"": ""2009-09-30 08:16:09"",
+        ""depth"": 80,
+        ""lat"": -0.7889
+    }]
+</pre>
+
+
+ 
+**MainActivity.java**
+
+ 
+    package ayub.khosa.json_parsing;
+    import java.io.IOException;
+    import java.util.ArrayList;
+    import java.util.Collection;
+    import java.util.HashMap;
+    import org.apache.http.client.ClientProtocolException;
+    import org.json.JSONArray;
+    import org.json.JSONException;
+    import org.json.JSONObject;
+    import android.app.ListActivity;
+    import android.os.Bundle;
+    import android.util.Log;
+    import android.view.Menu;
+    import android.view.View;
+    import android.view.Window;
+    import android.view.WindowManager;
+    import android.widget.AdapterView;
+    import android.widget.AdapterView.OnItemClickListener;
+    import android.widget.ListAdapter;
+    import android.widget.ListView;
+    import android.widget.SimpleAdapter;
+    import android.widget.Toast;
+    public class MainActivity extends ListActivity 
+    {
+	String tag = ""AYUB"";
+    /** Called when the activity is first created. */
+    @Override
+    public void onCreate(Bundle savedInstanceState) 
+    { super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    setContentView(R.layout.listplaceholder);
+        Log.d(tag, ""setContentView  "");
+        ArrayList<HashMap<String, String>> mylist = new ArrayList<HashMap<String, String>>();
+      
+       
+        JSONArray json = null;
+		try {
+			json = JSONfunctions.getJSONfromURL(""http://192.168.0.104/earthquakes.json"");
+		} catch (ClientProtocolException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (JSONException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+        Log.d(tag, ""json object  ""); 
+        try{
+        	Collection<?> result = null;
+			JSONArray json1 = new JSONArray(result);
+     //        	// ...
+
+        	for(int i=0;i<json.length();i++){                        
+        	    HashMap<String, String> map = new HashMap<String, String>();    
+        	    JSONObject e = json1.getJSONObject(i);
+
+        	    map.put(""id"",  String.valueOf(i));
+        	    map.put(""name"", ""Earthquake name:"" + e.getString(""eqid""));
+          	    map.put(""magnitude"", ""Magnitude: "" +  e.getString(""magnitude""));
+        	    mylist.add(map);            
+        	}
+        }catch(JSONException e)        {
+        	 Log.e(""log_tag"", ""Error parsing data ""+e.toString());
+        }
+        
+        ListAdapter adapter = new SimpleAdapter(this, mylist , R.layout.activity_main, 
+                        new String[] { ""name"", ""magnitude"" }, 
+                        new int[] { R.id.item_title, R.id.item_subtitle });
+        
+        setListAdapter(adapter);
+        
+        final ListView lv = getListView();
+        lv.setTextFilterEnabled(true);	
+        lv.setOnItemClickListener(new OnItemClickListener() {
+        	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {        		
+        		@SuppressWarnings(""unchecked"")
+				HashMap<String, String> o = (HashMap<String, String>) lv.getItemAtPosition(position);	
+        		Log.d(tag, ""json object  "" + lv.getItemAtPosition(position)); 
+        		Toast.makeText(MainActivity.this, ""ID "" + o.get(""id"")+""	"" + o.get(""name"") + o.get(""magnitude"")+""."", Toast.LENGTH_SHORT).show(); 
+
+			}
+		});
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_main, menu);
+        return true;
+     } 
+    }
+
+
+**JSONFunctions.java**
+
+    package ayub.khosa.json_parsing;
+    import java.io.BufferedReader;
+    import java.io.IOException;
+    import java.io.InputStream;
+    import java.io.InputStreamReader;
+    import org.apache.http.HttpEntity;
+    import org.apache.http.HttpResponse;
+    import org.apache.http.client.ClientProtocolException;
+    import org.apache.http.client.HttpClient;
+    import org.apache.http.client.methods.HttpGet;
+    import org.apache.http.impl.client.DefaultHttpClient;
+    import org.json.JSONArray;
+    import org.json.JSONException;
+    public class JSONfunctions {
+    public static JSONArray getJSONfromURL(String url) throws ClientProtocolException, IOException, JSONException{
+    InputStream is = null;
+    String result = """";
+    JSONArray jArray = null;
+
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpGet httpget = new HttpGet(url);
+            HttpResponse response = httpclient.execute(httpget);
+            HttpEntity entity = response.getEntity();
+            is = entity.getContent();
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is,""iso-8859-1""),8);
+            StringBuilder sb = new StringBuilder();
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                    sb.append(line + ""\n"");
+            }
+            is.close();
+            result=sb.toString();
+
+        jArray = new JSONArray(result);            
+    return jArray;
+    }
+    }
+
+
+
+
+Problem is that appears no data on screen and i get only a warning: 
+
+
+    09-21 12:09:26.225: W/ActivityManager(59): Launch timeout has expired, giving up wake lock!
+    09-21 12:09:26.500: W/ActivityManager(59): Activity idle timeout for HistoryRecord{43ee8ee8 ayub.khosa.json_parsing/.MainActivity}
+
+
+UPDATE :
+
+Indeed the webserver was down without i noticed. Now is up, i see in browser the json, but now i get the following errors: 
+
+     09-21 12:30:52.301: W/ActivityManager(59): Activity destroy timeout for HistoryRecord{43f44da0 ayub.khosa.json_parsing/.MainActivity}
+     09-21 12:30:57.449: I/ActivityManager(59): Starting activity: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 cmp=ayub.khosa.json_parsing/.MainActivity }
+     09-21 12:30:57.609: I/ActivityManager(59): Start proc ayub.khosa.json_parsing for activity ayub.khosa.json_parsing/.MainActivity: pid=287 uid=10036 gids={3003}
+     09-21 12:30:58.179: D/AYUB(287): setContentView  
+     09-21 12:30:58.339: D/AYUB(287): json object  
+     09-21 12:30:58.339: D/AndroidRuntime(287): Shutting down VM
+     09-21 12:30:58.339: W/dalvikvm(287): threadid=1: thread exiting with uncaught exception (group=0x4001d800)
+     09-21 12:30:58.349: E/AndroidRuntime(287): FATAL EXCEPTION: main
+     09-21 12:30:58.349: E/AndroidRuntime(287): java.lang.RuntimeException: Unable to start activity ComponentInfo{ayub.khosa.json_parsing/ayub.khosa.json_parsing.MainActivity}: java.lang.NullPointerException
+     09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2663)
+     09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:2679)
+     09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread.access$2300(ActivityThread.java:125)
+     09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2033)
+     09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.os.Handler.dispatchMessage(Handler.java:99)
+     09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.os.Looper.loop(Looper.java:123)
+     09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread.main(ActivityThread.java:4627)
+     09-21 12:30:58.349: E/AndroidRuntime(287): 	at java.lang.reflect.Method.invokeNative(Native Method)
+     09-21 12:30:58.349: E/AndroidRuntime(287): 	at java.lang.reflect.Method.invoke(Method.java:521)
+     09-21 12:30:58.349: E/AndroidRuntime(287): 	at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:868)
+     09-21 12:30:58.349: E/AndroidRuntime(287): 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:626)
+     09-21 12:30:58.349: E/AndroidRuntime(287): 	at dalvik.system.NativeStart.main(Native Method)
+     09-21 12:30:58.349: E/AndroidRuntime(287): Caused by: java.lang.NullPointerException
+     09-21 12:30:58.349: E/AndroidRuntime(287): 	at java.util.ArrayList.addAll(ArrayList.java:193)
+     09-21 12:30:58.349: E/AndroidRuntime(287): 	at org.json.JSONArray.<init(JSONArray.java:70)
+     09-21 12:30:58.349: E/AndroidRuntime(287): 	at ayub.khosa.json_parsing.MainActivity.onCreate(MainActivity.java:58)
+     09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1047)
+     09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2627)
+     09-21 12:30:58.349: E/AndroidRuntime(287): 	... 11 more
+     09-21 12:30:58.419: D/dalvikvm(287): GC_FOR_MALLOC freed 3711 objects / 261576 bytes in 67ms
+     09-21 12:30:58.429: W/ActivityManager(59):   Force finishing activity ayub.khosa.json_parsing/.MainActivity
+     09-21 12:30:58.958: W/ActivityManager(59): Activity pause timeout for HistoryRecord{440757b8 ayub.khosa.json_parsing/.MainActivity}
+     09-21 12:31:02.689: I/Process(287): Sending signal. PID: 287 SIG: 9
+     09-21 12:31:02.709: I/ActivityManager(59): Process ayub.khosa.json_parsing (pid 287) has died.
+     09-21 12:31:02.729: W/InputManagerService(59): Window already focused, ignoring focus gain of: com.android.internal.view.IInputMethodClient$Stub$Proxy@43e4ec30
+     09-21 12:31:09.089: W/ActivityManager(59): Activity destroy timeout for HistoryRecord{440757b8 ayub.khosa.json_parsing/.MainActivity}
+"
+47740824;5;18932575;eaeb1451-dd0a-49b8-98f5-8f9a8606e5af;2013-09-21 13:16:27;2683051;;added 5107 characters in body;"Regarding another thread here i try too, to get a json array form a json. I have the following files : 
+
+
+
+earthquake.json
+
+<pre>
+[{
+        ""eqid"": ""merge"",
+        ""magnitude"": 8.8,
+        ""lng"": 142.369,
+        ""src"": ""us"",
+        ""datetime"": ""2011-03-11 04:46:23"",
+        ""depth"": 24.4,
+        ""lat"": 38.322
+    }, {
+        ""eqid"": ""merge2"",
+        ""magnitude"": 8.6,
+        ""lng"": 93.0632,
+        ""src"": ""us"",
+        ""datetime"": ""2012-04-11 06:38:37"",
+        ""depth"": 22.9,
+        ""lat"": 2.311
+    }, {
+        ""eqid"": ""2007hear"",
+        ""magnitude"": 8.4,
+        ""lng"": 101.3815,
+        ""src"": ""us"",
+        ""datetime"": ""2007-09-12 09:10:26"",
+        ""depth"": 30,
+        ""lat"": -4.5172
+    }, {
+        ""eqid"": ""c00090da"",
+        ""magnitude"": 8.2,
+        ""lng"": 92.4522,
+        ""src"": ""us"",
+        ""datetime"": ""2012-04-11 08:43:09"",
+        ""depth"": 16.4,
+        ""lat"": 0.7731
+    }, {
+        ""eqid"": ""2007aqbk"",
+        ""magnitude"": 8,
+        ""lng"": 156.9567,
+        ""src"": ""us"",
+        ""datetime"": ""2007-04-01 18:39:56"",
+        ""depth"": 10,
+        ""lat"": -8.4528
+    }, {
+        ""eqid"": ""2007hec6"",
+        ""magnitude"": 7.8,
+        ""lng"": 100.9638,
+        ""src"": ""us"",
+        ""datetime"": ""2007-09-12 21:49:01"",
+        ""depth"": 10,
+        ""lat"": -2.5265
+    }, {
+        ""eqid"": ""b000g7x7"",
+        ""magnitude"": 7.8,
+        ""lng"": 62.0532,
+        ""src"": ""us"",
+        ""datetime"": ""2013-04-16 08:44:20"",
+        ""depth"": 82,
+        ""lat"": 28.1069
+    }, {
+        ""eqid"": ""a00043nx"",
+        ""magnitude"": 7.7,
+        ""lng"": 100.1139,
+        ""src"": ""us"",
+        ""datetime"": ""2010-10-25 12:42:22"",
+        ""depth"": 20.6,
+        ""lat"": -3.4841
+    }, {
+        ""eqid"": ""2010utc5"",
+        ""magnitude"": 7.7,
+        ""lng"": 97.1315,
+        ""src"": ""us"",
+        ""datetime"": ""2010-04-06 20:15:02"",
+        ""depth"": 31,
+        ""lat"": 2.3602
+    }, {
+        ""eqid"": ""2009mebz"",
+        ""magnitude"": 7.6,
+        ""lng"": 99.9606,
+        ""src"": ""us"",
+        ""datetime"": ""2009-09-30 08:16:09"",
+        ""depth"": 80,
+        ""lat"": -0.7889
+    }]
+</pre>
+
+
+ 
+**MainActivity.java**
+
+ 
+    package ayub.khosa.json_parsing;
+    import java.io.IOException;
+    import java.util.ArrayList;
+    import java.util.Collection;
+    import java.util.HashMap;
+    import org.apache.http.client.ClientProtocolException;
+    import org.json.JSONArray;
+    import org.json.JSONException;
+    import org.json.JSONObject;
+    import android.app.ListActivity;
+    import android.os.Bundle;
+    import android.util.Log;
+    import android.view.Menu;
+    import android.view.View;
+    import android.view.Window;
+    import android.view.WindowManager;
+    import android.widget.AdapterView;
+    import android.widget.AdapterView.OnItemClickListener;
+    import android.widget.ListAdapter;
+    import android.widget.ListView;
+    import android.widget.SimpleAdapter;
+    import android.widget.Toast;
+    public class MainActivity extends ListActivity 
+    {
+	String tag = ""AYUB"";
+    /** Called when the activity is first created. */
+    @Override
+    public void onCreate(Bundle savedInstanceState) 
+    { super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    setContentView(R.layout.listplaceholder);
+        Log.d(tag, ""setContentView  "");
+        ArrayList<HashMap<String, String>> mylist = new ArrayList<HashMap<String, String>>();
+      
+       
+        JSONArray json = null;
+		try {
+			json = JSONfunctions.getJSONfromURL(""http://192.168.0.104/earthquakes.json"");
+		} catch (ClientProtocolException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (JSONException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+        Log.d(tag, ""json object  ""); 
+        try{
+        	Collection<?> result = null;
+			JSONArray json1 = new JSONArray(result);
+     //        	// ...
+
+        	for(int i=0;i<json.length();i++){                        
+        	    HashMap<String, String> map = new HashMap<String, String>();    
+        	    JSONObject e = json1.getJSONObject(i);
+
+        	    map.put(""id"",  String.valueOf(i));
+        	    map.put(""name"", ""Earthquake name:"" + e.getString(""eqid""));
+          	    map.put(""magnitude"", ""Magnitude: "" +  e.getString(""magnitude""));
+        	    mylist.add(map);            
+        	}
+        }catch(JSONException e)        {
+        	 Log.e(""log_tag"", ""Error parsing data ""+e.toString());
+        }
+        
+        ListAdapter adapter = new SimpleAdapter(this, mylist , R.layout.activity_main, 
+                        new String[] { ""name"", ""magnitude"" }, 
+                        new int[] { R.id.item_title, R.id.item_subtitle });
+        
+        setListAdapter(adapter);
+        
+        final ListView lv = getListView();
+        lv.setTextFilterEnabled(true);	
+        lv.setOnItemClickListener(new OnItemClickListener() {
+        	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {        		
+        		@SuppressWarnings(""unchecked"")
+				HashMap<String, String> o = (HashMap<String, String>) lv.getItemAtPosition(position);	
+        		Log.d(tag, ""json object  "" + lv.getItemAtPosition(position)); 
+        		Toast.makeText(MainActivity.this, ""ID "" + o.get(""id"")+""	"" + o.get(""name"") + o.get(""magnitude"")+""."", Toast.LENGTH_SHORT).show(); 
+
+			}
+		});
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_main, menu);
+        return true;
+     } 
+    }
+
+
+**JSONFunctions.java**
+
+    package ayub.khosa.json_parsing;
+    import java.io.BufferedReader;
+    import java.io.IOException;
+    import java.io.InputStream;
+    import java.io.InputStreamReader;
+    import org.apache.http.HttpEntity;
+    import org.apache.http.HttpResponse;
+    import org.apache.http.client.ClientProtocolException;
+    import org.apache.http.client.HttpClient;
+    import org.apache.http.client.methods.HttpGet;
+    import org.apache.http.impl.client.DefaultHttpClient;
+    import org.json.JSONArray;
+    import org.json.JSONException;
+    public class JSONfunctions {
+    public static JSONArray getJSONfromURL(String url) throws ClientProtocolException, IOException, JSONException{
+    InputStream is = null;
+    String result = """";
+    JSONArray jArray = null;
+
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpGet httpget = new HttpGet(url);
+            HttpResponse response = httpclient.execute(httpget);
+            HttpEntity entity = response.getEntity();
+            is = entity.getContent();
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is,""iso-8859-1""),8);
+            StringBuilder sb = new StringBuilder();
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                    sb.append(line + ""\n"");
+            }
+            is.close();
+            result=sb.toString();
+
+        jArray = new JSONArray(result);            
+    return jArray;
+    }
+    }
+
+
+
+
+Problem is that appears no data on screen and i get only a warning: 
+
+
+    09-21 12:09:26.225: W/ActivityManager(59): Launch timeout has expired, giving up wake lock!
+    09-21 12:09:26.500: W/ActivityManager(59): Activity idle timeout for HistoryRecord{43ee8ee8 ayub.khosa.json_parsing/.MainActivity}
+
+
+UPDATE :
+
+Indeed the webserver was down without i noticed. Now is up, i see in browser the json, but now i get the following errors: 
+
+     09-21 12:30:52.301: W/ActivityManager(59): Activity destroy timeout for HistoryRecord{43f44da0 ayub.khosa.json_parsing/.MainActivity}
+     09-21 12:30:57.449: I/ActivityManager(59): Starting activity: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 cmp=ayub.khosa.json_parsing/.MainActivity }
+     09-21 12:30:57.609: I/ActivityManager(59): Start proc ayub.khosa.json_parsing for activity ayub.khosa.json_parsing/.MainActivity: pid=287 uid=10036 gids={3003}
+     09-21 12:30:58.179: D/AYUB(287): setContentView  
+     09-21 12:30:58.339: D/AYUB(287): json object  
+     09-21 12:30:58.339: D/AndroidRuntime(287): Shutting down VM
+     09-21 12:30:58.339: W/dalvikvm(287): threadid=1: thread exiting with uncaught exception (group=0x4001d800)
+     09-21 12:30:58.349: E/AndroidRuntime(287): FATAL EXCEPTION: main
+     09-21 12:30:58.349: E/AndroidRuntime(287): java.lang.RuntimeException: Unable to start activity ComponentInfo{ayub.khosa.json_parsing/ayub.khosa.json_parsing.MainActivity}: java.lang.NullPointerException
+     09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2663)
+     09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:2679)
+     09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread.access$2300(ActivityThread.java:125)
+     09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2033)
+     09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.os.Handler.dispatchMessage(Handler.java:99)
+     09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.os.Looper.loop(Looper.java:123)
+     09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread.main(ActivityThread.java:4627)
+     09-21 12:30:58.349: E/AndroidRuntime(287): 	at java.lang.reflect.Method.invokeNative(Native Method)
+     09-21 12:30:58.349: E/AndroidRuntime(287): 	at java.lang.reflect.Method.invoke(Method.java:521)
+     09-21 12:30:58.349: E/AndroidRuntime(287): 	at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:868)
+     09-21 12:30:58.349: E/AndroidRuntime(287): 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:626)
+     09-21 12:30:58.349: E/AndroidRuntime(287): 	at dalvik.system.NativeStart.main(Native Method)
+     09-21 12:30:58.349: E/AndroidRuntime(287): Caused by: java.lang.NullPointerException
+     09-21 12:30:58.349: E/AndroidRuntime(287): 	at java.util.ArrayList.addAll(ArrayList.java:193)
+     09-21 12:30:58.349: E/AndroidRuntime(287): 	at org.json.JSONArray.<init(JSONArray.java:70)
+     09-21 12:30:58.349: E/AndroidRuntime(287): 	at ayub.khosa.json_parsing.MainActivity.onCreate(MainActivity.java:58)
+     09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1047)
+     09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2627)
+     09-21 12:30:58.349: E/AndroidRuntime(287): 	... 11 more
+     09-21 12:30:58.419: D/dalvikvm(287): GC_FOR_MALLOC freed 3711 objects / 261576 bytes in 67ms
+     09-21 12:30:58.429: W/ActivityManager(59):   Force finishing activity ayub.khosa.json_parsing/.MainActivity
+     09-21 12:30:58.958: W/ActivityManager(59): Activity pause timeout for HistoryRecord{440757b8 ayub.khosa.json_parsing/.MainActivity}
+     09-21 12:31:02.689: I/Process(287): Sending signal. PID: 287 SIG: 9
+     09-21 12:31:02.709: I/ActivityManager(59): Process ayub.khosa.json_parsing (pid 287) has died.
+     09-21 12:31:02.729: W/InputManagerService(59): Window already focused, ignoring focus gain of: com.android.internal.view.IInputMethodClient$Stub$Proxy@43e4ec30
+     09-21 12:31:09.089: W/ActivityManager(59): Activity destroy timeout for HistoryRecord{440757b8 ayub.khosa.json_parsing/.MainActivity}
+
+
+UPDATE 2 - after Max edit suggestion
+
+>  09-21 13:08:24.395: D/AYUB(272): setContentView 
+ 
+>  09-21 13:08:24.475: I/global(272): Default buffer size used in BufferedReader constructor. It would be better to be explicit if an 8k-char buffer is required.
+
+>  09-21 13:08:24.475: W/System.err(272): org.json.JSONException: End of input at character 0 of 
+
+>  09-21 13:08:24.485: W/System.err(272): 	at org.json.JSONTokener.syntaxError(JSONTokener.java:446)
+
+>  09-21 13:08:24.485: W/System.err(272): 	at org.json.JSONTokener.nextValue(JSONTokener.java:93)
+
+>  09-21 13:08:24.495: W/System.err(272): 	at org.json.JSONArray.<init>(JSONArray.java:87)
+
+>  09-21 13:08:24.495: W/System.err(272): 	at org.json.JSONArray.<init>(JSONArray.java:103)
+
+>  09-21 13:08:24.495: W/System.err(272): 	at ayub.khosa.json_parsing.JSONfunctions.getJSONfromURL(JSONfunctions.java:41)
+
+>  09-21 13:08:24.495: W/System.err(272): 	at ayub.khosa.json_parsing.MainActivity.onCreate(MainActivity.java:44)
+
+>  09-21 13:08:24.495: W/System.err(272): 	at android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1047)
+
+>  09-21 13:08:24.495: W/System.err(272): 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2627)
+
+>  09-21 13:08:24.495: W/System.err(272): 	at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:2679)
+
+>  09-21 13:08:24.495: W/System.err(272): 	at android.app.ActivityThread.access$2300(ActivityThread.java:125)
+
+>  09-21 13:08:24.495: W/System.err(272): 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2033)
+
+>  09-21 13:08:24.495: W/System.err(272): 	at android.os.Handler.dispatchMessage(Handler.java:99)
+
+>  09-21 13:08:24.495: W/System.err(272): 	at android.os.Looper.loop(Looper.java:123)
+
+>  09-21 13:08:24.495: W/System.err(272): 	at android.app.ActivityThread.main(ActivityThread.java:4627)
+
+>  09-21 13:08:24.495: W/System.err(272): 	at java.lang.reflect.Method.invokeNative(Native Method)
+
+>  09-21 13:08:24.505: W/System.err(272): 	at java.lang.reflect.Method.invoke(Method.java:521)
+
+>  09-21 13:08:24.505: W/System.err(272): 	at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:868)
+
+>  09-21 13:08:24.505: W/System.err(272): 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:626)
+
+>  09-21 13:08:24.505: W/System.err(272): 	at dalvik.system.NativeStart.main(Native Method)
+
+>  09-21 13:08:24.505: D/AYUB(272): json object  
+
+>  09-21 13:08:24.505: D/AndroidRuntime(272): Shutting down VM
+
+>  09-21 13:08:24.505: W/dalvikvm(272): threadid=1: thread exiting with uncaught exception (group=0x4001d800)
+
+>  09-21 13:08:24.515: E/AndroidRuntime(272): FATAL EXCEPTION: main
+
+>  09-21 13:08:24.515: E/AndroidRuntime(272): java.lang.RuntimeException: Unable to start activity ComponentInfo{ayub.khosa.json_parsing/ayub.khosa.json_parsing.MainActivity}: java.lang.NullPointerException
+
+>  09-21 13:08:24.515: E/AndroidRuntime(272): 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2663)
+
+>  09-21 13:08:24.515: E/AndroidRuntime(272): 	at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:2679)
+
+>  09-21 13:08:24.515: E/AndroidRuntime(272): 	at android.app.ActivityThread.access$2300(ActivityThread.java:125)
+
+>  09-21 13:08:24.515: E/AndroidRuntime(272): 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2033)
+
+>  09-21 13:08:24.515: E/AndroidRuntime(272): 	at android.os.Handler.dispatchMessage(Handler.java:99)
+
+>  09-21 13:08:24.515: E/AndroidRuntime(272): 	at android.os.Looper.loop(Looper.java:123)
+
+>  09-21 13:08:24.515: E/AndroidRuntime(272): 	at android.app.ActivityThread.main(ActivityThread.java:4627)
+
+>  09-21 13:08:24.515: E/AndroidRuntime(272): 	at java.lang.reflect.Method.invokeNative(Native Method)
+
+>  09-21 13:08:24.515: E/AndroidRuntime(272): 	at java.lang.reflect.Method.invoke(Method.java:521)
+
+>  09-21 13:08:24.515: E/AndroidRuntime(272): 	at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:868)
+
+>  09-21 13:08:24.515: E/AndroidRuntime(272): 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:626)
+
+>  09-21 13:08:24.515: E/AndroidRuntime(272): 	at dalvik.system.NativeStart.main(Native Method)
+
+>  09-21 13:08:24.515: E/AndroidRuntime(272): Caused by: java.lang.NullPointerException
+
+>  09-21 13:08:24.515: E/AndroidRuntime(272): 	at java.util.ArrayList.addAll(ArrayList.java:193)
+
+>  09-21 13:08:24.515: E/AndroidRuntime(272): 	at org.json.JSONArray.<init>(JSONArray.java:70)
+
+>  09-21 13:08:24.515: E/AndroidRuntime(272): 	at ayub.khosa.json_parsing.MainActivity.onCreate(MainActivity.java:58)
+
+>  09-21 13:08:24.515: E/AndroidRuntime(272): 	at android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1047)
+
+>  09-21 13:08:24.515: E/AndroidRuntime(272): 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2627)
+
+>  09-21 13:08:24.515: E/AndroidRuntime(272): 	... 11 more
+
+>  09-21 13:08:27.035: I/Process(272): Sending signal. PID: 272 SIG: 9
+"
+77562455;5;18932575;3a4f562e-6ead-423c-b3de-d4d93f9a3de9;2014-11-13 06:22:21;3029904;;format stackstrace;"Regarding another thread here i try too, to get a json array form a json. I have the following files : 
+
+
+
+earthquake.json
+
+<pre>
+[{
+        ""eqid"": ""merge"",
+        ""magnitude"": 8.8,
+        ""lng"": 142.369,
+        ""src"": ""us"",
+        ""datetime"": ""2011-03-11 04:46:23"",
+        ""depth"": 24.4,
+        ""lat"": 38.322
+    }, {
+        ""eqid"": ""merge2"",
+        ""magnitude"": 8.6,
+        ""lng"": 93.0632,
+        ""src"": ""us"",
+        ""datetime"": ""2012-04-11 06:38:37"",
+        ""depth"": 22.9,
+        ""lat"": 2.311
+    }, {
+        ""eqid"": ""2007hear"",
+        ""magnitude"": 8.4,
+        ""lng"": 101.3815,
+        ""src"": ""us"",
+        ""datetime"": ""2007-09-12 09:10:26"",
+        ""depth"": 30,
+        ""lat"": -4.5172
+    }, {
+        ""eqid"": ""c00090da"",
+        ""magnitude"": 8.2,
+        ""lng"": 92.4522,
+        ""src"": ""us"",
+        ""datetime"": ""2012-04-11 08:43:09"",
+        ""depth"": 16.4,
+        ""lat"": 0.7731
+    }, {
+        ""eqid"": ""2007aqbk"",
+        ""magnitude"": 8,
+        ""lng"": 156.9567,
+        ""src"": ""us"",
+        ""datetime"": ""2007-04-01 18:39:56"",
+        ""depth"": 10,
+        ""lat"": -8.4528
+    }, {
+        ""eqid"": ""2007hec6"",
+        ""magnitude"": 7.8,
+        ""lng"": 100.9638,
+        ""src"": ""us"",
+        ""datetime"": ""2007-09-12 21:49:01"",
+        ""depth"": 10,
+        ""lat"": -2.5265
+    }, {
+        ""eqid"": ""b000g7x7"",
+        ""magnitude"": 7.8,
+        ""lng"": 62.0532,
+        ""src"": ""us"",
+        ""datetime"": ""2013-04-16 08:44:20"",
+        ""depth"": 82,
+        ""lat"": 28.1069
+    }, {
+        ""eqid"": ""a00043nx"",
+        ""magnitude"": 7.7,
+        ""lng"": 100.1139,
+        ""src"": ""us"",
+        ""datetime"": ""2010-10-25 12:42:22"",
+        ""depth"": 20.6,
+        ""lat"": -3.4841
+    }, {
+        ""eqid"": ""2010utc5"",
+        ""magnitude"": 7.7,
+        ""lng"": 97.1315,
+        ""src"": ""us"",
+        ""datetime"": ""2010-04-06 20:15:02"",
+        ""depth"": 31,
+        ""lat"": 2.3602
+    }, {
+        ""eqid"": ""2009mebz"",
+        ""magnitude"": 7.6,
+        ""lng"": 99.9606,
+        ""src"": ""us"",
+        ""datetime"": ""2009-09-30 08:16:09"",
+        ""depth"": 80,
+        ""lat"": -0.7889
+    }]
+</pre>
+
+
+ 
+**MainActivity.java**
+
+ 
+    package ayub.khosa.json_parsing;
+    import java.io.IOException;
+    import java.util.ArrayList;
+    import java.util.Collection;
+    import java.util.HashMap;
+    import org.apache.http.client.ClientProtocolException;
+    import org.json.JSONArray;
+    import org.json.JSONException;
+    import org.json.JSONObject;
+    import android.app.ListActivity;
+    import android.os.Bundle;
+    import android.util.Log;
+    import android.view.Menu;
+    import android.view.View;
+    import android.view.Window;
+    import android.view.WindowManager;
+    import android.widget.AdapterView;
+    import android.widget.AdapterView.OnItemClickListener;
+    import android.widget.ListAdapter;
+    import android.widget.ListView;
+    import android.widget.SimpleAdapter;
+    import android.widget.Toast;
+    public class MainActivity extends ListActivity 
+    {
+	String tag = ""AYUB"";
+    /** Called when the activity is first created. */
+    @Override
+    public void onCreate(Bundle savedInstanceState) 
+    { super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    setContentView(R.layout.listplaceholder);
+        Log.d(tag, ""setContentView  "");
+        ArrayList<HashMap<String, String>> mylist = new ArrayList<HashMap<String, String>>();
+      
+       
+        JSONArray json = null;
+		try {
+			json = JSONfunctions.getJSONfromURL(""http://192.168.0.104/earthquakes.json"");
+		} catch (ClientProtocolException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (JSONException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+        Log.d(tag, ""json object  ""); 
+        try{
+        	Collection<?> result = null;
+			JSONArray json1 = new JSONArray(result);
+     //        	// ...
+
+        	for(int i=0;i<json.length();i++){                        
+        	    HashMap<String, String> map = new HashMap<String, String>();    
+        	    JSONObject e = json1.getJSONObject(i);
+
+        	    map.put(""id"",  String.valueOf(i));
+        	    map.put(""name"", ""Earthquake name:"" + e.getString(""eqid""));
+          	    map.put(""magnitude"", ""Magnitude: "" +  e.getString(""magnitude""));
+        	    mylist.add(map);            
+        	}
+        }catch(JSONException e)        {
+        	 Log.e(""log_tag"", ""Error parsing data ""+e.toString());
+        }
+        
+        ListAdapter adapter = new SimpleAdapter(this, mylist , R.layout.activity_main, 
+                        new String[] { ""name"", ""magnitude"" }, 
+                        new int[] { R.id.item_title, R.id.item_subtitle });
+        
+        setListAdapter(adapter);
+        
+        final ListView lv = getListView();
+        lv.setTextFilterEnabled(true);	
+        lv.setOnItemClickListener(new OnItemClickListener() {
+        	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {        		
+        		@SuppressWarnings(""unchecked"")
+				HashMap<String, String> o = (HashMap<String, String>) lv.getItemAtPosition(position);	
+        		Log.d(tag, ""json object  "" + lv.getItemAtPosition(position)); 
+        		Toast.makeText(MainActivity.this, ""ID "" + o.get(""id"")+""	"" + o.get(""name"") + o.get(""magnitude"")+""."", Toast.LENGTH_SHORT).show(); 
+
+			}
+		});
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_main, menu);
+        return true;
+     } 
+    }
+
+
+**JSONFunctions.java**
+
+    package ayub.khosa.json_parsing;
+    import java.io.BufferedReader;
+    import java.io.IOException;
+    import java.io.InputStream;
+    import java.io.InputStreamReader;
+    import org.apache.http.HttpEntity;
+    import org.apache.http.HttpResponse;
+    import org.apache.http.client.ClientProtocolException;
+    import org.apache.http.client.HttpClient;
+    import org.apache.http.client.methods.HttpGet;
+    import org.apache.http.impl.client.DefaultHttpClient;
+    import org.json.JSONArray;
+    import org.json.JSONException;
+    public class JSONfunctions {
+    public static JSONArray getJSONfromURL(String url) throws ClientProtocolException, IOException, JSONException{
+    InputStream is = null;
+    String result = """";
+    JSONArray jArray = null;
+
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpGet httpget = new HttpGet(url);
+            HttpResponse response = httpclient.execute(httpget);
+            HttpEntity entity = response.getEntity();
+            is = entity.getContent();
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is,""iso-8859-1""),8);
+            StringBuilder sb = new StringBuilder();
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                    sb.append(line + ""\n"");
+            }
+            is.close();
+            result=sb.toString();
+
+        jArray = new JSONArray(result);            
+    return jArray;
+    }
+    }
+
+
+
+
+Problem is that appears no data on screen and i get only a warning: 
+
+
+    09-21 12:09:26.225: W/ActivityManager(59): Launch timeout has expired, giving up wake lock!
+    09-21 12:09:26.500: W/ActivityManager(59): Activity idle timeout for HistoryRecord{43ee8ee8 ayub.khosa.json_parsing/.MainActivity}
+
+
+UPDATE :
+
+Indeed the webserver was down without i noticed. Now is up, i see in browser the json, but now i get the following errors: 
+
+         09-21 12:30:52.301: W/ActivityManager(59): Activity destroy timeout for HistoryRecord{43f44da0 ayub.khosa.json_parsing/.MainActivity}
+         09-21 12:30:57.449: I/ActivityManager(59): Starting activity: Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 cmp=ayub.khosa.json_parsing/.MainActivity }
+         09-21 12:30:57.609: I/ActivityManager(59): Start proc ayub.khosa.json_parsing for activity ayub.khosa.json_parsing/.MainActivity: pid=287 uid=10036 gids={3003}
+         09-21 12:30:58.179: D/AYUB(287): setContentView  
+         09-21 12:30:58.339: D/AYUB(287): json object  
+         09-21 12:30:58.339: D/AndroidRuntime(287): Shutting down VM
+         09-21 12:30:58.339: W/dalvikvm(287): threadid=1: thread exiting with uncaught exception (group=0x4001d800)
+         09-21 12:30:58.349: E/AndroidRuntime(287): FATAL EXCEPTION: main
+         09-21 12:30:58.349: E/AndroidRuntime(287): java.lang.RuntimeException: Unable to start activity ComponentInfo{ayub.khosa.json_parsing/ayub.khosa.json_parsing.MainActivity}: java.lang.NullPointerException
+         09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2663)
+         09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:2679)
+         09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread.access$2300(ActivityThread.java:125)
+         09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2033)
+         09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.os.Handler.dispatchMessage(Handler.java:99)
+         09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.os.Looper.loop(Looper.java:123)
+         09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread.main(ActivityThread.java:4627)
+         09-21 12:30:58.349: E/AndroidRuntime(287): 	at java.lang.reflect.Method.invokeNative(Native Method)
+         09-21 12:30:58.349: E/AndroidRuntime(287): 	at java.lang.reflect.Method.invoke(Method.java:521)
+         09-21 12:30:58.349: E/AndroidRuntime(287): 	at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:868)
+         09-21 12:30:58.349: E/AndroidRuntime(287): 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:626)
+         09-21 12:30:58.349: E/AndroidRuntime(287): 	at dalvik.system.NativeStart.main(Native Method)
+         09-21 12:30:58.349: E/AndroidRuntime(287): Caused by: java.lang.NullPointerException
+         09-21 12:30:58.349: E/AndroidRuntime(287): 	at java.util.ArrayList.addAll(ArrayList.java:193)
+         09-21 12:30:58.349: E/AndroidRuntime(287): 	at org.json.JSONArray.<init(JSONArray.java:70)
+         09-21 12:30:58.349: E/AndroidRuntime(287): 	at ayub.khosa.json_parsing.MainActivity.onCreate(MainActivity.java:58)
+         09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1047)
+         09-21 12:30:58.349: E/AndroidRuntime(287): 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2627)
+         09-21 12:30:58.349: E/AndroidRuntime(287): 	... 11 more
+         09-21 12:30:58.419: D/dalvikvm(287): GC_FOR_MALLOC freed 3711 objects / 261576 bytes in 67ms
+         09-21 12:30:58.429: W/ActivityManager(59):   Force finishing activity ayub.khosa.json_parsing/.MainActivity
+         09-21 12:30:58.958: W/ActivityManager(59): Activity pause timeout for HistoryRecord{440757b8 ayub.khosa.json_parsing/.MainActivity}
+         09-21 12:31:02.689: I/Process(287): Sending signal. PID: 287 SIG: 9
+         09-21 12:31:02.709: I/ActivityManager(59): Process ayub.khosa.json_parsing (pid 287) has died.
+         09-21 12:31:02.729: W/InputManagerService(59): Window already focused, ignoring focus gain of: com.android.internal.view.IInputMethodClient$Stub$Proxy@43e4ec30
+         09-21 12:31:09.089: W/ActivityManager(59): Activity destroy timeout for HistoryRecord{440757b8 ayub.khosa.json_parsing/.MainActivity}
+    
+    
+    UPDATE 2 - after Max edit suggestion
+    
+    >  09-21 13:08:24.395: D/AYUB(272): setContentView 
+     
+    >  09-21 13:08:24.475: I/global(272): Default buffer size used in BufferedReader constructor. It would be better to be explicit if an 8k-char buffer is required.
+    
+    >  09-21 13:08:24.475: W/System.err(272): org.json.JSONException: End of input at character 0 of 
+    
+    >  09-21 13:08:24.485: W/System.err(272): 	at org.json.JSONTokener.syntaxError(JSONTokener.java:446)
+    
+    >  09-21 13:08:24.485: W/System.err(272): 	at org.json.JSONTokener.nextValue(JSONTokener.java:93)
+    
+    >  09-21 13:08:24.495: W/System.err(272): 	at org.json.JSONArray.<init>(JSONArray.java:87)
+    
+    >  09-21 13:08:24.495: W/System.err(272): 	at org.json.JSONArray.<init>(JSONArray.java:103)
+    
+    >  09-21 13:08:24.495: W/System.err(272): 	at ayub.khosa.json_parsing.JSONfunctions.getJSONfromURL(JSONfunctions.java:41)
+    
+    >  09-21 13:08:24.495: W/System.err(272): 	at ayub.khosa.json_parsing.MainActivity.onCreate(MainActivity.java:44)
+    
+    >  09-21 13:08:24.495: W/System.err(272): 	at android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1047)
+    
+    >  09-21 13:08:24.495: W/System.err(272): 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2627)
+    
+    >  09-21 13:08:24.495: W/System.err(272): 	at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:2679)
+    
+    >  09-21 13:08:24.495: W/System.err(272): 	at android.app.ActivityThread.access$2300(ActivityThread.java:125)
+    
+    >  09-21 13:08:24.495: W/System.err(272): 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2033)
+    
+    >  09-21 13:08:24.495: W/System.err(272): 	at android.os.Handler.dispatchMessage(Handler.java:99)
+    
+    >  09-21 13:08:24.495: W/System.err(272): 	at android.os.Looper.loop(Looper.java:123)
+    
+    >  09-21 13:08:24.495: W/System.err(272): 	at android.app.ActivityThread.main(ActivityThread.java:4627)
+    
+    >  09-21 13:08:24.495: W/System.err(272): 	at java.lang.reflect.Method.invokeNative(Native Method)
+    
+    >  09-21 13:08:24.505: W/System.err(272): 	at java.lang.reflect.Method.invoke(Method.java:521)
+    
+    >  09-21 13:08:24.505: W/System.err(272): 	at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:868)
+    
+    >  09-21 13:08:24.505: W/System.err(272): 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:626)
+    
+    >  09-21 13:08:24.505: W/System.err(272): 	at dalvik.system.NativeStart.main(Native Method)
+    
+    >  09-21 13:08:24.505: D/AYUB(272): json object  
+    
+    >  09-21 13:08:24.505: D/AndroidRuntime(272): Shutting down VM
+    
+    >  09-21 13:08:24.505: W/dalvikvm(272): threadid=1: thread exiting with uncaught exception (group=0x4001d800)
+    
+    >  09-21 13:08:24.515: E/AndroidRuntime(272): FATAL EXCEPTION: main
+    
+    >  09-21 13:08:24.515: E/AndroidRuntime(272): java.lang.RuntimeException: Unable to start activity ComponentInfo{ayub.khosa.json_parsing/ayub.khosa.json_parsing.MainActivity}: java.lang.NullPointerException
+    
+    >  09-21 13:08:24.515: E/AndroidRuntime(272): 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2663)
+    
+    >  09-21 13:08:24.515: E/AndroidRuntime(272): 	at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:2679)
+    
+    >  09-21 13:08:24.515: E/AndroidRuntime(272): 	at android.app.ActivityThread.access$2300(ActivityThread.java:125)
+    
+    >  09-21 13:08:24.515: E/AndroidRuntime(272): 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2033)
+    
+    >  09-21 13:08:24.515: E/AndroidRuntime(272): 	at android.os.Handler.dispatchMessage(Handler.java:99)
+    
+    >  09-21 13:08:24.515: E/AndroidRuntime(272): 	at android.os.Looper.loop(Looper.java:123)
+    
+    >  09-21 13:08:24.515: E/AndroidRuntime(272): 	at android.app.ActivityThread.main(ActivityThread.java:4627)
+    
+    >  09-21 13:08:24.515: E/AndroidRuntime(272): 	at java.lang.reflect.Method.invokeNative(Native Method)
+    
+    >  09-21 13:08:24.515: E/AndroidRuntime(272): 	at java.lang.reflect.Method.invoke(Method.java:521)
+    
+    >  09-21 13:08:24.515: E/AndroidRuntime(272): 	at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:868)
+    
+    >  09-21 13:08:24.515: E/AndroidRuntime(272): 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:626)
+    
+    >  09-21 13:08:24.515: E/AndroidRuntime(272): 	at dalvik.system.NativeStart.main(Native Method)
+    
+    >  09-21 13:08:24.515: E/AndroidRuntime(272): Caused by: java.lang.NullPointerException
+    
+    >  09-21 13:08:24.515: E/AndroidRuntime(272): 	at java.util.ArrayList.addAll(ArrayList.java:193)
+    
+    >  09-21 13:08:24.515: E/AndroidRuntime(272): 	at org.json.JSONArray.<init>(JSONArray.java:70)
+    
+    >  09-21 13:08:24.515: E/AndroidRuntime(272): 	at ayub.khosa.json_parsing.MainActivity.onCreate(MainActivity.java:58)
+    
+    >  09-21 13:08:24.515: E/AndroidRuntime(272): 	at android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1047)
+    
+    >  09-21 13:08:24.515: E/AndroidRuntime(272): 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2627)
+    
+    >  09-21 13:08:24.515: E/AndroidRuntime(272): 	... 11 more
+    
+    >  09-21 13:08:27.035: I/Process(272): Sending signal. PID: 272 SIG: 9
+
+"
 77562456;24;18932575;3a4f562e-6ead-423c-b3de-d4d93f9a3de9;2014-11-13 06:22:21;;;Proposed by 3029904 approved by 1943464, 189163, 3282633 edit id of 1602378;

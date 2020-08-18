@@ -1,2 +1,29 @@
 Id;PostHistoryTypeId;PostId;RevisionGUID;CreationDate;UserId;UserDisplayName;Comment;Text
-55158265;2;20991163;d14b69a6-6eee-44f6-96c8-2bd19940c27d;2014-01-08 09:08:50;1597399;;;"    private class GrabURL extends AsyncTask<String, Void, Void> {&#xD;&#xA; &#xD;&#xA;        @Override&#xD;&#xA;        protected void onPreExecute() {&#xD;&#xA;            super.onPreExecute();&#xD;&#xA;            // Showing progress dialog&#xD;&#xA;            pDialog = new ProgressDialog(MainActivity.this);&#xD;&#xA;            pDialog.setMessage(""Please wait..."");&#xD;&#xA;            pDialog.setCancelable(false);&#xD;&#xA;            pDialog.show();&#xD;&#xA; &#xD;&#xA;        }&#xD;&#xA; &#xD;&#xA;        @Override&#xD;&#xA;        protected Void doInBackground(String... arg0) {&#xD;&#xA;            // download page&#xD;&#xA;            return null;&#xD;&#xA;        }&#xD;&#xA; &#xD;&#xA;        @Override&#xD;&#xA;        protected void onPostExecute(Void result) {&#xD;&#xA;            super.onPostExecute(result);&#xD;&#xA;            // Dismiss the progress dialog&#xD;&#xA;            if (pDialog.isShowing())&#xD;&#xA;                pDialog.dismiss();&#xD;&#xA;        }&#xD;&#xA; &#xD;&#xA;    }"
+55158265;2;20991163;d14b69a6-6eee-44f6-96c8-2bd19940c27d;2014-01-08 09:08:50;1597399;;;"    private class GrabURL extends AsyncTask<String, Void, Void> {
+ 
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            // Showing progress dialog
+            pDialog = new ProgressDialog(MainActivity.this);
+            pDialog.setMessage(""Please wait..."");
+            pDialog.setCancelable(false);
+            pDialog.show();
+ 
+        }
+ 
+        @Override
+        protected Void doInBackground(String... arg0) {
+            // download page
+            return null;
+        }
+ 
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            // Dismiss the progress dialog
+            if (pDialog.isShowing())
+                pDialog.dismiss();
+        }
+ 
+    }"

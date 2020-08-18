@@ -1,11 +1,109 @@
 Id;PostHistoryTypeId;PostId;RevisionGUID;CreationDate;UserId;UserDisplayName;Comment;Text
-37351235;2;15372744;308e18e9-60ba-4ea4-a430-368e52451114;2013-03-12 21:41:02;1651148;;;"I've been working with Grails for a couple months now and I've stumbled upon something...&#xD;&#xA;&#xD;&#xA;So I have a small application with Spring Security installed and made users etc. &#xD;&#xA;&#xD;&#xA;**class Group extends User{&#xD;&#xA;...&#xD;&#xA;}**&#xD;&#xA;&#xD;&#xA;**abstract class User{&#xD;&#xA;    ...&#xD;&#xA;}**&#xD;&#xA;&#xD;&#xA;Question: Can I have multiple ""User"" being extended from the same ""Group""? The idea was to have multiple users within a group access this group's information etc. If so, how is this achieved?&#xD;&#xA;&#xD;&#xA;Thank you all in advance"
+37351235;2;15372744;308e18e9-60ba-4ea4-a430-368e52451114;2013-03-12 21:41:02;1651148;;;"I've been working with Grails for a couple months now and I've stumbled upon something...
+
+So I have a small application with Spring Security installed and made users etc. 
+
+**class Group extends User{
+...
+}**
+
+**abstract class User{
+    ...
+}**
+
+Question: Can I have multiple ""User"" being extended from the same ""Group""? The idea was to have multiple users within a group access this group's information etc. If so, how is this achieved?
+
+Thank you all in advance"
 37351236;1;15372744;308e18e9-60ba-4ea4-a430-368e52451114;2013-03-12 21:41:02;1651148;;;Grails - Extending an instance
 37351237;3;15372744;308e18e9-60ba-4ea4-a430-368e52451114;2013-03-12 21:41:02;1651148;;;<java><grails><groovy><spring-security>
-37357498;5;15372744;c52450be-4cf4-40f8-972a-2a479f9b5915;2013-03-13 00:36:46;1651148;;added 20 characters in body;"I've been working with Grails for a couple months now and I've stumbled upon something...&#xD;&#xA;&#xD;&#xA;So I have a small application with Spring Security installed and made users etc. &#xD;&#xA;&#xD;&#xA;    class Group extends User{&#xD;&#xA;        ...&#xD;&#xA;    }&#xD;&#xA;&#xD;&#xA;    abstract class User{&#xD;&#xA;        ...&#xD;&#xA;    }&#xD;&#xA;&#xD;&#xA;Question: Can I have multiple ""User"" being extended from the same ""Group""? The idea was to have multiple users within a group access this group's information etc. If so, how is this achieved?&#xD;&#xA;&#xD;&#xA;Thank you all in advance"
-37366248;5;15372744;a2cc3807-aac7-4a28-855f-43b462ac497a;2013-03-13 05:53:52;1651148;;added 242 characters in body;"I've been working with Grails for a couple months now and I've stumbled upon something...&#xD;&#xA;&#xD;&#xA;So I have a small application with Spring Security installed and made users etc. &#xD;&#xA;&#xD;&#xA;Thank you all in advance&#xD;&#xA;&#xD;&#xA;**-------EDIT--------**&#xD;&#xA;&#xD;&#xA;To make the question more simple and straight forward, forget the class names. &#xD;&#xA;&#xD;&#xA;    class ABC extends XYZ{...}&#xD;&#xA;&#xD;&#xA;    class XYZ{...}&#xD;&#xA;&#xD;&#xA;Question: Can multiple instances of XYZ extend the same instance of ABC?"
+37357498;5;15372744;c52450be-4cf4-40f8-972a-2a479f9b5915;2013-03-13 00:36:46;1651148;;added 20 characters in body;"I've been working with Grails for a couple months now and I've stumbled upon something...
+
+So I have a small application with Spring Security installed and made users etc. 
+
+    class Group extends User{
+        ...
+    }
+
+    abstract class User{
+        ...
+    }
+
+Question: Can I have multiple ""User"" being extended from the same ""Group""? The idea was to have multiple users within a group access this group's information etc. If so, how is this achieved?
+
+Thank you all in advance"
+37366248;5;15372744;a2cc3807-aac7-4a28-855f-43b462ac497a;2013-03-13 05:53:52;1651148;;added 242 characters in body;"I've been working with Grails for a couple months now and I've stumbled upon something...
+
+So I have a small application with Spring Security installed and made users etc. 
+
+Thank you all in advance
+
+**-------EDIT--------**
+
+To make the question more simple and straight forward, forget the class names. 
+
+    class ABC extends XYZ{...}
+
+    class XYZ{...}
+
+Question: Can multiple instances of XYZ extend the same instance of ABC?"
 37367316;6;15372744;5aca1b3a-a28d-47fb-87f7-c1788cf81650;2013-03-13 06:25:28;1400279;;edited tags;<java><grails><groovy>
-37408779;5;15372744;28fe70e1-a168-42c6-ba38-e6ce7799110b;2013-03-13 18:29:31;1651148;;added 70 characters in body;"I've been working with Grails for a couple months now and I've stumbled upon something...&#xD;&#xA;&#xD;&#xA;So I have a small application with Spring Security installed and made users etc. &#xD;&#xA;&#xD;&#xA;Thank you all in advance&#xD;&#xA;&#xD;&#xA;**-------EDIT--------**&#xD;&#xA;&#xD;&#xA;To make the question more simple and straight forward, forget the class names. &#xD;&#xA;&#xD;&#xA;    class ABC extends XYZ{...}&#xD;&#xA;&#xD;&#xA;    class XYZ{...}&#xD;&#xA;&#xD;&#xA;Question: Can multiple instances of XYZ extend the same instance of ABC? So, can instances XYZ1, XYZ2, and XYZ3 extend the same ABC1 instance?"
-37409127;5;15372744;b0cd10e7-bb82-4d4d-9c91-901bdf9f77a7;2013-03-13 18:37:13;1651148;;added 4 characters in body;"I've been working with Grails for a couple months now and I've stumbled upon something...&#xD;&#xA;&#xD;&#xA;So I have a small application with Spring Security installed and made users etc. &#xD;&#xA;&#xD;&#xA;Thank you all in advance&#xD;&#xA;&#xD;&#xA;**-------EDIT--------**&#xD;&#xA;&#xD;&#xA;To make the question more simple and straight forward, forget the class names. &#xD;&#xA;&#xD;&#xA;    class ABC extends XYZ{...}&#xD;&#xA;&#xD;&#xA;    class XYZ{...}&#xD;&#xA;&#xD;&#xA;Question: Can multiple instances of XYZ extend the same instance of ABC? **So, can instances XYZ1, XYZ2, and XYZ3 extend the same ABC1 instance?**"
-37540640;5;15372744;056f53a7-8bb4-4d4f-bd59-bd5458657e56;2013-03-15 20:50:54;1651148;;deleted 8 characters in body;"I've been working with Grails for a couple months now and I've stumbled upon something...&#xD;&#xA;&#xD;&#xA;So I have a small application with Spring Security installed and made users etc. &#xD;&#xA;&#xD;&#xA;Thank you all in advance&#xD;&#xA;&#xD;&#xA;**-------EDIT--------**&#xD;&#xA;&#xD;&#xA;To make the question more simple and straight forward, forget the class names. &#xD;&#xA;&#xD;&#xA;    class ABC extends XYZ{...}&#xD;&#xA;&#xD;&#xA;    class XYZ{...}&#xD;&#xA;&#xD;&#xA;Question: Can multiple objects of XYZ extend the same object of ABC? **So, can objects XYZ1, XYZ2, and XYZ3 extend the same ABC1 object?**"
-37540911;5;15372744;f1d97ee7-8395-4c13-b64b-ae006757294c;2013-03-15 20:57:09;1651148;;Clarifying the question;"I've been working with Grails for a couple months now and I've stumbled upon something...&#xD;&#xA;&#xD;&#xA;So I have a small application with Spring Security installed and made users etc. &#xD;&#xA;&#xD;&#xA;Thank you all in advance&#xD;&#xA;&#xD;&#xA;**-------EDIT--------**&#xD;&#xA;&#xD;&#xA;To make the question more simple and straight forward, forget the class names. &#xD;&#xA;&#xD;&#xA;    class ABC extends XYZ{...}&#xD;&#xA;&#xD;&#xA;    class XYZ{...}&#xD;&#xA;&#xD;&#xA;Question: Can multiple objects of XYZ extend the same object of ABC? **So if I already have object ABC1 that extends XYZ1, can I create XYZ2 and have it extend ABC1 as well? "
+37408779;5;15372744;28fe70e1-a168-42c6-ba38-e6ce7799110b;2013-03-13 18:29:31;1651148;;added 70 characters in body;"I've been working with Grails for a couple months now and I've stumbled upon something...
+
+So I have a small application with Spring Security installed and made users etc. 
+
+Thank you all in advance
+
+**-------EDIT--------**
+
+To make the question more simple and straight forward, forget the class names. 
+
+    class ABC extends XYZ{...}
+
+    class XYZ{...}
+
+Question: Can multiple instances of XYZ extend the same instance of ABC? So, can instances XYZ1, XYZ2, and XYZ3 extend the same ABC1 instance?"
+37409127;5;15372744;b0cd10e7-bb82-4d4d-9c91-901bdf9f77a7;2013-03-13 18:37:13;1651148;;added 4 characters in body;"I've been working with Grails for a couple months now and I've stumbled upon something...
+
+So I have a small application with Spring Security installed and made users etc. 
+
+Thank you all in advance
+
+**-------EDIT--------**
+
+To make the question more simple and straight forward, forget the class names. 
+
+    class ABC extends XYZ{...}
+
+    class XYZ{...}
+
+Question: Can multiple instances of XYZ extend the same instance of ABC? **So, can instances XYZ1, XYZ2, and XYZ3 extend the same ABC1 instance?**"
+37540640;5;15372744;056f53a7-8bb4-4d4f-bd59-bd5458657e56;2013-03-15 20:50:54;1651148;;deleted 8 characters in body;"I've been working with Grails for a couple months now and I've stumbled upon something...
+
+So I have a small application with Spring Security installed and made users etc. 
+
+Thank you all in advance
+
+**-------EDIT--------**
+
+To make the question more simple and straight forward, forget the class names. 
+
+    class ABC extends XYZ{...}
+
+    class XYZ{...}
+
+Question: Can multiple objects of XYZ extend the same object of ABC? **So, can objects XYZ1, XYZ2, and XYZ3 extend the same ABC1 object?**"
+37540911;5;15372744;f1d97ee7-8395-4c13-b64b-ae006757294c;2013-03-15 20:57:09;1651148;;Clarifying the question;"I've been working with Grails for a couple months now and I've stumbled upon something...
+
+So I have a small application with Spring Security installed and made users etc. 
+
+Thank you all in advance
+
+**-------EDIT--------**
+
+To make the question more simple and straight forward, forget the class names. 
+
+    class ABC extends XYZ{...}
+
+    class XYZ{...}
+
+Question: Can multiple objects of XYZ extend the same object of ABC? **So if I already have object ABC1 that extends XYZ1, can I create XYZ2 and have it extend ABC1 as well? "

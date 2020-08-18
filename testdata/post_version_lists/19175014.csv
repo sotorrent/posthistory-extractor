@@ -1,5 +1,55 @@
 Id;PostHistoryTypeId;PostId;RevisionGUID;CreationDate;UserId;UserDisplayName;Comment;Text
-48605852;2;19175014;bc24feae-9933-42d0-a3bc-57fa02bee449;2013-10-04 06:48:58;1096194;;;"I want to build an array based on a comma seperated string . But cant hwlp myslef any further . &#xD;&#xA;&#xD;&#xA;<pre><code>&#xD;&#xA;DECLARE&#xD;&#xA;type rol_type is record &#xD;&#xA;(role  MMSTROLEHDR.ROLECODE%TYPE) ;&#xD;&#xA;&#xD;&#xA;   array_rolecode  rol_type;&#xD;&#xA;   vl_prmval        VARCHAR2 (4000) := '2,3,4';&#xD;&#xA;   vl_pos           NUMBER;&#xD;&#xA;BEGIN&#xD;&#xA;   WHILE (INSTR (vl_prmval, ',') > 0)&#xD;&#xA;   LOOP&#xD;&#xA;      vl_pos := INSTR (vl_prmval, ',');&#xD;&#xA;&#xD;&#xA;      --vl_cnt := vl_cnt + 1;&#xD;&#xA;      array_rolecode.role := SUBSTR (vl_prmval, 1, vl_pos - 1);&#xD;&#xA;      vl_prmval := SUBSTR (vl_prmval, vl_pos + 1);&#xD;&#xA;   END LOOP;&#xD;&#xA;&#xD;&#xA;   FOR j IN array_rolecode.first .. array_rolecode.last&#xD;&#xA;   LOOP&#xD;&#xA;      DBMS_OUTPUT.put_line (array_rolecode.role);&#xD;&#xA;   END LOOP;&#xD;&#xA;END;&#xD;&#xA;END;</pre></code>"
+48605852;2;19175014;bc24feae-9933-42d0-a3bc-57fa02bee449;2013-10-04 06:48:58;1096194;;;"I want to build an array based on a comma seperated string . But cant hwlp myslef any further . 
+
+<pre><code>
+DECLARE
+type rol_type is record 
+(role  MMSTROLEHDR.ROLECODE%TYPE) ;
+
+   array_rolecode  rol_type;
+   vl_prmval        VARCHAR2 (4000) := '2,3,4';
+   vl_pos           NUMBER;
+BEGIN
+   WHILE (INSTR (vl_prmval, ',') > 0)
+   LOOP
+      vl_pos := INSTR (vl_prmval, ',');
+
+      --vl_cnt := vl_cnt + 1;
+      array_rolecode.role := SUBSTR (vl_prmval, 1, vl_pos - 1);
+      vl_prmval := SUBSTR (vl_prmval, vl_pos + 1);
+   END LOOP;
+
+   FOR j IN array_rolecode.first .. array_rolecode.last
+   LOOP
+      DBMS_OUTPUT.put_line (array_rolecode.role);
+   END LOOP;
+END;
+END;</pre></code>"
 48605853;1;19175014;bc24feae-9933-42d0-a3bc-57fa02bee449;2013-10-04 06:48:58;1096194;;;Building an array based on comma seperated string -oracle
 48605854;3;19175014;bc24feae-9933-42d0-a3bc-57fa02bee449;2013-10-04 06:48:58;1096194;;;<sql><oracle><plsql><oracle10g>
-73934729;5;19175014;1f50c0f9-6efd-4b27-856f-d7c2ab1ea4ed;2014-09-20 20:50:03;759866;;edited body;"I want to build an array based on a comma separated string . But cant hwlp myslef any further . &#xD;&#xA;&#xD;&#xA;<pre><code>&#xD;&#xA;DECLARE&#xD;&#xA;type rol_type is record &#xD;&#xA;(role  MMSTROLEHDR.ROLECODE%TYPE) ;&#xD;&#xA;&#xD;&#xA;   array_rolecode  rol_type;&#xD;&#xA;   vl_prmval        VARCHAR2 (4000) := '2,3,4';&#xD;&#xA;   vl_pos           NUMBER;&#xD;&#xA;BEGIN&#xD;&#xA;   WHILE (INSTR (vl_prmval, ',') > 0)&#xD;&#xA;   LOOP&#xD;&#xA;      vl_pos := INSTR (vl_prmval, ',');&#xD;&#xA;&#xD;&#xA;      --vl_cnt := vl_cnt + 1;&#xD;&#xA;      array_rolecode.role := SUBSTR (vl_prmval, 1, vl_pos - 1);&#xD;&#xA;      vl_prmval := SUBSTR (vl_prmval, vl_pos + 1);&#xD;&#xA;   END LOOP;&#xD;&#xA;&#xD;&#xA;   FOR j IN array_rolecode.first .. array_rolecode.last&#xD;&#xA;   LOOP&#xD;&#xA;      DBMS_OUTPUT.put_line (array_rolecode.role);&#xD;&#xA;   END LOOP;&#xD;&#xA;END;&#xD;&#xA;END;</pre></code>"
+73934729;5;19175014;1f50c0f9-6efd-4b27-856f-d7c2ab1ea4ed;2014-09-20 20:50:03;759866;;edited body;"I want to build an array based on a comma separated string . But cant hwlp myslef any further . 
+
+<pre><code>
+DECLARE
+type rol_type is record 
+(role  MMSTROLEHDR.ROLECODE%TYPE) ;
+
+   array_rolecode  rol_type;
+   vl_prmval        VARCHAR2 (4000) := '2,3,4';
+   vl_pos           NUMBER;
+BEGIN
+   WHILE (INSTR (vl_prmval, ',') > 0)
+   LOOP
+      vl_pos := INSTR (vl_prmval, ',');
+
+      --vl_cnt := vl_cnt + 1;
+      array_rolecode.role := SUBSTR (vl_prmval, 1, vl_pos - 1);
+      vl_prmval := SUBSTR (vl_prmval, vl_pos + 1);
+   END LOOP;
+
+   FOR j IN array_rolecode.first .. array_rolecode.last
+   LOOP
+      DBMS_OUTPUT.put_line (array_rolecode.role);
+   END LOOP;
+END;
+END;</pre></code>"

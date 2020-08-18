@@ -1,11 +1,689 @@
 Id;PostHistoryTypeId;PostId;RevisionGUID;CreationDate;UserId;UserDisplayName;Comment;Text
-158130447;2;46695379;5959ad03-d82e-4189-94e8-efe6b1115ca2;2017-10-11 18:40:54;7332748;;;"I am working on a project in django with pycharm. &#xD;&#xA;I have this view in the views.py :&#xD;&#xA;&#xD;&#xA;    def all_songs(request, filter_by):&#xD;&#xA;        if not request.user.is_authenticated():&#xD;&#xA;            return render(request, 'music/login.html')&#xD;&#xA;        else:&#xD;&#xA;            try:&#xD;&#xA;                song_ids = []&#xD;&#xA;                for album in Album.objects.all():&#xD;&#xA;                    for song in album.song_set.all():&#xD;&#xA;                        song_ids.append(song.pk)&#xD;&#xA;                users_songs = Song.objects.filter(pk__in=song_ids)&#xD;&#xA;                for album in GenericAlbum.objects.all():&#xD;&#xA;                    for song in album.genericsong_set.all():&#xD;&#xA;                        song_ids.append(song.pk)&#xD;&#xA;                generic_songs = GenericSong.objects.filter(pk__in=song_ids)&#xD;&#xA;            except Album.DoesNotExist:&#xD;&#xA;                users_songs = []&#xD;&#xA;            except GenericAlbum.DoesNotExist:&#xD;&#xA;                generic_songs = []&#xD;&#xA;            return render(request, 'music/songs.html', {&#xD;&#xA;                'song_list_all': users_songs,&#xD;&#xA;                'generic_song_list': generic_songs,&#xD;&#xA;                'filter_by': filter_by,&#xD;&#xA;            })&#xD;&#xA;&#xD;&#xA;Everything is working fine when I click on the page that run this method, but I get an error :&#xD;&#xA;&#xD;&#xA;> Traceback (most recent call last):   File&#xD;&#xA;> ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"",&#xD;&#xA;> line 639, in process_request_thread&#xD;&#xA;>     self.finish_request(request, client_address)   File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"",&#xD;&#xA;> line 361, in finish_request&#xD;&#xA;>     self.RequestHandlerClass(request, client_address, self)   File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"",&#xD;&#xA;> line 99, in __init__&#xD;&#xA;>     super(WSGIRequestHandler, self).__init__(*args, **kwargs)   File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"",&#xD;&#xA;> line 696, in __init__&#xD;&#xA;>     self.handle()   File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"",&#xD;&#xA;> line 179, in handle&#xD;&#xA;>     handler.run(self.server.get_app())   File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"",&#xD;&#xA;> line 144, in run&#xD;&#xA;>     self.close()   File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\simple_server.py"",&#xD;&#xA;> line 35, in close&#xD;&#xA;>     self.status.split(' ',1)[0], self.bytes_sent AttributeError: 'NoneType' object has no attribute 'split'&#xD;&#xA;&#xD;&#xA;but when I change this line ""for album in Album.objects.all():"" with  ""for album in Album.objects.filter(user=request_user), the error disapears.&#xD;&#xA;I don't want to use the filter because I want all the albums.&#xD;&#xA;&#xD;&#xA;I am runing django 1.9.4 with python 3.6."
+158130447;2;46695379;5959ad03-d82e-4189-94e8-efe6b1115ca2;2017-10-11 18:40:54;7332748;;;"I am working on a project in django with pycharm. 
+I have this view in the views.py :
+
+    def all_songs(request, filter_by):
+        if not request.user.is_authenticated():
+            return render(request, 'music/login.html')
+        else:
+            try:
+                song_ids = []
+                for album in Album.objects.all():
+                    for song in album.song_set.all():
+                        song_ids.append(song.pk)
+                users_songs = Song.objects.filter(pk__in=song_ids)
+                for album in GenericAlbum.objects.all():
+                    for song in album.genericsong_set.all():
+                        song_ids.append(song.pk)
+                generic_songs = GenericSong.objects.filter(pk__in=song_ids)
+            except Album.DoesNotExist:
+                users_songs = []
+            except GenericAlbum.DoesNotExist:
+                generic_songs = []
+            return render(request, 'music/songs.html', {
+                'song_list_all': users_songs,
+                'generic_song_list': generic_songs,
+                'filter_by': filter_by,
+            })
+
+Everything is working fine when I click on the page that run this method, but I get an error :
+
+> Traceback (most recent call last):   File
+> ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"",
+> line 639, in process_request_thread
+>     self.finish_request(request, client_address)   File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"",
+> line 361, in finish_request
+>     self.RequestHandlerClass(request, client_address, self)   File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"",
+> line 99, in __init__
+>     super(WSGIRequestHandler, self).__init__(*args, **kwargs)   File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"",
+> line 696, in __init__
+>     self.handle()   File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"",
+> line 179, in handle
+>     handler.run(self.server.get_app())   File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"",
+> line 144, in run
+>     self.close()   File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\simple_server.py"",
+> line 35, in close
+>     self.status.split(' ',1)[0], self.bytes_sent AttributeError: 'NoneType' object has no attribute 'split'
+
+but when I change this line ""for album in Album.objects.all():"" with  ""for album in Album.objects.filter(user=request_user), the error disapears.
+I don't want to use the filter because I want all the albums.
+
+I am runing django 1.9.4 with python 3.6."
 158130448;1;46695379;5959ad03-d82e-4189-94e8-efe6b1115ca2;2017-10-11 18:40:54;7332748;;;'NoneType' object has no attribute 'split' : Django 1.9.4
 158130449;3;46695379;5959ad03-d82e-4189-94e8-efe6b1115ca2;2017-10-11 18:40:54;7332748;;;<python><django><pycharm>
-158130692;5;46695379;7868ae43-782b-45e0-9ac1-d362f3df4ced;2017-10-11 18:44:38;6655211;;added 34 characters in body;"I am working on a project in django with pycharm. &#xD;&#xA;I have this view in the views.py :&#xD;&#xA;&#xD;&#xA;    def all_songs(request, filter_by):&#xD;&#xA;        if not request.user.is_authenticated():&#xD;&#xA;            return render(request, 'music/login.html')&#xD;&#xA;        else:&#xD;&#xA;            try:&#xD;&#xA;                song_ids = []&#xD;&#xA;                for album in Album.objects.all():&#xD;&#xA;                    for song in album.song_set.all():&#xD;&#xA;                        song_ids.append(song.pk)&#xD;&#xA;                users_songs = Song.objects.filter(pk__in=song_ids)&#xD;&#xA;                for album in GenericAlbum.objects.all():&#xD;&#xA;                    for song in album.genericsong_set.all():&#xD;&#xA;                        song_ids.append(song.pk)&#xD;&#xA;                generic_songs = GenericSong.objects.filter(pk__in=song_ids)&#xD;&#xA;            except Album.DoesNotExist:&#xD;&#xA;                users_songs = []&#xD;&#xA;            except GenericAlbum.DoesNotExist:&#xD;&#xA;                generic_songs = []&#xD;&#xA;            return render(request, 'music/songs.html', {&#xD;&#xA;                'song_list_all': users_songs,&#xD;&#xA;                'generic_song_list': generic_songs,&#xD;&#xA;                'filter_by': filter_by,&#xD;&#xA;            })&#xD;&#xA;&#xD;&#xA;Everything is working fine when I click on the page that run this method, but I get an error :&#xD;&#xA;&#xD;&#xA;    Traceback (most recent call last):   &#xD;&#xA;    File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 639, in process_request_thread&#xD;&#xA;        self.finish_request(request, client_address)   &#xD;&#xA;    File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 361, in finish_request&#xD;&#xA;        self.RequestHandlerClass(request, client_address, self)   &#xD;&#xA;    File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"", line 99, in __init__&#xD;&#xA;        super(WSGIRequestHandler, self).__init__(*args, **kwargs)   &#xD;&#xA;    File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 696, in __init__&#xD;&#xA;        self.handle()   &#xD;&#xA;    File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"", line 179, in handle&#xD;&#xA;        handler.run(self.server.get_app())   &#xD;&#xA;    File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 144, in run&#xD;&#xA;        self.close()   &#xD;&#xA;    File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\simple_server.py"", line 35, in close&#xD;&#xA;        self.status.split(' ',1)[0], self.bytes_sent AttributeError: 'NoneType' object has no attribute 'split'&#xD;&#xA;&#xD;&#xA;but when I change this line ""for album in Album.objects.all():"" with  ""for album in Album.objects.filter(user=request_user), the error disapears.&#xD;&#xA;I don't want to use the filter because I want all the albums.&#xD;&#xA;&#xD;&#xA;I am runing django 1.9.4 with python 3.6."
-158130728;5;46695379;888df4b5-5e6d-420f-97bf-efe448ba2047;2017-10-11 18:45:25;6895491;;Added code blocks;"I am working on a project in django with pycharm. &#xD;&#xA;I have this view in the views.py :&#xD;&#xA;&#xD;&#xA;    def all_songs(request, filter_by):&#xD;&#xA;        if not request.user.is_authenticated():&#xD;&#xA;            return render(request, 'music/login.html')&#xD;&#xA;        else:&#xD;&#xA;            try:&#xD;&#xA;                song_ids = []&#xD;&#xA;                for album in Album.objects.all():&#xD;&#xA;                    for song in album.song_set.all():&#xD;&#xA;                        song_ids.append(song.pk)&#xD;&#xA;                users_songs = Song.objects.filter(pk__in=song_ids)&#xD;&#xA;                for album in GenericAlbum.objects.all():&#xD;&#xA;                    for song in album.genericsong_set.all():&#xD;&#xA;                        song_ids.append(song.pk)&#xD;&#xA;                generic_songs = GenericSong.objects.filter(pk__in=song_ids)&#xD;&#xA;            except Album.DoesNotExist:&#xD;&#xA;                users_songs = []&#xD;&#xA;            except GenericAlbum.DoesNotExist:&#xD;&#xA;                generic_songs = []&#xD;&#xA;            return render(request, 'music/songs.html', {&#xD;&#xA;                'song_list_all': users_songs,&#xD;&#xA;                'generic_song_list': generic_songs,&#xD;&#xA;                'filter_by': filter_by,&#xD;&#xA;            })&#xD;&#xA;&#xD;&#xA;Everything is working fine when I click on the page that run this method, but I get an error :&#xD;&#xA;&#xD;&#xA;> Traceback (most recent call last):   File&#xD;&#xA;> ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"",&#xD;&#xA;> line 639, in process_request_thread&#xD;&#xA;>     self.finish_request(request, client_address)   File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"",&#xD;&#xA;> line 361, in finish_request&#xD;&#xA;>     self.RequestHandlerClass(request, client_address, self)   File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"",&#xD;&#xA;> line 99, in __init__&#xD;&#xA;>     super(WSGIRequestHandler, self).__init__(*args, **kwargs)   File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"",&#xD;&#xA;> line 696, in __init__&#xD;&#xA;>     self.handle()   File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"",&#xD;&#xA;> line 179, in handle&#xD;&#xA;>     handler.run(self.server.get_app())   File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"",&#xD;&#xA;> line 144, in run&#xD;&#xA;>     self.close()   File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\simple_server.py"",&#xD;&#xA;> line 35, in close&#xD;&#xA;>     self.status.split(' ',1)[0], self.bytes_sent AttributeError: 'NoneType' object has no attribute 'split'&#xD;&#xA;&#xD;&#xA;but when I change this line `for album in Album.objects.all():` with  `for album in Album.objects.filter(user=request_user)`, the error disapears.&#xD;&#xA;I don't want to use the filter because I want all the albums.&#xD;&#xA;&#xD;&#xA;I am runing django 1.9.4 with python 3.6."
+158130692;5;46695379;7868ae43-782b-45e0-9ac1-d362f3df4ced;2017-10-11 18:44:38;6655211;;added 34 characters in body;"I am working on a project in django with pycharm. 
+I have this view in the views.py :
+
+    def all_songs(request, filter_by):
+        if not request.user.is_authenticated():
+            return render(request, 'music/login.html')
+        else:
+            try:
+                song_ids = []
+                for album in Album.objects.all():
+                    for song in album.song_set.all():
+                        song_ids.append(song.pk)
+                users_songs = Song.objects.filter(pk__in=song_ids)
+                for album in GenericAlbum.objects.all():
+                    for song in album.genericsong_set.all():
+                        song_ids.append(song.pk)
+                generic_songs = GenericSong.objects.filter(pk__in=song_ids)
+            except Album.DoesNotExist:
+                users_songs = []
+            except GenericAlbum.DoesNotExist:
+                generic_songs = []
+            return render(request, 'music/songs.html', {
+                'song_list_all': users_songs,
+                'generic_song_list': generic_songs,
+                'filter_by': filter_by,
+            })
+
+Everything is working fine when I click on the page that run this method, but I get an error :
+
+    Traceback (most recent call last):   
+    File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 639, in process_request_thread
+        self.finish_request(request, client_address)   
+    File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 361, in finish_request
+        self.RequestHandlerClass(request, client_address, self)   
+    File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"", line 99, in __init__
+        super(WSGIRequestHandler, self).__init__(*args, **kwargs)   
+    File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 696, in __init__
+        self.handle()   
+    File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"", line 179, in handle
+        handler.run(self.server.get_app())   
+    File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 144, in run
+        self.close()   
+    File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\simple_server.py"", line 35, in close
+        self.status.split(' ',1)[0], self.bytes_sent AttributeError: 'NoneType' object has no attribute 'split'
+
+but when I change this line ""for album in Album.objects.all():"" with  ""for album in Album.objects.filter(user=request_user), the error disapears.
+I don't want to use the filter because I want all the albums.
+
+I am runing django 1.9.4 with python 3.6."
+158130728;5;46695379;888df4b5-5e6d-420f-97bf-efe448ba2047;2017-10-11 18:45:25;6895491;;Added code blocks;"I am working on a project in django with pycharm. 
+I have this view in the views.py :
+
+    def all_songs(request, filter_by):
+        if not request.user.is_authenticated():
+            return render(request, 'music/login.html')
+        else:
+            try:
+                song_ids = []
+                for album in Album.objects.all():
+                    for song in album.song_set.all():
+                        song_ids.append(song.pk)
+                users_songs = Song.objects.filter(pk__in=song_ids)
+                for album in GenericAlbum.objects.all():
+                    for song in album.genericsong_set.all():
+                        song_ids.append(song.pk)
+                generic_songs = GenericSong.objects.filter(pk__in=song_ids)
+            except Album.DoesNotExist:
+                users_songs = []
+            except GenericAlbum.DoesNotExist:
+                generic_songs = []
+            return render(request, 'music/songs.html', {
+                'song_list_all': users_songs,
+                'generic_song_list': generic_songs,
+                'filter_by': filter_by,
+            })
+
+Everything is working fine when I click on the page that run this method, but I get an error :
+
+> Traceback (most recent call last):   File
+> ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"",
+> line 639, in process_request_thread
+>     self.finish_request(request, client_address)   File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"",
+> line 361, in finish_request
+>     self.RequestHandlerClass(request, client_address, self)   File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"",
+> line 99, in __init__
+>     super(WSGIRequestHandler, self).__init__(*args, **kwargs)   File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"",
+> line 696, in __init__
+>     self.handle()   File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"",
+> line 179, in handle
+>     handler.run(self.server.get_app())   File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"",
+> line 144, in run
+>     self.close()   File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\simple_server.py"",
+> line 35, in close
+>     self.status.split(' ',1)[0], self.bytes_sent AttributeError: 'NoneType' object has no attribute 'split'
+
+but when I change this line `for album in Album.objects.all():` with  `for album in Album.objects.filter(user=request_user)`, the error disapears.
+I don't want to use the filter because I want all the albums.
+
+I am runing django 1.9.4 with python 3.6."
 158130729;24;46695379;888df4b5-5e6d-420f-97bf-efe448ba2047;2017-10-11 18:45:25;;;Proposed by 6895491 approved by 7332748 edit id of 3350837;
-158131524;8;46695379;64cbe157-44f0-4f54-b3d4-fe1a42d8a36e;2017-10-11 18:58:35;6655211;;Rollback to [7868ae43-782b-45e0-9ac1-d362f3df4ced];"I am working on a project in django with pycharm. &#xD;&#xA;I have this view in the views.py :&#xD;&#xA;&#xD;&#xA;    def all_songs(request, filter_by):&#xD;&#xA;        if not request.user.is_authenticated():&#xD;&#xA;            return render(request, 'music/login.html')&#xD;&#xA;        else:&#xD;&#xA;            try:&#xD;&#xA;                song_ids = []&#xD;&#xA;                for album in Album.objects.all():&#xD;&#xA;                    for song in album.song_set.all():&#xD;&#xA;                        song_ids.append(song.pk)&#xD;&#xA;                users_songs = Song.objects.filter(pk__in=song_ids)&#xD;&#xA;                for album in GenericAlbum.objects.all():&#xD;&#xA;                    for song in album.genericsong_set.all():&#xD;&#xA;                        song_ids.append(song.pk)&#xD;&#xA;                generic_songs = GenericSong.objects.filter(pk__in=song_ids)&#xD;&#xA;            except Album.DoesNotExist:&#xD;&#xA;                users_songs = []&#xD;&#xA;            except GenericAlbum.DoesNotExist:&#xD;&#xA;                generic_songs = []&#xD;&#xA;            return render(request, 'music/songs.html', {&#xD;&#xA;                'song_list_all': users_songs,&#xD;&#xA;                'generic_song_list': generic_songs,&#xD;&#xA;                'filter_by': filter_by,&#xD;&#xA;            })&#xD;&#xA;&#xD;&#xA;Everything is working fine when I click on the page that run this method, but I get an error :&#xD;&#xA;&#xD;&#xA;    Traceback (most recent call last):   &#xD;&#xA;    File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 639, in process_request_thread&#xD;&#xA;        self.finish_request(request, client_address)   &#xD;&#xA;    File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 361, in finish_request&#xD;&#xA;        self.RequestHandlerClass(request, client_address, self)   &#xD;&#xA;    File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"", line 99, in __init__&#xD;&#xA;        super(WSGIRequestHandler, self).__init__(*args, **kwargs)   &#xD;&#xA;    File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 696, in __init__&#xD;&#xA;        self.handle()   &#xD;&#xA;    File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"", line 179, in handle&#xD;&#xA;        handler.run(self.server.get_app())   &#xD;&#xA;    File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 144, in run&#xD;&#xA;        self.close()   &#xD;&#xA;    File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\simple_server.py"", line 35, in close&#xD;&#xA;        self.status.split(' ',1)[0], self.bytes_sent AttributeError: 'NoneType' object has no attribute 'split'&#xD;&#xA;&#xD;&#xA;but when I change this line ""for album in Album.objects.all():"" with  ""for album in Album.objects.filter(user=request_user), the error disapears.&#xD;&#xA;I don't want to use the filter because I want all the albums.&#xD;&#xA;&#xD;&#xA;I am runing django 1.9.4 with python 3.6."
-158131594;5;46695379;94307c17-2eec-45a5-b77e-6f510f752806;2017-10-11 18:59:23;6655211;;added 8 characters in body;"I am working on a project in django with pycharm. &#xD;&#xA;I have this view in the views.py :&#xD;&#xA;&#xD;&#xA;    def all_songs(request, filter_by):&#xD;&#xA;        if not request.user.is_authenticated():&#xD;&#xA;            return render(request, 'music/login.html')&#xD;&#xA;        else:&#xD;&#xA;            try:&#xD;&#xA;                song_ids = []&#xD;&#xA;                for album in Album.objects.all():&#xD;&#xA;                    for song in album.song_set.all():&#xD;&#xA;                        song_ids.append(song.pk)&#xD;&#xA;                users_songs = Song.objects.filter(pk__in=song_ids)&#xD;&#xA;                for album in GenericAlbum.objects.all():&#xD;&#xA;                    for song in album.genericsong_set.all():&#xD;&#xA;                        song_ids.append(song.pk)&#xD;&#xA;                generic_songs = GenericSong.objects.filter(pk__in=song_ids)&#xD;&#xA;            except Album.DoesNotExist:&#xD;&#xA;                users_songs = []&#xD;&#xA;            except GenericAlbum.DoesNotExist:&#xD;&#xA;                generic_songs = []&#xD;&#xA;            return render(request, 'music/songs.html', {&#xD;&#xA;                'song_list_all': users_songs,&#xD;&#xA;                'generic_song_list': generic_songs,&#xD;&#xA;                'filter_by': filter_by,&#xD;&#xA;            })&#xD;&#xA;&#xD;&#xA;Everything is working fine when I click on the page that run this method, but I get an error :&#xD;&#xA;&#xD;&#xA;    Traceback (most recent call last):   &#xD;&#xA;    File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 639, in process_request_thread&#xD;&#xA;        self.finish_request(request, client_address)   &#xD;&#xA;    File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 361, in finish_request&#xD;&#xA;        self.RequestHandlerClass(request, client_address, self)   &#xD;&#xA;    File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"", line 99, in __init__&#xD;&#xA;        super(WSGIRequestHandler, self).__init__(*args, **kwargs)   &#xD;&#xA;    File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 696, in __init__&#xD;&#xA;        self.handle()   &#xD;&#xA;    File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"", line 179, in handle&#xD;&#xA;        handler.run(self.server.get_app())   &#xD;&#xA;    File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 144, in run&#xD;&#xA;        self.close()   &#xD;&#xA;    File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\simple_server.py"", line 35, in close&#xD;&#xA;        self.status.split(' ',1)[0], self.bytes_sent &#xD;&#xA;    AttributeError: 'NoneType' object has no attribute 'split'&#xD;&#xA;&#xD;&#xA;but when I change this line `for album in Album.objects.all():` with  `for album in Album.objects.filter(user=request_user)`, the error disappears.&#xD;&#xA;I don't want to use the filter because I want all the albums.&#xD;&#xA;&#xD;&#xA;I am runing django 1.9.4 with python 3.6."
-158194873;5;46695379;2db2bfe5-477b-4448-83a1-7fd5bc660e53;2017-10-12 14:08:09;7332748;;"added 25977 characters in body; edited title";"I am working on a project in django with pycharm. &#xD;&#xA;I have this view in the views.py :&#xD;&#xA;&#xD;&#xA;    def all_songs(request, filter_by):&#xD;&#xA;        if not request.user.is_authenticated():&#xD;&#xA;            return render(request, 'music/login.html')&#xD;&#xA;        else:&#xD;&#xA;            try:&#xD;&#xA;                song_ids = []&#xD;&#xA;                for album in Album.objects.all():&#xD;&#xA;                    for song in album.song_set.all():&#xD;&#xA;                        song_ids.append(song.pk)&#xD;&#xA;                users_songs = Song.objects.filter(pk__in=song_ids)&#xD;&#xA;                for album in GenericAlbum.objects.all():&#xD;&#xA;                    for song in album.genericsong_set.all():&#xD;&#xA;                        song_ids.append(song.pk)&#xD;&#xA;                generic_songs = GenericSong.objects.filter(pk__in=song_ids)&#xD;&#xA;            except Album.DoesNotExist:&#xD;&#xA;                users_songs = []&#xD;&#xA;            except GenericAlbum.DoesNotExist:&#xD;&#xA;                generic_songs = []&#xD;&#xA;            return render(request, 'music/songs.html', {&#xD;&#xA;                'song_list_all': users_songs,&#xD;&#xA;                'generic_song_list': generic_songs,&#xD;&#xA;                'filter_by': filter_by,&#xD;&#xA;            })&#xD;&#xA;&#xD;&#xA;Everything is working fine when I click on the page that run this method, but I get an error :&#xD;&#xA;&#xD;&#xA;Traceback (most recent call last):&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 639, in process_request_thread&#xD;&#xA;    self.finish_request(request, client_address)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 361, in finish_request&#xD;&#xA;    self.RequestHandlerClass(request, client_address, self)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 696, in __init__&#xD;&#xA;    self.handle()&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"", line 155, in handle&#xD;&#xA;    handler.run(self.server.get_app())&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 144, in run&#xD;&#xA;    self.close()&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\simple_server.py"", line 35, in close&#xD;&#xA;    self.status.split(' ',1)[0], self.bytes_sent&#xD;&#xA;AttributeError: 'NoneType' object has no attribute 'split'&#xD;&#xA;----------------------------------------&#xD;&#xA;[12/Oct/2017 14:57:50] ""GET /media/Eminem_-_Mockingbird.mp3 HTTP/1.1"" 200 212992&#xD;&#xA;Traceback (most recent call last):&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 138, in run&#xD;&#xA;    self.finish_response()&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 180, in finish_response&#xD;&#xA;    self.write(data)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 279, in write&#xD;&#xA;    self._write(data)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 453, in _write&#xD;&#xA;    result = self.stdout.write(data)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 775, in write&#xD;&#xA;    self._sock.sendall(b)&#xD;&#xA;ConnectionAbortedError: [WinError 10053] Une connexion établie a été abandonnée par un logiciel de votre ordinateur hôte&#xD;&#xA;[12/Oct/2017 14:57:50] ""GET /media/Eminem_-_Mockingbird.mp3 HTTP/1.1"" 500 59&#xD;&#xA;----------------------------------------&#xD;&#xA;Exception happened during processing of request from ('127.0.0.1', 59866)&#xD;&#xA;Traceback (most recent call last):&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 138, in run&#xD;&#xA;    self.finish_response()&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 180, in finish_response&#xD;&#xA;    self.write(data)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 279, in write&#xD;&#xA;    self._write(data)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 453, in _write&#xD;&#xA;    result = self.stdout.write(data)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 775, in write&#xD;&#xA;    self._sock.sendall(b)&#xD;&#xA;ConnectionAbortedError: [WinError 10053] Une connexion établie a été abandonnée par un logiciel de votre ordinateur hôte&#xD;&#xA;&#xD;&#xA;During handling of the above exception, another exception occurred:&#xD;&#xA;&#xD;&#xA;Traceback (most recent call last):&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 141, in run&#xD;&#xA;    self.handle_error()&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"", line 88, in handle_error&#xD;&#xA;    super(ServerHandler, self).handle_error()&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 368, in handle_error&#xD;&#xA;    self.finish_response()&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 180, in finish_response&#xD;&#xA;    self.write(data)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 274, in write&#xD;&#xA;    self.send_headers()&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 331, in send_headers&#xD;&#xA;    if not self.origin_server or self.client_is_modern():&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 344, in client_is_modern&#xD;&#xA;    return self.environ['SERVER_PROTOCOL'].upper() != 'HTTP/0.9'&#xD;&#xA;TypeError: 'NoneType' object is not subscriptable&#xD;&#xA;&#xD;&#xA;During handling of the above exception, another exception occurred:&#xD;&#xA;&#xD;&#xA;Traceback (most recent call last):&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 639, in process_request_thread&#xD;&#xA;    self.finish_request(request, client_address)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 361, in finish_request&#xD;&#xA;    self.RequestHandlerClass(request, client_address, self)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 696, in __init__&#xD;&#xA;    self.handle()&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"", line 155, in handle&#xD;&#xA;    handler.run(self.server.get_app())&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 144, in run&#xD;&#xA;    self.close()&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\simple_server.py"", line 35, in close&#xD;&#xA;    self.status.split(' ',1)[0], self.bytes_sent&#xD;&#xA;AttributeError: 'NoneType' object has no attribute 'split'&#xD;&#xA;----------------------------------------&#xD;&#xA;[12/Oct/2017 14:57:50] ""GET /media/Scorpions_-_Wind_Of_Change.mp3 HTTP/1.1"" 200 1638400&#xD;&#xA;[12/Oct/2017 14:57:50] ""GET /media/The_Cranberries_-_Zombie.mp3 HTTP/1.1"" 200 1597440&#xD;&#xA;[12/Oct/2017 14:57:50] ""GET /media/Bon_Jovi_-_Always.mp3 HTTP/1.1"" 200 1449984&#xD;&#xA;Traceback (most recent call last):&#xD;&#xA;Traceback (most recent call last):&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 138, in run&#xD;&#xA;    self.finish_response()&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 138, in run&#xD;&#xA;    self.finish_response()&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 180, in finish_response&#xD;&#xA;    self.write(data)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 279, in write&#xD;&#xA;    self._write(data)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 180, in finish_response&#xD;&#xA;    self.write(data)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 453, in _write&#xD;&#xA;    result = self.stdout.write(data)&#xD;&#xA;[12/Oct/2017 14:57:50] ""GET /media/Bon_Jovi_-_Hey_God_Long_Version.mp3 HTTP/1.1"" 200 1318912&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 775, in write&#xD;&#xA;    self._sock.sendall(b)&#xD;&#xA;ConnectionResetError: [WinError 10054] Une connexion existante a dû être fermée par l’hôte distant&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 279, in write&#xD;&#xA;    self._write(data)&#xD;&#xA;[12/Oct/2017 14:57:50] ""GET /media/Scorpions_-_Wind_Of_Change.mp3 HTTP/1.1"" 500 59&#xD;&#xA;Traceback (most recent call last):&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 453, in _write&#xD;&#xA;    result = self.stdout.write(data)&#xD;&#xA;----------------------------------------&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 138, in run&#xD;&#xA;    self.finish_response()&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 775, in write&#xD;&#xA;    self._sock.sendall(b)&#xD;&#xA;Traceback (most recent call last):&#xD;&#xA;Exception happened during processing of request from ('127.0.0.1', 59868)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 180, in finish_response&#xD;&#xA;    self.write(data)&#xD;&#xA;ConnectionResetError: [WinError 10054] Une connexion existante a dû être fermée par l’hôte distant&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 138, in run&#xD;&#xA;    self.finish_response()&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 279, in write&#xD;&#xA;    self._write(data)&#xD;&#xA;[12/Oct/2017 14:57:50] ""GET /media/The_Cranberries_-_Zombie.mp3 HTTP/1.1"" 500 59&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 453, in _write&#xD;&#xA;    result = self.stdout.write(data)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 180, in finish_response&#xD;&#xA;    self.write(data)&#xD;&#xA;----------------------------------------&#xD;&#xA;Exception happened during processing of request from ('127.0.0.1', 59869)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 775, in write&#xD;&#xA;    self._sock.sendall(b)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 279, in write&#xD;&#xA;    self._write(data)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 453, in _write&#xD;&#xA;    result = self.stdout.write(data)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 775, in write&#xD;&#xA;    self._sock.sendall(b)&#xD;&#xA;ConnectionResetError: [WinError 10054] Une connexion existante a dû être fermée par l’hôte distant&#xD;&#xA;ConnectionResetError: [WinError 10054] Une connexion existante a dû être fermée par l’hôte distant&#xD;&#xA;[12/Oct/2017 14:57:50] ""GET /media/Bon_Jovi_-_Hey_God_Long_Version.mp3 HTTP/1.1"" 500 59&#xD;&#xA;----------------------------------------&#xD;&#xA;[12/Oct/2017 14:57:50] ""GET /media/Bon_Jovi_-_Always.mp3 HTTP/1.1"" 500 59&#xD;&#xA;Exception happened during processing of request from ('127.0.0.1', 59871)&#xD;&#xA;----------------------------------------&#xD;&#xA;[12/Oct/2017 14:57:50] ""GET /media/eminem__lose_yourself_lyrics.mp3 HTTP/1.1"" 200 794624&#xD;&#xA;Exception happened during processing of request from ('127.0.0.1', 59870)&#xD;&#xA;Traceback (most recent call last):&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 138, in run&#xD;&#xA;    self.finish_response()&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 180, in finish_response&#xD;&#xA;    self.write(data)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 279, in write&#xD;&#xA;    self._write(data)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 453, in _write&#xD;&#xA;    result = self.stdout.write(data)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 775, in write&#xD;&#xA;    self._sock.sendall(b)&#xD;&#xA;ConnectionResetError: [WinError 10054] Une connexion existante a dû être fermée par l’hôte distant&#xD;&#xA;Traceback (most recent call last):&#xD;&#xA;Traceback (most recent call last):&#xD;&#xA;&#xD;&#xA;During handling of the above exception, another exception occurred:&#xD;&#xA;&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 138, in run&#xD;&#xA;    self.finish_response()&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 138, in run&#xD;&#xA;    self.finish_response()&#xD;&#xA;Traceback (most recent call last):&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 180, in finish_response&#xD;&#xA;    self.write(data)&#xD;&#xA;Traceback (most recent call last):&#xD;&#xA;Traceback (most recent call last):&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 180, in finish_response&#xD;&#xA;    self.write(data)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 141, in run&#xD;&#xA;    self.handle_error()&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 279, in write&#xD;&#xA;    self._write(data)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 138, in run&#xD;&#xA;    self.finish_response()&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 138, in run&#xD;&#xA;    self.finish_response()&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 279, in write&#xD;&#xA;    self._write(data)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"", line 88, in handle_error&#xD;&#xA;    super(ServerHandler, self).handle_error()&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 453, in _write&#xD;&#xA;    result = self.stdout.write(data)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 775, in write&#xD;&#xA;    self._sock.sendall(b)&#xD;&#xA;ConnectionAbortedError: [WinError 10053] Une connexion établie a été abandonnée par un logiciel de votre ordinateur hôte&#xD;&#xA;[12/Oct/2017 14:57:50] ""GET /media/eminem__lose_yourself_lyrics.mp3 HTTP/1.1"" 500 59&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 180, in finish_response&#xD;&#xA;    self.write(data)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 180, in finish_response&#xD;&#xA;    self.write(data)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 453, in _write&#xD;&#xA;    result = self.stdout.write(data)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 368, in handle_error&#xD;&#xA;    self.finish_response()&#xD;&#xA;----------------------------------------&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 279, in write&#xD;&#xA;    self._write(data)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 279, in write&#xD;&#xA;    self._write(data)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 775, in write&#xD;&#xA;    self._sock.sendall(b)&#xD;&#xA;ConnectionResetError: [WinError 10054] Une connexion existante a dû être fermée par l’hôte distant&#xD;&#xA;Exception happened during processing of request from ('127.0.0.1', 59867)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 453, in _write&#xD;&#xA;    result = self.stdout.write(data)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 180, in finish_response&#xD;&#xA;    self.write(data)&#xD;&#xA;&#xD;&#xA;During handling of the above exception, another exception occurred:&#xD;&#xA;&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 453, in _write&#xD;&#xA;    result = self.stdout.write(data)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 775, in write&#xD;&#xA;    self._sock.sendall(b)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 274, in write&#xD;&#xA;    self.send_headers()&#xD;&#xA;Traceback (most recent call last):&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 775, in write&#xD;&#xA;    self._sock.sendall(b)&#xD;&#xA;ConnectionResetError: [WinError 10054] Une connexion existante a dû être fermée par l’hôte distant&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 331, in send_headers&#xD;&#xA;    if not self.origin_server or self.client_is_modern():&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 344, in client_is_modern&#xD;&#xA;    return self.environ['SERVER_PROTOCOL'].upper() != 'HTTP/0.9'&#xD;&#xA;TypeError: 'NoneType' object is not subscriptable&#xD;&#xA;&#xD;&#xA;During handling of the above exception, another exception occurred:&#xD;&#xA;&#xD;&#xA;Traceback (most recent call last):&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 639, in process_request_thread&#xD;&#xA;    self.finish_request(request, client_address)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 361, in finish_request&#xD;&#xA;    self.RequestHandlerClass(request, client_address, self)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 696, in __init__&#xD;&#xA;    self.handle()&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"", line 155, in handle&#xD;&#xA;    handler.run(self.server.get_app())&#xD;&#xA;&#xD;&#xA;During handling of the above exception, another exception occurred:&#xD;&#xA;&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 141, in run&#xD;&#xA;    self.handle_error()&#xD;&#xA;ConnectionResetError: [WinError 10054] Une connexion existante a dû être fermée par l’hôte distant&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 144, in run&#xD;&#xA;    self.close()&#xD;&#xA;Traceback (most recent call last):&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"", line 88, in handle_error&#xD;&#xA;    super(ServerHandler, self).handle_error()&#xD;&#xA;&#xD;&#xA;During handling of the above exception, another exception occurred:&#xD;&#xA;&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\simple_server.py"", line 35, in close&#xD;&#xA;    self.status.split(' ',1)[0], self.bytes_sent&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 141, in run&#xD;&#xA;    self.handle_error()&#xD;&#xA;Traceback (most recent call last):&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 368, in handle_error&#xD;&#xA;    self.finish_response()&#xD;&#xA;Traceback (most recent call last):&#xD;&#xA;AttributeError: 'NoneType' object has no attribute 'split'&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"", line 88, in handle_error&#xD;&#xA;    super(ServerHandler, self).handle_error()&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 138, in run&#xD;&#xA;    self.finish_response()&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 180, in finish_response&#xD;&#xA;    self.write(data)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 141, in run&#xD;&#xA;    self.handle_error()&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"", line 88, in handle_error&#xD;&#xA;    super(ServerHandler, self).handle_error()&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 368, in handle_error&#xD;&#xA;    self.finish_response()&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 180, in finish_response&#xD;&#xA;    self.write(data)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 274, in write&#xD;&#xA;    self.send_headers()&#xD;&#xA;----------------------------------------&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 368, in handle_error&#xD;&#xA;    self.finish_response()&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 180, in finish_response&#xD;&#xA;    self.write(data)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 274, in write&#xD;&#xA;    self.send_headers()&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 331, in send_headers&#xD;&#xA;    if not self.origin_server or self.client_is_modern():&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 180, in finish_response&#xD;&#xA;    self.write(data)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 279, in write&#xD;&#xA;    self._write(data)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 331, in send_headers&#xD;&#xA;    if not self.origin_server or self.client_is_modern():&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 344, in client_is_modern&#xD;&#xA;    return self.environ['SERVER_PROTOCOL'].upper() != 'HTTP/0.9'&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 274, in write&#xD;&#xA;    self.send_headers()&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 331, in send_headers&#xD;&#xA;    if not self.origin_server or self.client_is_modern():&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 344, in client_is_modern&#xD;&#xA;    return self.environ['SERVER_PROTOCOL'].upper() != 'HTTP/0.9'&#xD;&#xA;TypeError: 'NoneType' object is not subscriptable&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 453, in _write&#xD;&#xA;    result = self.stdout.write(data)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 775, in write&#xD;&#xA;    self._sock.sendall(b)&#xD;&#xA;ConnectionAbortedError: [WinError 10053] Une connexion établie a été abandonnée par un logiciel de votre ordinateur hôte&#xD;&#xA;&#xD;&#xA;During handling of the above exception, another exception occurred:&#xD;&#xA;&#xD;&#xA;Traceback (most recent call last):&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 141, in run&#xD;&#xA;    self.handle_error()&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"", line 88, in handle_error&#xD;&#xA;    super(ServerHandler, self).handle_error()&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 368, in handle_error&#xD;&#xA;    self.finish_response()&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 180, in finish_response&#xD;&#xA;    self.write(data)&#xD;&#xA;&#xD;&#xA;During handling of the above exception, another exception occurred:&#xD;&#xA;&#xD;&#xA;Traceback (most recent call last):&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 639, in process_request_thread&#xD;&#xA;    self.finish_request(request, client_address)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 274, in write&#xD;&#xA;    self.send_headers()&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 331, in send_headers&#xD;&#xA;    if not self.origin_server or self.client_is_modern():&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 344, in client_is_modern&#xD;&#xA;    return self.environ['SERVER_PROTOCOL'].upper() != 'HTTP/0.9'&#xD;&#xA;TypeError: 'NoneType' object is not subscriptable&#xD;&#xA;&#xD;&#xA;During handling of the above exception, another exception occurred:&#xD;&#xA;&#xD;&#xA;Traceback (most recent call last):&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 361, in finish_request&#xD;&#xA;    self.RequestHandlerClass(request, client_address, self)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 696, in __init__&#xD;&#xA;    self.handle()&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"", line 155, in handle&#xD;&#xA;    handler.run(self.server.get_app())&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 144, in run&#xD;&#xA;    self.close()&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\simple_server.py"", line 35, in close&#xD;&#xA;    self.status.split(' ',1)[0], self.bytes_sent&#xD;&#xA;AttributeError: 'NoneType' object has no attribute 'split'&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 639, in process_request_thread&#xD;&#xA;    self.finish_request(request, client_address)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 344, in client_is_modern&#xD;&#xA;    return self.environ['SERVER_PROTOCOL'].upper() != 'HTTP/0.9'&#xD;&#xA;TypeError: 'NoneType' object is not subscriptable&#xD;&#xA;&#xD;&#xA;During handling of the above exception, another exception occurred:&#xD;&#xA;&#xD;&#xA;Traceback (most recent call last):&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 639, in process_request_thread&#xD;&#xA;    self.finish_request(request, client_address)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 361, in finish_request&#xD;&#xA;    self.RequestHandlerClass(request, client_address, self)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 696, in __init__&#xD;&#xA;    self.handle()&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"", line 155, in handle&#xD;&#xA;    handler.run(self.server.get_app())&#xD;&#xA;----------------------------------------&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 361, in finish_request&#xD;&#xA;    self.RequestHandlerClass(request, client_address, self)&#xD;&#xA;TypeError: 'NoneType' object is not subscriptable&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 144, in run&#xD;&#xA;    self.close()&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 696, in __init__&#xD;&#xA;    self.handle()&#xD;&#xA;&#xD;&#xA;During handling of the above exception, another exception occurred:&#xD;&#xA;&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\simple_server.py"", line 35, in close&#xD;&#xA;    self.status.split(' ',1)[0], self.bytes_sent&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"", line 155, in handle&#xD;&#xA;    handler.run(self.server.get_app())&#xD;&#xA;Traceback (most recent call last):&#xD;&#xA;AttributeError: 'NoneType' object has no attribute 'split'&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 144, in run&#xD;&#xA;    self.close()&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 639, in process_request_thread&#xD;&#xA;    self.finish_request(request, client_address)&#xD;&#xA;----------------------------------------&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\simple_server.py"", line 35, in close&#xD;&#xA;    self.status.split(' ',1)[0], self.bytes_sent&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 361, in finish_request&#xD;&#xA;    self.RequestHandlerClass(request, client_address, self)&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 696, in __init__&#xD;&#xA;    self.handle()&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"", line 155, in handle&#xD;&#xA;    handler.run(self.server.get_app())&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 144, in run&#xD;&#xA;    self.close()&#xD;&#xA;  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\simple_server.py"", line 35, in close&#xD;&#xA;    self.status.split(' ',1)[0], self.bytes_sent&#xD;&#xA;AttributeError: 'NoneType' object has no attribute 'split'&#xD;&#xA;----------------------------------------&#xD;&#xA;AttributeError: 'NoneType' object has no attribute 'split'&#xD;&#xA;----------------------------------------&#xD;&#xA;&#xD;&#xA;I am runing django 1.11 with python 3.6."
+158131524;8;46695379;64cbe157-44f0-4f54-b3d4-fe1a42d8a36e;2017-10-11 18:58:35;6655211;;Rollback to [7868ae43-782b-45e0-9ac1-d362f3df4ced];"I am working on a project in django with pycharm. 
+I have this view in the views.py :
+
+    def all_songs(request, filter_by):
+        if not request.user.is_authenticated():
+            return render(request, 'music/login.html')
+        else:
+            try:
+                song_ids = []
+                for album in Album.objects.all():
+                    for song in album.song_set.all():
+                        song_ids.append(song.pk)
+                users_songs = Song.objects.filter(pk__in=song_ids)
+                for album in GenericAlbum.objects.all():
+                    for song in album.genericsong_set.all():
+                        song_ids.append(song.pk)
+                generic_songs = GenericSong.objects.filter(pk__in=song_ids)
+            except Album.DoesNotExist:
+                users_songs = []
+            except GenericAlbum.DoesNotExist:
+                generic_songs = []
+            return render(request, 'music/songs.html', {
+                'song_list_all': users_songs,
+                'generic_song_list': generic_songs,
+                'filter_by': filter_by,
+            })
+
+Everything is working fine when I click on the page that run this method, but I get an error :
+
+    Traceback (most recent call last):   
+    File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 639, in process_request_thread
+        self.finish_request(request, client_address)   
+    File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 361, in finish_request
+        self.RequestHandlerClass(request, client_address, self)   
+    File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"", line 99, in __init__
+        super(WSGIRequestHandler, self).__init__(*args, **kwargs)   
+    File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 696, in __init__
+        self.handle()   
+    File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"", line 179, in handle
+        handler.run(self.server.get_app())   
+    File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 144, in run
+        self.close()   
+    File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\simple_server.py"", line 35, in close
+        self.status.split(' ',1)[0], self.bytes_sent AttributeError: 'NoneType' object has no attribute 'split'
+
+but when I change this line ""for album in Album.objects.all():"" with  ""for album in Album.objects.filter(user=request_user), the error disapears.
+I don't want to use the filter because I want all the albums.
+
+I am runing django 1.9.4 with python 3.6."
+158131594;5;46695379;94307c17-2eec-45a5-b77e-6f510f752806;2017-10-11 18:59:23;6655211;;added 8 characters in body;"I am working on a project in django with pycharm. 
+I have this view in the views.py :
+
+    def all_songs(request, filter_by):
+        if not request.user.is_authenticated():
+            return render(request, 'music/login.html')
+        else:
+            try:
+                song_ids = []
+                for album in Album.objects.all():
+                    for song in album.song_set.all():
+                        song_ids.append(song.pk)
+                users_songs = Song.objects.filter(pk__in=song_ids)
+                for album in GenericAlbum.objects.all():
+                    for song in album.genericsong_set.all():
+                        song_ids.append(song.pk)
+                generic_songs = GenericSong.objects.filter(pk__in=song_ids)
+            except Album.DoesNotExist:
+                users_songs = []
+            except GenericAlbum.DoesNotExist:
+                generic_songs = []
+            return render(request, 'music/songs.html', {
+                'song_list_all': users_songs,
+                'generic_song_list': generic_songs,
+                'filter_by': filter_by,
+            })
+
+Everything is working fine when I click on the page that run this method, but I get an error :
+
+    Traceback (most recent call last):   
+    File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 639, in process_request_thread
+        self.finish_request(request, client_address)   
+    File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 361, in finish_request
+        self.RequestHandlerClass(request, client_address, self)   
+    File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"", line 99, in __init__
+        super(WSGIRequestHandler, self).__init__(*args, **kwargs)   
+    File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 696, in __init__
+        self.handle()   
+    File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"", line 179, in handle
+        handler.run(self.server.get_app())   
+    File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 144, in run
+        self.close()   
+    File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\simple_server.py"", line 35, in close
+        self.status.split(' ',1)[0], self.bytes_sent 
+    AttributeError: 'NoneType' object has no attribute 'split'
+
+but when I change this line `for album in Album.objects.all():` with  `for album in Album.objects.filter(user=request_user)`, the error disappears.
+I don't want to use the filter because I want all the albums.
+
+I am runing django 1.9.4 with python 3.6."
+158194873;5;46695379;2db2bfe5-477b-4448-83a1-7fd5bc660e53;2017-10-12 14:08:09;7332748;;"added 25977 characters in body; edited title";"I am working on a project in django with pycharm. 
+I have this view in the views.py :
+
+    def all_songs(request, filter_by):
+        if not request.user.is_authenticated():
+            return render(request, 'music/login.html')
+        else:
+            try:
+                song_ids = []
+                for album in Album.objects.all():
+                    for song in album.song_set.all():
+                        song_ids.append(song.pk)
+                users_songs = Song.objects.filter(pk__in=song_ids)
+                for album in GenericAlbum.objects.all():
+                    for song in album.genericsong_set.all():
+                        song_ids.append(song.pk)
+                generic_songs = GenericSong.objects.filter(pk__in=song_ids)
+            except Album.DoesNotExist:
+                users_songs = []
+            except GenericAlbum.DoesNotExist:
+                generic_songs = []
+            return render(request, 'music/songs.html', {
+                'song_list_all': users_songs,
+                'generic_song_list': generic_songs,
+                'filter_by': filter_by,
+            })
+
+Everything is working fine when I click on the page that run this method, but I get an error :
+
+Traceback (most recent call last):
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 639, in process_request_thread
+    self.finish_request(request, client_address)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 361, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 696, in __init__
+    self.handle()
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"", line 155, in handle
+    handler.run(self.server.get_app())
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 144, in run
+    self.close()
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\simple_server.py"", line 35, in close
+    self.status.split(' ',1)[0], self.bytes_sent
+AttributeError: 'NoneType' object has no attribute 'split'
+----------------------------------------
+[12/Oct/2017 14:57:50] ""GET /media/Eminem_-_Mockingbird.mp3 HTTP/1.1"" 200 212992
+Traceback (most recent call last):
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 138, in run
+    self.finish_response()
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 180, in finish_response
+    self.write(data)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 279, in write
+    self._write(data)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 453, in _write
+    result = self.stdout.write(data)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 775, in write
+    self._sock.sendall(b)
+ConnectionAbortedError: [WinError 10053] Une connexion établie a été abandonnée par un logiciel de votre ordinateur hôte
+[12/Oct/2017 14:57:50] ""GET /media/Eminem_-_Mockingbird.mp3 HTTP/1.1"" 500 59
+----------------------------------------
+Exception happened during processing of request from ('127.0.0.1', 59866)
+Traceback (most recent call last):
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 138, in run
+    self.finish_response()
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 180, in finish_response
+    self.write(data)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 279, in write
+    self._write(data)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 453, in _write
+    result = self.stdout.write(data)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 775, in write
+    self._sock.sendall(b)
+ConnectionAbortedError: [WinError 10053] Une connexion établie a été abandonnée par un logiciel de votre ordinateur hôte
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 141, in run
+    self.handle_error()
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"", line 88, in handle_error
+    super(ServerHandler, self).handle_error()
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 368, in handle_error
+    self.finish_response()
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 180, in finish_response
+    self.write(data)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 274, in write
+    self.send_headers()
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 331, in send_headers
+    if not self.origin_server or self.client_is_modern():
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 344, in client_is_modern
+    return self.environ['SERVER_PROTOCOL'].upper() != 'HTTP/0.9'
+TypeError: 'NoneType' object is not subscriptable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 639, in process_request_thread
+    self.finish_request(request, client_address)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 361, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 696, in __init__
+    self.handle()
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"", line 155, in handle
+    handler.run(self.server.get_app())
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 144, in run
+    self.close()
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\simple_server.py"", line 35, in close
+    self.status.split(' ',1)[0], self.bytes_sent
+AttributeError: 'NoneType' object has no attribute 'split'
+----------------------------------------
+[12/Oct/2017 14:57:50] ""GET /media/Scorpions_-_Wind_Of_Change.mp3 HTTP/1.1"" 200 1638400
+[12/Oct/2017 14:57:50] ""GET /media/The_Cranberries_-_Zombie.mp3 HTTP/1.1"" 200 1597440
+[12/Oct/2017 14:57:50] ""GET /media/Bon_Jovi_-_Always.mp3 HTTP/1.1"" 200 1449984
+Traceback (most recent call last):
+Traceback (most recent call last):
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 138, in run
+    self.finish_response()
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 138, in run
+    self.finish_response()
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 180, in finish_response
+    self.write(data)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 279, in write
+    self._write(data)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 180, in finish_response
+    self.write(data)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 453, in _write
+    result = self.stdout.write(data)
+[12/Oct/2017 14:57:50] ""GET /media/Bon_Jovi_-_Hey_God_Long_Version.mp3 HTTP/1.1"" 200 1318912
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 775, in write
+    self._sock.sendall(b)
+ConnectionResetError: [WinError 10054] Une connexion existante a dû être fermée par l’hôte distant
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 279, in write
+    self._write(data)
+[12/Oct/2017 14:57:50] ""GET /media/Scorpions_-_Wind_Of_Change.mp3 HTTP/1.1"" 500 59
+Traceback (most recent call last):
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 453, in _write
+    result = self.stdout.write(data)
+----------------------------------------
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 138, in run
+    self.finish_response()
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 775, in write
+    self._sock.sendall(b)
+Traceback (most recent call last):
+Exception happened during processing of request from ('127.0.0.1', 59868)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 180, in finish_response
+    self.write(data)
+ConnectionResetError: [WinError 10054] Une connexion existante a dû être fermée par l’hôte distant
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 138, in run
+    self.finish_response()
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 279, in write
+    self._write(data)
+[12/Oct/2017 14:57:50] ""GET /media/The_Cranberries_-_Zombie.mp3 HTTP/1.1"" 500 59
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 453, in _write
+    result = self.stdout.write(data)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 180, in finish_response
+    self.write(data)
+----------------------------------------
+Exception happened during processing of request from ('127.0.0.1', 59869)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 775, in write
+    self._sock.sendall(b)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 279, in write
+    self._write(data)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 453, in _write
+    result = self.stdout.write(data)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 775, in write
+    self._sock.sendall(b)
+ConnectionResetError: [WinError 10054] Une connexion existante a dû être fermée par l’hôte distant
+ConnectionResetError: [WinError 10054] Une connexion existante a dû être fermée par l’hôte distant
+[12/Oct/2017 14:57:50] ""GET /media/Bon_Jovi_-_Hey_God_Long_Version.mp3 HTTP/1.1"" 500 59
+----------------------------------------
+[12/Oct/2017 14:57:50] ""GET /media/Bon_Jovi_-_Always.mp3 HTTP/1.1"" 500 59
+Exception happened during processing of request from ('127.0.0.1', 59871)
+----------------------------------------
+[12/Oct/2017 14:57:50] ""GET /media/eminem__lose_yourself_lyrics.mp3 HTTP/1.1"" 200 794624
+Exception happened during processing of request from ('127.0.0.1', 59870)
+Traceback (most recent call last):
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 138, in run
+    self.finish_response()
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 180, in finish_response
+    self.write(data)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 279, in write
+    self._write(data)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 453, in _write
+    result = self.stdout.write(data)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 775, in write
+    self._sock.sendall(b)
+ConnectionResetError: [WinError 10054] Une connexion existante a dû être fermée par l’hôte distant
+Traceback (most recent call last):
+Traceback (most recent call last):
+
+During handling of the above exception, another exception occurred:
+
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 138, in run
+    self.finish_response()
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 138, in run
+    self.finish_response()
+Traceback (most recent call last):
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 180, in finish_response
+    self.write(data)
+Traceback (most recent call last):
+Traceback (most recent call last):
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 180, in finish_response
+    self.write(data)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 141, in run
+    self.handle_error()
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 279, in write
+    self._write(data)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 138, in run
+    self.finish_response()
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 138, in run
+    self.finish_response()
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 279, in write
+    self._write(data)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"", line 88, in handle_error
+    super(ServerHandler, self).handle_error()
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 453, in _write
+    result = self.stdout.write(data)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 775, in write
+    self._sock.sendall(b)
+ConnectionAbortedError: [WinError 10053] Une connexion établie a été abandonnée par un logiciel de votre ordinateur hôte
+[12/Oct/2017 14:57:50] ""GET /media/eminem__lose_yourself_lyrics.mp3 HTTP/1.1"" 500 59
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 180, in finish_response
+    self.write(data)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 180, in finish_response
+    self.write(data)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 453, in _write
+    result = self.stdout.write(data)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 368, in handle_error
+    self.finish_response()
+----------------------------------------
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 279, in write
+    self._write(data)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 279, in write
+    self._write(data)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 775, in write
+    self._sock.sendall(b)
+ConnectionResetError: [WinError 10054] Une connexion existante a dû être fermée par l’hôte distant
+Exception happened during processing of request from ('127.0.0.1', 59867)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 453, in _write
+    result = self.stdout.write(data)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 180, in finish_response
+    self.write(data)
+
+During handling of the above exception, another exception occurred:
+
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 453, in _write
+    result = self.stdout.write(data)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 775, in write
+    self._sock.sendall(b)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 274, in write
+    self.send_headers()
+Traceback (most recent call last):
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 775, in write
+    self._sock.sendall(b)
+ConnectionResetError: [WinError 10054] Une connexion existante a dû être fermée par l’hôte distant
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 331, in send_headers
+    if not self.origin_server or self.client_is_modern():
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 344, in client_is_modern
+    return self.environ['SERVER_PROTOCOL'].upper() != 'HTTP/0.9'
+TypeError: 'NoneType' object is not subscriptable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 639, in process_request_thread
+    self.finish_request(request, client_address)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 361, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 696, in __init__
+    self.handle()
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"", line 155, in handle
+    handler.run(self.server.get_app())
+
+During handling of the above exception, another exception occurred:
+
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 141, in run
+    self.handle_error()
+ConnectionResetError: [WinError 10054] Une connexion existante a dû être fermée par l’hôte distant
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 144, in run
+    self.close()
+Traceback (most recent call last):
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"", line 88, in handle_error
+    super(ServerHandler, self).handle_error()
+
+During handling of the above exception, another exception occurred:
+
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\simple_server.py"", line 35, in close
+    self.status.split(' ',1)[0], self.bytes_sent
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 141, in run
+    self.handle_error()
+Traceback (most recent call last):
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 368, in handle_error
+    self.finish_response()
+Traceback (most recent call last):
+AttributeError: 'NoneType' object has no attribute 'split'
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"", line 88, in handle_error
+    super(ServerHandler, self).handle_error()
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 138, in run
+    self.finish_response()
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 180, in finish_response
+    self.write(data)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 141, in run
+    self.handle_error()
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"", line 88, in handle_error
+    super(ServerHandler, self).handle_error()
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 368, in handle_error
+    self.finish_response()
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 180, in finish_response
+    self.write(data)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 274, in write
+    self.send_headers()
+----------------------------------------
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 368, in handle_error
+    self.finish_response()
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 180, in finish_response
+    self.write(data)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 274, in write
+    self.send_headers()
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 331, in send_headers
+    if not self.origin_server or self.client_is_modern():
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 180, in finish_response
+    self.write(data)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 279, in write
+    self._write(data)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 331, in send_headers
+    if not self.origin_server or self.client_is_modern():
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 344, in client_is_modern
+    return self.environ['SERVER_PROTOCOL'].upper() != 'HTTP/0.9'
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 274, in write
+    self.send_headers()
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 331, in send_headers
+    if not self.origin_server or self.client_is_modern():
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 344, in client_is_modern
+    return self.environ['SERVER_PROTOCOL'].upper() != 'HTTP/0.9'
+TypeError: 'NoneType' object is not subscriptable
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 453, in _write
+    result = self.stdout.write(data)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 775, in write
+    self._sock.sendall(b)
+ConnectionAbortedError: [WinError 10053] Une connexion établie a été abandonnée par un logiciel de votre ordinateur hôte
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 141, in run
+    self.handle_error()
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"", line 88, in handle_error
+    super(ServerHandler, self).handle_error()
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 368, in handle_error
+    self.finish_response()
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 180, in finish_response
+    self.write(data)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 639, in process_request_thread
+    self.finish_request(request, client_address)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 274, in write
+    self.send_headers()
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 331, in send_headers
+    if not self.origin_server or self.client_is_modern():
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 344, in client_is_modern
+    return self.environ['SERVER_PROTOCOL'].upper() != 'HTTP/0.9'
+TypeError: 'NoneType' object is not subscriptable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 361, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 696, in __init__
+    self.handle()
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"", line 155, in handle
+    handler.run(self.server.get_app())
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 144, in run
+    self.close()
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\simple_server.py"", line 35, in close
+    self.status.split(' ',1)[0], self.bytes_sent
+AttributeError: 'NoneType' object has no attribute 'split'
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 639, in process_request_thread
+    self.finish_request(request, client_address)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 344, in client_is_modern
+    return self.environ['SERVER_PROTOCOL'].upper() != 'HTTP/0.9'
+TypeError: 'NoneType' object is not subscriptable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 639, in process_request_thread
+    self.finish_request(request, client_address)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 361, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 696, in __init__
+    self.handle()
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"", line 155, in handle
+    handler.run(self.server.get_app())
+----------------------------------------
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 361, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+TypeError: 'NoneType' object is not subscriptable
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 144, in run
+    self.close()
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 696, in __init__
+    self.handle()
+
+During handling of the above exception, another exception occurred:
+
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\simple_server.py"", line 35, in close
+    self.status.split(' ',1)[0], self.bytes_sent
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"", line 155, in handle
+    handler.run(self.server.get_app())
+Traceback (most recent call last):
+AttributeError: 'NoneType' object has no attribute 'split'
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 144, in run
+    self.close()
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 639, in process_request_thread
+    self.finish_request(request, client_address)
+----------------------------------------
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\simple_server.py"", line 35, in close
+    self.status.split(' ',1)[0], self.bytes_sent
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 361, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\socketserver.py"", line 696, in __init__
+    self.handle()
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\site-packages\django\core\servers\basehttp.py"", line 155, in handle
+    handler.run(self.server.get_app())
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\handlers.py"", line 144, in run
+    self.close()
+  File ""C:\Users\elmou\AppData\Local\Programs\Python\Python36-32\lib\wsgiref\simple_server.py"", line 35, in close
+    self.status.split(' ',1)[0], self.bytes_sent
+AttributeError: 'NoneType' object has no attribute 'split'
+----------------------------------------
+AttributeError: 'NoneType' object has no attribute 'split'
+----------------------------------------
+
+I am runing django 1.11 with python 3.6."
 158194874;4;46695379;2db2bfe5-477b-4448-83a1-7fd5bc660e53;2017-10-12 14:08:09;7332748;;"added 25977 characters in body; edited title";'NoneType' object has no attribute 'split' : Django 1.11

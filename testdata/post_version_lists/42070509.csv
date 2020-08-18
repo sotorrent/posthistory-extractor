@@ -1,3 +1,151 @@
 Id;PostId;UserId;PostHistoryTypeId;RevisionGUID;CreationDate;Text;UserDisplayName;Comment
-137707769;42070509;5768908;2;2ec52973-a6a8-4416-a32d-b0c0ed6820bc;2017-02-06 14:45:10.0;"This has nothing to do with D3 (be it v3 or v4). The problem here is that `scale` is centered at the origin (0,0) of the SVG, which is the top left corner. Because of this, any element that is not on that position (0,0) will seem to move.&#xD;&#xA;&#xD;&#xA;Have a look at this (hover over the circle):&#xD;&#xA;&#xD;&#xA;<!-- begin snippet: js hide: false console: true babel: false -->&#xD;&#xA;&#xD;&#xA;<!-- language: lang-js -->&#xD;&#xA;&#xD;&#xA;    var circle = d3.select(""circle"");&#xD;&#xA;    circle.on('mouseover', function(d) {&#xD;&#xA;        d3.select(this).attr('transform', 'scale(' + 2 + ')');&#xD;&#xA;    })&#xD;&#xA;&#xD;&#xA;<!-- language: lang-html -->&#xD;&#xA;&#xD;&#xA;    <script src=""https://d3js.org/d3.v4.min.js""></script>&#xD;&#xA;    <svg>&#xD;&#xA;    	<circle cx=""150"" cy=""75"" r=""20"" fill=""teal""></circle>&#xD;&#xA;    </svg>&#xD;&#xA;&#xD;&#xA;<!-- end snippet -->&#xD;&#xA;&#xD;&#xA;**Solution**: translate the element to the origin before the scale:&#xD;&#xA;&#xD;&#xA;<!-- begin snippet: js hide: false console: true babel: false -->&#xD;&#xA;&#xD;&#xA;<!-- language: lang-js -->&#xD;&#xA;&#xD;&#xA;    var circle = d3.select(""circle"");&#xD;&#xA;    circle.on('mouseover', function(d) {&#xD;&#xA;        d3.select(this).attr('transform', 'translate(-150,-75) scale(' + 2 + ')');&#xD;&#xA;    })&#xD;&#xA;&#xD;&#xA;<!-- language: lang-html -->&#xD;&#xA;&#xD;&#xA;    <script src=""https://d3js.org/d3.v4.min.js""></script>&#xD;&#xA;    <svg>&#xD;&#xA;    	<circle cx=""150"" cy=""75"" r=""20"" fill=""teal""></circle>&#xD;&#xA;    </svg>&#xD;&#xA;&#xD;&#xA;<!-- end snippet -->&#xD;&#xA;&#xD;&#xA;**D3 Solution (way better)**: simply change the radius of the circle:&#xD;&#xA;&#xD;&#xA;<!-- begin snippet: js hide: false console: true babel: false -->&#xD;&#xA;&#xD;&#xA;<!-- language: lang-js -->&#xD;&#xA;&#xD;&#xA;    var circle = d3.select(""circle"");&#xD;&#xA;    circle.on('mouseover', function(d) {&#xD;&#xA;        d3.select(this).attr('r', 40);&#xD;&#xA;    })&#xD;&#xA;&#xD;&#xA;<!-- language: lang-html -->&#xD;&#xA;&#xD;&#xA;    <script src=""https://d3js.org/d3.v4.min.js""></script>&#xD;&#xA;    <svg>&#xD;&#xA;    	<circle cx=""150"" cy=""75"" r=""20"" fill=""teal""></circle>&#xD;&#xA;    </svg>&#xD;&#xA;&#xD;&#xA;<!-- end snippet -->&#xD;&#xA;&#xD;&#xA;";;
-137710868;42070509;5768908;5;580dfaba-8fba-4577-b60b-43caad47a451;2017-02-06 15:22:07.0;"This has nothing to do with D3 (be it v3 or v4). The problem here is that `scale` is centered at the origin (0,0) of the SVG, which is the top left corner. Because of this, any element that is not on that position (0,0) will seem to move.&#xD;&#xA;&#xD;&#xA;Have a look at this (hover over the circle):&#xD;&#xA;&#xD;&#xA;<!-- begin snippet: js hide: false console: true babel: false -->&#xD;&#xA;&#xD;&#xA;<!-- language: lang-js -->&#xD;&#xA;&#xD;&#xA;    var circle = d3.select(""circle"");&#xD;&#xA;    circle.on('mouseover', function(d) {&#xD;&#xA;        d3.select(this).attr('transform', 'scale(' + 2 + ')');&#xD;&#xA;    })&#xD;&#xA;&#xD;&#xA;<!-- language: lang-html -->&#xD;&#xA;&#xD;&#xA;    <script src=""https://d3js.org/d3.v4.min.js""></script>&#xD;&#xA;    <svg>&#xD;&#xA;    	<circle cx=""150"" cy=""75"" r=""20"" fill=""teal""></circle>&#xD;&#xA;    </svg>&#xD;&#xA;&#xD;&#xA;<!-- end snippet -->&#xD;&#xA;&#xD;&#xA;**Solution**: translate the element to the origin before the scale:&#xD;&#xA;&#xD;&#xA;<!-- begin snippet: js hide: false console: true babel: false -->&#xD;&#xA;&#xD;&#xA;<!-- language: lang-js -->&#xD;&#xA;&#xD;&#xA;    var circle = d3.select(""circle"");&#xD;&#xA;    circle.on('mouseover', function(d) {&#xD;&#xA;        d3.select(this).attr('transform', 'translate(-150,-75) scale(' + 2 + ')');&#xD;&#xA;    })&#xD;&#xA;&#xD;&#xA;<!-- language: lang-html -->&#xD;&#xA;&#xD;&#xA;    <script src=""https://d3js.org/d3.v4.min.js""></script>&#xD;&#xA;    <svg>&#xD;&#xA;    	<circle cx=""150"" cy=""75"" r=""20"" fill=""teal""></circle>&#xD;&#xA;    </svg>&#xD;&#xA;&#xD;&#xA;<!-- end snippet -->&#xD;&#xA;&#xD;&#xA;**D3 Solution (way better)**: simply change the radius of the circle:&#xD;&#xA;&#xD;&#xA;<!-- begin snippet: js hide: false console: true babel: false -->&#xD;&#xA;&#xD;&#xA;<!-- language: lang-js -->&#xD;&#xA;&#xD;&#xA;    var circle = d3.select(""circle"");&#xD;&#xA;    circle.on('mouseover', function(d) {&#xD;&#xA;        d3.select(this).attr('r', 40);&#xD;&#xA;    })&#xD;&#xA;&#xD;&#xA;<!-- language: lang-html -->&#xD;&#xA;&#xD;&#xA;    <script src=""https://d3js.org/d3.v4.min.js""></script>&#xD;&#xA;    <svg>&#xD;&#xA;    	<circle cx=""150"" cy=""75"" r=""20"" fill=""teal""></circle>&#xD;&#xA;    </svg>&#xD;&#xA;&#xD;&#xA;<!-- end snippet -->&#xD;&#xA;&#xD;&#xA;**EDIT**: Using getters, you can change the attribute without hardcoding it. For instance, getting the radius of the circle and doubling it on `mouseover` and dividing it by half on `mouseout`:&#xD;&#xA;&#xD;&#xA;<!-- begin snippet: js hide: false console: true babel: false -->&#xD;&#xA;&#xD;&#xA;<!-- language: lang-js -->&#xD;&#xA;&#xD;&#xA;    var circle = d3.select(""circle"");&#xD;&#xA;    circle.on('mouseover', function(d) {&#xD;&#xA;        var r = d3.select(this).attr('r')&#xD;&#xA;        d3.select(this).attr('r', r*2);&#xD;&#xA;    }).on('mouseout', function(d) {&#xD;&#xA;        var r = d3.select(this).attr('r')&#xD;&#xA;        d3.select(this).attr('r', r/2);&#xD;&#xA;    });&#xD;&#xA;&#xD;&#xA;<!-- language: lang-html -->&#xD;&#xA;&#xD;&#xA;    <script src=""https://d3js.org/d3.v4.min.js""></script>&#xD;&#xA;    <svg>&#xD;&#xA;    	<circle cx=""150"" cy=""75"" r=""20"" fill=""teal""></circle>&#xD;&#xA;    </svg>&#xD;&#xA;&#xD;&#xA;<!-- end snippet -->&#xD;&#xA;&#xD;&#xA;";;added 793 characters in body
+137707769;42070509;5768908;2;2ec52973-a6a8-4416-a32d-b0c0ed6820bc;2017-02-06 14:45:10.0;"This has nothing to do with D3 (be it v3 or v4). The problem here is that `scale` is centered at the origin (0,0) of the SVG, which is the top left corner. Because of this, any element that is not on that position (0,0) will seem to move.
+
+Have a look at this (hover over the circle):
+
+<!-- begin snippet: js hide: false console: true babel: false -->
+
+<!-- language: lang-js -->
+
+    var circle = d3.select(""circle"");
+    circle.on('mouseover', function(d) {
+        d3.select(this).attr('transform', 'scale(' + 2 + ')');
+    })
+
+<!-- language: lang-html -->
+
+    <script src=""https://d3js.org/d3.v4.min.js""></script>
+    <svg>
+    	<circle cx=""150"" cy=""75"" r=""20"" fill=""teal""></circle>
+    </svg>
+
+<!-- end snippet -->
+
+**Solution**: translate the element to the origin before the scale:
+
+<!-- begin snippet: js hide: false console: true babel: false -->
+
+<!-- language: lang-js -->
+
+    var circle = d3.select(""circle"");
+    circle.on('mouseover', function(d) {
+        d3.select(this).attr('transform', 'translate(-150,-75) scale(' + 2 + ')');
+    })
+
+<!-- language: lang-html -->
+
+    <script src=""https://d3js.org/d3.v4.min.js""></script>
+    <svg>
+    	<circle cx=""150"" cy=""75"" r=""20"" fill=""teal""></circle>
+    </svg>
+
+<!-- end snippet -->
+
+**D3 Solution (way better)**: simply change the radius of the circle:
+
+<!-- begin snippet: js hide: false console: true babel: false -->
+
+<!-- language: lang-js -->
+
+    var circle = d3.select(""circle"");
+    circle.on('mouseover', function(d) {
+        d3.select(this).attr('r', 40);
+    })
+
+<!-- language: lang-html -->
+
+    <script src=""https://d3js.org/d3.v4.min.js""></script>
+    <svg>
+    	<circle cx=""150"" cy=""75"" r=""20"" fill=""teal""></circle>
+    </svg>
+
+<!-- end snippet -->
+
+";;
+137710868;42070509;5768908;5;580dfaba-8fba-4577-b60b-43caad47a451;2017-02-06 15:22:07.0;"This has nothing to do with D3 (be it v3 or v4). The problem here is that `scale` is centered at the origin (0,0) of the SVG, which is the top left corner. Because of this, any element that is not on that position (0,0) will seem to move.
+
+Have a look at this (hover over the circle):
+
+<!-- begin snippet: js hide: false console: true babel: false -->
+
+<!-- language: lang-js -->
+
+    var circle = d3.select(""circle"");
+    circle.on('mouseover', function(d) {
+        d3.select(this).attr('transform', 'scale(' + 2 + ')');
+    })
+
+<!-- language: lang-html -->
+
+    <script src=""https://d3js.org/d3.v4.min.js""></script>
+    <svg>
+    	<circle cx=""150"" cy=""75"" r=""20"" fill=""teal""></circle>
+    </svg>
+
+<!-- end snippet -->
+
+**Solution**: translate the element to the origin before the scale:
+
+<!-- begin snippet: js hide: false console: true babel: false -->
+
+<!-- language: lang-js -->
+
+    var circle = d3.select(""circle"");
+    circle.on('mouseover', function(d) {
+        d3.select(this).attr('transform', 'translate(-150,-75) scale(' + 2 + ')');
+    })
+
+<!-- language: lang-html -->
+
+    <script src=""https://d3js.org/d3.v4.min.js""></script>
+    <svg>
+    	<circle cx=""150"" cy=""75"" r=""20"" fill=""teal""></circle>
+    </svg>
+
+<!-- end snippet -->
+
+**D3 Solution (way better)**: simply change the radius of the circle:
+
+<!-- begin snippet: js hide: false console: true babel: false -->
+
+<!-- language: lang-js -->
+
+    var circle = d3.select(""circle"");
+    circle.on('mouseover', function(d) {
+        d3.select(this).attr('r', 40);
+    })
+
+<!-- language: lang-html -->
+
+    <script src=""https://d3js.org/d3.v4.min.js""></script>
+    <svg>
+    	<circle cx=""150"" cy=""75"" r=""20"" fill=""teal""></circle>
+    </svg>
+
+<!-- end snippet -->
+
+**EDIT**: Using getters, you can change the attribute without hardcoding it. For instance, getting the radius of the circle and doubling it on `mouseover` and dividing it by half on `mouseout`:
+
+<!-- begin snippet: js hide: false console: true babel: false -->
+
+<!-- language: lang-js -->
+
+    var circle = d3.select(""circle"");
+    circle.on('mouseover', function(d) {
+        var r = d3.select(this).attr('r')
+        d3.select(this).attr('r', r*2);
+    }).on('mouseout', function(d) {
+        var r = d3.select(this).attr('r')
+        d3.select(this).attr('r', r/2);
+    });
+
+<!-- language: lang-html -->
+
+    <script src=""https://d3js.org/d3.v4.min.js""></script>
+    <svg>
+    	<circle cx=""150"" cy=""75"" r=""20"" fill=""teal""></circle>
+    </svg>
+
+<!-- end snippet -->
+
+";;added 793 characters in body
