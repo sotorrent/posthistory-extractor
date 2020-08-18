@@ -5,55 +5,62 @@
     <name>PostHistoryExtractor</name>
     <groupId>org.sotorrent</groupId>
     <artifactId>posthistory-extractor</artifactId>
-    <version>3.5.5</version>
+    <version>3.6.0</version>
     <url>https://github.com/sotorrent/posthistory-extractor</url>
 
     <properties>
         <java.version>11</java.version>
+
         <!-- Project -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <project.build.sourceDirectory>src</project.build.sourceDirectory>
         <project.build.testSourceDirectory>tests</project.build.testSourceDirectory>
+
         <!-- Maven -->
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.mainclass>org.sotorrent.posthistoryextractor.MainIterator</maven.mainclass>
+
         <!-- Maven Plugins -->
-            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
-            <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
-            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-jar-plugin -->
-            <maven.jar.plugin.version>3.2.0</maven.jar.plugin.version>
-            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-assembly-plugin -->
-            <maven.assembly.plugin.version>3.2.0</maven.assembly.plugin.version>
-            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-source-plugin -->
-            <maven.source.plugin.version>3.2.0</maven.source.plugin.version>
-            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-javadoc-plugin -->
-            <maven.javadoc.plugin.version>3.1.1</maven.javadoc.plugin.version>
-            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
-            <maven.surefire.plugin.version>3.0.0-M4</maven.surefire.plugin.version>
-            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-deploy-plugin -->
-            <maven.deploy.plugin.version>3.0.0-M1</maven.deploy.plugin.version>
+        <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
+        <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
+        <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-jar-plugin -->
+        <maven.jar.plugin.version>3.2.0</maven.jar.plugin.version>
+        <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-assembly-plugin -->
+        <maven.assembly.plugin.version>3.3.0</maven.assembly.plugin.version>
+        <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-source-plugin -->
+        <maven.source.plugin.version>3.2.1</maven.source.plugin.version>
+        <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-javadoc-plugin -->
+        <maven.javadoc.plugin.version>3.2.0</maven.javadoc.plugin.version>
+        <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
+        <maven.surefire.plugin.version>3.0.0-M5</maven.surefire.plugin.version>
+        <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-deploy-plugin -->
+        <maven.deploy.plugin.version>3.0.0-M1</maven.deploy.plugin.version>
+
         <!-- JUnit -->
-            <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
-            <junit.jupiter.version>5.5.2</junit.jupiter.version>
-            <!-- https://mvnrepository.com/artifact/org.hamcrest/hamcrest-junit -->
-            <hamcrest.junit.version>2.0.0.0</hamcrest.junit.version>
+        <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
+        <junit.jupiter.version>5.6.2</junit.jupiter.version>
+        <!-- https://mvnrepository.com/artifact/org.hamcrest/hamcrest-junit -->
+        <hamcrest.junit.version>2.0.0.0</hamcrest.junit.version>
+
+        <!-- SOTorrent dependencies -->
+        <!-- https://github.com/sotorrent/util/ -->
+        <util.version>3.4.3</util.version>
+        <!-- https://github.com/sotorrent/string-similarity/ -->
+        <string-similarity.version>2.1.1</string-similarity.version>
+
         <!-- Other dependencies -->
-            <!-- https://github.com/sotorrent/util/ -->
-            <util.version>3.4.3</util.version>
-            <!-- https://github.com/sotorrent/string-similarity/ -->
-            <string-similarity.version>2.1.1</string-similarity.version>
-            <!-- https://mvnrepository.com/artifact/commons-cli/commons-cli -->
-            <commons-cli.version>1.4</commons-cli.version>
-            <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
-            <commons-io.version>2.6</commons-io.version>
-            <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-csv -->
-            <commons-csv.version>1.7</commons-csv.version>
-            <!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-core -->
-            <hibernate.version>5.4.10.Final</hibernate.version>
-            <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
-            <mysql-connector-java.version>8.0.18</mysql-connector-java.version>
+        <!-- https://mvnrepository.com/artifact/commons-cli/commons-cli -->
+        <commons-cli.version>1.4</commons-cli.version>
+        <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
+        <commons-io.version>2.7</commons-io.version>
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-csv -->
+        <commons-csv.version>1.8</commons-csv.version>
+        <!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-core -->
+        <hibernate.version>5.4.20.Final</hibernate.version>
+        <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+        <mysql-connector-java.version>8.0.21</mysql-connector-java.version>
     </properties>
 
     <distributionManagement>
