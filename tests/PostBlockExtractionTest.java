@@ -254,4 +254,20 @@ class PostBlockExtractionTest {
         assertEquals(2, version_1.getStackSnippets().size());
         TestUtils.testStackSnippets(version_1);
     }
+
+    @Test
+    void testQuestion848841() {
+        int postId = 848841;
+        PostVersionList q_848841 = PostVersionList.readFromCSV(TestUtils.pathToPostVersionLists, postId, Posts.QUESTION_ID);
+        PostVersion version_2 = q_848841.get(1);
+        TestUtils.testPostBlockCount(version_2, 4, 4);
+
+        // Test import of escaped newline characters
+        assertEquals(
+                // PostHistory.xml: style=&quot;width:&amp;#xD;&amp;#xA;           3&amp;#xD;&amp;#xA;     %;&quot;
+                // Table PostHistory (parsed into MySQL): style="width:&#xD;&#xA;		3&#xD;&#xA;	%;"
+                "style=\"width:&#xD;&#xA;3&#xD;&#xA;%;\"",
+                version_2.getCodeBlocks().get(1).getContent().replaceAll("\\s", "")
+        );
+    }
 }

@@ -87,7 +87,7 @@ public class PostHistory {
     }
 
     // regex for escaped newline characters
-    public static final String newLineRegex = "((?:&#xD;|&#xA;)?&#xA;)";
+    public static final String newLineRegex = "([\r\n]?\n)";
 
     // a code block is indented by four spaces or a tab (which can be preceded by spaces)
     private static final Pattern codeBlockPattern = Pattern.compile("^( {4}|[ ]*\\t)");
