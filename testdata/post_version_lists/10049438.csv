@@ -1,3 +1,0 @@
-Id;PostId;UserId;PostHistoryTypeId;RevisionGUID;CreationDate;Text;UserDisplayName;Comment
-23015907;10049438;1071736;2;6c996fde-3736-4225-9624-427dcbdc6582;2012-04-06 21:24:55.0;"    rather than using \'$first_name\' replace it with \\""$first_name\\"" and the same follows with other variable stoo";;
-23039034;10049438;1172739;5;b89823b9-a436-4444-96c5-f11515aebc92;2012-04-07 21:31:19.0;"Rather than using `\'$first_name\'` replace it with `\\""$first_name\\""` and the same follows with other variables too.";;corrected code layout

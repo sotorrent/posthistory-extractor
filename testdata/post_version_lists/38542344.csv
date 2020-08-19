@@ -1,4 +1,0 @@
-Id;PostHistoryTypeId;PostId;RevisionGUID;CreationDate;UserId;UserDisplayName;Comment;Text
-123294842;2;38542344;01c5ab74-32bc-441b-9645-e35a7f5f3cff;2016-07-23 13:31:03;1469540;;;"With `(>\s""\d*\.{0,1}\d*""\s\.$)` you can find both numbers if they are at the end of the line. Then you can just append `^^<http://www.w3.org/2001/XMLSchema#float>` to that line.
-
-Alternatively you can replace search for `(>\s""\d*\.{0,1}\d*""\s\.$)` and replace with `$1 ^^<http://www.w3.org/2001/XMLSchema#float>` (tested with notepad++)."
