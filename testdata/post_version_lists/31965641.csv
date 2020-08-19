@@ -1,0 +1,38 @@
+Id;PostHistoryTypeId;PostId;RevisionGUID;CreationDate;UserId;UserDisplayName;Comment;Text
+97239080;2;31965641;91f586b3-29eb-4e15-a1c1-e9ee55c77e80;2015-08-12 12:44:55;902383;;;"first create threshold factory,
+
+    static enum ThresholdsFactory {
+    		
+    		
+    		week(new WeekThreshold()), month(new MonthThreshold())/* etc */;
+    
+    		static private Map<String,ThresholdsFactory> lookup = new HashMap<String, ThresholdsFactory>();
+    		static{
+    			for(ThresholdsFactory val :  ThresholdsFactory.values()){
+    			lookup.put(val.name(), val);
+    			}
+    		}
+    		
+    		public AbstractThreshold threshold;
+    
+    		public static ThresholdsFactory find(String name){
+    			return lookup.get(name);
+    		}
+    		
+    		ThresholdsFactory(AbstractThreshold th) {
+    			threshold = th;
+    		
+
+}
+	}
+
+
+
+now all what you need to do is
+
+    AbstractThreshold th = ThresholdsFactory.find(ar[4]);
+    
+    if (th!=null){
+        firstTime = unparsedDate.format(th.getStartDate().getTime());
+        secondTime = unparsedDate.format(th.getEndDate().getTime());
+    }"

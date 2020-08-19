@@ -1,0 +1,509 @@
+Id;PostId;UserId;PostHistoryTypeId;RevisionGUID;CreationDate;Text;UserDisplayName;Comment
+42311547;17158055;2495044;2;21a3a03a-726e-40cb-93ce-55b25e9fcba9;2013-06-17 22:43:06.0;"I have searched and searched for the answer, but I have had no luck whatsoever.
+
+I have a form with four Selects and only the first Select is required.  These Selects have the Options populated by a JS script pulling from my database to make a dynamic dependent drop down menu.  The problem is I don't want ""unselected"" Selects to pass their parameter to the URL and make the query string long and complicated. Plus, when the ""unselected"" Selects pass the default value it is something like ""Select Group"" which shows in the URL as ""Select+Group"".  I definitely want to use GET so I can copy/save links. How can I add the Select value(s) conditionally and not prevent the JS script from populating the options?
+
+For example, here is a typical URL right now:
+    http://www.mydomain.com/bn/products?Division=1&Group=Select+Group&Segment=Select+Segment&Category=Select+Category
+
+Here is what I want that URL to be for use with my .htaccess & RewriteRule:
+   http://www.mydomain.com/bn/products/1
+
+Because Group, Segment and Category are not selected, their value pairs are making an unnecessary mess of the URL.
+
+Any suggestions would be appreciated.
+";;
+42354041;17158055;2495044;5;fc804169-2598-40d3-9ea6-37520af9cf98;2013-06-18 16:06:35.0;"I have searched and searched for the answer, but I have had no luck whatsoever.
+
+I have a form with four Selects and only the first Select is required.  These Selects have the Options populated by a JS script pulling from my database to make a dynamic dependent drop down menu.  The problem is I don't want ""unselected"" Selects to pass their parameter to the URL and make the query string long and complicated. Plus, when the ""unselected"" Selects pass the default value it is something like ""Select Group"" which shows in the URL as ""Select+Group"".  I definitely want to use GET so I can copy/save links. How can I add the Select value(s) conditionally and not prevent the JS script from populating the options?
+
+For example, here is a typical URL right now:
+
+    `mydomain.com/bn/products?Division=1&Group=Select+Group&Segment=Select+Segment&Category=Select+Category`
+
+Here is what I want that URL to be for use with my .htaccess & RewriteRule:
+
+   `mydomain.com/bn/products/1`
+
+Because Group, Segment and Category are not selected, their value pairs are making an unnecessary mess of the URL.
+
+Any suggestions would be appreciated.
+
+**MORE INFO**
+
+I'm new to posting here and I don't understand where to add lengthy follow-ups. Here goes:
+
+I like the idea of intercepting and generating via JS a new URL based on selections made. One problem I'm having is the way the URL is created by the form:
+
+`mydomain.com/bn/products?Division=1`
+
+A little background might be helpful. I'm using a content variable to retrieve page content from the database. All content except the site home page is displayed in the content directory (/bn). What is happening in the link above is that the content variable is already set (products), but the form is placing ? after the content variable.  Here is a simple RewriteRule that would work if the URL were written correctly:
+
+`RewriteRule ^bn/products/([0-9-]+)$ /bn/index.php?content=products&Division=$1`
+
+I can access my selection using the following URL: `mydomain.com/bn/products/1` because it conforms to the rewrite rule. Likewise I can get there using the traditional: `mydomain.com/bn/index.php?content=products&Division=$1`.  
+
+Now I must confess that I am a PHP guy with very limited JS and jQuery experience.
+  
+";;added 1127 characters in body
+42356410;17158055;2495044;5;ef651ef7-cdd8-4be0-b7a3-4a9b627c285a;2013-06-18 16:54:43.0;"I have searched and searched for the answer, but I have had no luck whatsoever.
+
+I have a form with four Selects and only the first Select is required.  These Selects have the Options populated by a JS script pulling from my database to make a dynamic dependent drop down menu.  The problem is I don't want ""unselected"" Selects to pass their parameter to the URL and make the query string long and complicated. Plus, when the ""unselected"" Selects pass the default value it is something like ""Select Group"" which shows in the URL as ""Select+Group"".  I definitely want to use GET so I can copy/save links. How can I add the Select value(s) conditionally and not prevent the JS script from populating the options?
+
+For example, here is a typical URL right now:
+
+    `mydomain.com/bn/products?Division=1&Group=Select+Group&Segment=Select+Segment&Category=Select+Category`
+
+Here is what I want that URL to be for use with my .htaccess & RewriteRule:
+
+   `mydomain.com/bn/products/1`
+
+Because Group, Segment and Category are not selected, their value pairs are making an unnecessary mess of the URL.
+
+Any suggestions would be appreciated.
+
+**MORE INFO**
+
+I'm new to posting here and I don't understand where to add lengthy follow-ups. Here goes:
+
+I like the idea of intercepting and generating via JS a new URL based on selections made. One problem I'm having is the way the URL is created by the form:
+
+`mydomain.com/bn/products?Division=1`
+
+A little background might be helpful. I'm using a content variable to retrieve page content from the database. All content except the site home page is displayed in the content directory (/bn). What is happening in the link above is that the content variable is already set (products), but the form is placing ? after the content variable.  Here is a simple RewriteRule that would work if the URL were written correctly:
+
+`RewriteRule ^bn/products/([0-9-]+)$ /bn/index.php?content=products&Division=$1`
+
+I can access my selection using the following URL: `mydomain.com/bn/products/1` because it conforms to the rewrite rule. Likewise I can get there using the traditional: `mydomain.com/bn/index.php?content=products&Division=$1`.  
+
+Now I must confess that I am a PHP guy with very limited JS and jQuery experience. Shomz suggests `onsubmit=""my_submit_function(); return false;""` in my_submit_function I could check for the value of the select `var divValue = $('#Division').val()` and append it to a URL.  What I don't know is how I send the generated URL. Obviously I want the URL to be in the ""friendly"" form `mydomain.com/bn/products/1`.  Could someone offer insight there?
+
+Many thanks.
+  
+";;added 1127 characters in body
+42364079;17158055;2495044;5;b5427828-0f95-49b1-8ef1-45edcc335dce;2013-06-18 19:40:55.0;"I have searched and searched for the answer, but I have had no luck whatsoever.
+
+I have a form with four Selects and only the first Select is required.  These Selects have the Options populated by a JS script pulling from my database to make a dynamic dependent drop down menu.  The problem is I don't want ""unselected"" Selects to pass their parameter to the URL and make the query string long and complicated. Plus, when the ""unselected"" Selects pass the default value it is something like ""Select Group"" which shows in the URL as ""Select+Group"".  I definitely want to use GET so I can copy/save links. How can I add the Select value(s) conditionally and not prevent the JS script from populating the options?
+
+For example, here is a typical URL right now:
+
+    `mydomain.com/bn/products?Division=1&Group=Select+Group&Segment=Select+Segment&Category=Select+Category`
+
+Here is what I want that URL to be for use with my .htaccess & RewriteRule:
+
+   `mydomain.com/bn/products/1`
+
+Because Group, Segment and Category are not selected, their value pairs are making an unnecessary mess of the URL.
+
+Any suggestions would be appreciated.
+
+**MORE INFO**
+
+I'm new to posting here and I don't understand where to add lengthy follow-ups. Here goes:
+
+I like the idea of intercepting and generating via JS a new URL based on selections made. One problem I'm having is the way the URL is created by the form:
+
+`mydomain.com/bn/products?Division=1`
+
+A little background might be helpful. I'm using a content variable to retrieve page content from the database. All content except the site home page is displayed in the content directory (/bn). What is happening in the link above is that the content variable is already set (products), but the form is placing ? after the content variable.  Here is a simple RewriteRule that would work if the URL were written correctly:
+
+`RewriteRule ^bn/products/([0-9-]+)$ /bn/index.php?content=products&Division=$1`
+
+I can access my selection using the following URL: `mydomain.com/bn/products/1` because it conforms to the rewrite rule. Likewise I can get there using the traditional: `mydomain.com/bn/index.php?content=products&Division=$1`.  
+
+Now I must confess that I am a PHP guy with very limited JS and jQuery experience. Shomz suggests `onsubmit=""my_submit_function(); return false;""` in my_submit_function I could check for the value of the select `var divValue = $('#Division').val()` and append it to a URL.  What I don't know is how I send the generated URL. Obviously I want the URL to be in the ""friendly"" form `mydomain.com/bn/products/1`.  Could someone offer insight there?
+
+Many thanks.
+  
+**UPDATE**
+
+I have created a function to replace the URL created by the form with one generated by my JS conditions.  First, here is the form top:
+`<form action="""" onsubmit=""my_submit_function()"" method=""get"" name=""DDm"" id=""DDm"">`
+
+";;added 237 characters in body
+42364964;17158055;2495044;5;00188fae-7aa3-4a94-9a9f-c2c75271e25b;2013-06-18 19:59:59.0;"I have searched and searched for the answer, but I have had no luck whatsoever.
+
+I have a form with four Selects and only the first Select is required.  These Selects have the Options populated by a JS script pulling from my database to make a dynamic dependent drop down menu.  The problem is I don't want ""unselected"" Selects to pass their parameter to the URL and make the query string long and complicated. Plus, when the ""unselected"" Selects pass the default value it is something like ""Select Group"" which shows in the URL as ""Select+Group"".  I definitely want to use GET so I can copy/save links. How can I add the Select value(s) conditionally and not prevent the JS script from populating the options?
+
+For example, here is a typical URL right now:
+
+    `mydomain.com/bn/products?Division=1&Group=Select+Group&Segment=Select+Segment&Category=Select+Category`
+
+Here is what I want that URL to be for use with my .htaccess & RewriteRule:
+
+   `mydomain.com/bn/products/1`
+
+Because Group, Segment and Category are not selected, their value pairs are making an unnecessary mess of the URL.
+
+Any suggestions would be appreciated.
+
+**MORE INFO**
+
+I'm new to posting here and I don't understand where to add lengthy follow-ups. Here goes:
+
+I like the idea of intercepting and generating via JS a new URL based on selections made. One problem I'm having is the way the URL is created by the form:
+
+    `mydomain.com/bn/products?Division=1`
+
+A little background might be helpful. I'm using a content variable to retrieve page content from the database. All content except the site home page is displayed in the content directory (/bn). What is happening in the link above is that the content variable is already set (products), but the form is placing ? after the content variable.  Here is a simple RewriteRule that would work if the URL were written correctly:
+
+    `RewriteRule ^bn/products/([0-9-]+)$ /bn/index.php?content=products&Division=$1`
+
+I can access my selection using the following URL:    `mydomain.com/bn/products/1` because it conforms to the rewrite rule. Likewise I can get there using the traditional:     `mydomain.com/bn/index.php?content=products&Division=$1`.  
+
+Now I must confess that I am a PHP guy with very limited JS and jQuery experience. Shomz suggests     `onsubmit=""my_submit_function(); return false;""` in my_submit_function I could check for the value of the select     `var divValue = $('#Division').val()` and append it to a URL.  What I don't know is how I send the generated URL. Obviously I want the URL to be in the ""friendly"" form     `mydomain.com/bn/products/1`.  Could someone offer insight there?
+
+Many thanks.
+  
+**UPDATE**
+
+I have created a function to replace the URL created by the form with one generated by my JS conditions.  First, here is the form top:
+
+    <form action="""" onsubmit=""my_submit_function()"" method=""get"" name=""DDm"" id=""DDm"">
+
+Then one Select:
+
+    <select id=""Division"" name=""Division"" onchange=""Division_reload(this)"">
+      <option selected><?php echo $division; ?></option>
+    </select>
+
+The Dynamic Dropdown Menu script has added the onchange element, could this be contributing to my problem?
+
+My function:
+
+    function my_submit_function() {
+      var DDmURL = $reqURL;
+      var divVal = document.getElementById('Division').value;
+      var grpVal = document.getElementById('Group').value;
+      var segVal = document.getElementById('Segment').value;
+      var catVal = document.getElementById('Category').value;
+      
+      if ((divVal != $division) || (divVal != -1)) {
+    	  DDmURL += '/'+divVal; }
+      if ((grpVal != $group) || (grpVal != -1)) {
+    	  DDmURL += '/'+grpVal; }
+      if ((segVal != $segment) || (segVal != -1)) {
+    	  DDmURL += '/'+segVal; }
+      if ((catVal != $category) || (catVal != -1)) {
+    	  DDmURL += '/'+catVal; }
+    window.location = DDmURL;
+    };
+
+I should mention that the PHP variables ($division, etc.) are default values like ""Select Division"".
+
+When I use the dropdown to select from Division I still get the same URL as before:
+
+    mydomain.com/bn/products?Division=1
+
+Any ideas why this is not working as expected?
+";;added 237 characters in body
+42365815;17158055;2495044;5;5852ed38-f9e4-4b12-a1d9-80dffd90c805;2013-06-18 20:18:18.0;"I have searched and searched for the answer, but I have had no luck whatsoever.
+
+I have a form with four Selects and only the first Select is required.  These Selects have the Options populated by a JS script pulling from my database to make a dynamic dependent drop down menu.  The problem is I don't want ""unselected"" Selects to pass their parameter to the URL and make the query string long and complicated. Plus, when the ""unselected"" Selects pass the default value it is something like ""Select Group"" which shows in the URL as ""Select+Group"".  I definitely want to use GET so I can copy/save links. How can I add the Select value(s) conditionally and not prevent the JS script from populating the options?
+
+For example, here is a typical URL right now:
+
+    `mydomain.com/bn/products?Division=1&Group=Select+Group&Segment=Select+Segment&Category=Select+Category`
+
+Here is what I want that URL to be for use with my .htaccess & RewriteRule:
+
+   `mydomain.com/bn/products/1`
+
+Because Group, Segment and Category are not selected, their value pairs are making an unnecessary mess of the URL.
+
+Any suggestions would be appreciated.
+
+**MORE INFO**
+
+I'm new to posting here and I don't understand where to add lengthy follow-ups. Here goes:
+
+I like the idea of intercepting and generating via JS a new URL based on selections made. One problem I'm having is the way the URL is created by the form:
+
+    `mydomain.com/bn/products?Division=1`
+
+A little background might be helpful. I'm using a content variable to retrieve page content from the database. All content except the site home page is displayed in the content directory (/bn). What is happening in the link above is that the content variable is already set (products), but the form is placing ? after the content variable.  Here is a simple RewriteRule that would work if the URL were written correctly:
+
+    `RewriteRule ^bn/products/([0-9-]+)$ /bn/index.php?content=products&Division=$1`
+
+I can access my selection using the following URL:    `mydomain.com/bn/products/1` because it conforms to the rewrite rule. Likewise I can get there using the traditional:     `mydomain.com/bn/index.php?content=products&Division=$1`.  
+
+Now I must confess that I am a PHP guy with very limited JS and jQuery experience. Shomz suggests     `onsubmit=""my_submit_function(); return false;""` in my_submit_function I could check for the value of the select     `var divValue = $('#Division').val()` and append it to a URL.  What I don't know is how I send the generated URL. Obviously I want the URL to be in the ""friendly"" form     `mydomain.com/bn/products/1`.  Could someone offer insight there?
+
+Many thanks.
+  
+**UPDATE**
+
+I have created a function to replace the URL created by the form with one generated by my JS conditions.  First, here is the form top:
+
+    <form action="""" onsubmit=""my_submit_function()"" method=""get"" name=""DDm"" id=""DDm"">
+
+Then one of my Selects:
+
+    <select id=""Division"" name=""Division"" onchange=""Division_reload(this)"">
+      <option selected><?php echo $division; ?></option>
+    </select>
+
+The Dynamic Dropdown Menu script has added the onchange element, could this be contributing to my problem?
+
+My function:
+
+    function my_submit_function() {
+      var DDmURL = $reqURL;
+      var divVal = document.getElementById('Division').value;
+      var grpVal = document.getElementById('Group').value;
+      var segVal = document.getElementById('Segment').value;
+      var catVal = document.getElementById('Category').value;
+      
+      if ((divVal != $division) || (divVal != -1)) {
+    	  DDmURL += '/'+divVal; }
+      if ((grpVal != $group) || (grpVal != -1)) {
+    	  DDmURL += '/'+grpVal; }
+      if ((segVal != $segment) || (segVal != -1)) {
+    	  DDmURL += '/'+segVal; }
+      if ((catVal != $category) || (catVal != -1)) {
+    	  DDmURL += '/'+catVal; }
+    window.location = DDmURL;
+    };
+
+I should mention that the PHP variables ($division, etc.) are default values like ""Select Division"".
+
+When I use the dropdown to select from Division I still get the same URL as before:
+
+    mydomain.com/bn/products?Division=1
+
+Any ideas why this is not working as expected?
+";;added 7 characters in body
+42366546;17158055;2495044;5;e3777e3c-931d-4546-b0a2-4e107b5bca88;2013-06-18 20:35:23.0;"I have searched and searched for the answer, but I have had no luck whatsoever.
+
+I have a form with four Selects and only the first Select is required.  These Selects have the Options populated by a JS script pulling from my database to make a dynamic dependent drop down menu.  The problem is I don't want ""unselected"" Selects to pass their parameter to the URL and make the query string long and complicated. Plus, when the ""unselected"" Selects pass the default value it is something like ""Select Group"" which shows in the URL as ""Select+Group"".  I definitely want to use GET so I can copy/save links. How can I add the Select value(s) conditionally and not prevent the JS script from populating the options?
+
+For example, here is a typical URL right now:
+
+    mydomain.com/bn/products?Division=1&Group=Select+Group&Segment=Select+Segment&Category=Select+Category
+
+Here is what I want that URL to be for use with my .htaccess & RewriteRule:
+
+    mydomain.com/bn/products/1
+
+Because Group, Segment and Category are not selected, their value pairs are making an unnecessary mess of the URL.
+
+Any suggestions would be appreciated.
+
+**MORE INFO**
+
+I'm new to posting here and I don't understand where to add lengthy follow-ups. Here goes:
+
+I like the idea of intercepting and generating via JS a new URL based on selections made. One problem I'm having is the way the URL is created by the form:
+
+    mydomain.com/bn/products?Division=1
+
+A little background might be helpful. I'm using a content variable to retrieve page content from the database. All content except the site home page is displayed in the content directory (/bn). What is happening in the link above is that the content variable is already set (products), but the form is placing ? after the content variable.  Here is a simple RewriteRule that would work if the URL were written correctly:
+
+    RewriteRule ^bn/products/([0-9-]+)$ /bn/index.php?content=products&Division=$1
+
+I can access my selection using the following URL:    `mydomain.com/bn/products/1` because it conforms to the rewrite rule. Likewise I can get there using the traditional:     `mydomain.com/bn/index.php?content=products&Division=$1`.  
+
+Now I must confess that I am a PHP guy with very limited JS and jQuery experience. Shomz suggests     `onsubmit=""my_submit_function(); return false;""` in my_submit_function I could check for the value of the select     `var divValue = $('#Division').val()` and append it to a URL.  What I don't know is how I send the generated URL. Obviously I want the URL to be in the ""friendly"" form     `mydomain.com/bn/products/1`.  Could someone offer insight there?
+
+Many thanks.
+  
+**UPDATE**
+
+I have created a function to replace the URL created by the form with one generated by my JS conditions.  First, here is the form top:
+
+    <form action="""" onsubmit=""my_submit_function()"" method=""get"" name=""DDm"" id=""DDm"">
+
+Then one of my Selects:
+
+    <select id=""Division"" name=""Division"" onchange=""Division_reload(this)"">
+      <option selected><?php echo $division; ?></option>
+    </select>
+
+The Dynamic Dropdown Menu script has added the onchange element, could this be contributing to my problem?
+
+My function:
+
+    function my_submit_function() {
+      var DDmURL = $reqURL;
+      var divVal = document.getElementById('Division').value;
+      var grpVal = document.getElementById('Group').value;
+      var segVal = document.getElementById('Segment').value;
+      var catVal = document.getElementById('Category').value;
+      
+      if ((divVal != $division) || (divVal != -1)) {
+    	  DDmURL += '/'+divVal; }
+      if ((grpVal != $group) || (grpVal != -1)) {
+    	  DDmURL += '/'+grpVal; }
+      if ((segVal != $segment) || (segVal != -1)) {
+    	  DDmURL += '/'+segVal; }
+      if ((catVal != $category) || (catVal != -1)) {
+    	  DDmURL += '/'+catVal; }
+    window.location = DDmURL;
+    };
+
+I should mention that the PHP variables ($division, etc.) are default values like ""Select Division"".
+
+When I use the dropdown to select from Division I still get the same URL as before:
+
+    mydomain.com/bn/products?Division=1
+
+Any ideas why this is not working as expected?
+";;deleted 7 characters in body
+42404789;17158055;2495044;5;8381962a-e0ec-4495-9750-263817d74832;2013-06-19 13:27:44.0;"I have searched and searched for the answer, but I have had no luck whatsoever.
+
+I have a form with four Selects and only the first Select is required.  These Selects have the Options populated by a JS script pulling from my database to make a dynamic dependent drop down menu.  The problem is I don't want ""unselected"" Selects to pass their parameter to the URL and make the query string long and complicated. Plus, when the ""unselected"" Selects pass the default value it is something like ""Select Group"" which shows in the URL as ""Select+Group"".  I definitely want to use GET so I can copy/save links. How can I add the Select value(s) conditionally and not prevent the JS script from populating the options?
+
+For example, here is a typical URL right now:
+
+    mydomain.com/bn/products?Division=1&Group=Select+Group&Segment=Select+Segment&Category=Select+Category
+
+Here is what I want that URL to be for use with my .htaccess & RewriteRule:
+
+    mydomain.com/bn/products/1
+
+Because Group, Segment and Category are not selected, their value pairs are making an unnecessary mess of the URL.
+
+Any suggestions would be appreciated.
+
+**MORE INFO**
+
+I'm new to posting here and I don't understand where to add lengthy follow-ups. Here goes:
+
+I like the idea of intercepting and generating via JS a new URL based on selections made. One problem I'm having is the way the URL is created by the form:
+
+    mydomain.com/bn/products?Division=1
+
+A little background might be helpful. I'm using a content variable to retrieve page content from the database. All content except the site home page is displayed in the content directory (/bn). What is happening in the link above is that the content variable is already set (products), but the form is placing ? after the content variable.  Here is a simple RewriteRule that would work if the URL were written correctly:
+
+    RewriteRule ^bn/products/([0-9-]+)$ /bn/index.php?content=products&Division=$1
+
+I can access my selection using the following URL:    `mydomain.com/bn/products/1` because it conforms to the rewrite rule. Likewise I can get there using the traditional:     `mydomain.com/bn/index.php?content=products&Division=$1`.  
+
+Now I must confess that I am a PHP guy with very limited JS and jQuery experience. Shomz suggests     `onsubmit=""my_submit_function(); return false;""` in my_submit_function I could check for the value of the select     `var divValue = $('#Division').val()` and append it to a URL.  What I don't know is how I send the generated URL. Obviously I want the URL to be in the ""friendly"" form     `mydomain.com/bn/products/1`.  Could someone offer insight there?
+
+Many thanks.
+  
+**UPDATE**
+
+I have created a function to replace the URL created by the form with one generated by my JS conditions.  First, here is the form top:
+
+    <form action="""" onsubmit=""my_submit_function()"" method=""get"" name=""DDm"" id=""DDm"">
+
+Then one of my Selects:
+
+    <select id=""Division"" name=""Division"" onchange=""Division_reload(this)"">
+      <option selected><?php echo $division; ?></option>
+    </select>
+
+The Dynamic Dropdown Menu script has added the onchange element, could this be contributing to my problem?
+
+My function:
+
+    function my_submit_function() {
+      var DDmURL = $reqURL;
+      var divVal = document.getElementById('Division').value;
+      var grpVal = document.getElementById('Group').value;
+      var segVal = document.getElementById('Segment').value;
+      var catVal = document.getElementById('Category').value;
+      
+      if ((divVal != $division) || (divVal != -1)) {
+    	  DDmURL += '/'+divVal; }
+      if ((grpVal != $group) || (grpVal != -1)) {
+    	  DDmURL += '/'+grpVal; }
+      if ((segVal != $segment) || (segVal != -1)) {
+    	  DDmURL += '/'+segVal; }
+      if ((catVal != $category) || (catVal != -1)) {
+    	  DDmURL += '/'+catVal; }
+    window.location = DDmURL;
+    };
+
+I should mention that the PHP variables ($division, etc.) are default values like ""Select Division"". I should also mention that I omitted showing the php open and close tags to simplify the JS code above. The tags are there, just not shown.
+
+When I use the dropdown to select from Division I still get the same URL as before:
+
+    mydomain.com/bn/products?Division=1
+
+Any ideas why this is not working as expected?
+";;added 140 characters in body
+42411022;17158055;2495044;5;19ec4e03-e9c9-4f6e-8a59-e45d7db36fd4;2013-06-19 15:04:55.0;"I have searched and searched for the answer, but I have had no luck whatsoever.
+
+I have a form with four Selects and only the first Select is required.  These Selects have the Options populated by a JS script pulling from my database to make a dynamic dependent drop down menu.  The problem is I don't want ""unselected"" Selects to pass their parameter to the URL and make the query string long and complicated. Plus, when the ""unselected"" Selects pass the default value it is something like ""Select Group"" which shows in the URL as ""Select+Group"".  I definitely want to use GET so I can copy/save links. How can I add the Select value(s) conditionally and not prevent the JS script from populating the options?
+
+For example, here is a typical URL right now:
+
+    mydomain.com/bn/products?Division=1&Group=Select+Group&Segment=Select+Segment&Category=Select+Category
+
+Here is what I want that URL to be for use with my .htaccess & RewriteRule:
+
+    mydomain.com/bn/products/1
+
+Because Group, Segment and Category are not selected, their value pairs are making an unnecessary mess of the URL.
+
+Any suggestions would be appreciated.
+
+**MORE INFO**
+
+I'm new to posting here and I don't understand where to add lengthy follow-ups. Here goes:
+
+I like the idea of intercepting and generating via JS a new URL based on selections made. One problem I'm having is the way the URL is created by the form:
+
+    mydomain.com/bn/products?Division=1
+
+A little background might be helpful. I'm using a content variable to retrieve page content from the database. All content except the site home page is displayed in the content directory (/bn). What is happening in the link above is that the content variable is already set (products), but the form is placing ? after the content variable.  Here is a simple RewriteRule that would work if the URL were written correctly:
+
+    RewriteRule ^bn/products/([0-9-]+)$ /bn/index.php?content=products&Division=$1
+
+I can access my selection using the following URL:    `mydomain.com/bn/products/1` because it conforms to the rewrite rule. Likewise I can get there using the traditional:     `mydomain.com/bn/index.php?content=products&Division=$1`.  
+
+Now I must confess that I am a PHP guy with very limited JS and jQuery experience. Shomz suggests     `onsubmit=""my_submit_function(); return false;""` in my_submit_function I could check for the value of the select     `var divValue = $('#Division').val()` and append it to a URL.  What I don't know is how I send the generated URL. Obviously I want the URL to be in the ""friendly"" form     `mydomain.com/bn/products/1`.  Could someone offer insight there?
+
+Many thanks.
+  
+**UPDATE**
+
+I have created a function to replace the URL created by the form with one generated by my JS conditions.  First, here is the form top:
+
+    <form action="""" onsubmit=""my_submit_function()"" method=""get"" name=""DDm"" id=""DDm"">
+
+Then one of my Selects:
+
+    <select id=""Division"" name=""Division"" onchange=""Division_reload(this)"">
+      <option selected><?php echo $division; ?></option>
+    </select>
+
+The Dynamic Dropdown Menu script has added the onchange element, could this be contributing to my problem?
+
+My function:
+
+    function my_submit_function() {
+      var DDmURL = $reqURL;
+      var divVal = document.getElementById('Division').value;
+      var grpVal = document.getElementById('Group').value;
+      var segVal = document.getElementById('Segment').value;
+      var catVal = document.getElementById('Category').value;
+      
+      if ((divVal != $division) || (divVal != -1)) {
+    	  DDmURL += '/'+divVal; }
+      if ((grpVal != $group) || (grpVal != -1)) {
+    	  DDmURL += '/'+grpVal; }
+      if ((segVal != $segment) || (segVal != -1)) {
+    	  DDmURL += '/'+segVal; }
+      if ((catVal != $category) || (catVal != -1)) {
+    	  DDmURL += '/'+catVal; }
+    window.location = DDmURL;
+    };
+
+I should mention that the PHP variables ($division, etc.) are default values like ""Select Division"". I should also mention that I omitted showing the php open and close tags to simplify the JS code above. The tags are there, just not shown.
+
+When I use the dropdown to select from Division I still get the same URL as before:
+
+    mydomain.com/bn/products?Division=1
+
+Any ideas why this is not working as expected?
+
+**RESOLVED**
+
+As stated in my comment to Shomz, I had not enclosed my PHP variables in quotes and that was causing problems and resulting in error messages in the console.  Once I changed that, all works as expected.
+
+Thanks to everyone for their help.
+";;added 260 characters in body

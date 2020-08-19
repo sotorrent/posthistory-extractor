@@ -1,0 +1,498 @@
+Id;PostId;UserId;PostHistoryTypeId;RevisionGUID;CreationDate;Text;UserDisplayName;Comment
+74868298;26196831;713775;2;596efd53-a75d-4002-8695-e8de366c04f7;2014-10-04 20:22:07;"Here is a better and less tightly coupled way to implement an OnClickListener for a RecyclerView.  Unfortunately, some poor answers have been accepted above.
+
+Snippet of usage:
+
+    RecyclerView recyclerView = findViewById(R.id.recycler);
+    recyclerView.addOnItemTouchListener(
+        new RecyclerItemClickListener(context, new RecyclerItemClickListener.OnItemClickListener() {
+          @Override public void onItemClick(View view, int position) {
+            // do whatever
+          }
+        });
+
+RecyclerItemClickListener implementation:
+
+    import android.content.Context;
+    import android.support.v7.widget.RecyclerView;
+    import android.view.GestureDetector;
+    import android.view.MotionEvent;
+    import android.view.View;
+
+
+    public class RecyclerItemTouchListener implements RecyclerView.OnItemTouchListener {
+      private OnItemClickListener mListener;
+
+      public interface OnItemClickListener {
+        public void onItemClick(View view, int position);
+      }
+
+      GestureDetector mGestureDetector;
+
+      public RecyclerItemTouchListener(Context context, OnItemClickListener listener) {
+        mListener = listener;
+        mGestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+          @Override public boolean onSingleTapUp(MotionEvent e) {
+            return true;
+          }
+        });
+      }
+
+      @Override public boolean onInterceptTouchEvent(RecyclerView view, MotionEvent e) {
+        View childView = view.findChildViewUnder(e.getX(), e.getY());
+        if (childView != null && mListener != null && mGestureDetector.onTouchEvent(e)) {
+          mListener.onItemClick(childView, view.getChildPosition(childView));
+        }
+        return false;
+      }
+
+      @Override public void onTouchEvent(RecyclerView view, MotionEvent motionEvent) { }
+    }";;
+74868477;26196831;713775;5;8afd027b-5584-4d14-be5a-6b64e62aba09;2014-10-04 20:29:00;"Here is a better and less tightly coupled way to implement an OnClickListener for a RecyclerView.  Unfortunately, some poor answers have been accepted above.
+
+Snippet of usage:
+
+    RecyclerView recyclerView = findViewById(R.id.recycler);
+    recyclerView.addOnItemTouchListener(
+        new RecyclerItemClickListener(context, new RecyclerItemClickListener.OnItemClickListener() {
+          @Override public void onItemClick(View view, int position) {
+            // do whatever
+          }
+        }
+    });
+
+RecyclerItemClickListener implementation:
+
+    import android.content.Context;
+    import android.support.v7.widget.RecyclerView;
+    import android.view.GestureDetector;
+    import android.view.MotionEvent;
+    import android.view.View;
+
+
+    public class RecyclerItemTouchListener implements RecyclerView.OnItemTouchListener {
+      private OnItemClickListener mListener;
+
+      public interface OnItemClickListener {
+        public void onItemClick(View view, int position);
+      }
+
+      GestureDetector mGestureDetector;
+
+      public RecyclerItemTouchListener(Context context, OnItemClickListener listener) {
+        mListener = listener;
+        mGestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+          @Override public boolean onSingleTapUp(MotionEvent e) {
+            return true;
+          }
+        });
+      }
+
+      @Override public boolean onInterceptTouchEvent(RecyclerView view, MotionEvent e) {
+        View childView = view.findChildViewUnder(e.getX(), e.getY());
+        if (childView != null && mListener != null && mGestureDetector.onTouchEvent(e)) {
+          mListener.onItemClick(childView, view.getChildPosition(childView));
+        }
+        return false;
+      }
+
+      @Override public void onTouchEvent(RecyclerView view, MotionEvent motionEvent) { }
+    }";;added 7 characters in body
+74868665;26196831;713775;5;ef8fc522-a0c8-4fae-a27d-ba29ad40cc1e;2014-10-04 20:34:55;"Here is a better and less tightly coupled way to implement an OnClickListener for a RecyclerView.  Unfortunately, some poor answers have been accepted above.
+
+Snippet of usage:
+
+    RecyclerView recyclerView = findViewById(R.id.recycler);
+    recyclerView.addOnItemTouchListener(
+        new RecyclerItemClickListener(context, new RecyclerItemClickListener.OnItemClickListener() {
+          @Override public void onItemClick(View view, int position) {
+            // do whatever
+          }
+        })
+    );
+
+RecyclerItemClickListener implementation:
+
+    import android.content.Context;
+    import android.support.v7.widget.RecyclerView;
+    import android.view.GestureDetector;
+    import android.view.MotionEvent;
+    import android.view.View;
+
+
+    public class RecyclerItemTouchListener implements RecyclerView.OnItemTouchListener {
+      private OnItemClickListener mListener;
+
+      public interface OnItemClickListener {
+        public void onItemClick(View view, int position);
+      }
+
+      GestureDetector mGestureDetector;
+
+      public RecyclerItemTouchListener(Context context, OnItemClickListener listener) {
+        mListener = listener;
+        mGestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+          @Override public boolean onSingleTapUp(MotionEvent e) {
+            return true;
+          }
+        });
+      }
+
+      @Override public boolean onInterceptTouchEvent(RecyclerView view, MotionEvent e) {
+        View childView = view.findChildViewUnder(e.getX(), e.getY());
+        if (childView != null && mListener != null && mGestureDetector.onTouchEvent(e)) {
+          mListener.onItemClick(childView, view.getChildPosition(childView));
+        }
+        return false;
+      }
+
+      @Override public void onTouchEvent(RecyclerView view, MotionEvent motionEvent) { }
+    }";;edited body
+75941347;26196831;1813651;5;525f89e0-c9d8-48e0-88c6-1e5c5e0fc15c;2014-10-21 00:48:52;"Here is a better and less tightly coupled way to implement an OnClickListener for a RecyclerView.  Unfortunately, some poor answers have been accepted above.
+
+Snippet of usage:
+
+    RecyclerView recyclerView = findViewById(R.id.recycler);
+    recyclerView.addOnItemTouchListener(
+        new RecyclerItemClickListener(context, new RecyclerItemClickListener.OnItemClickListener() {
+          @Override public void onItemClick(View view, int position) {
+            // do whatever
+          }
+        })
+    );
+
+RecyclerItemClickListener implementation:
+
+    import android.content.Context;
+    import android.support.v7.widget.RecyclerView;
+    import android.view.GestureDetector;
+    import android.view.MotionEvent;
+    import android.view.View;
+
+
+    public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListener {
+      private OnItemClickListener mListener;
+
+      public interface OnItemClickListener {
+        public void onItemClick(View view, int position);
+      }
+
+      GestureDetector mGestureDetector;
+
+      public RecyclerItemClickListener(Context context, OnItemClickListener listener) {
+        mListener = listener;
+        mGestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+          @Override public boolean onSingleTapUp(MotionEvent e) {
+            return true;
+          }
+        });
+      }
+
+      @Override public boolean onInterceptTouchEvent(RecyclerView view, MotionEvent e) {
+        View childView = view.findChildViewUnder(e.getX(), e.getY());
+        if (childView != null && mListener != null && mGestureDetector.onTouchEvent(e)) {
+          mListener.onItemClick(childView, view.getChildPosition(childView));
+        }
+        return false;
+      }
+
+      @Override public void onTouchEvent(RecyclerView view, MotionEvent motionEvent) { }
+    }";;class name typo
+75941348;26196831;0;24;525f89e0-c9d8-48e0-88c6-1e5c5e0fc15c;2014-10-21 00:48:52;;;Proposed by 1813651 approved by 713775 edit id of 1570316
+77386841;26196831;713775;5;16333d75-5995-4b82-8e5c-c8e00884c3e4;2014-11-11 01:23:17;"Here is a better and less tightly coupled way to implement an OnClickListener for a RecyclerView.  
+
+Snippet of usage:
+
+    RecyclerView recyclerView = findViewById(R.id.recycler);
+    recyclerView.addOnItemTouchListener(
+        new RecyclerItemClickListener(context, new RecyclerItemClickListener.OnItemClickListener() {
+          @Override public void onItemClick(View view, int position) {
+            // do whatever
+          }
+        })
+    );
+
+RecyclerItemClickListener implementation:
+
+    import android.content.Context;
+    import android.support.v7.widget.RecyclerView;
+    import android.view.GestureDetector;
+    import android.view.MotionEvent;
+    import android.view.View;
+
+
+    public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListener {
+      private OnItemClickListener mListener;
+
+      public interface OnItemClickListener {
+        public void onItemClick(View view, int position);
+      }
+
+      GestureDetector mGestureDetector;
+
+      public RecyclerItemClickListener(Context context, OnItemClickListener listener) {
+        mListener = listener;
+        mGestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+          @Override public boolean onSingleTapUp(MotionEvent e) {
+            return true;
+          }
+        });
+      }
+
+      @Override public boolean onInterceptTouchEvent(RecyclerView view, MotionEvent e) {
+        View childView = view.findChildViewUnder(e.getX(), e.getY());
+        if (childView != null && mListener != null && mGestureDetector.onTouchEvent(e)) {
+          mListener.onItemClick(childView, view.getChildPosition(childView));
+        }
+        return false;
+      }
+
+      @Override public void onTouchEvent(RecyclerView view, MotionEvent motionEvent) { }
+    }";;deleted 58 characters in body
+80624528;26196831;2864525;5;c2f378e3-a400-4245-82fc-e5f7ce948bab;2014-12-29 21:27:19;"Here is a better and less tightly coupled way to implement an OnClickListener for a RecyclerView.  
+
+Snippet of usage:
+
+    RecyclerView recyclerView = findViewById(R.id.recycler);
+    recyclerView.addOnItemTouchListener(
+        new RecyclerItemClickListener(context, new RecyclerItemClickListener.OnItemClickListener() {
+          @Override public void onItemClick(View view, int position) {
+            // do whatever
+          }
+        })
+    );
+
+RecyclerItemClickListener implementation:
+
+    import android.content.Context;
+    import android.support.v7.widget.RecyclerView;
+    import android.view.GestureDetector;
+    import android.view.MotionEvent;
+    import android.view.View;
+
+
+    public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListener {
+      private OnItemClickListener mListener;
+
+      public interface OnItemClickListener {
+        public void onItemClick(View view, int position);
+      }
+
+      GestureDetector mGestureDetector;
+
+      public RecyclerItemClickListener(Context context, OnItemClickListener listener) {
+        mListener = listener;
+        mGestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+          @Override public boolean onSingleTapUp(MotionEvent e) {
+            return true;
+          }
+        });
+      }
+
+      @Override public boolean onInterceptTouchEvent(RecyclerView view, MotionEvent e) {
+        View childView = view.findChildViewUnder(e.getX(), e.getY());
+        if (childView != null && mListener != null && mGestureDetector.onTouchEvent(e)) {
+          mListener.onItemClick(childView, view.getChildPosition(childView));
+          return true;
+        }
+        return false;
+      }
+
+      @Override public void onTouchEvent(RecyclerView view, MotionEvent motionEvent) { }
+    }";;stop send events
+80624529;26196831;0;24;c2f378e3-a400-4245-82fc-e5f7ce948bab;2014-12-29 21:27:19;;;Proposed by 2864525 approved by 726106, 155077, 1565862 edit id of 1662735
+104781354;26196831;3032347;5;55d3af71-e159-4026-918f-df520ebda55b;2015-11-23 15:30:32;"Here is a better and less tightly coupled way to implement an OnClickListener for a RecyclerView.  
+
+Snippet of usage:
+
+    RecyclerView recyclerView = findViewById(R.id.recycler);
+    recyclerView.addOnItemTouchListener(
+        new RecyclerItemClickListener(context, new RecyclerItemClickListener.OnItemClickListener() {
+          @Override public void onItemClick(View view, int position) {
+            // do whatever
+          }
+        })
+    );
+
+RecyclerItemClickListener implementation:
+
+    import android.content.Context;
+    import android.support.v7.widget.RecyclerView;
+    import android.view.GestureDetector;
+    import android.view.MotionEvent;
+    import android.view.View;
+
+
+    public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListener {
+      private OnItemClickListener mListener;
+
+      public interface OnItemClickListener {
+        public void onItemClick(View view, int position);
+      }
+
+      GestureDetector mGestureDetector;
+
+      public RecyclerItemClickListener(Context context, OnItemClickListener listener) {
+        mListener = listener;
+        mGestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+          @Override public boolean onSingleTapUp(MotionEvent e) {
+            return true;
+          }
+        });
+      }
+
+      @Override public boolean onInterceptTouchEvent(RecyclerView view, MotionEvent e) {
+        View childView = view.findChildViewUnder(e.getX(), e.getY());
+        if (childView != null && mListener != null && mGestureDetector.onTouchEvent(e)) {
+          mListener.onItemClick(childView, view.getChildPosition(childView));
+          return true;
+        }
+        return false;
+      }
+
+      @Override public void onTouchEvent(RecyclerView view, MotionEvent motionEvent) { }
+
+      @Override
+      public void onRequestDisallowInterceptTouchEvent (boolean disallowIntercept){}
+    }";;implement abstract method: onRequestDisallowInterceptTouchEvent 
+104781355;26196831;0;24;55d3af71-e159-4026-918f-df520ebda55b;2015-11-23 15:30:32;;;Proposed by 3032347 approved by 930716, 371530, 1319061 edit id of 2198220
+122126277;26196831;2534099;5;c3d44420-6432-4b59-8fac-5e69c7efcdf6;2016-07-07 14:05:18;"Here is a better and less tightly coupled way to implement an OnClickListener for a RecyclerView.  
+
+Snippet of usage:
+
+    RecyclerView recyclerView = findViewById(R.id.recycler);
+    recyclerView.addOnItemTouchListener(
+        new RecyclerItemClickListener(context, recyclerView ,new RecyclerItemClickListener.OnItemClickListener() {
+          @Override public void onItemClick(View view, int position) {
+            // do whatever
+          }
+
+          @Override public void onLongItemClick(View view, int position) {
+            // do whatever
+          }
+        })
+    );
+
+RecyclerItemClickListener implementation:
+
+    import android.content.Context;
+    import android.support.v7.widget.RecyclerView;
+    import android.view.GestureDetector;
+    import android.view.MotionEvent;
+    import android.view.View;
+
+
+    public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListener {
+      private OnItemClickListener mListener;
+
+      public interface OnItemClickListener {
+        public void onItemClick(View view, int position);
+
+        public void onLongItemClick(View view, int position);
+      }
+
+      GestureDetector mGestureDetector;
+
+      public RecyclerItemClickListener(Context context, final RecyclerView recyclerView, OnItemClickListener listener) {
+        mListener = listener;
+        mGestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onSingleTapUp(MotionEvent e) {
+                return true;
+            }
+
+            @Override
+            public void onLongPress(MotionEvent e) {
+                View child = recyclerView.findChildViewUnder(e.getX(), e.getY());
+                if (child != null && mListener != null) {
+                    mListener.onLongItemClick(child, recyclerView.getChildAdapterPosition(child));
+                }
+            }
+        });
+    }
+
+      @Override public boolean onInterceptTouchEvent(RecyclerView view, MotionEvent e) {
+        View childView = view.findChildViewUnder(e.getX(), e.getY());
+        if (childView != null && mListener != null && mGestureDetector.onTouchEvent(e)) {
+          mListener.onItemClick(childView, view.getChildAdapterPosition(childView));
+          return true;
+        }
+        return false;
+      }
+
+      @Override public void onTouchEvent(RecyclerView view, MotionEvent motionEvent) { }
+
+      @Override
+      public void onRequestDisallowInterceptTouchEvent (boolean disallowIntercept){}
+    }";;add onLongPress item - getChildPosition is deprecated and should replace with getChildAdapterPosition
+122126278;26196831;0;24;c3d44420-6432-4b59-8fac-5e69c7efcdf6;2016-07-07 14:05:18;;;Proposed by 2534099 approved by 5969411, 321061, 1116216 edit id of 2604022
+127047617;26196831;1619036;5;b7d3f671-85df-4ae5-9449-bf9ad07489b8;2016-09-14 06:35:48;"Here is a better and less tightly coupled way to implement an `OnClickListener` for a `RecyclerView`.  
+
+Snippet of usage:
+
+    RecyclerView recyclerView = findViewById(R.id.recycler);
+    recyclerView.addOnItemTouchListener(
+        new RecyclerItemClickListener(context, recyclerView ,new RecyclerItemClickListener.OnItemClickListener() {
+          @Override public void onItemClick(View view, int position) {
+            // do whatever
+          }
+
+          @Override public void onLongItemClick(View view, int position) {
+            // do whatever
+          }
+        })
+    );
+
+`RecyclerItemClickListener` implementation:
+
+    import android.content.Context;
+    import android.support.v7.widget.RecyclerView;
+    import android.view.GestureDetector;
+    import android.view.MotionEvent;
+    import android.view.View;
+
+
+    public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListener {
+      private OnItemClickListener mListener;
+
+      public interface OnItemClickListener {
+        public void onItemClick(View view, int position);
+
+        public void onLongItemClick(View view, int position);
+      }
+
+      GestureDetector mGestureDetector;
+
+      public RecyclerItemClickListener(Context context, final RecyclerView recyclerView, OnItemClickListener listener) {
+        mListener = listener;
+        mGestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onSingleTapUp(MotionEvent e) {
+                return true;
+            }
+
+            @Override
+            public void onLongPress(MotionEvent e) {
+                View child = recyclerView.findChildViewUnder(e.getX(), e.getY());
+                if (child != null && mListener != null) {
+                    mListener.onLongItemClick(child, recyclerView.getChildAdapterPosition(child));
+                }
+            }
+        });
+    }
+
+      @Override public boolean onInterceptTouchEvent(RecyclerView view, MotionEvent e) {
+        View childView = view.findChildViewUnder(e.getX(), e.getY());
+        if (childView != null && mListener != null && mGestureDetector.onTouchEvent(e)) {
+          mListener.onItemClick(childView, view.getChildAdapterPosition(childView));
+          return true;
+        }
+        return false;
+      }
+
+      @Override public void onTouchEvent(RecyclerView view, MotionEvent motionEvent) { }
+
+      @Override
+      public void onRequestDisallowInterceptTouchEvent (boolean disallowIntercept){}
+    }";;Formatting
+127047618;26196831;0;24;b7d3f671-85df-4ae5-9449-bf9ad07489b8;2016-09-14 06:35:48;;;Proposed by 1619036 approved by 2826147, 6169399, 1819669 edit id of 2719599

@@ -1,0 +1,25 @@
+Id;PostId;UserId;PostHistoryTypeId;RevisionGUID;CreationDate;Text;UserDisplayName;Comment
+12024597;5599842;699240;2;9d747358-78a2-4ade-91d0-43c6cc0751bb;2011-04-08 19:22:01;"    public static String readableFileSize(long size) {
+        if(size <= 0) return ""0"";
+        final String[] units = new String[] { ""B"", ""KB"", ""MB"", ""GB"", ""TB"" };
+        int digitGroups = (int) Math.log10(size)/3;
+        return new DecimalFormat(""#,##0.#"").format(size/Math.pow(1024, digitGroups)) + "" "" + units[digitGroups];
+    }
+
+This will work up to 1000 TB.... and the program is short!";;
+12024768;5599842;699240;5;0379b019-c43e-4440-a39f-b2d68dfd3a2f;2011-04-08 19:29:48;"    public static String readableFileSize(long size) {
+        if(size <= 0) return ""0"";
+        final String[] units = new String[] { ""B"", ""KB"", ""MB"", ""GB"", ""TB"" };
+        int digitGroups = (int) (Math.log10(size)/Math.log10(1024));
+        return new DecimalFormat(""#,##0.#"").format(size/Math.pow(1024, digitGroups)) + "" "" + units[digitGroups];
+    }
+
+This will work up to 1000 TB.... and the program is short!";;added 17 characters in body
+76573335;5599842;67579;5;85411f2d-9228-4768-9a7f-04c6d392a385;2014-10-30 00:45:20;"    public static String readableFileSize(long size) {
+        if(size <= 0) return ""0"";
+        final String[] units = new String[] { ""B"", ""kB"", ""MB"", ""GB"", ""TB"" };
+        int digitGroups = (int) (Math.log10(size)/Math.log10(1024));
+        return new DecimalFormat(""#,##0.#"").format(size/Math.pow(1024, digitGroups)) + "" "" + units[digitGroups];
+    }
+
+This will work up to 1000 TB.... and the program is short!";;edited body

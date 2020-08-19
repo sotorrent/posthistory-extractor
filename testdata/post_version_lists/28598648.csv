@@ -1,0 +1,24 @@
+Id;PostHistoryTypeId;PostId;RevisionGUID;CreationDate;UserId;UserDisplayName;Comment;Text
+84099026;2;28598648;bfbeacc9-6829-401e-bbab-873025376c4a;2015-02-19 04:33:56;4080716;;;"    <script type=""text/javascript"" src=""http://code.jquery.com/jquery-1.8.1.min.js""></script>
+    <script type=""text/javascript"" src=""http://code.jquery.com/file1.js""></script>
+    <script type=""text/javascript"" src=""http://code.jquery.com/file2.js""></script>
+    <script type=""text/javascript"" src=""http://code.jquery.com/file3.js""></script>
+    <script type=""text/javascript"" src=""http://code.jquery.com/file4.js""></script><script type=""text/javascript"" src=""http://code.jquery.com/file5.js""></script>
+
+
+
+I  have four or more js file alert message or (event come) how can i find which is come's from this file ?"
+84099027;1;28598648;bfbeacc9-6829-401e-bbab-873025376c4a;2015-02-19 04:33:56;4080716;;;How to find jquery or javascript event occure from which file?
+84099028;3;28598648;bfbeacc9-6829-401e-bbab-873025376c4a;2015-02-19 04:33:56;4080716;;;<javascript><php><jquery><html><html5>
+84099569;5;28598648;59177b58-be78-47db-9465-6509ee89928b;2015-02-19 04:49:34;4080716;;deleted 15 characters in body;"    <script type=""text/javascript"" src=""http://code.jquery.com/jquery-1.8.1.min.js""></script>
+    <script type=""text/javascript"" src=""http://code.jquery.com/file1.js""></script>
+    <script type=""text/javascript"" src=""http://code.jquery.com/file2.js""></script>
+    <script type=""text/javascript"" src=""http://code.jquery.com/file3.js""></script>
+    <script type=""text/javascript"" src=""http://code.jquery.com/file4.js""></script><script type=""text/javascript"" src=""http://code.jquery.com/file5.js""></script>
+
+
+
+
+	
+i have 100 or more js file alert message comes from anywhere how can i hide and find ?"
+84106345;10;28598648;c0904e64-47de-4d49-a78f-a62ef68b6187;2015-02-19 07:17:03;-1;;101;{"OriginalQuestionIds":[12506762],"Voters":[{"Id":2074608,"DisplayName":"Qantas 94 Heavy"},{"Id":696364,"DisplayName":"Rikesh","BindingReason":{"GoldTagBadge":"php"}}]}

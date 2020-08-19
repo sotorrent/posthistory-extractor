@@ -1,0 +1,115 @@
+Id;PostId;UserId;PostHistoryTypeId;RevisionGUID;CreationDate;Text;UserDisplayName;Comment
+119651247;37625877;2552290;2;0c2009c8-396b-4422-a69f-f91813f1792d;2016-06-04 02:55:16.0;"I'm surprised by how painful it is to use java.util.ArrayList<T>.toArray().
+
+Suppose I declare my array list as:
+
+    java.util.ArrayList<double[]> arrayList = new java.util.ArrayList<double[]>();
+    ... add some items ...
+
+Then to convert it to an array, I have to do one of the following:
+
+    double[][] array = (double[][])arrayList.toArray(new double[0][]);
+or:
+
+    double[][] array = (double[][])arrayList.toArray(new double[arrayList.size()][]);
+or:
+
+    double[][] array = new double[arrayList.size()];
+    arrayList.toArray(array);
+
+None of the above are very readable.  Shouldn't I be able to say the following instead?
+
+    double[][] array = arrayList.toArray();
+But that gives a compile error because Object[] can't be converted to double[][].
+
+Perhaps it's not possible because toArray has to return Object[]
+for backwards compatibility with pre-template days.
+But if that's the case, couldn't a friendlier alternative method be added
+with a different name?  I can't think of a good name, but almost anything
+would be better than the existing ways; e.g. the following would be fine:
+
+    double[][] array = arrayList.toArrayOfNaturalType();
+
+No such member function exists, but maybe it's possible to write a generic helper function that will do it?
+
+    double[][] array = MyToArray(arrayList);
+The signature of MyToArray would be something like:
+
+    public static <T> T[] MyToArray(java.util.ArrayList<T> arrayList)
+Is it possible to implement such a function?
+My various attempts at implementing it resulted in compile errors
+""error: generic array creation"" or ""error: cannot select from a type variable"".
+
+Here's the closest I was able to get:
+
+    public static <T> T[] MyToArray(java.util.ArrayList<T> arrayList, Class type)
+    {
+        T[] array = (T[])java.lang.reflect.Array.newInstance(type, arrayList.size());
+        arrayList.toArray(array);
+        return array;
+    }
+It's called like this:
+
+    double[][] array = MyToArray(arrayList, double[].class);
+I wish the redundant final parameter wasn't there, but, even so,
+I think this is the least-horrible way that I've seen so far for converting array list to array.
+
+Is it possible to do any better than this?
+";;
+119651373;37625877;2552290;5;e6bca437-f19a-4481-8501-6ef0d407c60b;2016-06-04 03:00:48.0;"I'm surprised by how painful it is to use java.util.ArrayList&lt;T>.toArray().
+
+Suppose I declare my array list as:
+
+    java.util.ArrayList<double[]> arrayList = new java.util.ArrayList<double[]>();
+    ... add some items ...
+
+Then to convert it to an array, I have to do one of the following:
+
+    double[][] array = (double[][])arrayList.toArray(new double[0][]);
+or:
+
+    double[][] array = (double[][])arrayList.toArray(new double[arrayList.size()][]);
+or:
+
+    double[][] array = new double[arrayList.size()];
+    arrayList.toArray(array);
+
+None of the above are very readable.  Shouldn't I be able to say the following instead?
+
+    double[][] array = arrayList.toArray();
+But that gives a compile error because Object[] can't be converted to double[][].
+
+Perhaps it's not possible because toArray has to return Object[]
+for backwards compatibility with pre-template days.
+But if that's the case, couldn't a friendlier alternative method be added
+with a different name?  I can't think of a good name, but almost anything
+would be better than the existing ways; e.g. the following would be fine:
+
+    double[][] array = arrayList.toArrayOfNaturalType();
+
+No such member function exists, but maybe it's possible to write a generic helper function that will do it?
+
+    double[][] array = MyToArray(arrayList);
+The signature of MyToArray would be something like:
+
+    public static <T> T[] MyToArray(java.util.ArrayList<T> arrayList)
+Is it possible to implement such a function?
+My various attempts at implementing it resulted in compile errors
+""error: generic array creation"" or ""error: cannot select from a type variable"".
+
+Here's the closest I was able to get:
+
+    public static <T> T[] MyToArray(java.util.ArrayList<T> arrayList, Class type)
+    {
+        T[] array = (T[])java.lang.reflect.Array.newInstance(type, arrayList.size());
+        arrayList.toArray(array);
+        return array;
+    }
+It's called like this:
+
+    double[][] array = MyToArray(arrayList, double[].class);
+I wish the redundant final parameter wasn't there, but, even so,
+I think this is the least-horrible way that I've seen so far for converting array list to array.
+
+Is it possible to do any better than this?
+";;"use &lt; so that the <T> will appear properly. doesn't seem to be a problem in code sections."

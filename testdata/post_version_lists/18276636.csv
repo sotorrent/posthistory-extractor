@@ -1,0 +1,237 @@
+Id;PostId;UserId;PostHistoryTypeId;RevisionGUID;CreationDate;Text;UserDisplayName;Comment
+45480805;18276636;2687121;2;2488e1ad-676a-42dc-a182-d699b4660a6a;2013-08-16 15:12:15.0;"I'm trying to override the routes of a vendor module ([ZFcUser][1]) from within a custom module's (ContentManager) module.config.php. The ContentManagerController extends the original UserController. I don't want to touch the ZFcUser's module.config.php, as it could lead into troubles after a prospective update via composer. I want to strictly seperate any configurations made by me from the original vendor files.
+Simply overriding
+
+    'route' => '/user',
+
+to
+
+    'route' => '/cms',
+works for now, but isn't what I want to achieve.
+So, I need to replace the controller entry as well
+
+    'defaults' => array(
+        'controller' => 'zfcuser',
+        'action'     => 'index',
+    ),
+with
+    
+    'defaults' => array(
+        'controller' => 'ContentManager\Controller\ContentManager',
+    ),
+But that gives me a 404 error.
+
+    The requested controller was unable to dispatch the request.
+
+    Controller:
+    ContentManager\Controller\ContentManager
+Seems as if both controllers are in conflict. When I comment out the 'defaults' array in
+ the ZFcUser module.config.php my ContentManagerController is then invoked as expected.
+I also made sure that my module is registered after the ZFcUser. So overriding should work, afaik.
+
+I did a lot of research already but can't figure out what's going on here.
+The strategies described [here][2] and [there][3] don't do the trick.
+
+    return array(
+        'controllers' => array(
+            'invokables' => array(
+                'ContentManager\Controller\ContentManager' => 'ContentManager\Controller\ContentManagerController',
+            ),
+        ),
+	    'router' => array(
+            'routes' => array(
+                'zfcuser' => array(
+                    'type' => 'Literal',
+                    'priority' => 1000,
+                    'options' => array(
+                        'route' => '/cms',
+                        'defaults' => array(
+                            'controller' => 'ContentManager\Controller\ContentManager',
+                        ),
+                    ),
+                    'may_terminate' => true,
+                    'child_routes' => array(
+                        .
+                        .
+                        .
+                    ),
+                ),
+            ),
+        ),
+    );
+
+Thanks for your help!
+
+  [1]: https://github.com/ZF-Commons/ZfcUser
+  [2]: http://stackoverflow.com/questions/12621177/zend-2-how-to-override-modules-configuration-file
+  [3]: http://akrabat.com/zend-framework-2/overriding-module-configuration-in-zf2/";;
+45485022;18276636;2687121;5;2b3ab46c-00a0-4198-9744-b85f84a77759;2013-08-16 16:34:13.0;"EDIT: 
+I just found the solution on my own.
+As my ContentManagerController extends AbstractRestfulController it naturally has no index action implemented. So the 'action' field in the 'defaults' array has to be overridden by '' or null. Then the proper action depending on the HTTP request type will be invoked as expected. Where was my mind?
+
+Here's the updated code. Change
+
+    'defaults' => array(
+        'controller' => 'zfcuser',
+        'action'     => 'index',
+    ),
+to
+
+    'defaults' => array(
+        'controller' => 'ContentManager\Controller\ContentManager',
+        'action'     => '', // or null
+    ),
+
+--- Original Post ---
+
+I'm trying to override the routes of a vendor module ([ZFcUser][1]) from within a custom module's (ContentManager) module.config.php. The ContentManagerController extends the original UserController. I don't want to touch the ZFcUser's module.config.php, as it could lead into troubles after a prospective update via composer. I want to strictly seperate any configurations made by me from the original vendor files.
+Simply overriding
+
+    'route' => '/user',
+
+to
+
+    'route' => '/cms',
+works for now, but isn't what I want to achieve.
+So, I need to replace the controller entry as well
+
+    'defaults' => array(
+        'controller' => 'zfcuser',
+        'action'     => 'index',
+    ),
+with
+    
+    'defaults' => array(
+        'controller' => 'ContentManager\Controller\ContentManager',
+    ),
+But that gives me a 404 error.
+
+    The requested controller was unable to dispatch the request.
+
+    Controller:
+    ContentManager\Controller\ContentManager
+Seems as if both controllers are in conflict. When I comment out the 'defaults' array in
+ the ZFcUser module.config.php my ContentManagerController is then invoked as expected.
+I also made sure that my module is registered after the ZFcUser. So overriding should work, afaik.
+
+I did a lot of research already but can't figure out what's going on here.
+The strategies described [here][2] and [there][3] don't do the trick.
+
+    return array(
+        'controllers' => array(
+            'invokables' => array(
+                'ContentManager\Controller\ContentManager' => 'ContentManager\Controller\ContentManagerController',
+            ),
+        ),
+	    'router' => array(
+            'routes' => array(
+                'zfcuser' => array(
+                    'type' => 'Literal',
+                    'priority' => 1000,
+                    'options' => array(
+                        'route' => '/cms',
+                        'defaults' => array(
+                            'controller' => 'ContentManager\Controller\ContentManager',
+                        ),
+                    ),
+                    'may_terminate' => true,
+                    'child_routes' => array(
+                        .
+                        .
+                        .
+                    ),
+                ),
+            ),
+        ),
+    );
+
+Thanks for your help!
+
+  [1]: https://github.com/ZF-Commons/ZfcUser
+  [2]: http://stackoverflow.com/questions/12621177/zend-2-how-to-override-modules-configuration-file
+  [3]: http://akrabat.com/zend-framework-2/overriding-module-configuration-in-zf2/";;found the solution
+146986166;18276636;-1;5;2eabe0ec-044b-4609-92d8-f7c0289d9b4d;2017-05-23 12:07:22.0;"EDIT: 
+I just found the solution on my own.
+As my ContentManagerController extends AbstractRestfulController it naturally has no index action implemented. So the 'action' field in the 'defaults' array has to be overridden by '' or null. Then the proper action depending on the HTTP request type will be invoked as expected. Where was my mind?
+
+Here's the updated code. Change
+
+    'defaults' => array(
+        'controller' => 'zfcuser',
+        'action'     => 'index',
+    ),
+to
+
+    'defaults' => array(
+        'controller' => 'ContentManager\Controller\ContentManager',
+        'action'     => '', // or null
+    ),
+
+--- Original Post ---
+
+I'm trying to override the routes of a vendor module ([ZFcUser][1]) from within a custom module's (ContentManager) module.config.php. The ContentManagerController extends the original UserController. I don't want to touch the ZFcUser's module.config.php, as it could lead into troubles after a prospective update via composer. I want to strictly seperate any configurations made by me from the original vendor files.
+Simply overriding
+
+    'route' => '/user',
+
+to
+
+    'route' => '/cms',
+works for now, but isn't what I want to achieve.
+So, I need to replace the controller entry as well
+
+    'defaults' => array(
+        'controller' => 'zfcuser',
+        'action'     => 'index',
+    ),
+with
+    
+    'defaults' => array(
+        'controller' => 'ContentManager\Controller\ContentManager',
+    ),
+But that gives me a 404 error.
+
+    The requested controller was unable to dispatch the request.
+
+    Controller:
+    ContentManager\Controller\ContentManager
+Seems as if both controllers are in conflict. When I comment out the 'defaults' array in
+ the ZFcUser module.config.php my ContentManagerController is then invoked as expected.
+I also made sure that my module is registered after the ZFcUser. So overriding should work, afaik.
+
+I did a lot of research already but can't figure out what's going on here.
+The strategies described [here][2] and [there][3] don't do the trick.
+
+    return array(
+        'controllers' => array(
+            'invokables' => array(
+                'ContentManager\Controller\ContentManager' => 'ContentManager\Controller\ContentManagerController',
+            ),
+        ),
+	    'router' => array(
+            'routes' => array(
+                'zfcuser' => array(
+                    'type' => 'Literal',
+                    'priority' => 1000,
+                    'options' => array(
+                        'route' => '/cms',
+                        'defaults' => array(
+                            'controller' => 'ContentManager\Controller\ContentManager',
+                        ),
+                    ),
+                    'may_terminate' => true,
+                    'child_routes' => array(
+                        .
+                        .
+                        .
+                    ),
+                ),
+            ),
+        ),
+    );
+
+Thanks for your help!
+
+  [1]: https://github.com/ZF-Commons/ZfcUser
+  [2]: https://stackoverflow.com/questions/12621177/zend-2-how-to-override-modules-configuration-file
+  [3]: http://akrabat.com/zend-framework-2/overriding-module-configuration-in-zf2/";;replaced http://stackoverflow.com/ with https://stackoverflow.com/

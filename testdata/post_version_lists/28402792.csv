@@ -1,0 +1,40 @@
+Id;PostHistoryTypeId;PostId;RevisionGUID;CreationDate;UserId;UserDisplayName;Comment;Text
+83353105;2;28402792;cc07f13d-940f-4325-9bf0-0a52fd3a1c7f;2015-02-09 04:23:24;4559111;;;"I am using Rails 2 (2.3.8)
+My current array of object ""sum"" is:
+<pre class=""lang-rb prettyprint prettyprinted"">
+<code>[{""sum"":{""key1"":0,""key2"":""2014"",""key3"":0,""key4"":""8"",""key5"":0,""key6"":""0"",""key7"":0}},{""sum"":{""key1"":0,""key2"":""2014"",""key3"":0,""key4"":""12"",""key5"":0,""key6"":""1"",""key7"":0}}]</code>
+</pre>
+
+The target is:
+<pre class=""lang-rb prettyprint prettyprinted"">
+<code>[{""key1"":0,""key2"":""2014"",""key3"":0,""key4"":""8"",""key5"":0,""key6"":""0"",""key7"":0},{""key1"":0,""key2"":""2014"",""key3"":0,""key4"":""12"",""key5"":0,""key6"":""1"",""key7"":0}]</code>
+</pre>
+
+Thanks"
+83353106;1;28402792;cc07f13d-940f-4325-9bf0-0a52fd3a1c7f;2015-02-09 04:23:24;4559111;;;Ruby on Rails - How to convert an array of Objects to array of Hashes
+83353107;3;28402792;cc07f13d-940f-4325-9bf0-0a52fd3a1c7f;2015-02-09 04:23:24;4559111;;;<ruby-on-rails><ruby><arrays><hash>
+83353188;5;28402792;a2045605-a92d-4175-91fb-7a7492e3d879;2015-02-09 04:27:07;644810;;"deleted 131 characters in body; edited tags; edited title";"I am using Rails 2 (2.3.8)
+My current array of object ""sum"" is:
+
+
+> [{""sum"":{""key1"":0,""key2"":""2014"",""key3"":0,""key4"":""8"",""key5"":0,""key6"":""0"",""key7"":0}},{""sum"":{""key1"":0,""key2"":""2014"",""key3"":0,""key4"":""12"",""key5"":0,""key6"":""1"",""key7"":0}}]
+
+The target is:
+
+>[{""key1"":0,""key2"":""2014"",""key3"":0,""key4"":""8"",""key5"":0,""key6"":""0"",""key7"":0},{""key1"":0,""key2"":""2014"",""key3"":0,""key4"":""12"",""key5"":0,""key6"":""1"",""key7"":0}]
+
+Thanks"
+83353189;4;28402792;a2045605-a92d-4175-91fb-7a7492e3d879;2015-02-09 04:27:07;644810;;"deleted 131 characters in body; edited tags; edited title";How to convert an array of Objects to array of Hashes?
+83353190;6;28402792;a2045605-a92d-4175-91fb-7a7492e3d879;2015-02-09 04:27:07;644810;;"deleted 131 characters in body; edited tags; edited title";<ruby-on-rails><ruby><arrays><hash><ruby-on-rails-2>
+83353200;5;28402792;6a26a765-8d42-4ec8-be18-b6e58817bfba;2015-02-09 04:28:49;211563;;formatting, remove sig, nothing to do with rails;"My current array of object ""sum"" is:
+
+
+    [{""sum"":{""key1"":0,""key2"":""2014"",""key3"":0,""key4"":""8"",""key5"":0,""key6"":""0"",""key7"":0}},
+     {""sum"":{""key1"":0,""key2"":""2014"",""key3"":0,""key4"":""12"",""key5"":0,""key6"":""1"",""key7"":0}}]
+
+The target is:
+
+    [{""key1"":0,""key2"":""2014"",""key3"":0,""key4"":""8"",""key5"":0,""key6"":""0"",""key7"":0,
+     {""key1"":0,""key2"":""2014"",""key3"":0,""key4"":""12"",""key5"":0,""key6"":""1"",""key7"":0}]"
+83353201;6;28402792;6a26a765-8d42-4ec8-be18-b6e58817bfba;2015-02-09 04:28:49;211563;;formatting, remove sig, nothing to do with rails;<ruby><arrays><hash>
+83858006;10;28402792;af2f69ba-ef65-46e4-9eb5-2982eaff4c66;2015-02-16 04:12:02;-1;;103;{"Voters":[{"Id":314166,"DisplayName":"sawa"},{"Id":1009479,"DisplayName":"Yu Hao"},{"Id":2988,"DisplayName":"Jörg W Mittag"},{"Id":123527,"DisplayName":"Simone Carletti"},{"Id":644810,"DisplayName":"Rustam A. Gasanov"}]}

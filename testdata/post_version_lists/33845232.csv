@@ -1,0 +1,115 @@
+Id;PostId;UserId;PostHistoryTypeId;RevisionGUID;CreationDate;Text;UserDisplayName;Comment
+104661316;33845232;522444;2;201feff4-3e91-429e-8719-3a6e61d6e915;2015-11-21 15:37:21.0;"Your main question -- can you create a class that is a repository of your GUI components and use them elsewhere, and the answer is yes you *can*, but I don't think that you should, at least not for simple components. You should keep your JTextFields, JButtons in the GUI classes that use them, but any major subsection of your GUI, such as a JPanel that contains components and that has a unique functionality, that can go in its own class.
+
+More important is to separate out different functional parts of your program, especially you should try to separate out the logical or ""model"" part of your program from the GUI or ""view"" part. The details of how you do this will depend on the details of your program and overall problem.";;
+104663887;33845232;522444;5;56c3a8af-d0db-4bc5-a3e9-711e7edea6ea;2015-11-21 16:33:28.0;"Your main question -- can you create a class that is a repository of your GUI components and use them elsewhere, and the answer is yes you *can*, but I don't think that you should, at least not for simple components. You should keep your JTextFields, JButtons in the GUI classes that use them, but any major subsection of your GUI, such as a JPanel that contains components and that has a unique functionality, that can go in its own class.
+
+More important is to separate out different functional parts of your program, especially you should try to separate out the logical or ""model"" part of your program from the GUI or ""view"" part. The details of how you do this will depend on the details of your program and overall problem.
+
+For example:
+
+    import java.awt.event.ActionEvent;
+    import java.awt.event.ActionListener;
+    import javax.swing.*;
+    
+    public class SeparateClasses {
+        private static void createAndShowGui() {
+            SeparateClassView mainPanel = new SeparateClassView();
+            new SeparateClassControl(mainPanel);
+    
+            JFrame frame = new JFrame(""GUI"");
+            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            frame.getContentPane().add(mainPanel);
+            frame.pack();
+            frame.setLocationRelativeTo(null);
+            frame.setVisible(true);
+        }
+    
+        public static void main(String[] args) {
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    createAndShowGui();
+                }
+            });
+        }
+    }
+
+<?-- -->
+    
+    public class SeparateClassView extends JPanel {
+        private JTextField field1 = new JTextField(12);
+        private JTextField field2 = new JTextField(12);
+        private JTextField resultField = new JTextField(""false"", 5);
+        private JButton button = new JButton(""Click"");
+        
+        public SeparateClassView() {
+            resultField.setEditable(false);
+            resultField.setFocusable(false);
+            
+            add(new JLabel(""Field 1:""));
+            add(field1);
+            add(new JLabel(""Field 2:""));
+            add(field2);
+            
+            add(button);
+            
+            add(new JLabel(""Two texts equivalent?:""));
+            add(resultField);
+    
+        }
+        
+        public void addButtonListener(ActionListener listener) {
+            button.addActionListener(listener);
+            field1.addActionListener(listener);
+            field2.addActionListener(listener);
+        }
+        
+        public String getField1Text() {
+            return field1.getText();
+        }
+        
+        public String getField2Text() {
+            return field2.getText();
+        }
+        
+        public void setField1Text(String text) {
+            field1.setText(text);
+        }
+    
+        public void setField2Text(String text) {
+            field2.setText(text);
+        }
+        
+        public void setResult(boolean result) {
+            resultField.setText(String.valueOf(result));
+        }
+    }
+
+<?-- -->
+    
+    public class SeparateClassControl implements ActionListener {
+        private SeparateClassView view;
+        
+        public SeparateClassControl(SeparateClassView view) {
+            this.view = view;
+            view.addButtonListener(this);
+        }
+    
+    
+    
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String text1 = view.getField1Text();
+            String text2 = view.getField2Text();
+            boolean result = SeparateClassModel.stringsEquivalent(text1, text2);
+            view.setResult(result);
+        }
+    }
+
+<?-- -->
+    
+    public class SeparateClassModel {
+        public static boolean stringsEquivalent(String text1, String text2) {
+            return text1.equalsIgnoreCase(text2);
+        }
+    }";;added 3233 characters in body

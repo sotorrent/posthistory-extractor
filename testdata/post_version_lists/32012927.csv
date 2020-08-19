@@ -1,0 +1,178 @@
+Id;PostHistoryTypeId;PostId;RevisionGUID;CreationDate;UserId;UserDisplayName;Comment;Text
+97420176;2;32012927;ed6ec01a-986a-4f0a-b4f2-81225564387f;2015-08-14 14:51:31;2054487;;;"Follow the link:
+	
+Command-Line Arguments - The Java™ Tutorials : https://docs.oracle.com/javase/tutorial/essential/environment/cmdLineArgs.html
+
+shared by @BackSlash.
+
+It has all the content which would help you to clear all your doubts."
+97555350;5;32012927;9d7d783d-0c3b-4ca0-b0ed-1ae774645faa;2015-08-17 07:37:27;2054487;;added 1503 characters in body;"Follow the link:
+	
+Command-Line Arguments - The Java™ Tutorials : https://docs.oracle.com/javase/tutorial/essential/environment/cmdLineArgs.html
+
+shared by @BackSlash.
+
+It has all the content which would help you to clear all your doubts.
+
+Update:
+
+**Displaying Command-Line Arguments passed by user from command-line to a Java program**
+
+The following example displays each of its command-line arguments on a line by itself:
+
+
+    public class DisplayCommandLineParameters {
+        public static void main (String[] args) {
+            for (String s: args) {
+                System.out.println(s);
+            }
+        }
+    }
+
+
+**To compile the program:**  
+From the Command Prompt, navigate to the directory containing your .java file, say C:\test, by typing the cd command below.
+
+C:\Users\username>**cd c:\test**  
+C:\test\>
+
+Assuming the file, say DisplayCommandLineParameters.java, is in the current working directory, type the javac command below to compile it.
+
+C:\test\>**javac DisplayCommandLineParameters.java**  
+C:\test\>
+
+If everything went well, you should see no error messages.
+ 
+
+**To run the program:**  
+The following example shows how a user might run the class. 
+
+C:\test\>**java DisplayCommandLineParameters Hello Java World**
+
+**Output:**  
+Hello  
+Java  
+World
+
+Note that the application displays each word — Hello, Java and World — on a line by itself. This is because the space character separates command-line arguments. 
+
+To have Hello, Java and World interpreted as a single argument, the user would join them by enclosing them within quotation marks.
+
+C:\test\>**java DisplayCommandLineParameters ""Hello Java World""**
+
+**Output:**  
+Hello Java World
+"
+97573696;5;32012927;8bf44421-732f-4f8f-81a4-e09de2f37fd5;2015-08-17 11:54:33;2982225;;added 120 characters in body;"Follow the link:
+	
+Command-Line Arguments - The Java™ Tutorials : https://docs.oracle.com/javase/tutorial/essential/environment/cmdLineArgs.html
+
+shared by @BackSlash.
+
+It has all the content which would help you to clear all your doubts.  
+The content from the link is quoted below:
+
+> **Displaying Command-Line Arguments passed by user from command-line to a Java program**
+> 
+> The following example displays each of its command-line arguments on a
+> line by itself:
+> 
+> 
+>     public class DisplayCommandLineParameters {
+>         public static void main (String[] args) {
+>             for (String s: args) {
+>                 System.out.println(s);
+>             }
+>         }
+>     }
+> 
+> 
+> **To compile the program:**   From the Command Prompt, navigate to the directory containing your .java file, say C:\test, by typing the cd
+> command below.
+> 
+> C:\Users\username>**cd c:\test**   C:\test\>
+> 
+> Assuming the file, say DisplayCommandLineParameters.java, is in the
+> current working directory, type the javac command below to compile it.
+> 
+> C:\test\>**javac DisplayCommandLineParameters.java**   C:\test\>
+> 
+> If everything went well, you should see no error messages.  
+> 
+> **To run the program:**   The following example shows how a user might run the class. 
+> 
+> C:\test\>**java DisplayCommandLineParameters Hello Java World**
+> 
+> **Output:**   Hello   Java   World
+> 
+> Note that the application displays each word — Hello, Java and World —
+> on a line by itself. This is because the space character separates
+> command-line arguments. 
+> 
+> To have Hello, Java and World interpreted as a single argument, the
+> user would join them by enclosing them within quotation marks.
+> 
+> C:\test\>**java DisplayCommandLineParameters ""Hello Java World""**
+> 
+> **Output:**   Hello Java World
+
+"
+97576027;5;32012927;b1773f0f-0555-4fb6-9a8f-bf64470f8aa5;2015-08-17 12:23:41;2054487;;added 15 characters in body;"Follow the link:
+	
+Command-Line Arguments - The Java™ Tutorials : https://docs.oracle.com/javase/tutorial/essential/environment/cmdLineArgs.html
+
+shared by @BackSlash.
+
+It has all the content which would help you to clear all your doubts.  
+The content from the link is quoted below:
+
+> **Displaying Command-Line Arguments passed by user from command-line to a Java program**
+> 
+> The following example displays each of its command-line arguments on a
+> line by itself:
+> 
+> 
+>     public class DisplayCommandLineParameters {
+>         public static void main (String[] args) {
+>             for (String s: args) {
+>                 System.out.println(s);
+>             }
+>         }
+>     }
+> 
+> 
+> **To compile the program:**   From the Command Prompt, navigate to the directory containing your .java file, say C:\test, by typing the cd
+> command below.
+> 
+> C:\Users\username>**cd c:\test**  
+> C:\test\>
+> 
+> Assuming the file, say DisplayCommandLineParameters.java, is in the
+> current working directory, type the javac command below to compile it.
+> 
+> C:\test\>**javac DisplayCommandLineParameters.java**  
+> C:\test\>
+> 
+> If everything went well, you should see no error messages.  
+> 
+> **To run the program:**   The following example shows how a user might run the class. 
+> 
+> C:\test\>**java DisplayCommandLineParameters Hello Java World**
+> 
+> **Output:**  
+> Hello  
+> Java  
+> World
+> 
+> Note that the application displays each word — Hello, Java and World —
+> on a line by itself. This is because the space character separates
+> command-line arguments. 
+> 
+> To have Hello, Java and World interpreted as a single argument, the
+> user would join them by enclosing them within quotation marks.
+> 
+> C:\test\>**java DisplayCommandLineParameters ""Hello Java World""**
+> 
+> **Output:**   Hello Java World
+
+"

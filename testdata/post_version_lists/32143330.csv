@@ -1,0 +1,65 @@
+Id;PostHistoryTypeId;PostId;RevisionGUID;CreationDate;UserId;UserDisplayName;Comment;Text
+97933426;2;32143330;d4bac9da-ee4f-4fa2-be3f-75c902e8671b;2015-08-21 14:47:17;2025923;;;"You can use `||` if there is no match. `match` returns `null` when there is no match found, so when you use `length` on it the error is thrown.
+
+You can use `||` to return empty array when there is no match.
+
+    var result = TextToSearch.match(/NIGHT.*?</gi) || [];"
+97933639;5;32143330;2e6e13ec-7e1e-4638-88ca-b646bb0ee7ab;2015-08-21 14:49:30;2025923;;added 111 characters in body;"You can use `||` if there is no match. `match` returns `null` when there is no match found, so when you use `length` on `null` it the error is thrown.
+
+You can use `||` to return empty array when there is no match.
+
+    var result = TextToSearch.match(/NIGHT.*?</gi) || [];
+
+By using this, you make sure that `result` will be always an `array` regardless of the status of `match()`."
+97934078;5;32143330;5d6fa5d4-181b-40d6-9883-d9ded01dd919;2015-08-21 14:55:49;2025923;;added 70 characters in body;"You can use `||` if there is no match. `match` returns `null` when there is no match found, so when you use `length` on `null` it the error is thrown.
+
+You can use `||` to return empty array when there is no match.
+
+    var result = TextToSearch.match(/NIGHT.*?</gi) || [];
+
+By using this, you make sure that `result` will be always an `array` regardless of the status of `match()`.
+
+[**Demo**][1]
+
+
+  [1]: https://jsfiddle.net/tusharj/uooeLk2c/3/"
+98648706;5;32143330;d8f6d9a6-f951-4c73-b4bd-a47ed2a2aac1;2015-09-01 05:45:57;2025923;;added 782 characters in body;"You can use _OR_ `||` if there is no match. `match()` returns `null` when no match is found, then when you use `length` on `null`, error is thrown.
+
+You can use `||` to return empty array when there is no match.
+
+    var result = TextToSearch.match(/NIGHT.*?</gi) || [];
+
+By using this, you make sure that `result` will be always an `array` regardless of the status of `match()`.
+
+[**Demo**][1]
+
+<!-- begin snippet: js hide: false -->
+
+<!-- language: lang-js -->
+
+    var TextToSearch = document.getElementById('box2').innerHTML;
+    var result = TextToSearch.match(/DAY.*?</gi) || [];
+    var select = document.getElementById(""field"");
+
+    if (result.length) {
+      for (var i = 0; i < result.length; i++) {
+        var option = document.createElement(""option"");
+        option.value = i + 1;
+        option.innerHTML = result[i];
+        select.add(option);
+      }
+    }
+    alert(""No Error"");
+
+<!-- language: lang-html -->
+
+    <div id=""box2"">
+      <p>this is some text and here is night 3 cool right</p>
+      <!-- In the previous line, change DAY to something else -->
+    </div>
+    <br>
+    <select id=""field""></select>
+
+<!-- end snippet -->
+
+  [1]: https://jsfiddle.net/tusharj/uooeLk2c/3/"

@@ -1,0 +1,245 @@
+Id;PostId;UserId;PostHistoryTypeId;RevisionGUID;CreationDate;Text;UserDisplayName;Comment
+11662441;5445161;43151;2;fb5875a1-ec7e-407f-9a39-af3cb0477910;2011-03-26 20:40:26;"Here's a way using only standard Java library.
+
+    import java.util.Scanner;
+    
+    public String convertStreamToString(InputStream is) { 
+        return new Scanner(is).useDelimiter(""\\A"").next();
+    }
+
+I learned this one-liner from [""Stupid Scanner tricks""][1] article. The reason it works is because [Scanner][2] iterates over tokens in the stream, and in this case we separate tokens using ""beginning of the input boundary"" (\A) thus giving us only one token for the entire contents of the stream.
+
+Note, if you need to be specific about the input stream's encoding, you can provide the second argument to `Scanner` ctor that indicates what charset to use (e.g. ""UTF-8"").
+
+Hat tip goes also to [Jacob,][3] who once pointed me to the said article.
+
+
+  [1]: http://weblogs.java.net/blog/pat/archive/2004/10/stupid_scanner_1.html
+  [2]: http://download.oracle.com/javase/6/docs/api/java/util/Scanner.html
+  [3]: http://stackoverflow.com/users/68127/jacob-gabrielson";;
+21230790;5445161;43151;5;64dd3192-02d2-4779-bdf3-b66d7caafcb0;2012-02-19 05:49:59;"Here's a way using only standard Java library.
+
+    import java.util.Scanner;
+    import java.util.NoSuchElementException;
+    
+    public String convertStreamToString(InputStream is) {
+        try {
+            return new Scanner(is).useDelimiter(""\\A"").next();
+        } catch (NoSuchElementException e) {
+            return """";
+        }
+    }
+
+I learned this trick from [""Stupid Scanner tricks""][1] article. The reason it works is because [Scanner][2] iterates over tokens in the stream, and in this case we separate tokens using ""beginning of the input boundary"" (\A) thus giving us only one token for the entire contents of the stream.
+
+Note, if you need to be specific about the input stream's encoding, you can provide the second argument to `Scanner` ctor that indicates what charset to use (e.g. ""UTF-8"").
+
+Hat tip goes also to [Jacob,][3] who once pointed me to the said article.
+
+**EDITED:** Thanks to a suggestion from [Patrick][4], made the function more robust when handling an empty input stream.
+
+  [1]: http://weblogs.java.net/blog/pat/archive/2004/10/stupid_scanner_1.html
+  [2]: http://download.oracle.com/javase/6/docs/api/java/util/Scanner.html
+  [3]: http://stackoverflow.com/users/68127/jacob-gabrielson
+  [4]: http://stackoverflow.com/users/101272/patrick";;Made the function more robust when handling an empty input stream
+21289331;5445161;43151;5;79dddfc4-d7cb-4103-acb2-5b3eb8a75c4f;2012-02-21 00:14:19;"Here's a way using only standard Java library.
+
+    public String convertStreamToString(java.io.InputStream is) {
+        try {
+            return new java.util.Scanner(is).useDelimiter(""\\A"").next();
+        } catch (java.util.NoSuchElementException e) {
+            return """";
+        }
+    }
+
+I learned this trick from [""Stupid Scanner tricks""][1] article. The reason it works is because [Scanner][2] iterates over tokens in the stream, and in this case we separate tokens using ""beginning of the input boundary"" (\A) thus giving us only one token for the entire contents of the stream.
+
+Note, if you need to be specific about the input stream's encoding, you can provide the second argument to `Scanner` ctor that indicates what charset to use (e.g. ""UTF-8"").
+
+Hat tip goes also to [Jacob,][3] who once pointed me to the said article.
+
+**EDITED:** Thanks to a suggestion from [Patrick][4], made the function more robust when handling an empty input stream.
+
+  [1]: http://weblogs.java.net/blog/pat/archive/2004/10/stupid_scanner_1.html
+  [2]: http://download.oracle.com/javase/6/docs/api/java/util/Scanner.html
+  [3]: http://stackoverflow.com/users/68127/jacob-gabrielson
+  [4]: http://stackoverflow.com/users/101272/patrick
+
+";;Minor tweak to code, so it works right away when you paste it inside a class.
+22770107;5445161;43151;5;aeedaee8-b9fa-4427-8f42-e41b13d29df8;2012-03-30 23:23:12;"Here's a way using only standard Java library.
+
+    public String convertStreamToString(java.io.InputStream is) {
+        try {
+            return new java.util.Scanner(is).useDelimiter(""\\A"").next();
+        } catch (java.util.NoSuchElementException e) {
+            return """";
+        }
+    }
+
+I learned this trick from [""Stupid Scanner tricks""][1] article. The reason it works is because [Scanner][2] iterates over tokens in the stream, and in this case we separate tokens using ""beginning of the input boundary"" (\A) thus giving us only one token for the entire contents of the stream.
+
+**Note, if you need to be specific about the input stream's encoding, you can provide the second argument to `Scanner` ctor that indicates what charset to use (e.g. ""UTF-8"").**
+
+Hat tip goes also to [Jacob,][3] who once pointed me to the said article.
+
+**EDITED:** Thanks to a suggestion from [Patrick][4], made the function more robust when handling an empty input stream.
+
+  [1]: http://weblogs.java.net/blog/pat/archive/2004/10/stupid_scanner_1.html
+  [2]: http://download.oracle.com/javase/6/docs/api/java/util/Scanner.html
+  [3]: http://stackoverflow.com/users/68127/jacob-gabrielson
+  [4]: http://stackoverflow.com/users/101272/patrick
+
+";;added 4 characters in body
+25270546;5445161;43151;5;5c8741c0-6722-462c-9c9c-a19e08344df6;2012-06-07 06:37:21;"Here's a way using only standard Java library.
+
+    String convertStreamToString(java.io.InputStream is) {
+        try {
+            return new java.util.Scanner(is).useDelimiter(""\\A"").next();
+        } catch (java.util.NoSuchElementException e) {
+            return """";
+        }
+    }
+
+I learned this trick from [""Stupid Scanner tricks""][1] article. The reason it works is because [Scanner][2] iterates over tokens in the stream, and in this case we separate tokens using ""beginning of the input boundary"" (\A) thus giving us only one token for the entire contents of the stream.
+
+**Note, if you need to be specific about the input stream's encoding, you can provide the second argument to `Scanner` ctor that indicates what charset to use (e.g. ""UTF-8"").**
+
+Hat tip goes also to [Jacob,][3] who once pointed me to the said article.
+
+**EDITED:** Thanks to a suggestion from [Patrick][4], made the function more robust when handling an empty input stream.
+
+  [1]: http://weblogs.java.net/blog/pat/archive/2004/10/stupid_scanner_1.html
+  [2]: http://download.oracle.com/javase/6/docs/api/java/util/Scanner.html
+  [3]: http://stackoverflow.com/users/68127/jacob-gabrielson
+  [4]: http://stackoverflow.com/users/101272/patrick
+
+";;deleted 7 characters in body
+30827994;5445161;43151;5;462cb630-0eff-4ad4-8c81-3fe6db2f4c77;2012-10-22 17:32:44;"Here's a way using only standard Java library.
+
+    String convertStreamToString(java.io.InputStream is) {
+        java.util.Scanner s = new java.util.Scanner(is).useDelimiter(""\\A"");
+        return s.hasNext() ? s.next() : """";
+    }
+
+I learned this trick from [""Stupid Scanner tricks""][1] article. The reason it works is because [Scanner][2] iterates over tokens in the stream, and in this case we separate tokens using ""beginning of the input boundary"" (\A) thus giving us only one token for the entire contents of the stream.
+
+**Note, if you need to be specific about the input stream's encoding, you can provide the second argument to `Scanner` ctor that indicates what charset to use (e.g. ""UTF-8"").**
+
+Hat tip goes also to [Jacob,][3] who once pointed me to the said article.
+
+**EDITED:** Thanks to a suggestion from [Patrick][4], made the function more robust when handling an empty input stream. **One more edit:** nixed try/catch, Patrick's way is more laconic.
+
+  [1]: http://weblogs.java.net/blog/pat/archive/2004/10/stupid_scanner_1.html
+  [2]: http://download.oracle.com/javase/6/docs/api/java/util/Scanner.html
+  [3]: http://stackoverflow.com/users/68127/jacob-gabrielson
+  [4]: http://stackoverflow.com/users/101272/patrick
+
+";;Simplify!
+31249705;5445161;850830;5;40f6fa18-0a57-44a9-b1f8-9d338362641d;2012-11-01 06:20:38;"Here's a way using only standard Java library.
+
+    public static String convertStreamToString(java.io.InputStream is) {
+        java.util.Scanner s = new java.util.Scanner(is).useDelimiter(""\\A"");
+        return s.hasNext() ? s.next() : """";
+    }
+
+I learned this trick from [""Stupid Scanner tricks""][1] article. The reason it works is because [Scanner][2] iterates over tokens in the stream, and in this case we separate tokens using ""beginning of the input boundary"" (\A) thus giving us only one token for the entire contents of the stream.
+
+**Note, if you need to be specific about the input stream's encoding, you can provide the second argument to `Scanner` ctor that indicates what charset to use (e.g. ""UTF-8"").**
+
+Hat tip goes also to [Jacob,][3] who once pointed me to the said article.
+
+**EDITED:** Thanks to a suggestion from [Patrick][4], made the function more robust when handling an empty input stream. **One more edit:** nixed try/catch, Patrick's way is more laconic.
+
+  [1]: http://weblogs.java.net/blog/pat/archive/2004/10/stupid_scanner_1.html
+  [2]: http://download.oracle.com/javase/6/docs/api/java/util/Scanner.html
+  [3]: http://stackoverflow.com/users/68127/jacob-gabrielson
+  [4]: http://stackoverflow.com/users/101272/patrick
+
+";;Changing to public static.
+31249706;5445161;0;24;40f6fa18-0a57-44a9-b1f8-9d338362641d;2012-11-01 06:20:38;;;Proposed by 850830 approved by 992484, 1011959, 960481 edit id of 448821
+34610234;5445161;43151;5;3398348e-b977-4fd6-908c-e6981cf00e23;2013-01-17 16:27:53;"Here's a way using only standard Java library (note that the stream is not closed, YMMV).
+
+    public static String convertStreamToString(java.io.InputStream is) {
+        java.util.Scanner s = new java.util.Scanner(is).useDelimiter(""\\A"");
+        return s.hasNext() ? s.next() : """";
+    }
+
+I learned this trick from [""Stupid Scanner tricks""][1] article. The reason it works is because [Scanner][2] iterates over tokens in the stream, and in this case we separate tokens using ""beginning of the input boundary"" (\A) thus giving us only one token for the entire contents of the stream.
+
+**Note, if you need to be specific about the input stream's encoding, you can provide the second argument to `Scanner` ctor that indicates what charset to use (e.g. ""UTF-8"").**
+
+Hat tip goes also to [Jacob,][3] who once pointed me to the said article.
+
+**EDITED:** Thanks to a suggestion from [Patrick][4], made the function more robust when handling an empty input stream. **One more edit:** nixed try/catch, Patrick's way is more laconic.
+
+  [1]: http://weblogs.java.net/blog/pat/archive/2004/10/stupid_scanner_1.html
+  [2]: http://download.oracle.com/javase/6/docs/api/java/util/Scanner.html
+  [3]: http://stackoverflow.com/users/68127/jacob-gabrielson
+  [4]: http://stackoverflow.com/users/101272/patrick
+
+";;A little note about the stream not being closed.
+39215507;5445161;1292230;5;c1a8a504-be34-435a-b51d-06a79e082841;2013-04-16 17:49:54;"Here's a way using only standard Java library (note that the stream is not closed, YMMV).
+
+    public static String convertStreamToString(java.io.InputStream is) {
+        java.util.Scanner s = new java.util.Scanner(is).useDelimiter(""\\A"");
+        return s.hasNext() ? s.next() : """";
+    }
+
+I learned this trick from [""Stupid Scanner tricks""][1] article. The reason it works is because [Scanner][2] iterates over tokens in the stream, and in this case we separate tokens using ""beginning of the input boundary"" (\A) thus giving us only one token for the entire contents of the stream.
+
+**Note, if you need to be specific about the input stream's encoding, you can provide the second argument to `Scanner` constructor that indicates what charset to use (e.g. ""UTF-8"").**
+
+Hat tip goes also to [Jacob,][3] who once pointed me to the said article.
+
+**EDITED:** Thanks to a suggestion from [Patrick][4], made the function more robust when handling an empty input stream. **One more edit:** nixed try/catch, Patrick's way is more laconic.
+
+  [1]: http://weblogs.java.net/blog/pat/archive/2004/10/stupid_scanner_1.html
+  [2]: http://download.oracle.com/javase/6/docs/api/java/util/Scanner.html
+  [3]: http://stackoverflow.com/users/68127/jacob-gabrielson
+  [4]: http://stackoverflow.com/users/101272/patrick
+
+";;Completed a chopped word
+39215508;5445161;0;24;c1a8a504-be34-435a-b51d-06a79e082841;2013-04-16 17:49:54;;;Proposed by 1292230 approved by 567249, 451518, 1811501 edit id of 678309
+44935719;5445161;43151;5;7060023f-50e1-4630-ad89-842ab8e40d80;2013-08-06 22:11:45;"Here's a way using only standard Java library (note that the stream is not closed, YMMV).
+
+    static String convertStreamToString(java.io.InputStream is) {
+        java.util.Scanner s = new java.util.Scanner(is).useDelimiter(""\\A"");
+        return s.hasNext() ? s.next() : """";
+    }
+
+I learned this trick from [""Stupid Scanner tricks""][1] article. The reason it works is because [Scanner][2] iterates over tokens in the stream, and in this case we separate tokens using ""beginning of the input boundary"" (\A) thus giving us only one token for the entire contents of the stream.
+
+**Note, if you need to be specific about the input stream's encoding, you can provide the second argument to `Scanner` constructor that indicates what charset to use (e.g. ""UTF-8"").**
+
+Hat tip goes also to [Jacob,][3] who once pointed me to the said article.
+
+**EDITED:** Thanks to a suggestion from [Patrick][4], made the function more robust when handling an empty input stream. **One more edit:** nixed try/catch, Patrick's way is more laconic.
+
+  [1]: http://weblogs.java.net/blog/pat/archive/2004/10/stupid_scanner_1.html
+  [2]: http://download.oracle.com/javase/6/docs/api/java/util/Scanner.html
+  [3]: http://stackoverflow.com/users/68127/jacob-gabrielson
+  [4]: http://stackoverflow.com/users/101272/patrick
+
+";;Nixed irrelevant access modifier.
+106108210;5445161;4464702;5;250c508d-6cd0-4221-8d43-7c4e96820cf2;2015-12-10 17:48:34;"Here's a way using only standard Java library (note that the stream is not closed, YMMV).
+
+    static String convertStreamToString(java.io.InputStream is) {
+        java.util.Scanner s = new java.util.Scanner(is).useDelimiter(""\\A"");
+        return s.hasNext() ? s.next() : """";
+    }
+
+I learned this trick from [""Stupid Scanner tricks""][1] article. The reason it works is because [Scanner][2] iterates over tokens in the stream, and in this case we separate tokens using ""beginning of the input boundary"" (\A) thus giving us only one token for the entire contents of the stream.
+
+**Note, if you need to be specific about the input stream's encoding, you can provide the second argument to `Scanner` constructor that indicates what charset to use (e.g. ""UTF-8"").**
+
+Hat tip goes also to [Jacob,][3] who once pointed me to the said article.
+
+**EDITED:** Thanks to a suggestion from [Patrick][4], made the function more robust when handling an empty input stream. **One more edit:** nixed try/catch, Patrick's way is more laconic.
+
+  [1]: http://web.archive.org/web/20140531042945/https://weblogs.java.net/blog/pat/archive/2004/10/stupid_scanner_1.html
+  [2]: http://download.oracle.com/javase/8/docs/api/java/util/Scanner.html
+  [3]: http://stackoverflow.com/users/68127/jacob-gabrielson
+  [4]: http://stackoverflow.com/users/101272/patrick
+
+";;fix broken (first link)/old (java 6 has reached end of life) links
+106108211;5445161;0;24;250c508d-6cd0-4221-8d43-7c4e96820cf2;2015-12-10 17:48:34;;;Proposed by 4464702 approved by 4785664, 1235336, 4564945 edit id of 2228616

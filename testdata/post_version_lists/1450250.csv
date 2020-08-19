@@ -1,0 +1,8 @@
+Id;PostHistoryTypeId;PostId;RevisionGUID;CreationDate;UserId;UserDisplayName;Comment;Text
+2870161;2;1450250;f73bc48d-cd2f-4fb4-8661-9087d7c190bb;2009-09-20 03:44:49;109676;;;                           
+2870162;1;1450250;f73bc48d-cd2f-4fb4-8661-9087d7c190bb;2009-09-20 03:44:49;109676;;;OOP: Why would anyone want to mark a class a "not enheritable?"
+2870163;3;1450250;f73bc48d-cd2f-4fb4-8661-9087d7c190bb;2009-09-20 03:44:49;109676;;;<oop>
+2870171;4;1450250;27004625-6779-4f28-81bc-e8d076fd8c5f;2009-09-20 03:47:43;14357;;"edited title; edited title";OOP: Why would anyone want to mark a class as final/sealed?
+6078083;5;1450250;696039de-e777-4882-9a76-601cc7651a8c;2010-05-31 17:19:15;;Roger Pate;"added 30 characters in body; edited tags; edited title";Why would anyone want to mark a class as final or sealed?
+6078084;4;1450250;696039de-e777-4882-9a76-601cc7651a8c;2010-05-31 17:19:15;;Roger Pate;"added 30 characters in body; edited tags; edited title";Purpose of final and sealed
+6078085;6;1450250;696039de-e777-4882-9a76-601cc7651a8c;2010-05-31 17:19:15;;Roger Pate;"added 30 characters in body; edited tags; edited title";<design><oop><final><sealed>

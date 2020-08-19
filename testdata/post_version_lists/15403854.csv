@@ -1,0 +1,45 @@
+Id;PostId;UserId;PostHistoryTypeId;RevisionGUID;CreationDate;Text;UserDisplayName;Comment
+37437137;15403854;2126175;2;5a390cce-80e8-4b59-8a68-d95bc3ad5aef;2013-03-14 07:54:06.0;"i want to add subtiltles to a isometric tiled map game in andengine,
+i added follow code @Override
+	public void onPopulateScene(Scene pScene, OnPopulateSceneCallback pOnPopulateSceneCallback) throws Exception
+	{
+relativeLayout = new RelativeLayout(this);
+      relativeLayout.setId(0);
+     this.addContentView(relativeLayout, new LayoutParams(android.view.ViewGroup.LayoutParams.FILL_PARENT, android.view.ViewGroup.LayoutParams.FILL_PARENT));
+    relativeLayout.setBackgroundColor(Color.TRANSPARENT);
+       tv = new TextView(this);
+      tv.setText(""Actions"");
+      tv.setTextColor(Color.WHITE);
+      RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+              RelativeLayout.LayoutParams.WRAP_CONTENT,
+              RelativeLayout.LayoutParams.WRAP_CONTENT);
+      lp.addRule(RelativeLayout.ALIGN_PARENT_LEFT,RelativeLayout.TRUE);
+      lp.setMargins(0, 200, 0, 0);
+      tv.setLayoutParams(lp);
+            relativeLayout.addView(tv);
+      pOnPopulateSceneCallback.onPopulateSceneFinished();
+	}
+}
+but its not displaying textviews .please suggest me?";;
+40837681;15403854;1864222;5;89c27802-5ceb-40f0-8129-1e2df4876e9c;2013-05-18 18:25:21.0;"i want to add subtiltles to a isometric tiled map game in andengine,
+i added follow code 
+    
+    @Override
+    public void onPopulateScene(Scene pScene, OnPopulateSceneCallback pOnPopulateSceneCallback) throws Exception {
+        relativeLayout = new RelativeLayout(this);
+        relativeLayout.setId(0);
+        this.addContentView(relativeLayout, new LayoutParams(android.view.ViewGroup.LayoutParams.FILL_PARENT, android.view.ViewGroup.LayoutParams.FILL_PARENT));
+        relativeLayout.setBackgroundColor(Color.TRANSPARENT);
+        tv = new TextView(this);
+        tv.setText(""Actions"");
+        tv.setTextColor(Color.WHITE);
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        lp.addRule(RelativeLayout.ALIGN_PARENT_LEFT,RelativeLayout.TRUE);
+        lp.setMargins(0, 200, 0, 0);
+        tv.setLayoutParams(lp);
+        relativeLayout.addView(tv);
+        pOnPopulateSceneCallback.onPopulateSceneFinished();
+    }
+
+
+but its not displaying textviews. please suggest me?";;edited tags, code formatting

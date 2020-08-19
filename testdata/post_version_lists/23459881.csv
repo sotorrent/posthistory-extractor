@@ -1,0 +1,256 @@
+Id;PostId;UserId;PostHistoryTypeId;RevisionGUID;CreationDate;Text;UserDisplayName;Comment
+64356018;23459881;769275;2;3246c9bd-190f-4ee0-b4f5-4931696e3cde;2014-05-04 18:20:00.0;"I'm trying to unit test some persistence code and I run into the problem that the database hangs on to the rows creating in previous tests. I am also using Hibernate Search although this is not reflected in the code I'm sharing here.
+
+I'm using Spring 3.1.x, Hibernate 4.x and HSQLDB 2.3.2
+
+Log
+
+		DEBUG - HibernateTransactionManager.doGetTransaction(290) | Found thread-bound Session [SessionImpl(PersistenceContext[entityKeys=[],collectionKeys=[]];ActionQueue[insertions=[] updates=[] deletions=[] orphanRemovals=[] collectionCreations=[] collectionRemovals=[] collectionUpdates=[] collectionQueuedOps=[] unresolvedInsertDependencies=UnresolvedEntityInsertActions[]])] for Hibernate transaction
+		DEBUG - AbstractPlatformTransactionManager.handleExistingTransaction(470) | Participating in existing transaction
+		Hibernate: insert into UserRole (userRoleId, label) values (default, ?)
+		DEBUG - HibernateTransactionManager.doGetTransaction(290) | Found thread-bound Session [SessionImpl(PersistenceContext[entityKeys=[EntityKey[nl.project.model.user.UserRole#1]],collectionKeys=[]];ActionQueue[insertions=[] updates=[] deletions=[] orphanRemovals=[] collectionCreations=[] collectionRemovals=[] collectionUpdates=[] collectionQueuedOps=[] unresolvedInsertDependencies=UnresolvedEntityInsertActions[]])] for Hibernate transaction
+		DEBUG - AbstractPlatformTransactionManager.handleExistingTransaction(470) | Participating in existing transaction
+		Hibernate: insert into UserRole (userRoleId, label) values (default, ?)
+
+		***First test****
+
+		DEBUG - AbstractPlatformTransactionManager.processRollback(843) | Initiating transaction rollback
+		DEBUG - HibernateTransactionManager.doRollback(496) | Rolling back Hibernate transaction on Session [SessionImpl(PersistenceContext[entityKeys=[EntityKey[nl.project.model.user.User#1],EntityKey[nl.project.model.user.UserRole#1],EntityKey[nl.project.model.user.UserRole#2], EntityKey[nl.project.model.user.UserRole#3]],collectionKeys=[CollectionKey[nl.project.model.user.User.roles#1]]];ActionQueue[insertions=[] updates=[] deletions=[] orphanRemovals=[] collectionCreations=[] collectionRemovals=[] collectionUpdates=[] collectionQueuedOps=[] unresolvedInsertDependencies=UnresolvedEntityInsertActions[]])]
+		DEBUG - HibernateTransactionManager.doBegin(342) | Opened new Session [SessionImpl(PersistenceContext[entityKeys=[],collectionKeys=[]];ActionQueue[insertions=[] updates=[] deletions=[] orphanRemovals=[] collectionCreations=[] collectionRemovals=[] collectionUpdates=[] collectionQueuedOps=[] unresolvedInsertDependencies=UnresolvedEntityInsertActions[]])] for Hibernate transaction
+		DEBUG - HibernateTransactionManager.doBegin(352) | Preparing JDBC Connection of Hibernate Session [SessionImpl(PersistenceContext[entityKeys=[],collectionKeys=[]];ActionQueue[insertions=[] updates=[] deletions=[] orphanRemovals=[] collectionCreations=[] collectionRemovals=[] collectionUpdates=[] collectionQueuedOps=[] unresolvedInsertDependencies=UnresolvedEntityInsertActions[]])]
+		DEBUG - HibernateTransactionManager.doBegin(413) | Exposing Hibernate transaction as JDBC transaction [com.jolbox.bonecp.ConnectionHandle@73d17d67]
+		DEBUG - HibernateTransactionManager.doGetTransaction(290) | Found thread-bound Session [SessionImpl(PersistenceContext[entityKeys=[],collectionKeys=[]];ActionQueue[insertions=[] updates=[] deletions=[] orphanRemovals=[] collectionCreations=[] collectionRemovals=[] collectionUpdates=[] collectionQueuedOps=[] unresolvedInsertDependencies=UnresolvedEntityInsertActions[]])] for Hibernate transaction
+		DEBUG - AbstractPlatformTransactionManager.handleExistingTransaction(470) | Participating in existing transaction
+		DEBUG - HibernateTransactionManager.doGetTransaction(290) | Found thread-bound Session [SessionImpl(PersistenceContext[entityKeys=[],collectionKeys=[]];ActionQueue[insertions=[] updates=[] deletions=[] orphanRemovals=[] collectionCreations=[] collectionRemovals=[] collectionUpdates=[] collectionQueuedOps=[] unresolvedInsertDependencies=UnresolvedEntityInsertActions[]])] for Hibernate transaction
+		DEBUG - AbstractPlatformTransactionManager.handleExistingTransaction(470) | Participating in existing transaction
+		DEBUG - HibernateTransactionManager.doGetTransaction(290) | Found thread-bound Session [SessionImpl(PersistenceContext[entityKeys=[],collectionKeys=[]];ActionQueue[insertions=[] updates=[] deletions=[] orphanRemovals=[] collectionCreations=[] collectionRemovals=[] collectionUpdates=[] collectionQueuedOps=[] unresolvedInsertDependencies=UnresolvedEntityInsertActions[]])] for Hibernate transaction
+		DEBUG - AbstractPlatformTransactionManager.handleExistingTransaction(470) | Participating in existing transaction
+		Hibernate: select this_.userRoleId as userRole1_92_0_, this_.label as label2_92_0_ from UserRole this_
+		DEBUG - HibernateTransactionManager.doGetTransaction(290) | Found thread-bound Session [SessionImpl(PersistenceContext[entityKeys=[EntityKey[nl.project.model.user.UserRole#3], EntityKey[nl.project.model.user.UserRole#2], EntityKey[nl.project.model.user.UserRole#1]],collectionKeys=[]];ActionQueue[insertions=[] updates=[] deletions=[] orphanRemovals=[] collectionCreations=[] collectionRemovals=[] collectionUpdates=[] collectionQueuedOps=[] unresolvedInsertDependencies=UnresolvedEntityInsertActions[]])] for Hibernate transaction
+		DEBUG - AbstractPlatformTransactionManager.handleExistingTransaction(470) | Participating in existing transaction
+		Hibernate: insert into UserRole (userRoleId, label) values (default, ?)
+		WARN - SqlExceptionHelper.logExceptions(144) | SQL Error: -104, SQLState: 23505
+		ERROR - SqlExceptionHelper.logExceptions(146) | integrity constraint violation: unique constraint or index violation; UK_O0VIK8LBO8UYMR8WUDN5T21QX table: USERROLE
+
+
+Code
+
+		public class CoreTest extends TestCase {
+	
+			@Inject
+			protected SimpleManager<Long> simpleMgr; 
+	
+			public void baseSetup(){
+		
+				simpleMgr.flush();
+                                simpleMgr.clear();
+
+		                //after 1st test this contains all created UserRoles
+				List roles = simpleMgr.getAll(UserRole.class);
+		                
+				UserRole role = new UserRole(UserRole.ROLE_ANONYMOUS);
+				simpleMgr.save(role);
+		
+				role = new UserRole(UserRole.ROLE_USER);
+				simpleMgr.save(role);
+			}
+		}
+
+		@RunWith(SpringJUnit4ClassRunner.class)
+		@ContextConfiguration(locations = {
+				""classpath:/spring/applicationContext.xml""
+				""classpath:/spring/applicationContext-transaction.xml""})
+		public class MyManagerTest extends CoreTest{
+
+			@Before
+			public void methodSetup(){
+		
+				super.baseSetup();
+		
+				role = new UserRole(UserRole.ROLE_PROUSER);
+				simpleMgr.save(role);
+		
+				simpleMgr.save(userMgr.createUser(""marc"", ""marc@gmail.com""));
+		
+				simpleMgr.flush();
+			}
+	
+			@Test
+			@Transactional
+			public void test1(){
+				...
+			}
+	
+			@Test
+			@Transactional
+			public void test2(){
+				....
+			}
+	
+Transaction management
+
+		<bean id=""dataSource"" class=""org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy"">
+			<property name=""targetDataSource"" ref=""mainDataSource""/>
+		</bean>
+	
+		<bean id=""mainDataSource"" class=""com.jolbox.bonecp.BoneCPDataSource"" destroy-method=""close"">
+			<property name=""driverClass"" value=""${jdbc.driverClassName}""/>
+			[...]
+		</bean>
+		<bean id=""sessionFactory"" class=""org.springframework.orm.hibernate4.LocalSessionFactoryBean"">
+			<property name=""dataSource"" ref=""dataSource""/>
+			<property name=""configLocation"" value=""classpath:hibernate.cfg.xml""/>
+			<property name=""hibernateProperties"">
+				<value>
+					hibernate.connection.driver_class=${jdbc.driverClassName}
+					hibernate.jdbc.batch_size=30
+					hibernate.dialect=${hibernate.dialect}
+					hibernate.connection.autoReconnect=true
+					hibernate.connection.autoReconnectForPools=true
+					hibernate.connection.autocommit=false
+				</value>
+			</property>
+		</bean>
+		<bean id=""transactionManager"" class=""org.springframework.orm.hibernate4.HibernateTransactionManager"">
+			<property name=""sessionFactory"" ref=""sessionFactory""/>
+		</bean>";;
+64356224;23459881;769275;5;65b485b0-c045-4e2b-b457-bbe9266beb37;2014-05-04 18:25:27.0;"I'm trying to unit test some persistence code and I run into the problem that the database hangs on to the rows creating in previous tests. I am also using Hibernate Search although this is not reflected in the code I'm sharing here.
+
+I'm using Spring 3.1.x, Hibernate 4.x and HSQLDB 2.3.2
+
+Log
+
+		DEBUG - HibernateTransactionManager.doGetTransaction(290) | Found thread-bound Session [SessionImpl(PersistenceContext[entityKeys=[],collectionKeys=[]];ActionQueue[insertions=[] updates=[] deletions=[] orphanRemovals=[] collectionCreations=[] collectionRemovals=[] collectionUpdates=[] collectionQueuedOps=[] unresolvedInsertDependencies=UnresolvedEntityInsertActions[]])] for Hibernate transaction
+		DEBUG - AbstractPlatformTransactionManager.handleExistingTransaction(470) | Participating in existing transaction
+		Hibernate: insert into UserRole (userRoleId, label) values (default, ?)
+		DEBUG - HibernateTransactionManager.doGetTransaction(290) | Found thread-bound Session [SessionImpl(PersistenceContext[entityKeys=[EntityKey[nl.project.model.user.UserRole#1]],collectionKeys=[]];ActionQueue[insertions=[] updates=[] deletions=[] orphanRemovals=[] collectionCreations=[] collectionRemovals=[] collectionUpdates=[] collectionQueuedOps=[] unresolvedInsertDependencies=UnresolvedEntityInsertActions[]])] for Hibernate transaction
+		DEBUG - AbstractPlatformTransactionManager.handleExistingTransaction(470) | Participating in existing transaction
+		Hibernate: insert into UserRole (userRoleId, label) values (default, ?)
+
+		***First test****
+
+		DEBUG - AbstractPlatformTransactionManager.processRollback(843) | Initiating transaction rollback
+		DEBUG - HibernateTransactionManager.doRollback(496) | Rolling back Hibernate transaction on Session [SessionImpl(PersistenceContext[entityKeys=[EntityKey[nl.project.model.user.User#1],EntityKey[nl.project.model.user.UserRole#1],EntityKey[nl.project.model.user.UserRole#2], EntityKey[nl.project.model.user.UserRole#3]],collectionKeys=[CollectionKey[nl.project.model.user.User.roles#1]]];ActionQueue[insertions=[] updates=[] deletions=[] orphanRemovals=[] collectionCreations=[] collectionRemovals=[] collectionUpdates=[] collectionQueuedOps=[] unresolvedInsertDependencies=UnresolvedEntityInsertActions[]])]
+		DEBUG - HibernateTransactionManager.doBegin(342) | Opened new Session [SessionImpl(PersistenceContext[entityKeys=[],collectionKeys=[]];ActionQueue[insertions=[] updates=[] deletions=[] orphanRemovals=[] collectionCreations=[] collectionRemovals=[] collectionUpdates=[] collectionQueuedOps=[] unresolvedInsertDependencies=UnresolvedEntityInsertActions[]])] for Hibernate transaction
+		DEBUG - HibernateTransactionManager.doBegin(352) | Preparing JDBC Connection of Hibernate Session [SessionImpl(PersistenceContext[entityKeys=[],collectionKeys=[]];ActionQueue[insertions=[] updates=[] deletions=[] orphanRemovals=[] collectionCreations=[] collectionRemovals=[] collectionUpdates=[] collectionQueuedOps=[] unresolvedInsertDependencies=UnresolvedEntityInsertActions[]])]
+		DEBUG - HibernateTransactionManager.doBegin(413) | Exposing Hibernate transaction as JDBC transaction [com.jolbox.bonecp.ConnectionHandle@73d17d67]
+		DEBUG - HibernateTransactionManager.doGetTransaction(290) | Found thread-bound Session [SessionImpl(PersistenceContext[entityKeys=[],collectionKeys=[]];ActionQueue[insertions=[] updates=[] deletions=[] orphanRemovals=[] collectionCreations=[] collectionRemovals=[] collectionUpdates=[] collectionQueuedOps=[] unresolvedInsertDependencies=UnresolvedEntityInsertActions[]])] for Hibernate transaction
+		DEBUG - AbstractPlatformTransactionManager.handleExistingTransaction(470) | Participating in existing transaction
+		DEBUG - HibernateTransactionManager.doGetTransaction(290) | Found thread-bound Session [SessionImpl(PersistenceContext[entityKeys=[],collectionKeys=[]];ActionQueue[insertions=[] updates=[] deletions=[] orphanRemovals=[] collectionCreations=[] collectionRemovals=[] collectionUpdates=[] collectionQueuedOps=[] unresolvedInsertDependencies=UnresolvedEntityInsertActions[]])] for Hibernate transaction
+		DEBUG - AbstractPlatformTransactionManager.handleExistingTransaction(470) | Participating in existing transaction
+		DEBUG - HibernateTransactionManager.doGetTransaction(290) | Found thread-bound Session [SessionImpl(PersistenceContext[entityKeys=[],collectionKeys=[]];ActionQueue[insertions=[] updates=[] deletions=[] orphanRemovals=[] collectionCreations=[] collectionRemovals=[] collectionUpdates=[] collectionQueuedOps=[] unresolvedInsertDependencies=UnresolvedEntityInsertActions[]])] for Hibernate transaction
+		DEBUG - AbstractPlatformTransactionManager.handleExistingTransaction(470) | Participating in existing transaction
+		Hibernate: select this_.userRoleId as userRole1_92_0_, this_.label as label2_92_0_ from UserRole this_
+		DEBUG - HibernateTransactionManager.doGetTransaction(290) | Found thread-bound Session [SessionImpl(PersistenceContext[entityKeys=[EntityKey[nl.project.model.user.UserRole#3], EntityKey[nl.project.model.user.UserRole#2], EntityKey[nl.project.model.user.UserRole#1]],collectionKeys=[]];ActionQueue[insertions=[] updates=[] deletions=[] orphanRemovals=[] collectionCreations=[] collectionRemovals=[] collectionUpdates=[] collectionQueuedOps=[] unresolvedInsertDependencies=UnresolvedEntityInsertActions[]])] for Hibernate transaction
+		DEBUG - AbstractPlatformTransactionManager.handleExistingTransaction(470) | Participating in existing transaction
+		Hibernate: insert into UserRole (userRoleId, label) values (default, ?)
+		WARN - SqlExceptionHelper.logExceptions(144) | SQL Error: -104, SQLState: 23505
+		ERROR - SqlExceptionHelper.logExceptions(146) | integrity constraint violation: unique constraint or index violation; UK_O0VIK8LBO8UYMR8WUDN5T21QX table: USERROLE
+
+
+Code
+
+	@Entity
+	@Immutable
+	@Table
+	@NaturalIdCache(region=CacheRegion.NATURAL)
+	@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE,region=CacheRegion.USER)
+	public class UserRole implements Serializable{
+
+		public static final String ROLE_ANONYMOUS=""ROLE_ANONYMOUS"";
+		public static final String ROLE_USER=""ROLE_USER"";
+		public static final String ROLE_PROVENDOR=""ROLE_PROVENDOR"";
+	
+		@Id
+		@GeneratedValue(strategy = GenerationType.AUTO)
+		@Column(nullable=false, updatable=false)
+		private Long id;
+	
+		@Column(nullable=false,unique=true,updatable=false)
+		@NaturalId
+		private String label;
+
+		...
+		}
+
+Code
+
+		public class CoreTest extends TestCase {
+	
+			@Inject
+			protected SimpleManager<Long> simpleMgr; 
+	
+			public void baseSetup(){
+		
+				simpleMgr.flush();
+                                simpleMgr.clear();
+
+		                //after 1st test this contains all created UserRoles
+				List roles = simpleMgr.getAll(UserRole.class);
+		                
+				UserRole role = new UserRole(UserRole.ROLE_ANONYMOUS);
+				simpleMgr.save(role);
+		
+				role = new UserRole(UserRole.ROLE_USER);
+				simpleMgr.save(role);
+			}
+		}
+
+		@RunWith(SpringJUnit4ClassRunner.class)
+		@ContextConfiguration(locations = {
+				""classpath:/spring/applicationContext.xml""
+				""classpath:/spring/applicationContext-transaction.xml""})
+		public class MyManagerTest extends CoreTest{
+
+			@Before
+			public void methodSetup(){
+		
+				super.baseSetup();
+		
+				role = new UserRole(UserRole.ROLE_PROUSER);
+				simpleMgr.save(role);
+		
+				simpleMgr.save(userMgr.createUser(""marc"", ""marc@gmail.com""));
+		
+				simpleMgr.flush();
+			}
+	
+			@Test
+			@Transactional
+			public void test1(){
+				...
+			}
+	
+			@Test
+			@Transactional
+			public void test2(){
+				....
+			}
+	
+Transaction management
+
+		<bean id=""dataSource"" class=""org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy"">
+			<property name=""targetDataSource"" ref=""mainDataSource""/>
+		</bean>
+	
+		<bean id=""mainDataSource"" class=""com.jolbox.bonecp.BoneCPDataSource"" destroy-method=""close"">
+			<property name=""driverClass"" value=""${jdbc.driverClassName}""/>
+			[...]
+		</bean>
+		<bean id=""sessionFactory"" class=""org.springframework.orm.hibernate4.LocalSessionFactoryBean"">
+			<property name=""dataSource"" ref=""dataSource""/>
+			<property name=""configLocation"" value=""classpath:hibernate.cfg.xml""/>
+			<property name=""hibernateProperties"">
+				<value>
+					hibernate.connection.driver_class=${jdbc.driverClassName}
+					hibernate.jdbc.batch_size=30
+					hibernate.dialect=${hibernate.dialect}
+					hibernate.connection.autoReconnect=true
+					hibernate.connection.autoReconnectForPools=true
+					hibernate.connection.autocommit=false
+				</value>
+			</property>
+		</bean>
+		<bean id=""transactionManager"" class=""org.springframework.orm.hibernate4.HibernateTransactionManager"">
+			<property name=""sessionFactory"" ref=""sessionFactory""/>
+		</bean>";;added 663 characters in body

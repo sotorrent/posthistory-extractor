@@ -1,0 +1,410 @@
+Id;PostId;UserId;PostHistoryTypeId;RevisionGUID;CreationDate;Text;UserDisplayName;Comment
+72159065;25488162;3971619;2;dc07b22a-7cba-4f06-bbb1-91649acbc756;2014-08-25 14:27:09.0;"(Sorry for my english)
+
+When i try to get my keyChain value i get: 
+
+    Optional(""[thing in the KeyChain]"")
+
+I have try removing it  using a loop:
+
+    str = getKeyChain() // return: Optional(""[thing in the KeyChain]"")
+
+    for(var i = 0; i < 9 ; i++)
+    {
+        str[i] = 0
+    }
+
+But because str is a NSString it say: NSString does not have a member named 'SubScript'
+
+How can i do what i am trying to do but with a NSString ?";;
+72159434;25488162;3379523;5;ffde7621-1915-48b0-888b-b5992ae7ace5;2014-08-25 14:31:55.0;"When I try to get my keyChain value, I get: 
+
+    Optional(""[thing in the KeyChain]"")
+
+so, I tried to remove it by using a loop:
+
+    str = getKeyChain() // return: Optional(""[thing in the KeyChain]"")
+
+    for(var i = 0; i < 9 ; i++)
+    {
+        str[i] = 0
+    }
+
+But str is a NSString, so it says : 
+
+    NSString does not have a member named 'SubScript'
+
+How can I do this with a NSString ?";;"english correction and visibility correction "
+72160416;25488162;3971619;5;902fc059-3793-48af-824f-957f5fd738c6;2014-08-25 14:46:48.0;"When I try to get my keyChain value, I get: 
+
+    Optional(""[thing in the KeyChain]"")
+
+so, I tried to remove it by using a loop:
+
+    var str = KeychainService.loadToken()
+        
+    for(var i = 0; i < 9 ; i++)
+    {
+        str[i] = """"
+    }
+
+The loadToken function:
+
+    
+
+private class func load(service: NSString) -> String? {
+        
+        var keychainQuery: NSMutableDictionary = NSMutableDictionary(objects: [kSecClassGenericPasswordValue, service, userAccount, kCFBooleanTrue, kSecMatchLimitOneValue], forKeys: [kSecClassValue, kSecAttrServiceValue, kSecAttrAccountValue, kSecReturnDataValue, kSecMatchLimitValue])
+        
+        var dataTypeRef :Unmanaged<AnyObject>?
+        
+        // Search for the keychain items
+        let status: OSStatus = SecItemCopyMatching(keychainQuery, &dataTypeRef)
+        
+        let opaque = dataTypeRef?.toOpaque()
+        
+        var contentsOfKeychain: String?
+        
+        if let op = opaque? {
+            let retrievedData = Unmanaged<NSData>.fromOpaque(op).takeUnretainedValue()
+            
+            // Convert the data retrieved from the keychain into a string
+            contentsOfKeychain = NSString(data: retrievedData, encoding: NSUTF8StringEncoding)
+        } else {
+            println(""Nothing was retrieved from the keychain. Status code \\(status)"")
+        }
+        
+        return contentsOfKeychain
+    }";;added 1015 characters in body
+72160472;25488162;451475;5;a607d057-277b-4278-a314-74a6608f9d17;2014-08-25 14:47:34.0;"When I try to get my keyChain value, I get: 
+
+    Optional(""[thing in the KeyChain]"")
+
+so, I tried to remove it by using a loop:
+
+    var str = KeychainService.loadToken()
+        
+    for(var i = 0; i < 9 ; i++)
+    {
+        str[i] = """"
+    }
+
+The loadToken function:
+
+    private class func load(service: NSString) -> String? {
+        
+        var keychainQuery: NSMutableDictionary = NSMutableDictionary(objects: [kSecClassGenericPasswordValue, service, userAccount, kCFBooleanTrue, kSecMatchLimitOneValue], forKeys: [kSecClassValue, kSecAttrServiceValue, kSecAttrAccountValue, kSecReturnDataValue, kSecMatchLimitValue])
+        
+        var dataTypeRef :Unmanaged<AnyObject>?
+        
+        // Search for the keychain items
+        let status: OSStatus = SecItemCopyMatching(keychainQuery, &dataTypeRef)
+        
+        let opaque = dataTypeRef?.toOpaque()
+        
+        var contentsOfKeychain: String?
+        
+        if let op = opaque? {
+            let retrievedData = Unmanaged<NSData>.fromOpaque(op).takeUnretainedValue()
+            
+            // Convert the data retrieved from the keychain into a string
+            contentsOfKeychain = NSString(data: retrievedData, encoding: NSUTF8StringEncoding)
+        } else {
+            println(""Nothing was retrieved from the keychain. Status code \\(status)"")
+        }
+        
+        return contentsOfKeychain
+    }";;deleted 4 characters in body
+72160571;25488162;3971619;5;11545bc0-1af8-4851-9acc-75fdbb4f3ccf;2014-08-25 14:48:39.0;"When I try to get my keyChain value,  it return a string containing: 
+
+    Optional(""[thing in the KeyChain]"")
+
+so, I tried to remove ""Optional"" by using a loop:
+
+    var str = KeychainService.loadToken()
+        
+    for(var i = 0; i < 9 ; i++)
+    {
+        str[i] = """"
+    }
+
+But i get a error: NSString does not have a member named 'subscript'
+
+The loadToken function:
+
+    
+
+    private class func load(service: NSString) -> String? {
+        
+        var keychainQuery: NSMutableDictionary = NSMutableDictionary(objects: [kSecClassGenericPasswordValue, service, userAccount, kCFBooleanTrue, kSecMatchLimitOneValue], forKeys: [kSecClassValue, kSecAttrServiceValue, kSecAttrAccountValue, kSecReturnDataValue, kSecMatchLimitValue])
+        
+        var dataTypeRef :Unmanaged<AnyObject>?
+        
+        // Search for the keychain items
+        let status: OSStatus = SecItemCopyMatching(keychainQuery, &dataTypeRef)
+        
+        let opaque = dataTypeRef?.toOpaque()
+        
+        var contentsOfKeychain: String?
+        
+        if let op = opaque? {
+            let retrievedData = Unmanaged<NSData>.fromOpaque(op).takeUnretainedValue()
+            
+            // Convert the data retrieved from the keychain into a string
+            contentsOfKeychain = NSString(data: retrievedData, encoding: NSUTF8StringEncoding)
+        } else {
+            println(""Nothing was retrieved from the keychain. Status code \\(status)"")
+        }
+        
+        return contentsOfKeychain
+    }";;added 1015 characters in body
+72161258;25488162;3971619;5;deb4ff5e-2dd4-4b5e-886e-9d19f0f90744;2014-08-25 14:58:07.0;"When I try to get my keyChain value,  it return a string containing: 
+
+    Optional(""[thing in the KeyChain]"")
+
+so, I tried to remove ""Optional"" by using a loop:
+
+    var str = KeychainService.loadToken()
+        
+    for(var i = 0; i < 9 ; i++)
+    {
+        str[i] = """"
+    }
+
+But i get a error: NSString does not have a member named 'subscript'
+
+The loadToken function:
+
+    
+
+    private class func load(service: NSString) -> String? {
+        
+        var keychainQuery: NSMutableDictionary = NSMutableDictionary(objects: [kSecClassGenericPasswordValue, service, userAccount, kCFBooleanTrue, kSecMatchLimitOneValue], forKeys: [kSecClassValue, kSecAttrServiceValue, kSecAttrAccountValue, kSecReturnDataValue, kSecMatchLimitValue])
+        
+        var dataTypeRef :Unmanaged<AnyObject>?
+        
+        // Search for the keychain items
+        let status: OSStatus = SecItemCopyMatching(keychainQuery, &dataTypeRef)
+        
+        let opaque = dataTypeRef?.toOpaque()
+        
+        var contentsOfKeychain: String?
+        
+        if let op = opaque? {
+            let retrievedData = Unmanaged<NSData>.fromOpaque(op).takeUnretainedValue()
+            
+            // Convert the data retrieved from the keychain into a string
+            contentsOfKeychain = NSString(data: retrievedData, encoding: NSUTF8StringEncoding)
+        } else {
+            println(""Nothing was retrieved from the keychain. Status code \\(status)"")
+        }
+        
+        return contentsOfKeychain
+    }
+
+I have take this code from:
+
+http://matthewpalmer.net/blog/2014/06/21/example-ios-keychain-swift-save-query/";;added 114 characters in body
+72161826;25488162;3971619;5;670649eb-f0be-4185-8e1b-e494b0436e35;2014-08-25 15:06:10.0;"When I try to get my keyChain value,  it return a string containing: 
+
+    Optional(""[thing in the KeyChain]"")
+
+so, I tried to remove ""Optional"" by using a loop:
+
+    var str = KeychainService.loadToken()
+        
+    for(var i = 0; i < 9 ; i++)
+    {
+        str[i] = """"
+    }
+
+But i get a error: NSString does not have a member named 'subscript'
+
+The KeychainService class:
+
+    import Foundation
+    import Security
+
+    let serviceIdentifier = ""MySerivice""
+    let userAccount = ""authenticatedUser""
+    let accessGroup = ""MySerivice""
+
+    // Arguments for the keychain queries
+    let kSecClassValue = kSecClass.takeRetainedValue() as NSString
+    let kSecAttrAccountValue = kSecAttrAccount.takeRetainedValue() as NSString
+    let kSecValueDataValue = kSecValueData.takeRetainedValue() as NSString
+    let kSecClassGenericPasswordValue = kSecClassGenericPassword.takeRetainedValue() as NSString
+    let kSecAttrServiceValue = kSecAttrService.takeRetainedValue() as NSString
+    let kSecMatchLimitValue = kSecMatchLimit.takeRetainedValue() as NSString
+    let kSecReturnDataValue = kSecReturnData.takeRetainedValue() as NSString
+    let kSecMatchLimitOneValue = kSecMatchLimitOne.takeRetainedValue() as NSString
+
+    class KeychainService: NSObject {
+    
+    /**
+    * Exposed methods to perform queries.
+    * Note: feel free to play around with the arguments
+    * for these if you want to be able to customise the
+    * service identifier, user accounts, access groups, etc.
+    */
+    internal class func saveToken(token: NSString) {
+        self.save(serviceIdentifier, data: token)
+    }
+    
+    internal class func loadToken() -> NSString? {
+        var token = self.load(serviceIdentifier)
+        
+        return token
+    }
+    
+    /**
+    * Internal methods for querying the keychain.
+    */
+    private class func save(service: NSString, data: NSString) {
+        var dataFromString: NSData = data.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
+        
+        // Instantiate a new default keychain query
+        var keychainQuery: NSMutableDictionary = NSMutableDictionary(objects: [kSecClassGenericPasswordValue, service, userAccount, dataFromString], forKeys: [kSecClassValue, kSecAttrServiceValue, kSecAttrAccountValue, kSecValueDataValue])
+        
+        // Delete any existing items
+        SecItemDelete(keychainQuery as CFDictionaryRef)
+        
+        // Add the new keychain item
+        var status: OSStatus = SecItemAdd(keychainQuery as CFDictionaryRef, nil)
+    }
+    
+    private class func load(service: NSString) -> String? {
+        // Instantiate a new default keychain query
+        // Tell the query to return a result
+        // Limit our results to one item
+        var keychainQuery: NSMutableDictionary = NSMutableDictionary(objects: [kSecClassGenericPasswordValue, service, userAccount, kCFBooleanTrue, kSecMatchLimitOneValue], forKeys: [kSecClassValue, kSecAttrServiceValue, kSecAttrAccountValue, kSecReturnDataValue, kSecMatchLimitValue])
+        
+        var dataTypeRef :Unmanaged<AnyObject>?
+        
+        // Search for the keychain items
+        let status: OSStatus = SecItemCopyMatching(keychainQuery, &dataTypeRef)
+        
+        let opaque = dataTypeRef?.toOpaque()
+        
+        var contentsOfKeychain: String?
+        
+        if let op = opaque? {
+            let retrievedData = Unmanaged<NSData>.fromOpaque(op).takeUnretainedValue()
+            
+            // Convert the data retrieved from the keychain into a string
+            contentsOfKeychain = NSString(data: retrievedData, encoding: NSUTF8StringEncoding)
+        } else {
+            println(""Nothing was retrieved from the keychain. Status code \\(status)"")
+        }
+        
+        return contentsOfKeychain
+        }
+    }
+
+I just wan't to remove the Optional thing around the str
+
+I have take this code from:
+
+http://matthewpalmer.net/blog/2014/06/21/example-ios-keychain-swift-save-query/";;added 2337 characters in body
+72163080;25488162;3971619;5;c61ac546-6d0c-4299-a967-3fb3dda04913;2014-08-25 15:24:47.0;"When I try to get my keyChain value,  it return a string containing: 
+
+    Optional(""[thing in the KeyChain]"")
+
+so, I tried to remove ""Optional"" by using a loop:
+
+    var str = KeychainService.loadToken()
+        
+    for(var i = 0; i < 9 ; i++)
+    {
+        str[i] = """"
+    }
+
+But i get a error: NSString does not have a member named 'subscript'
+
+The KeychainService class:
+
+    import Foundation
+    import Security
+
+    let serviceIdentifier = ""MySerivice""
+    let userAccount = ""authenticatedUser""
+    let accessGroup = ""MySerivice""
+
+    // Arguments for the keychain queries
+    let kSecClassValue = kSecClass.takeRetainedValue() as NSString
+    let kSecAttrAccountValue = kSecAttrAccount.takeRetainedValue() as NSString
+    let kSecValueDataValue = kSecValueData.takeRetainedValue() as NSString
+    let kSecClassGenericPasswordValue = kSecClassGenericPassword.takeRetainedValue() as NSString
+    let kSecAttrServiceValue = kSecAttrService.takeRetainedValue() as NSString
+    let kSecMatchLimitValue = kSecMatchLimit.takeRetainedValue() as NSString
+    let kSecReturnDataValue = kSecReturnData.takeRetainedValue() as NSString
+    let kSecMatchLimitOneValue = kSecMatchLimitOne.takeRetainedValue() as NSString
+
+    class KeychainService: NSObject {
+    
+    /**
+    * Exposed methods to perform queries.
+    * Note: feel free to play around with the arguments
+    * for these if you want to be able to customise the
+    * service identifier, user accounts, access groups, etc.
+    */
+    internal class func saveToken(token: NSString) {
+        self.save(serviceIdentifier, data: token)
+    }
+    
+    internal class func loadToken() -> NSString? {
+        var token = self.load(serviceIdentifier)
+        
+        return token
+    }
+    
+    /**
+    * Internal methods for querying the keychain.
+    */
+    private class func save(service: NSString, data: NSString) {
+        var dataFromString: NSData = data.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
+        
+        // Instantiate a new default keychain query
+        var keychainQuery: NSMutableDictionary = NSMutableDictionary(objects: [kSecClassGenericPasswordValue, service, userAccount, dataFromString], forKeys: [kSecClassValue, kSecAttrServiceValue, kSecAttrAccountValue, kSecValueDataValue])
+        
+        // Delete any existing items
+        SecItemDelete(keychainQuery as CFDictionaryRef)
+        
+        // Add the new keychain item
+        var status: OSStatus = SecItemAdd(keychainQuery as CFDictionaryRef, nil)
+    }
+    
+    private class func load(service: NSString) -> String? {
+        // Instantiate a new default keychain query
+        // Tell the query to return a result
+        // Limit our results to one item
+        var keychainQuery: NSMutableDictionary = NSMutableDictionary(objects: [kSecClassGenericPasswordValue, service, userAccount, kCFBooleanTrue, kSecMatchLimitOneValue], forKeys: [kSecClassValue, kSecAttrServiceValue, kSecAttrAccountValue, kSecReturnDataValue, kSecMatchLimitValue])
+        
+        var dataTypeRef :Unmanaged<AnyObject>?
+        
+        // Search for the keychain items
+        let status: OSStatus = SecItemCopyMatching(keychainQuery, &dataTypeRef)
+        
+        let opaque = dataTypeRef?.toOpaque()
+        
+        var contentsOfKeychain: String?
+        
+        if let op = opaque? {
+            let retrievedData = Unmanaged<NSData>.fromOpaque(op).takeUnretainedValue()
+            
+            // Convert the data retrieved from the keychain into a string
+            contentsOfKeychain = NSString(data: retrievedData, encoding: NSUTF8StringEncoding)
+        } else {
+            println(""Nothing was retrieved from the keychain. Status code \\(status)"")
+        }
+        
+        return contentsOfKeychain
+        }
+    }
+
+I just wan't to remove the Optional thing around the str
+Or is there a better way to do that?
+
+I have take this code from:
+
+http://matthewpalmer.net/blog/2014/06/21/example-ios-keychain-swift-save-query/";;added 38 characters in body

@@ -1,0 +1,105 @@
+Id;PostId;UserId;PostHistoryTypeId;RevisionGUID;CreationDate;Text;UserDisplayName;Comment
+73618629;25871278;3944152;2;a7aeb010-ff63-49cc-87e0-42c8da9a4079;2014-09-16 14:20:39.0;"is there something way, that search in a **""example.txt""** file for a string **""example""** ? I tried Fileread and Fileseek but its not successful yet... later i'd like to write thats why append
+
+__FileOpen $4 ""$SYSDIR\\drivers\\etc\\hosts"" a__<br/>
+FileSeek $4 0 SET <br/>
+FileRead $4 $1<br/>
+${If} $1 != ""example""<br/>
+Strcmp $4 ""example"" end 0<br/>
+StrCmp $0 1 0 end";;
+73619935;25871278;3944152;5;2b44941e-b8b0-4817-a3a8-b07324db67a9;2014-09-16 14:36:06.0;"is there something way, that search in a **""example.txt""** file for a string **""example""** ? I tried Fileread and Fileseek but its not successful yet... later i'd like to write thats why append
+
+__FileOpen $4 ""$SYSDIR\\drivers\\etc\\hosts"" a__<br/>
+FileSeek $4 0 SET <br/>
+FileRead $4 $1<br/>
+${If} $1 != ""example""<br/>
+Strcmp $1 ""example"" end 0<br/>
+";;deleted 17 characters in body
+73621067;25871278;3944152;5;2909d9e0-1102-4378-bd7f-c0a9271112bc;2014-09-16 14:49:51.0;"is there something way, that search in a **""example.txt""** file for a string **""example""** ? I tried Fileread and Fileseek but its not successful yet... later i'd like to write thats why append
+
+__FileOpen $4 ""$SYSDIR\\drivers\\etc\\hosts"" a__<br/>
+FileSeek $4 0 SET <br/>
+FileRead $4 $1<br/>
+${If} $1 != ""example""<br/>
+Strcmp $1 ""example"" end 0<br/>
+ 
+
+Or can i walk the file with While? But when ends the file?";;added 63 characters in body
+73623182;25871278;317266;5;9ec21b32-6233-4568-bcbd-97af02db7b0d;2014-09-16 15:16:41.0;"is there something way, that search in a `example.txt` file for a string `example`? 
+
+I tried `Fileread` and `Fileseek` but it is not successful yet... later i'd like to write thats why append
+
+    FileOpen $4 ""$SYSDIR\\drivers\\etc\\hosts"" a
+    FileSeek $4 0 SET
+    FileRead $4 $1
+    ${If} $1 != ""example""
+    Strcmp $1 ""example"" end 0
+ 
+
+Or can i walk the file with `While`? But when ends the file?";;fixed code markup
+73699055;25871278;3944152;5;07918190-331c-4fea-b591-3cd6cdd6f0a3;2014-09-17 13:57:51.0;"is there something way, that search in a `example.txt` file for a string `example`? 
+
+I tried `Fileread` and `Fileseek` but it is not successful yet... later i'd like to write thats why append
+
+    FileOpen $4 ""$SYSDIR\\drivers\\etc\\hosts"" a
+    FileSeek $4 0 SET
+    FileRead $4 $1
+    ${If} $1 != ""example""
+    Strcmp $1 ""example"" end 0
+ 
+
+Or can i walk the file with `While`? But when ends the file?
+
+##UPDATED##
+
+FileOpen $0 ""$SYSDIR\\drivers\\etc\\hosts"" a  ;open file for append if exist (read and write)<br><br>
+loop:<br><br>
+   FileRead $0 $2<br>
+   IfErrors done<br>
+   Messagebox MB_OK ""$2""<br><br>
+      StrCmp $2 ""30.0.0.0 dispatcher"" 0 loop<br>
+MessageBox MB_OK ""30.0.0.0 dispatcher found""<br>
+	FileSeek $2 0 END			   ;file positioning to the END->end of the file<br>
+	FileWrite $2 ""$\\r$\\n"" ; new line<br>
+	FileWrite $2 ""30.0.0.0 dispatcher"" ;write ip and dispatcher<br>
+	FileWrite $2 ""$\\r$\\n"" ; extra line<br>
+ 
+done:
+
+	FileClose $0	      ;close file
+    	Quit
+
+Now its go the whole file but with strcmp nothing doing. Somebody please help.";;added 588 characters in body
+73704517;25871278;3944152;5;b8ebe324-1479-40bb-8799-4b33901de709;2014-09-17 15:00:12.0;"is there something way, that search in a `example.txt` file for a string `example`? 
+
+I tried `Fileread` and `Fileseek` but it is not successful yet... later i'd like to write thats why append
+
+    FileOpen $4 ""$SYSDIR\\drivers\\etc\\hosts"" a
+    FileSeek $4 0 SET
+    FileRead $4 $1
+    ${If} $1 != ""example""
+    Strcmp $1 ""example"" end 0
+ 
+
+Or can i walk the file with `While`? But when ends the file?
+
+##UPDATED##
+!define IP_AND_DISPATCHER ""30.0.0.0 dispatcher""
+	FileOpen $0 ""$SYSDIR\\drivers\\etc\\hosts"" a<br>
+loop:<br><br>
+   FileRead $0 $2<br>
+   IfErrors done<br>
+   Messagebox MB_OK ""$2""<br>
+      StrCmp $2 ""${IP_AND_DISPATCHER}$\\r$\\n"" 0 loop<br>
+MessageBox MB_OK ""$${IP_AND_DISPATCHER} found""<br>
+FileClose $2     ;close file<br>
+Quit<br>
+
+
+done:	<br><br>FileSeek $0 0 END<br>
+	FileWrite $0 ""$\\r$\\n"" ; new line<br>
+	FileWrite $0 ""${IP_AND_DISPATCHER}"" ;write ip and dispatcher<br>
+	FileWrite $0 ""$\\r$\\n"" ; extra line<br>
+ FileClose $0     ;close file<br>
+
+Now its work, but is there a way not to write the 30.0.0.0 dispatcher  so not the line...just for example ""dispatcher"" word?";;added 36 characters in body

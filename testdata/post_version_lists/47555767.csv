@@ -1,0 +1,4 @@
+Id;PostHistoryTypeId;PostId;RevisionGUID;CreationDate;UserId;UserDisplayName;Comment;Text
+161703171;2;47555767;21d3187d-4ae9-4771-b085-a26f45d8f20d;2017-11-29 15:00:00;8709389;;;```Intent.createChooser()``` will directly open an app if there is only one which can handle the intent. My question is how can I show the chooser dialog even though there is only one app?
+161703172;1;47555767;21d3187d-4ae9-4771-b085-a26f45d8f20d;2017-11-29 15:00:00;8709389;;;How can I show an intent chooser even though there is only one app?
+161703173;3;47555767;21d3187d-4ae9-4771-b085-a26f45d8f20d;2017-11-29 15:00:00;8709389;;;<android>

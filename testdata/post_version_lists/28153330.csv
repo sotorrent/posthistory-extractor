@@ -1,0 +1,36 @@
+Id;PostHistoryTypeId;PostId;RevisionGUID;CreationDate;UserId;UserDisplayName;Comment;Text
+82393134;2;28153330;4eb9c8e2-2a78-428d-b341-9404ccdb756b;2015-01-26 15:33:59;4254517;;;"Are you looking for a regex, that will only match invalid strings? This should do: `""(?<!\\\\)\\*\\*+""`
+It will match two or more asterisks in a row, not preceded by a backslash.  "
+82393525;5;28153330;34e106b6-df62-4f1d-870b-b7d78e2deb43;2015-01-26 15:39:46;4254517;;added 12 characters in body;"Are you looking for a regex, that will only match invalid strings? This should do: 
+    
+    ""(?<!\\\\)\\*\\*+""
+
+It will match two or more asterisks in a row, not preceded by a backslash.  "
+82394435;5;28153330;a523bc45-288f-47b3-841e-2d05dd81e410;2015-01-26 15:52:53;4254517;;added 648 characters in body;"Are you looking for a regex, that will only match invalid strings? This should do: 
+    
+    ""(?<!\\\\)\\*\\*+""
+
+It will match two or more asterisks in a row, not preceded by a backslash.  
+
+
+EDIT: `(?<!foo)` thingy is called ""negative look-behind"". It matches any zero-length place in the string that is not immediately followed by the regex inside parentheses (""foo"" in this case, or a backslash in yours). 
+I had this as `[^\\\\]` at first, which is almost the same thing (in this case), *except* that it matches any *character*, other than a backslash, but not an *absense* of a character, like at the beginning of a string in ""**"". 
+
+There is a good detailed  description of lookarounds (look-behind and look-ahead) as well as a lot of other regex ""magic"" [here][1]
+
+
+  [1]: http://www.regular-expressions.info/lookaround.html"
+82397437;5;28153330;ef6ceaf2-d1cb-4705-9c8c-61f1b1ac18d5;2015-01-26 16:35:10;4254517;;added 18 characters in body;"Are you looking for a regex, that will only match invalid strings? This should do: 
+    
+    ""(?<!\\\\)\\*\\*+""
+
+It will match two or more asterisks in a row, not preceded by a backslash.  
+
+
+EDIT: `(?<!foo)` thingy is called ""negative look-behind"". It matches any zero-length place in the string that is not immediately preceded by a region matching the regex inside parentheses (""foo"" in this case, or a backslash in yours). 
+I had this as `[^\\\\]` at first, which is almost the same thing (in this case), *except* that it matches any *character*, other than a backslash, but not an *absense* of a character, like at the beginning of a string in ""**"". 
+
+There is a good detailed  description of lookarounds (look-behind and look-ahead) as well as a lot of other regex ""magic"" [here][1]
+
+
+  [1]: http://www.regular-expressions.info/lookaround.html"

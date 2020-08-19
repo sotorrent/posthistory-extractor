@@ -1,0 +1,565 @@
+Id;PostHistoryTypeId;PostId;RevisionGUID;CreationDate;UserId;UserDisplayName;Comment;Text
+74278496;2;26044128;cc5ce67d-2a68-4ee8-b695-214fe619ee1f;2014-09-25 16:58:47;1342440;;;"You could convert each array within the array to a string and use indexOf instead to find `""0,1""`, otherwise you are strictly comparing objects and that won't work because no two objects are the same. 
+
+<!-- begin snippet: js hide: false -->
+
+<!-- language: lang-js -->
+
+    function myFunction() {
+      
+      var haystack = [[0,1],[1,1],[1,2]];
+      var needle = [0,1]  ;
+
+      var stringArray = haystack.map(function(array){       
+        return array.join();
+      });  
+      
+      // becomes [""0,1"",""1,1"",""1,2""]
+
+      var a = stringArray.indexOf( needle.join() ); // ""0,1""
+      
+      document.getElementById(""demo"").innerHTML = a;
+      
+    }
+
+<!-- language: lang-html -->
+
+    <p>Click the button to display the position of the element ""[0,1]"":</p>
+    <button onclick=""myFunction()"">Try it</button>
+    <p id=""demo""></p>
+
+<!-- end snippet -->"
+74278806;5;26044128;5cd3e12a-7813-4b08-b129-49ce11dc84fa;2014-09-25 17:03:52;1342440;;deleted 2 characters in body;"**Convert and compare strings**
+
+You could convert each array within the array to a string using [`map()`][1] and [`join()`][2]. Then use indexOf instead to find `""0,1""`, you are strictly comparing objects except no two objects are the same. 
+
+<!-- begin snippet: js hide: false -->
+
+<!-- language: lang-js -->
+
+    function myFunction() {
+      
+      var haystack = [[0,1],[1,1],[1,2]];
+      var needle = [0,1];
+
+      var stringArray = haystack.map(function(array){       
+        return array.join();
+      });  
+      
+      // becomes [""0,1"",""1,1"",""1,2""]
+
+      var a = stringArray.indexOf( needle.join() ); // ""0,1""
+      
+      document.getElementById(""demo"").innerHTML = a;
+      
+    }
+
+<!-- language: lang-html -->
+
+    <button onclick=""myFunction()"">Try it</button>
+    <p id=""demo""></p>
+
+<!-- end snippet -->
+
+
+  [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
+  [2]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join"
+74279099;5;26044128;4d7c4ce6-4f85-44d0-b21d-d559c05e3e48;2014-09-25 17:09:04;1342440;;added 110 characters in body;"**Convert and compare strings**
+
+Strictly comparing objects is false because no two objects are the same. You could convert each array within the array to a string using [`map()`][1] and [`join()`][2]. Then use [`indexOf`][3] instead to find `""0,1""`.
+
+    [0,1] === [0,1] // false
+    ""0,1"" === ""0,1"" // true
+    
+
+<!-- begin snippet: js hide: false -->
+
+<!-- language: lang-js -->
+
+    function myFunction() {
+      
+      var haystack = [ [0,1],[1,1],[1,2] ];
+      var needle = [0,1];
+
+      var stringArray = haystack.map(function(array){       
+        return array.join();
+      });  
+      
+      // becomes [""0,1"",""1,1"",""1,2""]
+
+      var a = stringArray.indexOf( needle.join() ); // ""0,1""
+      
+      document.getElementById(""demo"").innerHTML = a;
+      
+    }
+
+<!-- language: lang-html -->
+
+    <button onclick=""myFunction()"">Try it</button>
+    <p id=""demo""></p>
+
+<!-- end snippet -->
+
+
+  [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
+  [2]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join
+  [3]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf"
+74279497;5;26044128;f7d08cc9-f562-4a6f-8f33-a8ffe7e744bf;2014-09-25 17:14:52;1342440;;added 2 characters in body;"**Convert and compare strings**
+
+Strictly comparing objects is false because no two objects are the same. You could convert each array within the array to a string using [`map()`][1] and [`join()`][2]. Then use [`indexOf`][3] instead to find `""0,1""`.
+
+
+
+    [0,1] === [0,1] // false
+
+    ""0,1"" === ""0,1"" // true
+    
+
+**The outcome:** `[""0,1"",""1,1"",""1,2""].indexOf(""0,1"")` which is the intended use of `indexOf()`
+
+<hr>
+<!-- begin snippet: js hide: false -->
+
+<!-- language: lang-js -->
+
+    function myFunction() {
+      
+      var haystack = [ [0,1],[1,1],[1,2] ];
+      var needle = [0,1].join();
+
+      var stringArray = haystack.map(function(array){       
+        return array.join();
+      });        
+
+      var a = stringArray.indexOf(needle);
+      
+      document.getElementById(""demo"").innerHTML = a;
+      
+    }
+
+<!-- language: lang-html -->
+
+    <button onclick=""myFunction()"">Try it</button>
+    <p id=""demo""></p>
+
+<!-- end snippet -->
+
+
+  [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
+  [2]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join
+  [3]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf"
+74279997;5;26044128;8326bedc-cfb0-4868-a825-da59c7a33afe;2014-09-25 17:22:44;1342440;;added 1 character in body;"**Convert and compare strings**
+
+Strictly comparing objects is false because no two objects are the same. You could convert each array within the array to a string using [`map()`][1] and [`join()`][2]. Then use [`indexOf`][3] to instead  find `""0,1""`.
+
+
+
+    [0,1] === [0,1] // false
+
+    ""0,1"" === ""0,1"" // true
+
+<hr>    
+
+**The outcome:** `[""0,1"",""1,1"",""1,2""].indexOf(""0,1"")` which is the intended use of `indexOf()`
+
+<hr>
+<!-- begin snippet: js hide: false -->
+
+<!-- language: lang-js -->
+
+    function myFunction() {
+      
+      var myArray = [ [0,1],[1,1],[1,2] ];
+      var needle = [0,1].join(); // or ""0,1""
+
+      var haystack = myArray.map(function(array){       
+        return array.join();
+      });        
+
+      var index = haystack.indexOf(needle);
+      
+      document.getElementById(""demo"").innerHTML = index ;
+      
+    }
+
+<!-- language: lang-html -->
+
+    <button onclick=""myFunction()"">Try it</button>
+    <p id=""demo""></p>
+
+<!-- end snippet -->
+
+
+  [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
+  [2]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join
+  [3]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf"
+74281251;5;26044128;37f0a3c1-d5c9-4f30-8e48-e6b57748d8a0;2014-09-25 17:42:43;1342440;;deleted 53 characters in body;"**Convert and compare strings**
+
+Strictly comparing objects is false because no two objects are the same. You could convert each array within the array to a string using [`join()`][1] and [`split()`][2]. Then use [`indexOf`][3] to instead  find `""0,1""`.
+
+
+
+    [0,1] === [0,1] // false
+
+    ""0,1"" === ""0,1"" // true
+
+<hr>    
+
+**The outcome:** `[""0,1"",""1,1"",""1,2""].indexOf(""0,1"")` which is the intended use of `indexOf()`
+
+<hr>
+<!-- begin snippet: js hide: false -->
+
+<!-- language: lang-js -->
+
+    function myFunction() {
+      
+      var myArray = [ [0,1],[1,1],[1,2] ];
+      var needle = [0,1].join(); // or ""0,1""
+      var haystack = myArray.join('-').split('-');        
+      var index = haystack.indexOf(needle);      
+      document.getElementById(""demo"").innerHTML = index ;
+      
+    }
+
+<!-- language: lang-html -->
+
+    <button onclick=""myFunction()"">Try it</button>
+    <p id=""demo""></p>
+
+<!-- end snippet -->
+
+
+ - `.join('-')` produces `""0,1-1,1-1,2""`
+
+ - `.split('-')` produces `[""0,1"", ""1,1"", ""1,2""]`
+
+  [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join
+  [2]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/split
+  [3]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf"
+74281657;5;26044128;7e426bb6-566c-452e-bad6-1afad1679430;2014-09-25 17:49:19;1342440;;deleted 30 characters in body;"**Convert and compare strings**
+
+Strictly comparing objects is false because no two objects are the same. You could convert each array within the array to a string using [`join()`][1] and [`split()`][2]. Then use [`indexOf`][3] to instead  find `""0,1""`.
+
+
+
+    [0,1] === [0,1] // false
+
+    ""0,1"" === ""0,1"" // true
+
+<hr>    
+
+**The outcome:** `[""0,1"",""1,1"",""1,2""].indexOf(""0,1"")` which is the intended use of `indexOf()`
+
+<hr>
+<!-- begin snippet: js hide: false -->
+
+<!-- language: lang-js -->
+
+    function myFunction() {      
+        var needle = [0,1].join(); // or ""0,1""
+        var haystack = [ [0,1],[1,1],[1,2] ];
+        var index = haystack.join('-').split('-').indexOf(needle);      
+        document.getElementById(""demo"").innerHTML = index ;      
+    }
+
+<!-- language: lang-html -->
+
+    <button onclick=""myFunction()"">Try it</button>
+    <p id=""demo""></p>
+
+<!-- end snippet -->
+
+
+ - `.join('-')` produces `""0,1-1,1-1,2""`
+
+ - `.split('-')` produces `[""0,1"", ""1,1"", ""1,2""]`
+
+ - `.indexOf(""0,1"")` produces `0`
+
+  [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join
+  [2]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/split
+  [3]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf"
+74281952;5;26044128;2732ed5b-b113-4362-ad35-7790d106920f;2014-09-25 17:54:42;1342440;;deleted 30 characters in body;"<h2>Convert and compare strings</h2>
+
+Strictly comparing objects is false because no two objects are the same. You could convert each array within the array to a string using [`join()`][1] and [`split()`][2]. Then use [`indexOf`][3] to instead  find `""0,1""`.
+
+
+
+    [0,1] === [0,1] // false
+
+    ""0,1"" === ""0,1"" // true
+
+<hr>    
+
+**The goal:** `[""0,1"",""1,1"",""1,2""].indexOf(""0,1"")` which is the intended use of `indexOf()`
+
+<hr>
+<!-- begin snippet: js hide: false -->
+
+<!-- language: lang-js -->
+
+    function myFunction() {      
+        var needle = [0,1].join(); // or ""0,1""
+        var haystack = [ [0,1],[1,1],[1,2] ];
+        var index = haystack.join('-').split('-').indexOf(needle);      
+        document.getElementById(""demo"").innerHTML = index ;      
+    }
+
+<!-- language: lang-html -->
+
+    <button onclick=""myFunction()"">Try it</button>
+    <p id=""demo""></p>
+
+<!-- end snippet -->
+
+
+ - `.join('-')` produces `""0,1-1,1-1,2""`
+
+ - `.split('-')` produces `[""0,1"", ""1,1"", ""1,2""]`
+
+ - `.indexOf(""0,1"")` produces `0`
+
+<hr>
+
+<h2>Abstract version</h2>
+
+    function arrayInArray(needle, haystack) {      
+        return haystack.join('-').split('-').indexOf( needle.join() );          
+    } 
+
+    arrayInArray([0,1], [[""0,1""],[""1,1""],[""1,2""]]) // returns 0
+
+  [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join
+  [2]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/split
+  [3]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf"
+74282430;5;26044128;138de355-d172-4dd6-9600-20e499b3501a;2014-09-25 18:02:33;1342440;;added 10 characters in body;"<h2>Convert and compare strings</h2>
+
+Strictly comparing objects is false because no two objects are the same. You could convert each array within the array to a string using [`join()`][1] and [`split()`][2]. Then use [`indexOf`][3] to instead  find `""0,1""`.
+
+
+
+    [0,1] === [0,1] // false
+
+    ""0,1"" === ""0,1"" // true
+
+<hr>    
+
+**The goal:** `[""0,1"",""1,1"",""1,2""].indexOf(""0,1"")` which is the intended use of `indexOf()`
+
+<hr>
+<!-- begin snippet: js hide: false -->
+
+<!-- language: lang-js -->
+
+    function myFunction() { 
+     
+        var needle = [0,1].join(); // or ""0,1""
+
+        var haystack = [ [0,1],[1,1],[1,2] ];
+
+        var index = haystack.join('-').split('-').indexOf(needle); 
+     
+        document.getElementById(""demo"").innerHTML = index ;  
+    
+    }
+
+<!-- language: lang-html -->
+
+    <button onclick=""myFunction()"">Try it</button>
+    <p id=""demo""></p>
+
+<!-- end snippet -->
+
+
+ - `.join('-')` produces `""0,1-1,1-1,2""`
+
+ - `.split('-')` produces `[""0,1"", ""1,1"", ""1,2""]`
+
+ - `.indexOf(""0,1"")` produces `0`
+
+<hr>
+
+<h2>Abstract version</h2>
+
+    function arrayInArray(needle, haystack) {      
+        return haystack.join('-').split('-').indexOf( needle.join() );          
+    } 
+
+    arrayInArray([0,1], [[""0,1""],[""1,1""],[""1,2""]]) // returns 0
+
+  [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join
+  [2]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/split
+  [3]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf"
+74284779;5;26044128;4dd56a85-c4ef-4632-a7e1-3724f299c267;2014-09-25 18:40:21;1342440;;added 80 characters in body;"<h2>Convert and compare strings</h2>
+
+Strictly comparing objects is false because no two objects are the same. You could convert each array within the array to a string using [`join()`][1] and [`split()`][2]. Then use [`indexOf`][3] to instead  find `""0,1""`.
+
+
+
+    [0,1] === [0,1] // false
+
+    ""0,1"" === ""0,1"" // true
+
+<hr>    
+
+**The goal:** `[""0,1"",""1,1"",""1,2""].indexOf(""0,1"")` which is the intended use of `indexOf()`
+
+<hr>
+<!-- begin snippet: js hide: false -->
+
+<!-- language: lang-js -->
+
+    function myFunction() { 
+     
+        var needle = [0,1].join(); // or ""0,1""
+
+        var haystack = [ [0,1],[1,1],[1,2] ];
+
+        var index = haystack.join('-').split('-').indexOf(needle); 
+     
+        document.getElementById(""demo"").innerHTML = index ;  
+    
+    }
+
+<!-- language: lang-html -->
+
+    <button onclick=""myFunction()"">Try it</button>
+    <p id=""demo""></p>
+
+<!-- end snippet -->
+
+
+ - `.join('-')` produces `""0,1-1,1-1,2""`
+
+ - `.split('-')` produces `[""0,1"", ""1,1"", ""1,2""]`
+
+ - `.indexOf(""0,1"")` produces `0`
+
+<hr>
+
+<h2>Abstract version</h2>
+
+    var needle = [0,1];
+    var haystack = [[""0,1""],[""1,1""],[""1,2""]];
+    var index = getIndex(needle, haystack) // returns 0
+
+    function getIndex(needle, haystack) {      
+        return haystack.join('-').split('-').indexOf( needle.join() );          
+    } 
+
+
+  [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join
+  [2]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/split
+  [3]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf"
+74292227;5;26044128;2d6f5f33-ff56-4b06-ab53-3f19efdbe17f;2014-09-25 20:44:13;1342440;;added 3 characters in body;"<h2>Convert and compare strings</h2>
+
+Strictly comparing objects is false because no two objects are the same. You could convert each array within the array to a string using [`join()`][1] and [`split()`][2]. Then use [`indexOf`][3] to instead  find `""0,1""`.
+
+
+
+    [0,1] === [0,1] // false
+
+    ""0,1"" === ""0,1"" // true
+
+<hr>    
+
+**The goal:** `[""0,1"",""1,1"",""1,2""].indexOf(""0,1"")` which is the intended use of `indexOf()`
+
+<hr>
+<!-- begin snippet: js hide: false -->
+
+<!-- language: lang-js -->
+
+    function myFunction() { 
+     
+        var needle = [0,1].join(); // or ""0,1""
+
+        var haystack = [ [0,1],[1,1],[1,2] ];
+
+        var index = haystack.join('-').split('-').indexOf(needle); 
+     
+        document.getElementById(""demo"").innerHTML = index ;  
+    
+    }
+
+<!-- language: lang-html -->
+
+    <button onclick=""myFunction()"">Try it</button>
+    <p id=""demo""></p>
+
+<!-- end snippet -->
+
+
+ - `.join('-')` produces `""0,1-1,1-1,2""`
+
+ - `.split('-')` produces `[""0,1"", ""1,1"", ""1,2""]`
+
+ - `.indexOf(""0,1"")` produces `0`
+
+<hr>
+
+<h2>Standalone Function</h2>
+
+    var needle = [0,1];
+    var haystack = [[""0,1""],[""1,1""],[""1,2""]];
+    var index = getIndex(needle, haystack) // returns 0
+
+    function getIndex(needle, haystack) {      
+        return haystack.join('-').split('-').indexOf( needle.join() );          
+    } 
+
+
+  [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join
+  [2]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/split
+  [3]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf"
+74302960;5;26044128;b9ac3e47-5ce3-4efb-bd9e-1125e113e28a;2014-09-26 01:29:31;1342440;;deleted 138 characters in body;"<h2>Convert and compare strings</h2>
+
+Strictly comparing objects is false because no two objects are the same. You could convert each array within the array to a string using [`join()`][1] and [`split()`][2]. Then use [`indexOf`][3] to instead  find `""0,1""`.
+
+
+
+    [0,1] === [0,1] // false
+
+    ""0,1"" === ""0,1"" // true
+
+<hr>    
+
+**The goal:** `[""0,1"",""1,1"",""1,2""].indexOf(""0,1"")` which is the intended use of `indexOf()`
+
+<hr>
+<!-- begin snippet: js hide: false -->
+<!-- language: lang-js -->  
+var needle = [0,1].join(); // or ""0,1""
+var haystack = [ [0,1],[1,1],[1,2] ];
+var index = haystack.join('-').split('-').indexOf(needle); 
+     
+document.getElementById(""demo"").innerHTML = index ;  
+    
+<!-- language: lang-html -->
+    <p id=""demo""></p>
+<!-- end snippet -->
+
+
+ - `.join('-')` produces `""0,1-1,1-1,2""`
+
+ - `.split('-')` produces `[""0,1"", ""1,1"", ""1,2""]`
+
+ - `.indexOf(""0,1"")` produces `0`
+
+<hr>
+
+<h2>Standalone Function</h2>
+
+    var needle = [0,1];
+    var haystack = [[""0,1""],[""1,1""],[""1,2""]];
+    var index = getIndex(needle, haystack) // returns 0
+
+    function getIndex(needle, haystack) {      
+        return haystack.join('-').split('-').indexOf( needle.join() );          
+    } 
+
+
+  [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join
+  [2]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/split
+  [3]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf"

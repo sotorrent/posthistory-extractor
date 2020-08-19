@@ -1,0 +1,45 @@
+Id;PostHistoryTypeId;PostId;RevisionGUID;CreationDate;UserId;UserDisplayName;Comment;Text
+491587;1;309424;488e90cf-685b-4fcc-8716-8ae1c88997e4;2008-11-21 16:47:40;16616;;;In Java how do a read an input stream in to a string?
+491588;3;309424;488e90cf-685b-4fcc-8716-8ae1c88997e4;2008-11-21 16:47:40;16616;;;<java><io><string>
+491589;2;309424;488e90cf-685b-4fcc-8716-8ae1c88997e4;2008-11-21 16:47:40;16616;;;"If you have an java.io.InputStream object how should you process that object and produce a string.
+"
+7300079;5;309424;42627ba0-e22b-4837-b082-648844e0e85b;2010-08-17 09:25:39;5975;;Merging some title keywords and question content from question 1763789 after voting to close it as duplicate.;"If you have `java.io.InputStream` object how should you process that object and produce a `String`?
+
+---
+
+Suppose I have an `InputStream` that contains text data, and I want to convert this to a `String` (for example, so I can write the contents of the stream to a log file).
+
+What is the easiest way to take the `InputStream` and convert it to a `String`?
+
+    public String convertStreamToString(InputStream is) { 
+        // ???
+    }"
+7300080;4;309424;42627ba0-e22b-4837-b082-648844e0e85b;2010-08-17 09:25:39;5975;;Merging some title keywords and question content from question 1763789 after voting to close it as duplicate.;In Java how do a read/convert an InputStream in to a string?
+7300081;6;309424;42627ba0-e22b-4837-b082-648844e0e85b;2010-08-17 09:25:39;5975;;Merging some title keywords and question content from question 1763789 after voting to close it as duplicate.;<java><string><io><stream><inputstream>
+18158349;5;309424;d18311f7-1016-4919-ab99-330db3593e99;2011-11-15 20:55:32;435093;;fixed grammar in title;"If you have `java.io.InputStream` object, how should you process that object and produce a `String`?
+
+---
+
+Suppose I have an `InputStream` that contains text data, and I want to convert this to a `String` (for example, so I can write the contents of the stream to a log file).
+
+What is the easiest way to take the `InputStream` and convert it to a `String`?
+
+    public String convertStreamToString(InputStream is) { 
+        // ???
+    }"
+18158350;4;309424;d18311f7-1016-4919-ab99-330db3593e99;2011-11-15 20:55:32;435093;;fixed grammar in title;In Java, how do I read/convert an InputStream to a String?
+26807150;4;309424;85e47340-b3cb-4d4a-b259-5a10ed2daf1c;2012-07-16 20:32:58;170339;;Edited Title as per SO's defined standards ("How to"/"How do I" are discouraged);Java: Read/convert an InputStream to a String
+26807151;24;309424;85e47340-b3cb-4d4a-b259-5a10ed2daf1c;2012-07-16 20:32:58;;;Proposed by 170339 approved by 1159478, 168775, -1 edit id of 318890;
+26807152;4;309424;c391609d-2579-4832-8508-d6ce67df350d;2012-07-16 20:32:58;102937;;Edited Title as per SO's defined standards ("How to"/"How do I" are discouraged);Read/convert an InputStream to a String
+41922295;19;309424;69336512-d970-44b1-be7b-0f75f5e20bcd;2013-06-10 05:09:14;1723893;;;{"Voters":[{"Id":1723893,"DisplayName":"NullPoiиteя"}]}
+145744920;5;309424;9d65994a-e961-4f3b-baf9-84bd984fda69;2017-05-19 08:58:52;6027638;;deleted 1 character in body;"If you have `java.io.InputStream` object, how should you process that object and produce a `String`?
+
+---
+
+Suppose I have an `InputStream` that contains text data, and I want to convert this to a `String`. For example, so I can write the contents of the stream to a log file.
+
+What is the easiest way to take the `InputStream` and convert it to a `String`?
+
+    public String convertStreamToString(InputStream is) { 
+        // ???
+    }"

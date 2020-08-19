@@ -1,0 +1,60 @@
+Id;PostHistoryTypeId;PostId;RevisionGUID;CreationDate;UserId;UserDisplayName;Comment;Text
+1640032;2;848841;7b90b7df-9fb3-4058-93c7-54e0f08e4a56;2009-05-11 16:11:28;52087;;;"I have an XSLT transform issue:
+
+    style=""width:{Data/PercentSpaceUsed}%;""
+
+And the value of Data/PercentSpaceUsed is integer 3.
+
+And it outputs:
+
+    style=""width:&#xD;&#xA;		3&#xD;&#xA;	%;""
+
+instead of what I expected:
+
+    style=""width:3%;""
+
+Here's the code that does the transform:  xslt_xslt is the transform xml, sw.ToString() contains the ""& # x D ;"" (no spaces) and ""& # x A ;"" (no spaces) which I did not expect.
+
+    var xslTransObj = new XslCompiledTransform();
+    var reader = new XmlTextReader(new StringReader(xslt_xslt));
+    xslTransObj.Load(reader);
+    var sw = new StringWriter();
+    var writer = new XmlTextWriter(sw);
+    xslTransObj.Transform(new XmlTextReader(new StringReader(xslt_data)), writer);
+    
+    ResultLiteral.Text = sw.ToString();
+
+
+"
+1640033;1;848841;7b90b7df-9fb3-4058-93c7-54e0f08e4a56;2009-05-11 16:11:28;52087;;;"C# XSLT transform adding &#xA; and &#xD; to the output"
+1640034;3;848841;7b90b7df-9fb3-4058-93c7-54e0f08e4a56;2009-05-11 16:11:28;52087;;;<c#><xslt><transform>
+1641604;6;848841;a060b544-a3a6-439c-a684-3f155f88b338;2009-05-11 19:27:25;2679;;edited tags;<c#><xslt><whitespace>
+9901506;19;848841;4ce77787-95a1-4939-818c-15c50ce68fa9;2011-01-13 15:04:52;;user1228;;"{""Voters"":[{""Id"":1228,""DisplayName"":""Will""}]}"
+32543040;5;848841;e4bda985-0a84-4715-8054-fc824a01bf27;2012-11-30 08:37:58;1583566;;improve format;"I have an XSLT transform issue:
+
+    style=""width:{Data/PercentSpaceUsed}%;""
+
+And the value of Data/PercentSpaceUsed is integer 3.
+
+And it outputs:
+
+    style=""width:&#xD;&#xA;		3&#xD;&#xA;	%;""
+
+instead of what I expected:
+
+    style=""width:3%;""
+
+Here's the code that does the transform: `xslt_xslt` is the transform xml, `sw.ToString()` contains the `&#xD;` and `&#xA;` which I did not expect.
+
+    var xslTransObj = new XslCompiledTransform();
+    var reader = new XmlTextReader(new StringReader(xslt_xslt));
+    xslTransObj.Load(reader);
+    var sw = new StringWriter();
+    var writer = new XmlTextWriter(sw);
+    xslTransObj.Transform(new XmlTextReader(new StringReader(xslt_data)), writer);
+    
+    ResultLiteral.Text = sw.ToString();
+
+
+"
+32543041;24;848841;e4bda985-0a84-4715-8054-fc824a01bf27;2012-11-30 08:37:58;;;Proposed by 1583566 approved by 227192, 213550, 463139 edit id of 485188;

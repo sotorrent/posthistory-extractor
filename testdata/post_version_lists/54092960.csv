@@ -1,0 +1,67 @@
+Id;PostHistoryTypeId;PostId;RevisionGUID;CreationDate;UserId;UserDisplayName;Comment;Text
+189150375;2;54092960;75707e17-0714-46ea-939e-26304a046c8e;2019-01-08 13:33:02;9718056;;;"There are several ways to achieve what you want. Here are two examples:
+
+**Using `display: inline-block;`**
+
+<!-- begin snippet: js hide: false console: true babel: false -->
+
+<!-- language: lang-css -->
+
+    .player {
+      margin: 10px;
+      border: 1px solid red;
+      padding: 10px;
+      text-align: center;
+      display: inline-block;
+    }
+
+<!-- language: lang-html -->
+
+    <div class=""players"">
+        <div class=""player"">
+            <img src=""https://picsum.photos/100"">
+            <p>Username - Level</p>
+        </div>
+        
+        <div class=""player"">
+            <img src=""https://picsum.photos/100"">
+            <p>Username - Level</p>
+        </div>
+    </div>
+
+<!-- end snippet -->
+
+**Using `display: flex;`**
+
+<!-- begin snippet: js hide: false console: true babel: false -->
+
+<!-- language: lang-css -->
+
+    .players {
+      display: flex;
+    }
+
+    .player {
+      margin: 10px;
+      border: 1px solid red;
+      padding: 10px;
+      text-align: center;
+    }
+
+<!-- language: lang-html -->
+
+    <div class=""players"">
+        <div class=""player"">
+            <img src=""https://picsum.photos/100"">
+            <p>Username - Level</p>
+        </div>
+        
+        <div class=""player"">
+            <img src=""https://picsum.photos/100"">
+            <p>Username - Level</p>
+        </div>
+    </div>
+
+<!-- end snippet -->
+
+Both solutions need you to wrap your elements inside a wrapping `div`."

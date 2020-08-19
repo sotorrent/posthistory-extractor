@@ -1,0 +1,279 @@
+Id;PostHistoryTypeId;PostId;RevisionGUID;CreationDate;UserId;UserDisplayName;Comment;Text
+7035205;5;3381751;d5d79117-5e4d-48bf-b12d-7fe9ad0ffc5e;2010-08-01 12:01:44;407885;;"added 117 characters in body; added 9 characters in body";"hi every body I'm trying to open an image in a new window ,using javascript, by clicking on a button, then set a class to the image, using this code:
+
+   
+  
+        OpenWindow=window.open("""", ""newwin"",""height=100,width=1000""); 
+        OpenWindow.document.write(""<img id='img1' src='webfonts.jpg'>"");
+        OpenWindow.document.getElementById(""img1"").className = ""larger"";
+        OpenWindow.document.close();
+
+and this is the internal style I have included in my code in a style tag:
+.larger{ width:10px; }
+and in the body tag 
+1:I have include my image source by an img tag
+2:make a button tag with an onclick=larger() attribute
+
+but unfortunately I have a problem with last sentence, the class is not assigned at all to the image.
+ I have tried to use classname also instead of setttribute but it generates the same result. 
+any ideas?
+thx 
+"
+7035204;5;3381751;5e65abd8-a13f-4472-80b8-ad8725c5e162;2010-08-01 12:01:37;258127;;formatting;"hi every body I'm trying to open an image in a new window ,using javascript, by clicking on a button, then set a class to the image, using this code:
+  
+    OpenWindow=window.open("""", ""newwin"",""height=100,width=1000""); 
+    OpenWindow.document.write(""<img id='img1' src='webfonts.jpg'>"");
+    OpenWindow.document.getElementById(""img1"").className = ""larger"";
+    OpenWindow.document.close();
+
+and this is the internal style I have included in my code in a style tag:
+
+    .larger{ width:10px; }
+
+but unfortunately I have a problem with last sentence, the class is not assigned at all to the image.
+ I have tried to use classname also instead of setttribute but it generates the same result. 
+any ideas?
+thx 
+"
+7035186;5;3381751;b29b8c60-cead-4646-9f5a-cfb484f4ed81;2010-08-01 11:57:49;407885;;"added 99 characters in body; deleted 4 characters in body; edited body";"hi every body I'm trying to open an image in a new window ,using javascript, by clicking on a button, then set a class to the image, using this code:
+
+   
+  
+        OpenWindow=window.open("""", ""newwin"",""height=100,width=1000""); 
+        OpenWindow.document.write(""<img id='img1' src='webfonts.jpg'>"");
+        OpenWindow.document.getElementById(""img1"").className = ""larger"";
+        OpenWindow.document.close();
+
+and this is the internal style I have included in my code in a style tag:
+.larger{ width:10px; }
+
+but unfortunately I have a problem with last sentence, the class is not assigned at all to the image.
+ I have tried to use classname also instead of setttribute but it generates the same result. 
+any ideas?
+thx 
+"
+7035179;5;3381751;aed7be51-ab53-4139-8de3-747b8ec93a9e;2010-08-01 11:56:40;6144;;added id to image;"hi every body I'm trying to open an image in a new window ,using javascript, by clicking on a button, then set a class to the image, using this code:
+
+   
+  
+        OpenWindow=window.open("""", ""newwin"",""height=100,width=1000""); 
+        OpenWindow.document.write(""<img id='img1' src='webfonts.jpg'>"");
+        OpenWindow.document.getElementById(""img1"").className = ""larger"";
+        OpenWindow.document.close();
+
+
+
+
+but unfortunately I have a problem with last sentence, the class is not assigned at all to the image.
+ I have tried to use classname also instead of setttribute but it generates the same result. 
+any ideas?
+thx 
+"
+7035143;5;3381751;273ef0ec-40c0-4157-82a5-d8f419df033e;2010-08-01 11:51:51;407885;;"deleted 559 characters in body; added 4 characters in body";"hi every body I'm trying to open an image in a new window ,using javascript, by clicking on a button, then set a class to the image, using this code:
+
+   
+  
+        OpenWindow=window.open("""", ""newwin"",""height=100,width=1000""); 
+        OpenWindow.document.write(""src='webfonts.jpg'>"");
+        OpenWindow.document.getElementById(""img1"").className = ""larger"";
+        OpenWindow.document.close();
+
+
+
+
+but unfortunately I have a problem with last sentence, the class is not assigned at all to the image.
+ I have tried to use classname also instead of setttribute but it generates the same result. 
+any ideas?
+thx 
+"
+7035104;4;3381751;db9ee78f-517a-40b2-8207-a18330059b46;2010-08-01 11:46:27;6144;;added missing start tag;I can't assign a class to an element opened in new window
+7035103;5;3381751;db9ee78f-517a-40b2-8207-a18330059b46;2010-08-01 11:46:27;6144;;added missing start tag;"hi every body I'm trying to open an image in a new window ,using javascript, by clicking on a button, then set a class to the image, using this code:
+
+    <!DOCTYPE html PUBLIC ""-//W3C//DTD XHTML 1.0 Transitional//EN"" ""http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"">
+    <html xmlns=""http://www.w3.org/1999/xhtml"">
+    <head>
+    <meta http-equiv=""Content-Type"" content=""text/html; charset=utf-8"" />
+    <title>resize image </title>
+    <style>
+      .larger{ width:10px; }
+    </style>
+    <script type=""text/javascript"">
+      function  larger()
+      {
+        OpenWindow=window.open("""", ""newwin"",""height=100,width=1000""); 
+        OpenWindow.document.write(""src='webfonts.jpg'>"");
+        OpenWindow.document.getElementById(""img1"").className = ""larger"";
+      }
+    </script>
+    </head>
+    <body>
+      <img id=""img1"" src=""webfonts.jpg"" border=""0"" />
+      <button onclick=""larger()"">larger</button>
+    </body>
+    </html>
+
+
+but unfortunately I have a problem with last sentence, the class is not assigned at all to the image.
+ I have tried to use classname also instead of setttribute but it generates the same result. 
+any ideas?
+thx 
+"
+7035092;5;3381751;9b96ed24-9719-44c7-94ec-cb15fe9ff252;2010-08-01 11:44:06;407885;;added 354 characters in body;"hi every body I'm trying to open an image in a new window ,using java script, by clicking on a button, then set a class to the image, using this code:
+<!DOCTYPE html PUBLIC ""-//W3C//DTD XHTML 1.0 Transitional//EN"" ""http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"">
+<html xmlns=""http://www.w3.org/1999/xhtml"">
+<head>
+<meta http-equiv=""Content-Type"" content=""text/html; charset=utf-8"" />
+<title>resize image </title>
+<style>
+.larger{ width:10px; }
+</style>
+<script type=""text/javascript"">
+    function  larger()
+    {
+OpenWindow=window.open("""", ""newwin"",""height=100,width=1000""); 
+OpenWindow.document.write(""src='webfonts.jpg'>"");
+OpenWindow.document.getElementById(""img1"").className = ""larger"";
+
+ }
+</script>
+</head>
+<body>
+img id=""img1"" src=""webfonts.jpg""  border=""0"" />
+<button   onclick=""larger()"">larger</button>
+</body>
+</html>
+
+
+but unfortunately I have a problem with last sentence, the class is not assigned at all to the image.
+ I have tried to use classname also instead of setttribute but it generates the same result. 
+any ideas?
+thx 
+"
+7034945;5;3381751;324cb7bb-41fd-4093-aa04-08d663081c36;2010-08-01 11:24:12;258127;;formatting;"hi every body I'm trying to open an image in a new window ,using java script, by clicking on a button, then set a class to the image, using this code:
+
+    <style>
+    .larger{ width:1000px; }
+    </style>
+    <script type=""text/javascript"">
+        function  larger()
+        {
+    OpenWindow=window.open("""", ""newwin"",""height=100,width=1000""); 
+    OpenWindow.document.write(""<img'src='webfonts.jpg'>"") ;
+    OpenWindow.document.getElementById(""img1"").className = ""larger"";
+        }
+    </script>
+
+but unfortunately I have a problem with last sentence, the class is not assigned at all to the image.
+ I have tried to use classname also instead of setttribute but it generates the same result. 
+any ideas?
+thx 
+"
+7034904;5;3381751;b930788d-c221-4e75-89d1-03b1929835ec;2010-08-01 11:15:52;407885;;"deleted 5 characters in body; added 92 characters in body; deleted 21 characters in body";"hi every body I'm trying to open an image in a new window ,using java script, by clicking on a button, then set a class to the image, using this code:
+
+<style>
+.larger{ width:1000px; }
+</style>
+<script type=""text/javascript"">
+    function  larger()
+    {
+OpenWindow=window.open("""", ""newwin"",""height=100,width=1000""); 
+OpenWindow.document.write(""<img'src='webfonts.jpg'>"") ;
+OpenWindow.document.getElementById(""img1"").className = ""larger"";
+    }
+</script>
+
+
+but unfortunately I have a problem with last sentence, the class is not assigned at all to the image.
+ I have tried to use classname also instead of setttribute but it generates the same result. 
+any ideas?
+thx "
+7034847;5;3381751;e7f71e93-7718-4e40-aef5-06711ad75659;2010-08-01 11:06:06;218196;;deleted 52 characters in body;"hi every body I'm trying to open an image in a new window ,using java script, by clicking on a button, then set a class to the image, using this code:
+
+
+    <script type=""text/javascript"">
+        function  larger()
+        {
+            OpenWindow=window.open("""", ""newwin"",""height=100,width=10""); 
+            OpenWindow.document.write(""<iamgetag'src='webfonts.jpg'>"") ;
+            OpenWindow.document.getElementById(""img1"").setAttribute(""class"",""larger"");
+        }
+
+    </script>
+
+but unfortunately I have a problem with last sentence, the class is not assigned at all to the image.
+ 
+any ideas?
+thx "
+7034833;5;3381751;6bb4e5da-2c9c-47f0-acae-32c3e13cba22;2010-08-01 11:05:01;407885;;added 7 characters in body;"hi every body I'm trying to open an image in a new window ,using java script, by clicking on a button, then set a class to the image, using this code:
+********************************************************************
+<script type=""text/javascript"">
+    function  larger()
+    {
+OpenWindow=window.open("""", ""newwin"",""height=100,width=10""); 
+OpenWindow.document.write(""<iamgetag'src='webfonts.jpg'>"") ;
+OpenWindow.document.getElementById(""img1"").setAttribute(""class"",""larger"");
+    }
+</script>
+********************************************
+but unfortunately I have a problem with last sentence, the class is not assigned at all to the image.
+ 
+any ideas?
+thx "
+7034828;8;3381751;8d00052b-ece7-487d-b483-da2730f9c74d;2010-08-01 11:04:14;45433;;Rollback to [4f574f3b-b424-46c7-abb5-a2e1cdaf4c2b];"hi every body I'm trying to open an image in a new window ,using java script, by clicking on a button, then set a class to the image, using this code:
+
+    <script type=""text/javascript"">
+        function  larger()
+        {
+    OpenWindow=window.open("""", ""newwin"",""height=100,width=10""); 
+    OpenWindow.document.write(""<img' src='webfonts.jpg'>"") ;
+    OpenWindow.document.getElementById(""img1"").setAttribute(""class"",""larger"");
+        }
+    </script>
+
+but unfortunately I have a problem with last sentence, the class is not assigned at all to the image.
+any ideas?
+thx 
+"
+7034816;5;3381751;7e100039-1f8a-4954-819c-f37bd7938c6c;2010-08-01 11:02:03;407885;;"added 115 characters in body; added 1 characters in body";"hi every body I'm trying to open an image in a new window ,using java script, by clicking on a button, then set a class to the image, using this code:
+********************************************************************
+<script type=""text/javascript"">
+    function  larger()
+    {
+OpenWindow=window.open("""", ""newwin"",""height=100,width=10""); 
+OpenWindow.document.write(""<imge'src='webfonts.jpg'>"") ;
+OpenWindow.document.getElementById(""img1"").setAttribute(""class"",""larger"");
+    }
+</script>
+********************************************
+but unfortunately I have a problem with last sentence, the class is not assigned at all to the image.
+any ideas?
+thx "
+7034800;5;3381751;4f574f3b-b424-46c7-abb5-a2e1cdaf4c2b;2010-08-01 11:00:38;220819;;added 38 characters in body;"hi every body I'm trying to open an image in a new window ,using java script, by clicking on a button, then set a class to the image, using this code:
+
+    <script type=""text/javascript"">
+        function  larger()
+        {
+    OpenWindow=window.open("""", ""newwin"",""height=100,width=10""); 
+    OpenWindow.document.write(""<img' src='webfonts.jpg'>"") ;
+    OpenWindow.document.getElementById(""img1"").setAttribute(""class"",""larger"");
+        }
+    </script>
+
+but unfortunately I have a problem with last sentence, the class is not assigned at all to the image.
+any ideas?
+thx 
+"
+7034778;3;3381751;ad6b1eff-5a48-4b42-8d6c-fe4826555154;2010-08-01 10:58:39;407885;;;<javascript>
+7034777;1;3381751;ad6b1eff-5a48-4b42-8d6c-fe4826555154;2010-08-01 10:58:39;407885;;;I can't assign a class to an element opend in new window
+7034776;2;3381751;ad6b1eff-5a48-4b42-8d6c-fe4826555154;2010-08-01 10:58:39;407885;;;"hi every body I'm trying to open an image in a new window ,using java script, by clicking on a button, then set a class to the image, using this code:
+<script type=""text/javascript"">
+    function  larger()
+    {
+OpenWindow=window.open("""", ""newwin"",""height=100,width=10""); 
+OpenWindow.document.write(""<img' src='webfonts.jpg'>"") ;
+OpenWindow.document.getElementById(""img1"").setAttribute(""class"",""larger"");
+    }
+</script>
+but unfortunately I have a problem with last sentence, the class is not assigned at all to the image.
+any ideas?
+thx "

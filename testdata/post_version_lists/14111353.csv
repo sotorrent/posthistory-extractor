@@ -1,0 +1,93 @@
+Id;PostId;UserId;PostHistoryTypeId;RevisionGUID;CreationDate;Text;UserDisplayName;Comment
+33862704;14111353;640913;2;24c4048d-6814-493e-b08c-53771b882d4a;2013-01-01 14:39:06.0;"I am writing an application which sends data to blutooth printer. Can anyone help me how can i use android Bluetooth Stack for printing...??? or is there any external api or sdk to use??
+
+ 
+ ";;
+33862779;14111353;1760291;5;952be066-9b56-4c32-aae9-d01f1b080f60;2013-01-01 14:44:06.0;"I am writing an application which sends data to bluetooth printer. Can anyone help me ? how can I use android Bluetooth Stack for printing? or is there any external api or sdk to use?
+";;improved formatting
+33929502;14111353;640913;5;832c831c-c52b-4c3a-99f6-68ff5fd6c8d0;2013-01-03 07:57:01.0;"I am writing an application which sends data to bluetooth printer. Can anyone help me ? how can I use android Bluetooth Stack for printing? or is there any external api or sdk to use?
+
+
+Here is my code for searching bluetooth...
+
+    bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+	registerReceiver(ActionFoundReceiver, new IntentFilter(
+				BluetoothDevice.ACTION_FOUND));
+
+private final BroadcastReceiver ActionFoundReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			// TODO Auto-generated method stub
+			String action = intent.getAction();
+			if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+				BluetoothDevice device = intent
+						.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+				btArrayAdapter.add(device.getName() + ""\\n""
+						+ device.getAddress());
+				btArrayAdapter.notifyDataSetChanged();
+			}
+		}
+	};
+
+
+and here is my code for sending data to printer..
+
+
+    	BluetoothDevice mDevice=bluetoothAdapter.getRemoteDevice(""00:15:FF:F2:56:A4"");
+							
+								Method m=mDevice.getClass().getMethod(""createRfcommSocket"", new Class[] { int.class });
+								mBTsocket=(BluetoothSocket)m.invoke(mDevice, 1);
+								System.out.println(""Connecting....."");
+								mBTsocket.connect();
+								System.out.println(""Connected"");
+								OutputStream os = mBTsocket.getOutputStream();
+			                    os.flush();
+
+			                    os.write(Receipt.getBytes());
+//			                    mBTsocket.close();
+
+when i write socket.close() , data is not getting print to printer as socket connection getting closed before printing data..and if i didnt write socket.close() then data is getting printed only once..i would not be able to print data second time until i restart bluetooth of my phone.
+
+can any one have solution for it??? or is there any other way to get rid of this printing??
+";;Edited with code for searching and sending data to bluetooth.
+42382014;14111353;165667;5;4b4d9844-0001-48e0-b80b-fa1f2dfd5de2;2013-06-19 06:11:29.0;"I am writing an application which sends data to bluetooth printer. Can anyone help me ? how can I use android Bluetooth Stack for printing? or is there any external api or sdk to use?
+
+
+Here is my code for searching bluetooth...
+
+    bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+    registerReceiver(ActionFoundReceiver,
+            new IntentFilter(BluetoothDevice.ACTION_FOUND));
+
+    private final BroadcastReceiver ActionFoundReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                BluetoothDevice device = intent
+                        .getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                btArrayAdapter.add(device.getName() + ""\\n""
+                        + device.getAddress());
+                btArrayAdapter.notifyDataSetChanged();
+            }
+        }
+    };
+
+and here is my code for sending data to printer..
+
+    BluetoothDevice mDevice = bluetoothAdapter.getRemoteDevice(""00:15:FF:F2:56:A4"");
+    Method m = mDevice.getClass().getMethod(""createRfcommSocket"",
+            new Class[] { int.class });
+    mBTsocket = (BluetoothSocket) m.invoke(mDevice, 1);
+    System.out.println(""Connecting....."");
+    mBTsocket.connect();
+    System.out.println(""Connected"");
+    OutputStream os = mBTsocket.getOutputStream();
+    os.flush();
+    os.write(Receipt.getBytes());
+    // mBTsocket.close();
+
+When I write socket.close() , data is not getting print to printer as socket connection getting closed before printing data..and if I didn't write socket.close() then data is getting printed only once.. I would not be able to print data second time until I restart bluetooth of my phone.
+
+can any one have solution for it??? or is there any other way to get rid of this printing??";;corrected spelling, improved formatting
