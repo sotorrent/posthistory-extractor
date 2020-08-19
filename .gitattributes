@@ -1,2 +1,3 @@
-# Auto detect text files and perform LF normalization
+# Auto detect text files and perform LF normalization, but not for CSV files
 * text=auto
+*.csv -text
