@@ -23,8 +23,8 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 class GroundTruthTest {
-    private static Path pathToPostHistory = Paths.get("testdata", "gt_test", "files");
-    private static Path pathToGroundTruth = Paths.get("testdata", "gt_test", "gt");
+    private static final Path pathToPostHistory = Paths.get("testdata", "gt_test", "files");
+    private static final Path pathToGroundTruth = Paths.get("testdata", "gt_test", "gt");
 
     @Test
     void testReadFromDirectory() {

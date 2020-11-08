@@ -1,5 +1,4 @@
 import com.google.common.collect.Sets;
-import org.junit.jupiter.api.Assertions;
 import org.sotorrent.posthistoryextractor.comments.CommentsIterator;
 import org.sotorrent.posthistoryextractor.history.PostHistory;
 import org.sotorrent.posthistoryextractor.history.PostHistoryIterator;
@@ -16,6 +15,7 @@ import org.hibernate.ScrollableResults;
 import org.hibernate.StatelessSession;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeAll;
 import org.sotorrent.util.LogUtils;
 
 import java.io.File;
@@ -27,19 +27,23 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.hamcrest.junit.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+
 @Disabled
 class DisabledTest {
     private static Logger logger;
-    private static Path pathToHibernateConfig = Paths.get("hibernate", "hibernate.cfg.xml");
-    private static final String SOTORRENT_VERSION = "sotorrent_2020-03-15";
+    private static final Path pathToHibernateConfig = Paths.get("hibernate", "hibernate.cfg.xml");
+    private static final String SOTORRENT_VERSION = "sotorrent_2020-08-31";
     // these posts are ignored below because they have a separate test case
     private static final Set<Integer> POSTS_WITH_TEST_CASE = Sets.newHashSet(5864258, 9875710);
     // posts without post blocks
-    private static Path posts_no_blocks = Paths.get("testdata", SOTORRENT_VERSION, "all_posts_no_blocks.csv");
+    private static final Path posts_no_blocks = Paths.get("testdata", SOTORRENT_VERSION, "all_posts_no_blocks.csv");
     // posts without content versions
-    private static Path posts_no_content_versions = Paths.get("testdata", SOTORRENT_VERSION, "all_posts_no_content_versions.csv");
+    private static final Path posts_no_content_versions = Paths.get("testdata", SOTORRENT_VERSION, "all_posts_no_content_versions.csv");
     // questions without title versions
-    private static Path questions_no_title_versions = Paths.get("testdata", SOTORRENT_VERSION, "all_questions_no_title_versions.csv");
+    private static final Path questions_no_title_versions = Paths.get("testdata", SOTORRENT_VERSION, "all_questions_no_title_versions.csv");
 
     static {
         // configure logger
@@ -47,6 +51,17 @@ class DisabledTest {
             logger = LogUtils.getClassLogger(DisabledTest.class);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    @BeforeAll
+    static void setupHibernate() {
+        if (PostHistoryIterator.sessionFactory == null) {
+            PostHistoryIterator.createSessionFactory(pathToHibernateConfig);
+        }
+
+        if (CommentsIterator.sessionFactory == null) {
+            CommentsIterator.createSessionFactory(pathToHibernateConfig);
         }
     }
 
@@ -165,7 +180,7 @@ class DisabledTest {
                             postVersions.processVersionHistory();
                         }
 
-                        Assertions.assertNotNull(titleVersions);
+                        assertNotNull(titleVersions);
                         if (postTypeId == Posts.QUESTION_ID && titleVersions.size() == 0) {
                             logger.warning("No title versions extracted for PostId " + postId);
                             emptyTitleVersionListPresent = true;
@@ -179,64 +194,97 @@ class DisabledTest {
 
         logger.info("All posts processed.");
 
-        Assertions.assertFalse(emptyPostBlockListPresent);
-        Assertions.assertFalse(emptyPostVersionListPresent);
-        Assertions.assertFalse(emptyTitleVersionListPresent);
+        assertFalse(emptyPostBlockListPresent);
+        assertFalse(emptyPostVersionListPresent);
+        assertFalse(emptyTitleVersionListPresent);
     }
 
     @Test
-    void testSOTorrent() {
-        if (PostHistoryIterator.sessionFactory == null) {
-            PostHistoryIterator.createSessionFactory(pathToHibernateConfig);
-        }
-
-        if (CommentsIterator.sessionFactory == null) {
-            CommentsIterator.createSessionFactory(pathToHibernateConfig);
-        }
-
-        // test different properties of the SOTorrent tables
+    void testPostVersionCount() {
         try (StatelessSession session = PostHistoryIterator.sessionFactory.openStatelessSession()) {
             String postVersionPostIdsQuery = "select count(*) from PostVersion";
-            long postVersionPostIds = (long)session.createQuery(postVersionPostIdsQuery).list().get(0);
-            Assertions.assertEquals(75887884, postVersionPostIds);
+            long postVersionPostIds = (long) session.createQuery(postVersionPostIdsQuery).list().get(0);
 
             String postVersionPostHistoryIdsQuery = "select count(distinct PostHistoryId) from PostVersion";
             long postVersionPostHistoryIds = (long)session.createQuery(postVersionPostHistoryIdsQuery).list().get(0);
-            Assertions.assertEquals(postVersionPostIds, postVersionPostHistoryIds);
 
+            assertThat(postVersionPostIds, allOf(equalTo(77783645L), equalTo(postVersionPostHistoryIds)));
+        }
+    }
+
+    @Test
+    void testPostIdCount() {
+        try (StatelessSession session = PostHistoryIterator.sessionFactory.openStatelessSession()) {
             String postVersionDistinctPostIdsQuery = "select count(distinct PostId) from PostVersion";
-            long postVersionDistinctPostIds = (long)session.createQuery(postVersionDistinctPostIdsQuery).list().get(0);
-            Assertions.assertEquals(47828328, postVersionDistinctPostIds);
-
-            String postBlockVersionsQuery = "select count(*) from PostBlockVersion";
-            long postBlockVersions = (long)session.createQuery(postBlockVersionsQuery).list().get(0);
-            Assertions.assertEquals(238449928, postBlockVersions);
+            long postVersionDistinctPostIds = (long) session.createQuery(postVersionDistinctPostIdsQuery).list().get(0);
 
             String postBlockVersionPostIdsQuery = "select count(distinct PostId) from PostBlockVersion";
             long postBlockVersionPostIds = (long)session.createQuery(postBlockVersionPostIdsQuery).list().get(0);
-            Assertions.assertEquals(47828328, postBlockVersionPostIds);
 
+            assertThat(postVersionDistinctPostIds, allOf(equalTo(49036211L), equalTo(postBlockVersionPostIds)));
+        }
+    }
+
+    @Test
+    void testPostBlockVersionCount() {
+        try (StatelessSession session = PostHistoryIterator.sessionFactory.openStatelessSession()) {
+            String postBlockVersionsQuery = "select count(*) from PostBlockVersion";
+            long postBlockVersions = (long) session.createQuery(postBlockVersionsQuery).list().get(0);
+            assertEquals(243993989, postBlockVersions);
+        }
+    }
+
+    @Test
+    void testPostVersionUrlCount() {
+        try (StatelessSession session = PostHistoryIterator.sessionFactory.openStatelessSession()) {
             String postVersionUrlsQuery = "select count(*) from PostVersionUrl";
             long postVersionUrls = (long) session.createQuery(postVersionUrlsQuery).list().get(0);
-            Assertions.assertEquals(37554088, postVersionUrls);
+            assertEquals(38402277, postVersionUrls);
+        }
+    }
 
-            String postReferenceGHQuery = "select count(*) from PostReferenceGH";
-            long postReferenceGH = (long) session.createQuery(postReferenceGHQuery).list().get(0);
-            Assertions.assertEquals(2626036, postReferenceGH);
-
+    @Test
+    void testTitleVersionCount() {
+        try (StatelessSession session = PostHistoryIterator.sessionFactory.openStatelessSession()) {
             String titleVersionQuery = "select count(*) from TitleVersion";
             long titleVersions = (long) session.createQuery(titleVersionQuery).list().get(0);
-            Assertions.assertEquals(21961119, titleVersions);
+            assertEquals(22585364, titleVersions);
+        }
+    }
 
+    @Test
+    void testPostReferenceGHCount() {
+        try (StatelessSession session = PostHistoryIterator.sessionFactory.openStatelessSession()) {
+            String postReferenceGHQuery = "select count(*) from PostReferenceGH";
+            long postReferenceGH = (long) session.createQuery(postReferenceGHQuery).list().get(0);
+            assertEquals(8008892, postReferenceGH);
+        }
+    }
+
+    @Test
+    void tesGHMatchesCount() {
+        try (StatelessSession session = PostHistoryIterator.sessionFactory.openStatelessSession()) {
             String ghMatchesQuery = "select count(*) from GHMatches";
             long ghMatches = (long) session.createQuery(ghMatchesQuery).list().get(0);
-            Assertions.assertEquals(96170, ghMatches);
+            assertEquals(690042, ghMatches);
         }
+    }
 
+    @Test
+    void tesGHCommitsCount() {
+        try (StatelessSession session = PostHistoryIterator.sessionFactory.openStatelessSession()) {
+            String ghCommitsQuery = "select count(*) from GHCommits";
+            long ghCommits = (long) session.createQuery(ghCommitsQuery).list().get(0);
+            assertEquals(396552, ghCommits);
+        }
+    }
+
+    @Test
+    void testCommentCount() {
         try (StatelessSession session = CommentsIterator.sessionFactory.openStatelessSession()) {
             String commentUrlQuery = "select count(*) from CommentUrl";
             long commentUrls = (long) session.createQuery(commentUrlQuery).list().get(0);
-            Assertions.assertEquals(8139159, commentUrls);
+            assertEquals(8376074, commentUrls);
         }
     }
 }
