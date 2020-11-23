@@ -208,7 +208,7 @@ class DisabledTest {
             String postVersionPostHistoryIdsQuery = "select count(distinct PostHistoryId) from PostVersion";
             long postVersionPostHistoryIds = (long)session.createQuery(postVersionPostHistoryIdsQuery).list().get(0);
 
-            assertThat(postVersionPostIds, allOf(equalTo(77783645L), equalTo(postVersionPostHistoryIds)));
+            assertThat(postVersionPostIds, allOf(equalTo(80022656L), equalTo(postVersionPostHistoryIds)));
         }
     }
 
@@ -221,7 +221,7 @@ class DisabledTest {
             String postBlockVersionPostIdsQuery = "select count(distinct PostId) from PostBlockVersion";
             long postBlockVersionPostIds = (long)session.createQuery(postBlockVersionPostIdsQuery).list().get(0);
 
-            assertThat(postVersionDistinctPostIds, allOf(equalTo(49036211L), equalTo(postBlockVersionPostIds)));
+            assertThat(postVersionDistinctPostIds, allOf(equalTo(50232985L), equalTo(postBlockVersionPostIds)));
         }
     }
 
@@ -230,7 +230,7 @@ class DisabledTest {
         try (StatelessSession session = PostHistoryIterator.sessionFactory.openStatelessSession()) {
             String postBlockVersionsQuery = "select count(*) from PostBlockVersion";
             long postBlockVersions = (long) session.createQuery(postBlockVersionsQuery).list().get(0);
-            assertEquals(243993989, postBlockVersions);
+            assertEquals(250190512, postBlockVersions);
         }
     }
 
@@ -239,7 +239,7 @@ class DisabledTest {
         try (StatelessSession session = PostHistoryIterator.sessionFactory.openStatelessSession()) {
             String postVersionUrlsQuery = "select count(*) from PostVersionUrl";
             long postVersionUrls = (long) session.createQuery(postVersionUrlsQuery).list().get(0);
-            assertEquals(38402277, postVersionUrls);
+            assertEquals(39705460, postVersionUrls);
         }
     }
 
@@ -248,7 +248,7 @@ class DisabledTest {
         try (StatelessSession session = PostHistoryIterator.sessionFactory.openStatelessSession()) {
             String titleVersionQuery = "select count(*) from TitleVersion";
             long titleVersions = (long) session.createQuery(titleVersionQuery).list().get(0);
-            assertEquals(22585364, titleVersions);
+            assertEquals(23184586, titleVersions);
         }
     }
 
@@ -257,7 +257,7 @@ class DisabledTest {
         try (StatelessSession session = PostHistoryIterator.sessionFactory.openStatelessSession()) {
             String postReferenceGHQuery = "select count(*) from PostReferenceGH";
             long postReferenceGH = (long) session.createQuery(postReferenceGHQuery).list().get(0);
-            assertEquals(8008892, postReferenceGH);
+            assertEquals(6678873, postReferenceGH);
         }
     }
 
@@ -266,7 +266,7 @@ class DisabledTest {
         try (StatelessSession session = PostHistoryIterator.sessionFactory.openStatelessSession()) {
             String ghMatchesQuery = "select count(*) from GHMatches";
             long ghMatches = (long) session.createQuery(ghMatchesQuery).list().get(0);
-            assertEquals(690042, ghMatches);
+            assertEquals(649632, ghMatches);
         }
     }
 
@@ -275,7 +275,7 @@ class DisabledTest {
         try (StatelessSession session = PostHistoryIterator.sessionFactory.openStatelessSession()) {
             String ghCommitsQuery = "select count(*) from GHCommits";
             long ghCommits = (long) session.createQuery(ghCommitsQuery).list().get(0);
-            assertEquals(396552, ghCommits);
+            assertEquals(198667, ghCommits);
         }
     }
 
@@ -284,7 +284,7 @@ class DisabledTest {
         try (StatelessSession session = CommentsIterator.sessionFactory.openStatelessSession()) {
             String commentUrlQuery = "select count(*) from CommentUrl";
             long commentUrls = (long) session.createQuery(commentUrlQuery).list().get(0);
-            assertEquals(8376074, commentUrls);
+            assertEquals(8606510, commentUrls);
         }
     }
 }
