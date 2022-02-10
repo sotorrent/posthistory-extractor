@@ -58,7 +58,7 @@
         <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-csv -->
         <commons-csv.version>1.8</commons-csv.version>
         <!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-core -->
-        <hibernate.version>5.4.20.Final</hibernate.version>
+        <hibernate.version>5.4.24.Final</hibernate.version>
         <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
         <mysql-connector-java.version>8.0.21</mysql-connector-java.version>
     </properties>
